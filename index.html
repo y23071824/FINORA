@@ -1,0 +1,35 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Finora 資產管理</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Finora 資產管理</h1>
+    <nav>
+      <button onclick="switchTab('overview')">資產概覽</button>
+      <button onclick="switchTab('simulator')">複利模擬</button>
+      <button onclick="switchTab('records')">資產紀錄</button>
+    </nav>
+  </header>
+  <main>
+    <section id="overview" class="tab active">
+      <h2>資產概覽</h2>
+      <p>這裡將呈現圓餅圖與總覽資訊。</p>
+    </section>
+    <section id="simulator" class="tab">
+      <h2>複利模擬器</h2>
+      <p>這裡將設計年化報酬、定期定額等模擬功能。</p>
+    </section>
+    <section id="records" class="tab">
+      <h2>資產登記</h2>
+      <p>登記您的資產與負債項目。</p>
+    </section>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+
+body {
+  font-family: 'Helvetica Neue', sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f7fdfc;
+  color: #333;
+}
+header {
+  background: #e0f2f1;
+  color: #004d40;
+  padding: 1em;
+  text-align: center;
+}
+nav button {
+  margin: 0.3em;
+  background: #ffffff;
+  border: 1px solid #b2dfdb;
+  color: #00796b;
+  padding: 0.5em 1em;
+  border-radius: 8px;
+  cursor: pointer;
+}
+main {
+  padding: 1em;
+}
+.tab {
+  display: none;
+}
+.tab.active {
+  display: block;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 121, 107, 0.1);
+  padding: 1em;
+  margin-top: 1em;
+}
