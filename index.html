@@ -9,7 +9,45 @@
 </head>
 <body>
   <h1>Finora v2.3 資產登記</h1>
-  <p>請切換資產類型為「股票」檢查是否出現股票欄位。</p>
+  <form id="asset-form" onsubmit="saveAsset(event)">
+    <label>類型：
+      <select id="asset-type" onchange="updateFormByType()">
+        <option value="現金">現金</option>
+        <option value="股票">股票</option>
+        <option value="定存">定存</option>
+        <option value="房產">房產</option>
+        <option value="其他">其他</option>
+      </select>
+    </label>
+
+    <div id="general-fields">
+      <label>金額：<input type="number" id="asset-amount" /></label>
+    </div>
+
+    <div id="stock-fields" style="display:none;">
+      <label>股票名稱：<input type="text" id="stock-name" /></label>
+      <label>股數：<input type="number" id="stock-shares" /></label>
+      <label>成本單價：<input type="number" id="stock-cost" /></label>
+      <label>現價：<input type="number" id="stock-current" /></label>
+    </div>
+
+    <label>幣別：
+      <select id="asset-currency" onchange="updateExchangeVisibility()">
+        <option value="TWD">台幣</option>
+        <option value="USD">美金</option>
+        <option value="OTHER">其他</option>
+      </select>
+    </label>
+    <div id="exchange-group" style="display:none;">
+      <label>匯率（請手動輸入）：<input type="number" id="asset-rate" step="0.01" /></label>
+    </div>
+
+    <label>銀行名稱（非必填）：<input type="text" id="asset-bank" /></label>
+    <label>備註：<textarea id="asset-note"></textarea></label>
+    <button type="submit">儲存資產</button>
+  </form>
+
+  <div id="asset-list"></div>
   <script src="script.js"></script>
 </body>
 </html>

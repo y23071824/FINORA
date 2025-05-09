@@ -4,6 +4,23 @@ body {
   padding: 2em;
   background: #f4fdfc;
 }
-h1 {
-  color: #00695c;
+label {
+  display: block;
+  margin-top: 1em;
+}
+input, select, textarea, button {
+  width: 100%;
+  padding: 0.5em;
+  margin-top: 0.3em;
+}
+#asset-list {
+  margin-top: 2em;
+  background: #e0f7fa;
+  padding: 1em;
+  border-radius: 8px;
+}
+.asset-entry {
+  margin-bottom: 1em;
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid #ccc;
 }
