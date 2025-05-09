@@ -1,1 +1,1 @@
-function switchTab(id){}
+console.log('Finora v2.3 loaded');
