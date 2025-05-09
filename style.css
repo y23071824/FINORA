@@ -1,1 +1,9 @@
-body { font-family: sans-serif; }
+
+body {
+  font-family: sans-serif;
+  padding: 2em;
+  background: #f4fdfc;
+}
+h1 {
+  color: #00695c;
+}
