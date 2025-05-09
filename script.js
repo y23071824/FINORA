@@ -5,11 +5,9 @@ function switchTab(id) {
 }
 
 function updateExchangeVisibility() {
-  const type = document.getElementById('asset-type').value;
   const currency = document.getElementById('asset-currency').value;
   const exchangeGroup = document.getElementById('exchange-group');
-  const shouldShow = (currency !== 'TWD') && (type === '現金' || type === '定存');
-  exchangeGroup.style.display = shouldShow ? 'block' : 'none';
+  exchangeGroup.style.display = (currency !== 'TWD') ? 'block' : 'none';
 }
 
 function saveAsset(event) {
