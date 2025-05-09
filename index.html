@@ -13,7 +13,7 @@
     <nav>
       <button onclick="switchTab('overview')">資產概覽</button>
       <button onclick="switchTab('simulator')">複利模擬</button>
-      <button onclick="switchTab('records')">資產紀錄</button>
+      <button onclick="switchTab('records')">資產登記</button>
     </nav>
   </header>
   <main>
@@ -27,7 +27,23 @@
     </section>
     <section id="records" class="tab">
       <h2>資產登記</h2>
-      <p>登記您的資產與負債項目。</p>
+      <form id="asset-form" onsubmit="saveAsset(event)">
+        <label>資產名稱：<input type="text" id="asset-name" required /></label>
+        <label>類型：
+          <select id="asset-type">
+            <option>現金</option>
+            <option>股票</option>
+            <option>定存</option>
+            <option>房產</option>
+            <option>其他</option>
+          </select>
+        </label>
+        <label>金額（數字）：<input type="number" id="asset-amount" required /></label>
+        <label>銀行名稱（非必填）：<input type="text" id="asset-bank" /></label>
+        <label>備註：<textarea id="asset-note"></textarea></label>
+        <button type="submit">儲存資產</button>
+      </form>
+      <div id="asset-list"></div>
     </section>
   </main>
   <script src="script.js"></script>
