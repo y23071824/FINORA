@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -28,17 +27,26 @@
     <section id="records" class="tab">
       <h2>資產登記</h2>
       <form id="asset-form" onsubmit="saveAsset(event)">
-        <label>資產名稱：<input type="text" id="asset-name" required /></label>
         <label>類型：
-          <select id="asset-type">
-            <option>現金</option>
-            <option>股票</option>
-            <option>定存</option>
-            <option>房產</option>
-            <option>其他</option>
+          <select id="asset-type" onchange="updateExchangeVisibility()">
+            <option value="現金">現金</option>
+            <option value="股票">股票</option>
+            <option value="定存">定存</option>
+            <option value="房產">房產</option>
+            <option value="其他">其他</option>
           </select>
         </label>
-        <label>金額（數字）：<input type="number" id="asset-amount" required /></label>
+        <label>金額：<input type="number" id="asset-amount" required /></label>
+        <label>幣別：
+          <select id="asset-currency" onchange="updateExchangeVisibility()">
+            <option value="TWD">台幣</option>
+            <option value="USD">美金</option>
+            <option value="OTHER">其他</option>
+          </select>
+        </label>
+        <div id="exchange-group" style="display:none;">
+          <label>匯率（請手動輸入）：<input type="number" id="asset-rate" step="0.01" /></label>
+        </div>
         <label>銀行名稱（非必填）：<input type="text" id="asset-bank" /></label>
         <label>備註：<textarea id="asset-note"></textarea></label>
         <button type="submit">儲存資產</button>
