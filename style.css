@@ -1,1 +1,10 @@
-body { font-family: sans-serif; background: #f9fdfd; padding: 2em; }
+
+body {
+  font-family: sans-serif;
+  background: #fefefe;
+  padding: 2em;
+  color: #333;
+}
+h1 {
+  color: #00796b;
+}
