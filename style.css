@@ -1,7 +1,1 @@
-
-body { font-family: sans-serif; padding: 2em; background: #f9f9f9; }
-form label { display: block; margin: 0.5em 0; }
-input, select { width: 100%; padding: 0.5em; margin-top: 0.2em; }
-button { margin-top: 1em; }
-#asset-list, #summary { margin-top: 2em; background: #e0f7fa; padding: 1em; border-radius: 8px; }
-.asset-entry { margin-bottom: 1em; border-bottom: 1px solid #ccc; padding-bottom: 0.5em; }
+body { font-family: sans-serif; padding: 2em; background: #fdfdfd; }
