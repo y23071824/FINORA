@@ -1,1 +1,1 @@
-console.log('Finora v2.5 ready');
+console.log('Finora v2.5 script loaded');
