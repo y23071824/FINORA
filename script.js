@@ -1,21 +1,45 @@
 
-let totalAsset = 0;
-function addAsset() {
-  const name = document.getElementById("asset-name").value;
-  const value = parseFloat(document.getElementById("asset-value").value);
-  if (!name || isNaN(value)) return alert("請填入正確資料");
-  totalAsset += value;
-  const li = document.createElement("li");
-  li.textContent = `${name}：${value} 元`;
-  document.getElementById("asset-list").appendChild(li);
-  document.getElementById("total-asset").textContent = totalAsset.toLocaleString();
-  document.getElementById("retirement-asset").value = totalAsset;
-}
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("asset-form");
+  const assetList = document.getElementById("asset-list");
+  const totalsList = document.getElementById("totals-list");
 
-function calculateYears() {
-  const asset = parseFloat(document.getElementById("retirement-asset").value);
-  const withdraw = parseFloat(document.getElementById("withdraw-amount").value);
-  if (isNaN(asset) || isNaN(withdraw) || withdraw <= 0) return alert("請輸入有效數值");
-  const years = Math.floor(asset / withdraw);
-  document.getElementById("retirement-result").textContent = `預估可支撐約 ${years} 年`;
-}
+  let assets = JSON.parse(localStorage.getItem("assets") || "[]");
+
+  function render() {
+    assetList.innerHTML = "";
+    totalsList.innerHTML = "";
+
+    let totals = {};
+
+    assets.forEach((item, index) => {
+      const li = document.createElement("li");
+      li.textContent = `${item.type} - ${item.currency} $${item.amount.toLocaleString()} (${item.bank}) ${item.note ? '- ' + item.note : ''}`;
+      assetList.appendChild(li);
+
+      totals[item.currency] = (totals[item.currency] || 0) + Number(item.amount);
+    });
+
+    for (const currency in totals) {
+      const li = document.createElement("li");
+      li.textContent = `${currency}: $${totals[currency].toLocaleString()}`;
+      totalsList.appendChild(li);
+    }
+  }
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const type = document.getElementById("type").value;
+    const amount = parseFloat(document.getElementById("amount").value);
+    const currency = document.getElementById("currency").value;
+    const bank = document.getElementById("bank").value;
+    const note = document.getElementById("note").value;
+
+    assets.push({ type, amount, currency, bank, note });
+    localStorage.setItem("assets", JSON.stringify(assets));
+    form.reset();
+    render();
+  });
+
+  render();
+});

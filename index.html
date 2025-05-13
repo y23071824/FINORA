@@ -3,38 +3,39 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>資產與退休金整合頁</title>
+  <title>FINORA 資產登記</title>
   <link rel="stylesheet" href="style.css" />
-  <style>
-    section {
-      margin-bottom: 3rem;
-      border: 1px solid #ccc;
-      padding: 1.5rem;
-      border-radius: 12px;
-    }
-    h2 {
-      color: #d2889d;
-    }
-  </style>
 </head>
 <body>
-  <h1>資產管理與退休金試算</h1>
+  <h1>FINORA 資產登記</h1>
+  <form id="asset-form">
+    <label>種類：
+      <input type="text" id="type" required />
+    </label><br>
+    <label>金額：
+      <input type="number" id="amount" required />
+    </label><br>
+    <label>幣別：
+      <select id="currency">
+        <option value="TWD">TWD</option>
+        <option value="USD">USD</option>
+        <option value="JPY">JPY</option>
+      </select>
+    </label><br>
+    <label>銀行：
+      <input type="text" id="bank" />
+    </label><br>
+    <label>備註：
+      <input type="text" id="note" />
+    </label><br><br>
+    <button type="submit">儲存資產</button>
+  </form>
 
-  <section id="asset-section">
-    <h2>資產登記與加總</h2>
-    <label>資產名稱：<input type="text" id="asset-name" /></label><br>
-    <label>金額（元）：<input type="number" id="asset-value" /></label><br>
-    <button onclick="addAsset()">新增資產</button>
+  <section id="records-section">
+    <h2>資產紀錄</h2>
     <ul id="asset-list"></ul>
-    <p>資產總額：<span id="total-asset">0</span> 元</p>
-  </section>
-
-  <section id="retirement-section">
-    <h2>退休金簡易試算</h2>
-    <label>目前總資產：<input type="number" id="retirement-asset" /></label><br>
-    <label>每年提領金額：<input type="number" id="withdraw-amount" /></label><br>
-    <button onclick="calculateYears()">試算可領幾年</button>
-    <p id="retirement-result"></p>
+    <h3>幣別加總</h3>
+    <ul id="totals-list"></ul>
   </section>
 
   <script src="script.js"></script>
