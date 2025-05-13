@@ -1,102 +1,42 @@
+
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <title>Finora v2.4 完整整合版</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>資產與退休金整合頁</title>
+  <link rel="stylesheet" href="style.css" />
   <style>
-    #detail-section {
-      margin-top: 2rem;
-      border-top: 1px solid #ccc;
-      padding-top: 1.5rem;
+    section {
+      margin-bottom: 3rem;
+      border: 1px solid #ccc;
+      padding: 1.5rem;
+      border-radius: 12px;
     }
-    textarea {
-      width: 100%;
-      height: 120px;
-    }
-    select, input[type="number"] {
-      font-size: 16px;
-      padding: 0.3rem;
-      margin-top: 0.3rem;
-    }
-    label {
-      display: block;
-      margin-top: 1rem;
-    }
-    button {
-      margin-top: 1rem;
-      margin-right: 1rem;
-      font-size: 16px;
-      padding: 0.5rem 1rem;
+    h2 {
+      color: #d2889d;
     }
   </style>
 </head>
 <body>
-  <h1>Finora v2.4 完整整合版</h1>
-  <div id="calendar"></div>
+  <h1>資產管理與退休金試算</h1>
 
-  <div id="detail-section" style="display:none;">
-    <h2 id="selected-date-title">每日記錄</h2>
-    <label>我為自己做了什麼？<br><textarea id="actionText"></textarea></label>
-    <label>情緒狀態：
-      <select id="emotion">
-        <option value="green">綠色（正向）</option>
-        <option value="yellow">黃色（普通）</option>
-        <option value="red">紅色（低落）</option>
-      </select>
-    </label>
-    <label>類型標記：
-      <select id="tag">
-        <option value="emotion">情緒日記</option>
-        <option value="learning">學習進度</option>
-        <option value="money">金錢照顧</option>
-      </select>
-    </label>
-    <label>今日金錢照顧自己金額（元）：<input type="number" id="money"></label>
-    <br>
-    <button onclick="saveData()">儲存</button>
-    <button onclick="closeDetail()">關閉</button>
-  </div>
+  <section id="asset-section">
+    <h2>資產登記與加總</h2>
+    <label>資產名稱：<input type="text" id="asset-name" /></label><br>
+    <label>金額（元）：<input type="number" id="asset-value" /></label><br>
+    <button onclick="addAsset()">新增資產</button>
+    <ul id="asset-list"></ul>
+    <p>資產總額：<span id="total-asset">0</span> 元</p>
+  </section>
+
+  <section id="retirement-section">
+    <h2>退休金簡易試算</h2>
+    <label>目前總資產：<input type="number" id="retirement-asset" /></label><br>
+    <label>每年提領金額：<input type="number" id="withdraw-amount" /></label><br>
+    <button onclick="calculateYears()">試算可領幾年</button>
+    <p id="retirement-result"></p>
+  </section>
 
   <script src="script.js"></script>
-  <script>
-    let currentDate = '';
-
-    function showDetail(date) {
-      currentDate = date;
-      document.getElementById('selected-date-title').textContent = `${date} 的記錄`;
-      const record = JSON.parse(localStorage.getItem("record-" + date) || '{}');
-      document.getElementById("actionText").value = record.action || '';
-      document.getElementById("emotion").value = record.emotion || 'green';
-      document.getElementById("tag").value = record.tag || 'emotion';
-      document.getElementById("money").value = record.money || '';
-      document.getElementById("detail-section").style.display = 'block';
-    }
-
-    function saveData() {
-      const record = {
-        action: document.getElementById("actionText").value,
-        emotion: document.getElementById("emotion").value,
-        tag: document.getElementById("tag").value,
-        money: document.getElementById("money").value
-      };
-      localStorage.setItem("record-" + currentDate, JSON.stringify(record));
-      alert("已儲存！");
-    }
-
-    function closeDetail() {
-      document.getElementById("detail-section").style.display = 'none';
-    }
-
-    // 模擬一個簡單月曆按鈕範例
-    document.addEventListener("DOMContentLoaded", () => {
-      const calendar = document.getElementById("calendar");
-      let html = '<p>點選以下日期查看記錄：</p>';
-      for (let i = 1; i <= 7; i++) {
-        html += `<button onclick="showDetail('2025-05-${String(i).padStart(2, '0')}')">5月${i}日</button> `;
-      }
-      calendar.innerHTML = html;
-    });
-  </script>
 </body>
 </html>
