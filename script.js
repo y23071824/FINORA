@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <br>保單名稱：${item.policyName}
           <br>保額：$${item.policyAmount}, 年期：${item.policyYears} 年, 年繳保費：$${item.policyPremium}`;
       } else {
-        amount = parseFloat(item.amount) || 0; // ✅ 修正：保證其他類型能加總
+        amount = item.amount !== undefined && item.amount !== null ? parseFloat(item.amount) : 0;
       }
 
       totals[currency] = (totals[currency] || 0) + amount;
@@ -109,7 +109,8 @@ document.addEventListener("DOMContentLoaded", () => {
       asset.policyYears = parseInt(document.getElementById("policy-years").value) || 0;
       asset.policyPremium = parseFloat(document.getElementById("policy-premium").value) || 0;
     } else {
-      asset.amount = parseFloat(document.getElementById("amount").value) || 0;
+      const amtInput = document.getElementById("amount");
+      asset.amount = amtInput && amtInput.value !== "" ? parseFloat(amtInput.value) : 0;
     }
 
     if (editIndex !== null) {
