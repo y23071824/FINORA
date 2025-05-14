@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <br>保單名稱：${item.policyName}
           <br>保額：$${item.policyAmount}, 年期：${item.policyYears} 年, 年繳保費：$${item.policyPremium}`;
       } else {
-        amount = item.amount; // ⚠️ 修正：其他資產要納入加總與顯示
+        amount = parseFloat(item.amount) || 0; // ✅ 修正：保證其他類型能加總
       }
 
       totals[currency] = (totals[currency] || 0) + amount;
@@ -78,7 +78,6 @@ document.addEventListener("DOMContentLoaded", () => {
       profitList.appendChild(li);
     }
 
-    // 銀行記憶
     bankDatalist.innerHTML = "";
     bankHistory.forEach(bank => {
       const opt = document.createElement("option");
