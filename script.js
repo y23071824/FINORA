@@ -52,6 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <br>保額：$${item.policyAmount}, 年期：${item.policyYears} 年, 年繳保費：$${item.policyPremium}`;
       } else {
         amount = item.amount !== undefined && item.amount !== null ? parseFloat(item.amount) : 0;
+        extra = `<br>金額：$${amount.toLocaleString()}`; // ✅ 顯示金額
       }
 
       totals[currency] = (totals[currency] || 0) + amount;
