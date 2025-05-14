@@ -8,6 +8,7 @@
 </head>
 <body>
   <h1>FINORA 資產登記</h1>
+
   <form id="asset-form">
     <label>種類：
       <select id="type">
@@ -21,6 +22,7 @@
       </select>
     </label>
 
+    <!-- 股票欄位 -->
     <div id="stock-fields" style="display: none;">
       <label>股票類型：
         <select id="stock-category">
@@ -36,23 +38,17 @@
       <label>現價（每股）：<input type="number" id="price" step="0.01" /></label>
     </div>
 
+    <!-- 儲蓄保險欄位 -->
     <div id="insurance-fields" style="display: none;">
       <label>保單名稱：<input type="text" id="policy-name" /></label>
       <label>保額：<input type="number" id="policy-amount" /></label>
       <label>年期：<input type="number" id="policy-years" /></label>
       <label>每年保費：<input type="number" id="policy-premium" /></label>
-      
     </div>
-<div id="amount-field">
-  <label>金額：
-    <input type="number" id="amount" />
-  </label>
-</div>
-    
+
+    <!-- 一般金額欄位 -->
     <div id="amount-field">
-      <label>金額：
-        <input type="number" id="amount" />
-      </label>
+      <label>金額：<input type="number" id="amount" /></label>
     </div>
 
     <label>幣別：
@@ -62,25 +58,30 @@
         <option value="JPY">JPY</option>
       </select>
     </label>
+
     <label>銀行：
       <input type="text" id="bank" list="bank-list" />
       <datalist id="bank-list"></datalist>
     </label>
+
     <label>備註：
       <input type="text" id="note" />
     </label>
+
     <button type="submit">儲存資產</button>
   </form>
 
+  <!-- 資產紀錄 -->
   <section id="records-section">
     <h2>資產紀錄</h2>
     <ul id="asset-list"></ul>
-    <h3>幣別加總（含股票成本與其他資產金額）</h3>
+    <h3>幣別加總</h3>
     <ul id="totals-list"></ul>
     <h3>股票盈餘（依幣別）</h3>
     <ul id="stock-profit-list"></ul>
   </section>
 
+  <!-- 匯率換算 -->
   <section id="exchange-section">
     <h2>匯率換算計算機</h2>
     <label>金額：<input type="number" id="input-amount" /></label>
