@@ -1,114 +1,179 @@
-
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("asset-form");
+  const typeSelect = document.getElementById("type");
+  const stockFields = document.getElementById("stock-fields");
+  const insuranceFields = document.getElementById("insurance-fields");
+  const amountField = document.getElementById("amount-field");
   const assetList = document.getElementById("asset-list");
-  const summary = document.getElementById("summary");
+  const totalsList = document.getElementById("totals-list");
+  const profitList = document.getElementById("stock-profit-list");
+  const bankDatalist = document.getElementById("bank-list");
 
-  let savedAssets = JSON.parse(localStorage.getItem("assets") || "[]");
+  let assets = JSON.parse(localStorage.getItem("assets") || "[]");
+  let bankHistory = JSON.parse(localStorage.getItem("banks") || "[]");
+  let editIndex = null;
 
-  function formatCurrency(value) {
-    return "$" + Number(value).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+  function toggleFields() {
+    const type = typeSelect.value;
+    stockFields.style.display = type === "股票" ? "block" : "none";
+    insuranceFields.style.display = type === "儲蓄保險" ? "block" : "none";
+    amountField.style.display = type !== "股票" && type !== "儲蓄保險" ? "block" : "none";
   }
 
-  function saveAssets() {
-    localStorage.setItem("assets", JSON.stringify(savedAssets));
-  }
+  typeSelect.addEventListener("change", toggleFields);
 
-  function renderAssets() {
+  function render() {
     assetList.innerHTML = "";
-    const totals = {};
-    const stockProfits = {};
+    totalsList.innerHTML = "";
+    profitList.innerHTML = "";
 
-    savedAssets.forEach((asset, index) => {
-      const item = document.createElement("div");
-      item.className = "asset-item";
-      item.innerHTML = `
-        <strong>${asset.type}</strong> - ${asset.subtype || ""} - ${asset.currency} - ${asset.bank || ""}<br>
-        ${
-          asset.type === "股票"
-            ? `股數: ${asset.shares}, 成本: ${asset.cost}, 現價: ${asset.price}`
-            : asset.type === "儲蓄保險"
-            ? `名稱: ${asset.policyName}, 保額: ${asset.coverage}, 年期: ${asset.years}, 年繳: ${asset.premium}`
-            : `金額: ${asset.amount}`
-        }
-        <br>
+    let totals = {};
+    let profits = {};
+
+    assets.forEach((item, index) => {
+      let extra = "";
+      let currency = item.currency;
+      let amount = 0;
+
+      if (item.type === "股票") {
+        const cost = item.shares * item.cost;
+        const value = item.shares * item.price;
+        const profit = value - cost;
+        amount = cost;
+        profits[currency] = (profits[currency] || 0) + profit;
+        extra = `
+          <br>股票類型：${item.stockCategory}
+          <br>股數：${item.shares}, 成本：$${item.cost}, 現價：$${item.price}
+          <br>總成本：$${cost.toFixed(2)}, 市值：$${value.toFixed(2)}, 盈餘：$${profit.toFixed(2)}`;
+      } else if (item.type === "儲蓄保險") {
+        amount = item.policyAmount;
+        extra = `
+          <br>保單名稱：${item.policyName}
+          <br>保額：$${item.policyAmount}, 年期：${item.policyYears} 年, 年繳保費：$${item.policyPremium}`;
+      } else {
+        amount = item.amount !== undefined && item.amount !== null ? parseFloat(item.amount) : 0;
+        extra = `<br>金額：$${amount.toLocaleString()}`;
+      }
+
+      totals[currency] = (totals[currency] || 0) + amount;
+
+      const li = document.createElement("li");
+      li.innerHTML = `
+        ${item.type} - ${item.currency} (${item.bank}) ${item.note ? '- ' + item.note : ''}
+        ${extra}
         <button onclick="editAsset(${index})">編輯</button>
         <button onclick="deleteAsset(${index})">刪除</button>
       `;
-      assetList.appendChild(item);
-
-      const currency = asset.currency;
-      if (!totals[currency]) {
-        totals[currency] = 0;
-        stockProfits[currency] = 0;
-      }
-
-      if (asset.type === "股票") {
-        const cost = parseFloat(asset.cost) || 0;
-        const price = parseFloat(asset.price) || 0;
-        const shares = parseFloat(asset.shares) || 0;
-        const totalCost = cost * shares;
-        const totalValue = price * shares;
-        const profit = totalValue - totalCost;
-        totals[currency] += totalValue;
-        stockProfits[currency] += profit;
-      } else if (asset.type === "儲蓄保險") {
-        // 不計入加總
-      } else {
-        totals[currency] += parseFloat(asset.amount) || 0;
-      }
+      assetList.appendChild(li);
     });
 
-    // 顯示幣別總和＋盈餘資訊
-    summary.innerHTML = "<h3>資產總覽</h3>";
-    for (const currency in totals) {
-      const total = formatCurrency(totals[currency]);
-      const profit = formatCurrency(stockProfits[currency]);
-      summary.innerHTML += `<p>${currency}: ${total}（內含股票盈餘：${profit}）</p>`;
+    for (const ccy in totals) {
+      const totalValue = totals[ccy] + (profits[ccy] || 0);
+      const profitValue = profits[ccy] || 0;
+
+      const li = document.createElement("li");
+      li.textContent = `${ccy}: $${totalValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}（內含股票盈餘：$${profitValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}）`;
+      totalsList.appendChild(li);
     }
+
+    bankDatalist.innerHTML = "";
+    bankHistory.forEach(bank => {
+      const opt = document.createElement("option");
+      opt.value = bank;
+      bankDatalist.appendChild(opt);
+    });
   }
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
-
     const type = document.getElementById("type").value;
-    const subtype = document.getElementById("subtype")?.value || "";
-    const currency = document.getElementById("currency").value;
-    const bank = document.getElementById("bank").value;
+    if (!type) return alert("請選擇資產種類");
 
-    let asset = { type, subtype, currency, bank };
+    const asset = {
+      type,
+      currency: document.getElementById("currency").value,
+      bank: document.getElementById("bank").value,
+      note: document.getElementById("note").value
+    };
 
     if (type === "股票") {
-      asset.shares = document.getElementById("shares").value;
-      asset.cost = document.getElementById("cost").value;
-      asset.price = document.getElementById("price").value;
+      asset.stockCategory = document.getElementById("stock-category").value;
+      asset.shares = parseFloat(document.getElementById("shares").value) || 0;
+      asset.cost = parseFloat(document.getElementById("cost").value) || 0;
+      asset.price = parseFloat(document.getElementById("price").value) || 0;
     } else if (type === "儲蓄保險") {
-      asset.policyName = document.getElementById("policyName").value;
-      asset.coverage = document.getElementById("coverage").value;
-      asset.years = document.getElementById("years").value;
-      asset.premium = document.getElementById("premium").value;
+      asset.policyName = document.getElementById("policy-name").value;
+      asset.policyAmount = parseFloat(document.getElementById("policy-amount").value) || 0;
+      asset.policyYears = parseInt(document.getElementById("policy-years").value) || 0;
+      asset.policyPremium = parseFloat(document.getElementById("policy-premium").value) || 0;
     } else {
-      asset.amount = document.getElementById("amount").value;
+      const amtInput = document.getElementById("amount");
+      asset.amount = amtInput?.value ? parseFloat(amtInput.value) : 0;
     }
 
-    savedAssets.push(asset);
-    saveAssets();
-    renderAssets();
+    if (editIndex !== null) {
+      assets[editIndex] = asset;
+      editIndex = null;
+    } else {
+      assets.push(asset);
+    }
+
+    localStorage.setItem("assets", JSON.stringify(assets));
+
+    const bank = asset.bank;
+    if (bank && !bankHistory.includes(bank)) {
+      bankHistory.push(bank);
+      localStorage.setItem("banks", JSON.stringify(bankHistory));
+    }
+
     form.reset();
+    toggleFields();
+    render();
   });
 
-  window.editAsset = function(index) {
-    const asset = savedAssets[index];
-    alert("請手動修改資產（暫不支援自動填入編輯）");
-  };
-
-  window.deleteAsset = function(index) {
+  window.deleteAsset = (index) => {
     if (confirm("確定要刪除這筆資產嗎？")) {
-      savedAssets.splice(index, 1);
-      saveAssets();
-      renderAssets();
+      assets.splice(index, 1);
+      localStorage.setItem("assets", JSON.stringify(assets));
+      render();
     }
   };
 
-  renderAssets();
+  window.editAsset = (index) => {
+    const item = assets[index];
+    editIndex = index;
+    document.getElementById("type").value = item.type;
+    document.getElementById("currency").value = item.currency;
+    document.getElementById("bank").value = item.bank;
+    document.getElementById("note").value = item.note;
+    toggleFields();
+
+    if (item.type === "股票") {
+      document.getElementById("stock-category").value = item.stockCategory;
+      document.getElementById("shares").value = item.shares;
+      document.getElementById("cost").value = item.cost;
+      document.getElementById("price").value = item.price;
+    } else if (item.type === "儲蓄保險") {
+      document.getElementById("policy-name").value = item.policyName;
+      document.getElementById("policy-amount").value = item.policyAmount;
+      document.getElementById("policy-years").value = item.policyYears;
+      document.getElementById("policy-premium").value = item.policyPremium;
+    } else {
+      document.getElementById("amount").value = item.amount;
+    }
+  };
+
+  window.convertCurrency = () => {
+    const amt = parseFloat(document.getElementById("input-amount").value);
+    const rate = parseFloat(document.getElementById("input-rate").value);
+    const result = document.getElementById("converted-result");
+    if (isNaN(amt) || isNaN(rate)) {
+      result.textContent = "請輸入正確金額與匯率";
+      return;
+    }
+    result.textContent = `換算後金額：$${(amt * rate).toLocaleString()}`;
+  };
+
+  toggleFields();
+  render();
 });
