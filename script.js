@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("asset-form");
   const typeSelect = document.getElementById("type");
@@ -27,6 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
     assetList.innerHTML = "";
     totalsList.innerHTML = "";
     profitList.innerHTML = "";
+
     let totals = {};
     let profits = {};
 
@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <br>保單名稱：${item.policyName}
           <br>保額：$${item.policyAmount}, 年期：${item.policyYears} 年, 年繳保費：$${item.policyPremium}`;
       } else {
-        amount = item.amount;
+        amount = item.amount; // ⚠️ 修正：其他資產要納入加總與顯示
       }
 
       totals[currency] = (totals[currency] || 0) + amount;
@@ -78,6 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
       profitList.appendChild(li);
     }
 
+    // 銀行記憶
     bankDatalist.innerHTML = "";
     bankHistory.forEach(bank => {
       const opt = document.createElement("option");
