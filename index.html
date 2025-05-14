@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -10,7 +9,13 @@
   <h1>FINORA 資產登記</h1>
   <form id="asset-form">
     <label>種類：
-      <input type="text" id="type" required />
+      <select id="type">
+        <option value="股票">股票</option>
+        <option value="定存">定存</option>
+        <option value="現金">現金</option>
+        <option value="房產">房產</option>
+        <option value="其他">其他</option>
+      </select>
     </label><br>
     <label>金額：
       <input type="number" id="amount" required />
@@ -23,7 +28,8 @@
       </select>
     </label><br>
     <label>銀行：
-      <input type="text" id="bank" />
+      <input type="text" id="bank" list="bank-list" />
+      <datalist id="bank-list"></datalist>
     </label><br>
     <label>備註：
       <input type="text" id="note" />
@@ -36,6 +42,13 @@
     <ul id="asset-list"></ul>
     <h3>幣別加總</h3>
     <ul id="totals-list"></ul>
+  </section>
+
+  <section id="exchange-section">
+    <h2>匯率換算參考</h2>
+    <p>（可手動輸入參考匯率）</p>
+    <label>USD to TWD：<input type="number" id="usd-rate" value="32" /></label><br>
+    <label>JPY to TWD：<input type="number" id="jpy-rate" value="0.22" /></label><br>
   </section>
 
   <script src="script.js"></script>
