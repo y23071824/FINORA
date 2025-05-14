@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("asset-form");
   const assetList = document.getElementById("asset-list");
   const totalsList = document.getElementById("totals-list");
-  const bankInput = document.getElementById("bank");
   const bankDatalist = document.getElementById("bank-list");
 
   let assets = JSON.parse(localStorage.getItem("assets") || "[]");
@@ -13,9 +12,13 @@ document.addEventListener("DOMContentLoaded", () => {
     totalsList.innerHTML = "";
     let totals = {};
 
-    assets.forEach((item) => {
+    assets.forEach((item, index) => {
       const li = document.createElement("li");
-      li.textContent = `${item.type} - ${item.currency} $${item.amount.toLocaleString()} (${item.bank}) ${item.note ? '- ' + item.note : ''}`;
+      li.innerHTML = `
+        ${item.type} - ${item.currency} $${item.amount.toLocaleString()} (${item.bank}) ${item.note ? '- ' + item.note : ''}
+        <button onclick="editAsset(${index})">編輯</button>
+        <button onclick="deleteAsset(${index})">刪除</button>
+      `;
       assetList.appendChild(li);
       totals[item.currency] = (totals[item.currency] || 0) + Number(item.amount);
     });
@@ -53,6 +56,37 @@ document.addEventListener("DOMContentLoaded", () => {
     form.reset();
     render();
   });
+
+  window.deleteAsset = (index) => {
+    if (confirm("確定要刪除這筆資產嗎？")) {
+      assets.splice(index, 1);
+      localStorage.setItem("assets", JSON.stringify(assets));
+      render();
+    }
+  };
+
+  window.editAsset = (index) => {
+    const item = assets[index];
+    document.getElementById("type").value = item.type;
+    document.getElementById("amount").value = item.amount;
+    document.getElementById("currency").value = item.currency;
+    document.getElementById("bank").value = item.bank;
+    document.getElementById("note").value = item.note;
+    assets.splice(index, 1);
+    localStorage.setItem("assets", JSON.stringify(assets));
+    render();
+  };
+
+  window.convertCurrency = () => {
+    const amt = parseFloat(document.getElementById("input-amount").value);
+    const rate = parseFloat(document.getElementById("input-rate").value);
+    const result = document.getElementById("converted-result");
+    if (isNaN(amt) || isNaN(rate)) {
+      result.textContent = "請輸入正確金額與匯率";
+      return;
+    }
+    result.textContent = `換算後金額：$${(amt * rate).toLocaleString()}`;
+  };
 
   render();
 });
