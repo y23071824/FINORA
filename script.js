@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("asset-form");
   const assetList = document.getElementById("asset-list");
