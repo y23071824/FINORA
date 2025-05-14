@@ -2,6 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FINORA 資產登記</title>
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -16,24 +17,24 @@
         <option value="房產">房產</option>
         <option value="其他">其他</option>
       </select>
-    </label><br>
+    </label>
     <label>金額：
       <input type="number" id="amount" required />
-    </label><br>
+    </label>
     <label>幣別：
       <select id="currency">
         <option value="TWD">TWD</option>
         <option value="USD">USD</option>
         <option value="JPY">JPY</option>
       </select>
-    </label><br>
+    </label>
     <label>銀行：
       <input type="text" id="bank" list="bank-list" />
       <datalist id="bank-list"></datalist>
-    </label><br>
+    </label>
     <label>備註：
       <input type="text" id="note" />
-    </label><br><br>
+    </label>
     <button type="submit">儲存資產</button>
   </form>
 
@@ -45,10 +46,11 @@
   </section>
 
   <section id="exchange-section">
-    <h2>匯率換算參考</h2>
-    <p>（可手動輸入參考匯率）</p>
-    <label>USD to TWD：<input type="number" id="usd-rate" value="32" /></label><br>
-    <label>JPY to TWD：<input type="number" id="jpy-rate" value="0.22" /></label><br>
+    <h2>匯率換算計算機</h2>
+    <label>金額：<input type="number" id="input-amount" /></label>
+    <label>匯率（例如 USD→TWD）：<input type="number" id="input-rate" value="30" step="0.01" /></label>
+    <button onclick="convertCurrency()">換算</button>
+    <p id="converted-result"></p>
   </section>
 
   <script src="script.js"></script>
