@@ -11,18 +11,44 @@
   <form id="asset-form">
     <label>種類：
       <select id="type">
+        <option value="">請選擇</option>
         <option value="股票">股票</option>
         <option value="定存">定存</option>
         <option value="現金">現金</option>
         <option value="房產">房產</option>
+        <option value="儲蓄保險">儲蓄保險</option>
         <option value="其他">其他</option>
       </select>
     </label>
+
     <div id="stock-fields" style="display: none;">
+      <label>股票類型：
+        <select id="stock-category">
+          <option value="台股">台股</option>
+          <option value="美股">美股</option>
+          <option value="ETF">ETF</option>
+          <option value="權證">權證</option>
+          <option value="期貨">期貨</option>
+        </select>
+      </label>
       <label>股數：<input type="number" id="shares" /></label>
       <label>成本（每股）：<input type="number" id="cost" step="0.01" /></label>
       <label>現價（每股）：<input type="number" id="price" step="0.01" /></label>
     </div>
+
+    <div id="insurance-fields" style="display: none;">
+      <label>保單名稱：<input type="text" id="policy-name" /></label>
+      <label>保額：<input type="number" id="policy-amount" /></label>
+      <label>年期：<input type="number" id="policy-years" /></label>
+      <label>每年保費：<input type="number" id="policy-premium" /></label>
+    </div>
+
+    <div id="amount-field">
+      <label>金額：
+        <input type="number" id="amount" />
+      </label>
+    </div>
+
     <label>幣別：
       <select id="currency">
         <option value="TWD">TWD</option>
@@ -43,9 +69,9 @@
   <section id="records-section">
     <h2>資產紀錄</h2>
     <ul id="asset-list"></ul>
-    <h3>幣別加總（含股票成本）</h3>
+    <h3>幣別加總（含股票成本與其他資產金額）</h3>
     <ul id="totals-list"></ul>
-    <h3>股票盈餘</h3>
+    <h3>股票盈餘（依幣別）</h3>
     <ul id="stock-profit-list"></ul>
   </section>
 
