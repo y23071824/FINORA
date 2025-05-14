@@ -1,4 +1,3 @@
-
 body {
   font-family: sans-serif;
   background: #f9f9ff;
@@ -15,7 +14,7 @@ form label {
 button {
   margin-top: 1rem;
 }
-#records-section {
+#records-section, #exchange-section {
   margin-top: 3rem;
   background: #e8f4f8;
   padding: 1rem;
