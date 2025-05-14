@@ -111,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
       asset.policyPremium = parseFloat(document.getElementById("policy-premium").value) || 0;
     } else {
       const amtInput = document.getElementById("amount");
-      asset.amount = amtInput && amtInput.value !== "" ? parseFloat(amtInput.value) : 0;
+      asset.amount = amtInput?.value ? parseFloat(amtInput.value) : 0;
     }
 
     if (editIndex !== null) {
