@@ -1,7 +1,10 @@
+
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("asset-form");
   const typeSelect = document.getElementById("type");
   const stockFields = document.getElementById("stock-fields");
+  const insuranceFields = document.getElementById("insurance-fields");
+  const amountField = document.getElementById("amount-field");
   const assetList = document.getElementById("asset-list");
   const totalsList = document.getElementById("totals-list");
   const profitList = document.getElementById("stock-profit-list");
@@ -11,29 +14,47 @@ document.addEventListener("DOMContentLoaded", () => {
   let bankHistory = JSON.parse(localStorage.getItem("banks") || "[]");
   let editIndex = null;
 
-  typeSelect.addEventListener("change", () => {
-    stockFields.style.display = typeSelect.value === "股票" ? "block" : "none";
-  });
+  function toggleFields() {
+    const type = typeSelect.value;
+    stockFields.style.display = type === "股票" ? "block" : "none";
+    insuranceFields.style.display = type === "儲蓄保險" ? "block" : "none";
+    amountField.style.display = type !== "股票" && type !== "儲蓄保險" ? "block" : "none";
+  }
+
+  typeSelect.addEventListener("change", toggleFields);
 
   function render() {
     assetList.innerHTML = "";
     totalsList.innerHTML = "";
     profitList.innerHTML = "";
     let totals = {};
-    let profitTotal = 0;
+    let profits = {};
 
     assets.forEach((item, index) => {
       let extra = "";
+      let currency = item.currency;
       let amount = 0;
+
       if (item.type === "股票") {
         const cost = item.shares * item.cost;
         const value = item.shares * item.price;
         const profit = value - cost;
-        profitTotal += profit;
         amount = cost;
-        extra = `<br>股數：${item.shares}, 成本：$${item.cost}, 現價：$${item.price}
-        <br>總成本：$${cost.toFixed(2)}, 市值：$${value.toFixed(2)}, 盈餘：$${profit.toFixed(2)}`;
+        profits[currency] = (profits[currency] || 0) + profit;
+        extra = `
+          <br>股票類型：${item.stockCategory}
+          <br>股數：${item.shares}, 成本：$${item.cost}, 現價：$${item.price}
+          <br>總成本：$${cost.toFixed(2)}, 市值：$${value.toFixed(2)}, 盈餘：$${profit.toFixed(2)}`;
+      } else if (item.type === "儲蓄保險") {
+        amount = item.policyAmount;
+        extra = `
+          <br>保單名稱：${item.policyName}
+          <br>保額：$${item.policyAmount}, 年期：${item.policyYears} 年, 年繳保費：$${item.policyPremium}`;
+      } else {
+        amount = item.amount;
       }
+
+      totals[currency] = (totals[currency] || 0) + amount;
 
       const li = document.createElement("li");
       li.innerHTML = `
@@ -43,21 +64,19 @@ document.addEventListener("DOMContentLoaded", () => {
         <button onclick="deleteAsset(${index})">刪除</button>
       `;
       assetList.appendChild(li);
-
-      if (item.type === "股票") {
-        totals[item.currency] = (totals[item.currency] || 0) + (item.shares * item.cost);
-      }
     });
 
-    for (const currency in totals) {
+    for (const ccy in totals) {
       const li = document.createElement("li");
-      li.textContent = `${currency}: $${totals[currency].toLocaleString()}`;
+      li.textContent = `${ccy}: $${totals[ccy].toLocaleString()}`;
       totalsList.appendChild(li);
     }
 
-    const li = document.createElement("li");
-    li.textContent = `總盈餘：$${profitTotal.toFixed(2)}`;
-    profitList.appendChild(li);
+    for (const ccy in profits) {
+      const li = document.createElement("li");
+      li.textContent = `${ccy} 股票總盈餘：$${profits[ccy].toFixed(2)}`;
+      profitList.appendChild(li);
+    }
 
     bankDatalist.innerHTML = "";
     bankHistory.forEach(bank => {
@@ -69,17 +88,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
+    const type = document.getElementById("type").value;
+    if (!type) return alert("請選擇資產種類");
+
     const asset = {
-      type: document.getElementById("type").value,
+      type,
       currency: document.getElementById("currency").value,
       bank: document.getElementById("bank").value,
       note: document.getElementById("note").value
     };
 
-    if (asset.type === "股票") {
+    if (type === "股票") {
+      asset.stockCategory = document.getElementById("stock-category").value;
       asset.shares = parseFloat(document.getElementById("shares").value) || 0;
       asset.cost = parseFloat(document.getElementById("cost").value) || 0;
       asset.price = parseFloat(document.getElementById("price").value) || 0;
+    } else if (type === "儲蓄保險") {
+      asset.policyName = document.getElementById("policy-name").value;
+      asset.policyAmount = parseFloat(document.getElementById("policy-amount").value) || 0;
+      asset.policyYears = parseInt(document.getElementById("policy-years").value) || 0;
+      asset.policyPremium = parseFloat(document.getElementById("policy-premium").value) || 0;
+    } else {
+      asset.amount = parseFloat(document.getElementById("amount").value) || 0;
     }
 
     if (editIndex !== null) {
@@ -98,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     form.reset();
-    stockFields.style.display = "none";
+    toggleFields();
     render();
   });
 
@@ -117,13 +147,20 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("currency").value = item.currency;
     document.getElementById("bank").value = item.bank;
     document.getElementById("note").value = item.note;
+    toggleFields();
+
     if (item.type === "股票") {
-      stockFields.style.display = "block";
+      document.getElementById("stock-category").value = item.stockCategory;
       document.getElementById("shares").value = item.shares;
       document.getElementById("cost").value = item.cost;
       document.getElementById("price").value = item.price;
+    } else if (item.type === "儲蓄保險") {
+      document.getElementById("policy-name").value = item.policyName;
+      document.getElementById("policy-amount").value = item.policyAmount;
+      document.getElementById("policy-years").value = item.policyYears;
+      document.getElementById("policy-premium").value = item.policyPremium;
     } else {
-      stockFields.style.display = "none";
+      document.getElementById("amount").value = item.amount;
     }
   };
 
@@ -138,5 +175,6 @@ document.addEventListener("DOMContentLoaded", () => {
     result.textContent = `換算後金額：$${(amt * rate).toLocaleString()}`;
   };
 
+  toggleFields();
   render();
 });
