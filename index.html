@@ -18,6 +18,12 @@
         <option value="其他">其他</option>
       </select>
     </label>
+    <div id="stock-fields" style="display: none;">
+      <label>股數：<input type="number" id="shares" /></label>
+      <label>張數：<input type="number" id="lots" /></label>
+      <label>成本（每股）：<input type="number" id="cost" step="0.01" /></label>
+      <label>現價（每股）：<input type="number" id="price" step="0.01" /></label>
+    </div>
     <label>金額：
       <input type="number" id="amount" required />
     </label>
