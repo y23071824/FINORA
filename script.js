@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <br>保額：$${item.policyAmount}, 年期：${item.policyYears} 年, 年繳保費：$${item.policyPremium}`;
       } else {
         amount = item.amount !== undefined && item.amount !== null ? parseFloat(item.amount) : 0;
-        extra = `<br>金額：$${amount.toLocaleString()}`; // ✅ 顯示金額
+        extra = `<br>金額：$${amount.toLocaleString()}`;
       }
 
       totals[currency] = (totals[currency] || 0) + amount;
@@ -68,15 +68,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     for (const ccy in totals) {
-      const li = document.createElement("li");
-      li.textContent = `${ccy}: $${totals[ccy].toLocaleString()}`;
-      totalsList.appendChild(li);
-    }
+      const totalValue = totals[ccy] + (profits[ccy] || 0);
+      const profitValue = profits[ccy] || 0;
 
-    for (const ccy in profits) {
       const li = document.createElement("li");
-      li.textContent = `${ccy} 股票總盈餘：$${profits[ccy].toFixed(2)}`;
-      profitList.appendChild(li);
+      li.textContent = `${ccy}: $${totalValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}（內含股票盈餘：$${profitValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}）`;
+      totalsList.appendChild(li);
     }
 
     bankDatalist.innerHTML = "";
