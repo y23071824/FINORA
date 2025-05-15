@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let bankHistory = JSON.parse(localStorage.getItem("banks") || "[]");
   let editIndex = null;
 
+  // 匯率與股價 API
   async function fetchExchangeRates() {
     try {
       const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
@@ -35,6 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // 自動帶入股價
   document.getElementById("stock-category")?.addEventListener("blur", async () => {
     const symbol = document.getElementById("stock-category").value.trim();
     if (symbol) {
@@ -43,6 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // 幣別匯率提示
   document.getElementById("currency")?.addEventListener("change", () => {
     const currency = document.getElementById("currency").value;
     const rates = JSON.parse(localStorage.getItem("exchangeRates") || "{}");
