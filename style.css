@@ -1,53 +1,20 @@
-body {
-  font-family: sans-serif;
-  background: #f9f9ff;
-  color: #333;
-  padding: 1rem;
-  max-width: 600px;
-  margin: auto;
-}
-h1 {
-  color: #2a3f4f;
-  font-size: 1.5rem;
-  text-align: center;
-}
-form label, #exchange-section label {
-  display: block;
-  margin-bottom: 0.5rem;
-}
-input, select, button {
-  width: 100%;
-  padding: 0.4rem;
-  margin-bottom: 1rem;
-  font-size: 1rem;
-}
-button {
-  background-color: #3a7ca5;
-  color: white;
-  border: none;
-  border-radius: 5px;
-}
-button:hover {
-  opacity: 0.9;
-}
-#records-section, #exchange-section {
-  background: #e8f4f8;
-  padding: 1rem;
-  margin-top: 2rem;
-  border-radius: 8px;
-}
-#asset-list button {
-  margin-left: 0.5rem;
-  font-size: 0.8rem;
-  padding: 0.2rem 0.5rem;
-}
-.button-group {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-}
-.button-group button {
-  flex: 1;
-  margin: 0; /* 移除內建間距 */
-}
+body { font-family: sans-serif; background: #f9f9ff; color: #333; padding: 1rem; max-width: 600px; margin: auto; }
+
+h1 { color: #2a3f4f; font-size: 1.5rem; text-align: center; }
+
+form label, #exchange-section label { display: block; margin-bottom: 0.5rem; }
+
+input, select, button { width: 100%; padding: 0.4rem; margin-bottom: 1rem; font-size: 1rem; }
+
+button { background-color: #3a7ca5; color: white; border: none; border-radius: 5px; }
+
+button:hover { opacity: 0.9; }
+
+#records-section, #exchange-section { background: #e8f4f8; padding: 1rem; margin-top: 2rem; border-radius: 8px; }
+
+#asset-list button { margin-left: 0.5rem; font-size: 0.8rem; padding: 0.2rem 0.5rem; }
+
+.button-group { display: flex; justify-content: space-between; gap: 0.5rem; margin-top: 0.5rem; }
+
+.button-group button { flex: 1; margin: 0; }
+
