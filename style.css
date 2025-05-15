@@ -49,5 +49,5 @@ button:hover {
 }
 .button-group button {
   flex: 1;
-  margin: 0; /* 移除內建間距 */
+  margin: 0;
 }
