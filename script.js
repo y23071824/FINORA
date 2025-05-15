@@ -58,15 +58,15 @@ document.addEventListener("DOMContentLoaded", () => {
       totals[currency] = (totals[currency] || 0) + amount;
 
       const li = document.createElement("li");
-li.innerHTML = `
-  ${item.type} - ${item.currency} (${item.bank}) ${item.note ? '- ' + item.note : ''}
-  ${extra}
-  <div class="button-group">
-    <button onclick="editAsset(${index})">往上編輯</button>
-    <button onclick="deleteAsset(${index})">刪除</button>
-  </div>
-`;
-assetList.appendChild(li);
+      li.innerHTML = `
+        ${item.type} - ${item.currency} (${item.bank}) ${item.note ? '- ' + item.note : ''}
+        ${extra}
+        <div class="button-group">
+          <button onclick="editAsset(${index})">往上編輯</button>
+          <button onclick="deleteAsset(${index})">刪除</button>
+        </div>
+      `;
+      assetList.appendChild(li);
     });
 
     for (const ccy in totals) {
@@ -178,4 +178,4 @@ assetList.appendChild(li);
 
   toggleFields();
   render();
-});<paste your JavaScript code here>
+});
