@@ -52,29 +52,31 @@ document.addEventListener("DOMContentLoaded", () => {
           <br>保額：$${item.policyAmount}, 年期：${item.policyYears} 年, 年繳保費：$${item.policyPremium}`;
       } else {
         amount = item.amount !== undefined && item.amount !== null ? parseFloat(item.amount) : 0;
-        extra = `<br>金額：$${amount.toLocaleString()}`;
+        extra = `<br>金額：$${amount.toLocaleString()}`; // ✅ 顯示金額
       }
 
       totals[currency] = (totals[currency] || 0) + amount;
 
       const li = document.createElement("li");
-li.innerHTML = `
-  ${item.type} - ${item.currency} (${item.bank}) ${item.note ? '- ' + item.note : ''}
-  ${extra}
-  <div style="margin-top: 0.5rem;">
-    <button onclick="editAsset(${index})" style="display: inline-block; margin-right: 0.5rem;">往上編輯</button>
-    <button onclick="deleteAsset(${index})" style="display: inline-block;">刪除</button>
-  </div>
-`;
-assetList.appendChild(li);
+      li.innerHTML = `
+        ${item.type} - ${item.currency} (${item.bank}) ${item.note ? '- ' + item.note : ''}
+        ${extra}
+        <button onclick="editAsset(${index})">編輯</button>
+        <button onclick="deleteAsset(${index})">刪除</button>
+      `;
+      assetList.appendChild(li);
+    });
 
     for (const ccy in totals) {
-      const totalValue = totals[ccy] + (profits[ccy] || 0);
-      const profitValue = profits[ccy] || 0;
-
       const li = document.createElement("li");
-      li.textContent = `${ccy}: $${totalValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}（內含股票盈餘：$${profitValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}）`;
+      li.textContent = `${ccy}: $${totals[ccy].toLocaleString()}`;
       totalsList.appendChild(li);
+    }
+
+    for (const ccy in profits) {
+      const li = document.createElement("li");
+      li.textContent = `${ccy} 股票總盈餘：$${profits[ccy].toFixed(2)}`;
+      profitList.appendChild(li);
     }
 
     bankDatalist.innerHTML = "";
