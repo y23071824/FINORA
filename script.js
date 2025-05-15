@@ -163,6 +163,8 @@ for (const type in groupedAssets) {
     document.getElementById("note").value = item.note;
     toggleFields();
 
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    
     if (item.type === "股票") {
       document.getElementById("stock-category").value = item.stockCategory;
       document.getElementById("shares").value = item.shares;
