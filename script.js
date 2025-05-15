@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("asset-form");
   const typeSelect = document.getElementById("type");
