@@ -24,14 +24,15 @@
 
     <!-- 股票欄位 -->
     <div id="stock-fields" style="display: none;">
-      <label>股票類型：
+      <label>股票分類：
         <select id="stock-category">
           <option value="台股">台股</option>
           <option value="美股">美股</option>
           <option value="ETF">ETF</option>
-          <option value="權證">權證</option>
-          <option value="期貨">期貨</option>
         </select>
+      </label>
+      <label>股票代碼（如 QQQM）：
+        <input type="text" id="stock-symbol" placeholder="例如：QQQM、TSLA" />
       </label>
       <label>股數：<input type="number" id="shares" /></label>
       <label>成本（每股）：<input type="number" id="cost" step="0.01" /></label>
@@ -56,6 +57,7 @@
         <option value="TWD">TWD</option>
         <option value="USD">USD</option>
         <option value="JPY">JPY</option>
+        <option value="EUR">EUR</option>
       </select>
     </label>
 
@@ -77,8 +79,7 @@
     <ul id="asset-list"></ul>
     <h3>幣別加總</h3>
     <ul id="totals-list"></ul>
-<ul id="stock-profit-list"></ul>
-
+    <ul id="stock-profit-list"></ul>
   </section>
 
   <!-- 匯率換算 -->
