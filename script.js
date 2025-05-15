@@ -30,44 +30,57 @@ document.addEventListener("DOMContentLoaded", () => {
     let totals = {};
     let profits = {};
 
-    assets.forEach((item, index) => {
-      let extra = "";
-      let currency = item.currency;
-      let amount = 0;
+    const groupedAssets = {};
 
-      if (item.type === "股票") {
-        const cost = item.shares * item.cost;
-        const value = item.shares * item.price;
-        const profit = value - cost;
-        amount = cost;
-        profits[currency] = (profits[currency] || 0) + profit;
-        extra = `
-          <br>股票類型：${item.stockCategory}
-          <br>股數：${item.shares}, 成本：$${item.cost}, 現價：$${item.price}
-          <br>總成本：$${cost.toFixed(2)}, 市值：$${value.toFixed(2)}, 盈餘：$${profit.toFixed(2)}`;
-      } else if (item.type === "儲蓄保險") {
-        amount = item.policyAmount;
-        extra = `
-          <br>保單名稱：${item.policyName}
-          <br>保額：$${item.policyAmount}, 年期：${item.policyYears} 年, 年繳保費：$${item.policyPremium}`;
-      } else {
-        amount = item.amount !== undefined && item.amount !== null ? parseFloat(item.amount) : 0;
-        extra = `<br>金額：$${amount.toLocaleString()}`;
-      }
+assets.forEach((item, index) => {
+  if (!groupedAssets[item.type]) groupedAssets[item.type] = [];
+  groupedAssets[item.type].push({ item, index });
+});
 
-      totals[currency] = (totals[currency] || 0) + amount;
+for (const type in groupedAssets) {
+  const header = document.createElement("h3");
+  header.textContent = `【${type}】`;
+  assetList.appendChild(header);
 
-     const li = document.createElement("li");
-li.innerHTML = `
-  ${item.type} - ${item.currency} (${item.bank}) ${item.note ? '- ' + item.note : ''}
-  ${extra}
-  <div class="button-group">
-    <button onclick="editAsset(${index})">往上編輯</button>
-    <button onclick="deleteAsset(${index})">刪除</button>
-  </div>
-`;
-assetList.appendChild(li);
-    });
+  groupedAssets[type].forEach(({ item, index }) => {
+    let extra = "";
+    let currency = item.currency;
+    let amount = 0;
+
+    if (item.type === "股票") {
+      const cost = item.shares * item.cost;
+      const value = item.shares * item.price;
+      const profit = value - cost;
+      amount = cost;
+      profits[currency] = (profits[currency] || 0) + profit;
+      extra = `
+        <br>股票類型：${item.stockCategory}
+        <br>股數：${item.shares}, 成本：$${item.cost}, 現價：$${item.price}
+        <br>總成本：$${cost.toFixed(2)}, 市值：$${value.toFixed(2)}, 盈餘：$${profit.toFixed(2)}`;
+    } else if (item.type === "儲蓄保險") {
+      amount = item.policyAmount;
+      extra = `
+        <br>保單名稱：${item.policyName}
+        <br>保額：$${item.policyAmount}, 年期：${item.policyYears} 年, 年繳保費：$${item.policyPremium}`;
+    } else {
+      amount = item.amount !== undefined && item.amount !== null ? parseFloat(item.amount) : 0;
+      extra = `<br>金額：$${amount.toLocaleString()}`;
+    }
+
+    totals[currency] = (totals[currency] || 0) + amount;
+
+    const li = document.createElement("li");
+    li.innerHTML = `
+      ${item.currency} (${item.bank}) ${item.note ? '- ' + item.note : ''}
+      ${extra}
+      <div class="button-group">
+        <button onclick="editAsset(${index})">往上編輯</button>
+        <button onclick="deleteAsset(${index})">刪除</button>
+      </div>
+    `;
+    assetList.appendChild(li);
+  });
+}
 
     for (const ccy in totals) {
       const totalValue = totals[ccy] + (profits[ccy] || 0);
