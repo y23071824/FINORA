@@ -19,45 +19,39 @@
         <option value="儲蓄保險">儲蓄保險</option>
         <option value="其他">其他</option>
       </select>
-    </label>
+    </label><br>
 
     <div id="stock-fields" style="display:none;">
-      <label>股票類別：<input id="stock-category" /></label>
-      <label>股數：<input id="shares" type="number" /></label>
-      <label>成本：<input id="cost" type="number" /></label>
-      <label>現價：<input id="price" type="number" /></label>
+      <label>股票類別：<input id="stock-category" /></label><br>
+      <label>股數：<input id="shares" type="number" /></label><br>
+      <label>成本：<input id="cost" type="number" /></label><br>
+      <label>現價：<input id="price" type="number" /></label><br>
     </div>
 
     <div id="insurance-fields" style="display:none;">
-      <label>保單名稱：<input id="policy-name" /></label>
-      <label>保額：<input id="policy-amount" type="number" /></label>
-      <label>年期：<input id="policy-years" type="number" /></label>
-      <label>年繳保費：<input id="policy-premium" type="number" /></label>
+      <label>保單名稱：<input id="policy-name" /></label><br>
+      <label>保額：<input id="policy-amount" type="number" /></label><br>
+      <label>年期：<input id="policy-years" type="number" /></label><br>
+      <label>年繳保費：<input id="policy-premium" type="number" /></label><br>
     </div>
 
     <div id="amount-field">
-      <label>金額：<input id="amount" type="number" /></label>
+      <label>金額：<input id="amount" type="number" /></label><br>
     </div>
 
-    <label>幣別：<input id="currency" /></label>
+    <label>幣別：<input id="currency" /></label><br>
     <label>銀行名稱：<input id="bank" list="bank-list" /></label>
-    <datalist id="bank-list"></datalist>
-    <label>備註：<input id="note" /></label>
+    <datalist id="bank-list"></datalist><br>
+    <label>備註：<input id="note" /></label><br>
 
     <button type="submit">儲存資產</button>
   </form>
 
-  <div id="records-section">
-    <h2>資產清單</h2>
-    <ul id="asset-list"></ul>
-  </div>
+  <h2>資產紀錄</h2>
+  <ul id="asset-list"></ul>
 
-  <div id="exchange-section">
-    <h2>資產加總</h2>
-    <ul id="totals-list"></ul>
-    <h3>股票盈餘</h3>
-    <ul id="stock-profit-list"></ul>
-  </div>
+  <h2>總資產加總（含股票盈餘）</h2>
+  <ul id="totals-list"></ul>
 
   <script src="script.js"></script>
 </body>

@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("asset-form");
   const typeSelect = document.getElementById("type");
@@ -61,10 +62,8 @@ document.addEventListener("DOMContentLoaded", () => {
       li.innerHTML = `
         ${item.type} - ${item.currency} (${item.bank}) ${item.note ? '- ' + item.note : ''}
         ${extra}
-        <div class="button-group">
-          <button onclick="editAsset(${index})">往上編輯</button>
-          <button onclick="deleteAsset(${index})">刪除</button>
-        </div>
+        <button onclick="editAsset(${index})">編輯</button>
+        <button onclick="deleteAsset(${index})">刪除</button>
       `;
       assetList.appendChild(li);
     });
