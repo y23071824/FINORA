@@ -23,46 +23,37 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  async function fetchStockPrice(symbol, marketType) {
+  async function fetchStockPrice(symbol, category) {
     try {
-      if (marketType === "台股") {
-        const res = await fetch(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbol}.TW`);
+      if (category === "台股") {
+        if (/^\d+$/.test(symbol)) symbol += ".TW";
+        const res = await fetch(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbol}`);
         const data = await res.json();
         const quote = data.quoteResponse.result[0];
         return quote?.regularMarketPrice || null;
       } else {
-        const apikey = "de909496c6754a89bc33db0306c2def8";
-        const url = `https://api.twelvedata.com/price?symbol=${symbol}&apikey=${apikey}`;
-        const res = await fetch(url);
+        const apiKey = "de909496c6754a89bc33db0306c2def8";
+        const res = await fetch(`https://api.twelvedata.com/price?symbol=${symbol}&apikey=${apiKey}`);
         const data = await res.json();
-        if (data.price) return parseFloat(data.price);
-        else return null;
+        return data.price ? parseFloat(data.price) : null;
       }
     } catch (e) {
-      console.error("查價錯誤", e);
+      console.error("查詢股價失敗", e);
       return null;
     }
   }
 
-document.getElementById("stock-symbol")?.addEventListener("blur", async () => {
-  let symbol = document.getElementById("stock-symbol").value.trim().toUpperCase();
-  const category = document.getElementById("stock-category").value;
-
-  // 根據股票類型自動加後綴
-  if (category === "台股" && /^\d+$/.test(symbol)) {
-    symbol += ".TW";
-  }
-
-  if (symbol) {
-    const price = await fetchStockPrice(symbol);
+  document.getElementById("stock-symbol")?.addEventListener("blur", async () => {
+    const symbolInput = document.getElementById("stock-symbol").value.trim().toUpperCase();
+    const category = document.getElementById("stock-category").value;
+    if (!symbolInput) return;
+    const price = await fetchStockPrice(symbolInput, category);
     if (price != null) {
       document.getElementById("price").value = price;
     } else {
       alert("查無此股票代碼或查價失敗，請重新確認。");
     }
-  }
-});
-
+  });
 
   document.getElementById("currency")?.addEventListener("change", () => {
     const currency = document.getElementById("currency").value;
@@ -85,7 +76,10 @@ document.getElementById("stock-symbol")?.addEventListener("blur", async () => {
     assetList.innerHTML = "";
     totalsList.innerHTML = "";
     profitList.innerHTML = "";
-    let totals = {}, profits = {}, groupedAssets = {};
+
+    const totals = {};
+    const profits = {};
+    const groupedAssets = {};
 
     assets.forEach((item, index) => {
       if (!groupedAssets[item.type]) groupedAssets[item.type] = [];
@@ -98,9 +92,8 @@ document.getElementById("stock-symbol")?.addEventListener("blur", async () => {
       assetList.appendChild(header);
 
       groupedAssets[type].forEach(({ item, index }) => {
-        let extra = "";
-        let currency = item.currency;
-        let amount = 0;
+        let extra = "", amount = 0;
+        const currency = item.currency;
 
         if (item.type === "股票") {
           const cost = item.shares * item.cost;
@@ -109,7 +102,7 @@ document.getElementById("stock-symbol")?.addEventListener("blur", async () => {
           amount = cost;
           profits[currency] = (profits[currency] || 0) + profit;
           extra = `
-            <br>股票代碼：${item.stockSymbol || "未填寫"}
+            <br>股票代碼：${item.stockSymbol}
             <br>股票類型：${item.stockCategory}
             <br>股數：${item.shares}, 成本：$${item.cost}, 現價：$${item.price}
             <br>總成本：$${cost.toFixed(2)}, 市值：$${value.toFixed(2)}, 盈餘：$${profit.toFixed(2)}`;
@@ -127,7 +120,7 @@ document.getElementById("stock-symbol")?.addEventListener("blur", async () => {
 
         const li = document.createElement("li");
         li.innerHTML = `
-          ${item.currency} (${item.bank}) ${item.note ? '- ' + item.note : ''}
+          ${item.currency} (${item.bank}) ${item.note ? "- " + item.note : ""}
           ${extra}
           <div class="button-group">
             <button onclick="editAsset(${index})">往上編輯</button>
@@ -139,10 +132,10 @@ document.getElementById("stock-symbol")?.addEventListener("blur", async () => {
     }
 
     for (const ccy in totals) {
-      const totalValue = totals[ccy] + (profits[ccy] || 0);
-      const profitValue = profits[ccy] || 0;
+      const total = totals[ccy] + (profits[ccy] || 0);
+      const profit = profits[ccy] || 0;
       const li = document.createElement("li");
-      li.textContent = `${ccy}: $${totalValue.toLocaleString()}（內含股票盈餘：$${profitValue.toLocaleString()})`;
+      li.textContent = `${ccy}: $${total.toLocaleString()}（內含股票盈餘：$${profit.toLocaleString()})`;
       totalsList.appendChild(li);
     }
 
@@ -168,7 +161,7 @@ document.getElementById("stock-symbol")?.addEventListener("blur", async () => {
 
     if (type === "股票") {
       asset.stockCategory = document.getElementById("stock-category").value;
-      asset.stockSymbol = document.getElementById("stock-symbol").value;
+      asset.stockSymbol = document.getElementById("stock-symbol").value.toUpperCase();
       asset.shares = parseFloat(document.getElementById("shares").value) || 0;
       asset.cost = parseFloat(document.getElementById("cost").value) || 0;
       asset.price = parseFloat(document.getElementById("price").value) || 0;
