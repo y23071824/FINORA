@@ -1,237 +1,105 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("asset-form");
-  const typeSelect = document.getElementById("type");
-  const stockFields = document.getElementById("stock-fields");
-  const insuranceFields = document.getElementById("insurance-fields");
-  const amountField = document.getElementById("amount-field");
-  const assetList = document.getElementById("asset-list");
-  const totalsList = document.getElementById("totals-list");
-  const profitList = document.getElementById("stock-profit-list");
-  const bankDatalist = document.getElementById("bank-list");
+body {
+  font-family: sans-serif;
+  background: #f9f9ff;
+  color: #333;
+  padding: 1rem;
+  max-width: 600px;
+  margin: auto;
+}
 
-  let assets = JSON.parse(localStorage.getItem("assets") || "[]");
-  let bankHistory = JSON.parse(localStorage.getItem("banks") || "[]");
-  let editIndex = null;
+h1 {
+  color: #2a3f4f;
+  font-size: 1.8rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
 
-  // 匯率與股價 API
-  async function fetchExchangeRates() {
-    try {
-      const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
-      const data = await res.json();
-      localStorage.setItem("exchangeRates", JSON.stringify(data.rates));
-    } catch (e) {
-      console.error("匯率載入失敗", e);
-    }
-  }
+h2 {
+  font-size: 1.4rem;
+  color: #3a7ca5;
+  margin-top: 2rem;
+  border-bottom: 2px solid #c0d6e4;
+  padding-bottom: 0.3rem;
+}
 
-  async function fetchStockPrice(symbol) {
-    try {
-      const res = await fetch(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbol}`);
-      const data = await res.json();
-      const quote = data.quoteResponse.result[0];
-      return quote?.regularMarketPrice || null;
-    } catch (e) {
-      console.error("股價查詢失敗", e);
-      return null;
-    }
-  }
+h3 {
+  font-size: 1.2rem;
+  margin-top: 1.5rem;
+  color: #666;
+}
 
-  // 股票代碼查詢自動帶入現價
-  document.getElementById("stock-symbol")?.addEventListener("blur", async () => {
-    const symbol = document.getElementById("stock-symbol").value.trim();
-    if (symbol) {
-      const price = await fetchStockPrice(symbol);
-      if (price) document.getElementById("price").value = price;
-    }
-  });
+form label,
+#exchange-section label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
 
-  // 幣別切換匯率提示
-  document.getElementById("currency")?.addEventListener("change", () => {
-    const currency = document.getElementById("currency").value;
-    const rates = JSON.parse(localStorage.getItem("exchangeRates") || "{}");
-    if (["USD", "JPY", "EUR"].includes(currency)) {
-      alert(`目前 ${currency} 對 TWD 匯率：約 ${rates[currency] || "查詢中"}`);
-    }
-  });
+input,
+select,
+button {
+  width: 100%;
+  padding: 0.4rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
 
-  function toggleFields() {
-    const type = typeSelect.value;
-    stockFields.style.display = type === "股票" ? "block" : "none";
-    insuranceFields.style.display = type === "儲蓄保險" ? "block" : "none";
-    amountField.style.display = type !== "股票" && type !== "儲蓄保險" ? "block" : "none";
-  }
+button {
+  background-color: #3a7ca5;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
 
-  typeSelect.addEventListener("change", toggleFields);
+button:hover {
+  opacity: 0.9;
+}
 
-  function render() {
-    assetList.innerHTML = "";
-    totalsList.innerHTML = "";
-    profitList.innerHTML = "";
+#records-section,
+#exchange-section {
+  background: #e8f4f8;
+  padding: 1rem;
+  margin-top: 2rem;
+  border-radius: 8px;
+}
 
-    let totals = {};
-    let profits = {};
-    const groupedAssets = {};
+ul {
+  list-style: none;
+  padding-left: 0;
+}
 
-    assets.forEach((item, index) => {
-      if (!groupedAssets[item.type]) groupedAssets[item.type] = [];
-      groupedAssets[item.type].push({ item, index });
-    });
+li {
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background: #ffffff;
+  border-left: 4px solid #3a7ca5;
+  border-radius: 6px;
+}
 
-    for (const type in groupedAssets) {
-      const header = document.createElement("h3");
-      header.textContent = `【${type}】`;
-      assetList.appendChild(header);
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
 
-      groupedAssets[type].forEach(({ item, index }) => {
-        let extra = "";
-        let currency = item.currency;
-        let amount = 0;
+.button-group button {
+  flex: 1;
+  font-size: 0.9rem;
+  padding: 0.4rem 0.6rem;
+  margin: 0;
+  background-color: #5a9bd4;
+  border: none;
+  border-radius: 4px;
+}
 
-        if (item.type === "股票") {
-          const cost = item.shares * item.cost;
-          const value = item.shares * item.price;
-          const profit = value - cost;
-          amount = cost;
-          profits[currency] = (profits[currency] || 0) + profit;
-          extra = `
-            <br>股票代碼：${item.stockSymbol || "未填寫"}
-            <br>股票類型：${item.stockCategory}
-            <br>股數：${item.shares}, 成本：$${item.cost}, 現價：$${item.price}
-            <br>總成本：$${cost.toFixed(2)}, 市值：$${value.toFixed(2)}, 盈餘：$${profit.toFixed(2)}`;
-        } else if (item.type === "儲蓄保險") {
-          amount = item.policyAmount;
-          extra = `
-            <br>保單名稱：${item.policyName}
-            <br>保額：$${item.policyAmount}, 年期：${item.policyYears} 年, 年繳保費：$${item.policyPremium}`;
-        } else {
-          amount = parseFloat(item.amount) || 0;
-          extra = `<br>金額：$${amount.toLocaleString()}`;
-        }
+.button-group button:hover {
+  background-color: #488cc3;
+}
 
-        totals[currency] = (totals[currency] || 0) + amount;
-
-        const li = document.createElement("li");
-        li.innerHTML = `
-          ${item.currency} (${item.bank}) ${item.note ? '- ' + item.note : ''}
-          ${extra}
-          <div class="button-group">
-            <button onclick="editAsset(${index})">往上編輯</button>
-            <button onclick="deleteAsset(${index})">刪除</button>
-          </div>
-        `;
-        assetList.appendChild(li);
-      });
-    }
-
-    for (const ccy in totals) {
-      const totalValue = totals[ccy] + (profits[ccy] || 0);
-      const profitValue = profits[ccy] || 0;
-      const li = document.createElement("li");
-      li.textContent = `${ccy}: $${totalValue.toLocaleString()}（內含股票盈餘：$${profitValue.toLocaleString()})`;
-      totalsList.appendChild(li);
-    }
-
-    bankDatalist.innerHTML = "";
-    bankHistory.forEach(bank => {
-      const opt = document.createElement("option");
-      opt.value = bank;
-      bankDatalist.appendChild(opt);
-    });
-  }
-
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const type = document.getElementById("type").value;
-    if (!type) return alert("請選擇資產種類");
-
-    const asset = {
-      type,
-      currency: document.getElementById("currency").value,
-      bank: document.getElementById("bank").value,
-      note: document.getElementById("note").value
-    };
-
-    if (type === "股票") {
-      asset.stockCategory = document.getElementById("stock-category").value;
-      asset.stockSymbol = document.getElementById("stock-symbol").value;
-      asset.shares = parseFloat(document.getElementById("shares").value) || 0;
-      asset.cost = parseFloat(document.getElementById("cost").value) || 0;
-      asset.price = parseFloat(document.getElementById("price").value) || 0;
-    } else if (type === "儲蓄保險") {
-      asset.policyName = document.getElementById("policy-name").value;
-      asset.policyAmount = parseFloat(document.getElementById("policy-amount").value) || 0;
-      asset.policyYears = parseInt(document.getElementById("policy-years").value) || 0;
-      asset.policyPremium = parseFloat(document.getElementById("policy-premium").value) || 0;
-    } else {
-      asset.amount = parseFloat(document.getElementById("amount").value) || 0;
-    }
-
-    if (editIndex !== null) {
-      assets[editIndex] = asset;
-      editIndex = null;
-    } else {
-      assets.push(asset);
-    }
-
-    localStorage.setItem("assets", JSON.stringify(assets));
-
-    const bank = asset.bank;
-    if (bank && !bankHistory.includes(bank)) {
-      bankHistory.push(bank);
-      localStorage.setItem("banks", JSON.stringify(bankHistory));
-    }
-
-    form.reset();
-    toggleFields();
-    render();
-  });
-
-  window.deleteAsset = (index) => {
-    if (confirm("確定要刪除這筆資產嗎？")) {
-      assets.splice(index, 1);
-      localStorage.setItem("assets", JSON.stringify(assets));
-      render();
-    }
-  };
-
-  window.editAsset = (index) => {
-    const item = assets[index];
-    editIndex = index;
-    document.getElementById("type").value = item.type;
-    document.getElementById("currency").value = item.currency;
-    document.getElementById("bank").value = item.bank;
-    document.getElementById("note").value = item.note;
-    toggleFields();
-    window.scrollTo({ top: 0, behavior: "smooth" });
-
-    if (item.type === "股票") {
-      document.getElementById("stock-category").value = item.stockCategory;
-      document.getElementById("stock-symbol").value = item.stockSymbol;
-      document.getElementById("shares").value = item.shares;
-      document.getElementById("cost").value = item.cost;
-      document.getElementById("price").value = item.price;
-    } else if (item.type === "儲蓄保險") {
-      document.getElementById("policy-name").value = item.policyName;
-      document.getElementById("policy-amount").value = item.policyAmount;
-      document.getElementById("policy-years").value = item.policyYears;
-      document.getElementById("policy-premium").value = item.policyPremium;
-    } else {
-      document.getElementById("amount").value = item.amount;
-    }
-  };
-
-  window.convertCurrency = () => {
-    const amt = parseFloat(document.getElementById("input-amount").value);
-    const rate = parseFloat(document.getElementById("input-rate").value);
-    const result = document.getElementById("converted-result");
-    if (isNaN(amt) || isNaN(rate)) {
-      result.textContent = "請輸入正確金額與匯率";
-      return;
-    }
-    result.textContent = `換算後金額：$${(amt * rate).toLocaleString()}`;
-  };
-
-  fetchExchangeRates();
-  toggleFields();
-  render();
-});
+#converted-result {
+  font-weight: bold;
+  color: #2a3f4f;
+  margin-top: 0.5rem;
+}
