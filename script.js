@@ -23,24 +23,32 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  async function fetchStockPrice(symbol) {
+  async function fetchStockPrice(symbol, marketType) {
     try {
-      const apikey = "de909496c6754a89bc33db0306c2def8";
-      const url = `https://api.twelvedata.com/price?symbol=${symbol}&apikey=${apikey}`;
-      const res = await fetch(url);
-      const data = await res.json();
-      if (data.price) return parseFloat(data.price);
-      else throw new Error(data.message || "查詢失敗");
+      if (marketType === "台股") {
+        const res = await fetch(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbol}.TW`);
+        const data = await res.json();
+        const quote = data.quoteResponse.result[0];
+        return quote?.regularMarketPrice || null;
+      } else {
+        const apikey = "de909496c6754a89bc33db0306c2def8";
+        const url = `https://api.twelvedata.com/price?symbol=${symbol}&apikey=${apikey}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.price) return parseFloat(data.price);
+        else return null;
+      }
     } catch (e) {
-      console.error("股價查詢失敗", e);
+      console.error("查價錯誤", e);
       return null;
     }
   }
 
   document.getElementById("stock-symbol")?.addEventListener("blur", async () => {
     const symbol = document.getElementById("stock-symbol").value.trim().toUpperCase();
+    const market = document.getElementById("stock-category").value;
     if (symbol) {
-      const price = await fetchStockPrice(symbol);
+      const price = await fetchStockPrice(symbol, market);
       if (price != null) {
         document.getElementById("price").value = price;
       } else {
@@ -70,7 +78,6 @@ document.addEventListener("DOMContentLoaded", () => {
     assetList.innerHTML = "";
     totalsList.innerHTML = "";
     profitList.innerHTML = "";
-
     let totals = {}, profits = {}, groupedAssets = {};
 
     assets.forEach((item, index) => {
