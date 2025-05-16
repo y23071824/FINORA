@@ -21,10 +21,8 @@
       </select>
     </label>
 
-   <div id="stock-fields" style="display: none;">
-  <label>股票代碼（如 QQQM）：
-    <input type="text" id="stock-symbol" placeholder="輸入股票代碼後自動查價" />
-  </label>
+  <!-- 股票欄位 -->
+<div id="stock-fields" style="display: none;">
   <label>股票類型：
     <select id="stock-category">
       <option value="台股">台股</option>
@@ -34,6 +32,11 @@
       <option value="期貨">期貨</option>
     </select>
   </label>
+
+  <label>股票代碼（如 QQQM）：
+    <input type="text" id="stock-symbol" placeholder="輸入股票代碼後自動查價" />
+  </label>
+
   <label>股數：
     <input type="number" id="shares" />
   </label>
