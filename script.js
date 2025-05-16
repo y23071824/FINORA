@@ -1,3 +1,6 @@
+// script.js
+
+// ✅ 初始化
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("asset-form");
   const typeSelect = document.getElementById("type");
@@ -13,6 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let bankHistory = JSON.parse(localStorage.getItem("banks") || "[]");
   let editIndex = null;
 
+  // ✅ 取得即時匯率
   async function fetchExchangeRates() {
     try {
       const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
@@ -23,31 +27,30 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  async function fetchStockPrice(symbol, category) {
+  // ✅ 查詢股價（支援台股 .TW）
+  async function fetchStockPrice(symbol, marketType) {
     try {
-      if (category === "台股") {
-        if (/^\d+$/.test(symbol)) symbol += ".TW";
-        const res = await fetch(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbol}`);
-        const data = await res.json();
-        const quote = data.quoteResponse.result[0];
-        return quote?.regularMarketPrice || null;
-      } else {
-        const apiKey = "de909496c6754a89bc33db0306c2def8";
-        const res = await fetch(`https://api.twelvedata.com/price?symbol=${symbol}&apikey=${apiKey}`);
-        const data = await res.json();
-        return data.price ? parseFloat(data.price) : null;
+      let finalSymbol = symbol;
+      if (marketType === "台股" && /^\d+$/.test(symbol)) {
+        finalSymbol = `${symbol}.TW`;
       }
+      const res = await fetch(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${finalSymbol}`);
+      const data = await res.json();
+      const quote = data.quoteResponse.result[0];
+      return quote?.regularMarketPrice || null;
     } catch (e) {
-      console.error("查詢股價失敗", e);
+      console.error("股價查詢失敗", e);
       return null;
     }
   }
 
+  // ✅ 股票代碼 blur 時查價
   document.getElementById("stock-symbol")?.addEventListener("blur", async () => {
-    const symbolInput = document.getElementById("stock-symbol").value.trim().toUpperCase();
+    const symbol = document.getElementById("stock-symbol").value.trim().toUpperCase();
     const category = document.getElementById("stock-category").value;
-    if (!symbolInput) return;
-    const price = await fetchStockPrice(symbolInput, category);
+    if (!symbol) return;
+
+    const price = await fetchStockPrice(symbol, category);
     if (price != null) {
       document.getElementById("price").value = price;
     } else {
@@ -55,6 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // ✅ 匯率提示
   document.getElementById("currency")?.addEventListener("change", () => {
     const currency = document.getElementById("currency").value;
     const rates = JSON.parse(localStorage.getItem("exchangeRates") || "{}");
@@ -63,6 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // ✅ 顯示欄位切換
   function toggleFields() {
     const type = typeSelect.value;
     stockFields.style.display = type === "股票" ? "block" : "none";
@@ -72,14 +77,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   typeSelect.addEventListener("change", toggleFields);
 
+  // ✅ 渲染資產紀錄與統計
   function render() {
     assetList.innerHTML = "";
     totalsList.innerHTML = "";
     profitList.innerHTML = "";
 
-    const totals = {};
-    const profits = {};
-    const groupedAssets = {};
+    let totals = {}, profits = {}, groupedAssets = {};
 
     assets.forEach((item, index) => {
       if (!groupedAssets[item.type]) groupedAssets[item.type] = [];
@@ -92,8 +96,9 @@ document.addEventListener("DOMContentLoaded", () => {
       assetList.appendChild(header);
 
       groupedAssets[type].forEach(({ item, index }) => {
-        let extra = "", amount = 0;
-        const currency = item.currency;
+        let extra = "";
+        let currency = item.currency;
+        let amount = 0;
 
         if (item.type === "股票") {
           const cost = item.shares * item.cost;
@@ -102,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
           amount = cost;
           profits[currency] = (profits[currency] || 0) + profit;
           extra = `
-            <br>股票代碼：${item.stockSymbol}
+            <br>股票代碼：${item.stockSymbol || "未填寫"}
             <br>股票類型：${item.stockCategory}
             <br>股數：${item.shares}, 成本：$${item.cost}, 現價：$${item.price}
             <br>總成本：$${cost.toFixed(2)}, 市值：$${value.toFixed(2)}, 盈餘：$${profit.toFixed(2)}`;
@@ -120,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const li = document.createElement("li");
         li.innerHTML = `
-          ${item.currency} (${item.bank}) ${item.note ? "- " + item.note : ""}
+          ${item.currency} (${item.bank}) ${item.note ? '- ' + item.note : ''}
           ${extra}
           <div class="button-group">
             <button onclick="editAsset(${index})">往上編輯</button>
@@ -132,10 +137,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     for (const ccy in totals) {
-      const total = totals[ccy] + (profits[ccy] || 0);
-      const profit = profits[ccy] || 0;
+      const totalValue = totals[ccy] + (profits[ccy] || 0);
+      const profitValue = profits[ccy] || 0;
       const li = document.createElement("li");
-      li.textContent = `${ccy}: $${total.toLocaleString()}（內含股票盈餘：$${profit.toLocaleString()})`;
+      li.textContent = `${ccy}: $${totalValue.toLocaleString()}（內含股票盈餘：$${profitValue.toLocaleString()})`;
       totalsList.appendChild(li);
     }
 
@@ -147,6 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // ✅ 表單提交處理
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     const type = document.getElementById("type").value;
@@ -161,7 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (type === "股票") {
       asset.stockCategory = document.getElementById("stock-category").value;
-      asset.stockSymbol = document.getElementById("stock-symbol").value.toUpperCase();
+      asset.stockSymbol = document.getElementById("stock-symbol").value;
       asset.shares = parseFloat(document.getElementById("shares").value) || 0;
       asset.cost = parseFloat(document.getElementById("cost").value) || 0;
       asset.price = parseFloat(document.getElementById("price").value) || 0;
@@ -194,6 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
     render();
   });
 
+  // ✅ 刪除資產
   window.deleteAsset = (index) => {
     if (confirm("確定要刪除這筆資產嗎？")) {
       assets.splice(index, 1);
@@ -202,6 +209,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  // ✅ 編輯資產
   window.editAsset = (index) => {
     const item = assets[index];
     editIndex = index;
@@ -228,6 +236,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  // ✅ 匯率換算工具
   window.convertCurrency = () => {
     const amt = parseFloat(document.getElementById("input-amount").value);
     const rate = parseFloat(document.getElementById("input-rate").value);
@@ -239,6 +248,7 @@ document.addEventListener("DOMContentLoaded", () => {
     result.textContent = `換算後金額：$${(amt * rate).toLocaleString()}`;
   };
 
+  // ✅ 初始化呼叫
   fetchExchangeRates();
   toggleFields();
   render();
