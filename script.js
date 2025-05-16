@@ -25,10 +25,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function fetchStockPrice(symbol) {
     try {
-      const res = await fetch(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbol}`);
+      const apikey = "de909496c6754a89bc33db0306c2def8";
+      const url = `https://api.twelvedata.com/price?symbol=${symbol}&apikey=${apikey}`;
+      const res = await fetch(url);
       const data = await res.json();
-      const quote = data.quoteResponse.result[0];
-      return quote?.regularMarketPrice || null;
+      if (data.price) return parseFloat(data.price);
+      else throw new Error(data.message || "查詢失敗");
     } catch (e) {
       console.error("股價查詢失敗", e);
       return null;
