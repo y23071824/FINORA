@@ -44,18 +44,25 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  document.getElementById("stock-symbol")?.addEventListener("blur", async () => {
-    const symbol = document.getElementById("stock-symbol").value.trim().toUpperCase();
-    const market = document.getElementById("stock-category").value;
-    if (symbol) {
-      const price = await fetchStockPrice(symbol, market);
-      if (price != null) {
-        document.getElementById("price").value = price;
-      } else {
-        alert("查無此股票代碼或查價失敗，請重新確認。");
-      }
+document.getElementById("stock-symbol")?.addEventListener("blur", async () => {
+  let symbol = document.getElementById("stock-symbol").value.trim().toUpperCase();
+  const category = document.getElementById("stock-category").value;
+
+  // 根據股票類型自動加後綴
+  if (category === "台股" && /^\d+$/.test(symbol)) {
+    symbol += ".TW";
+  }
+
+  if (symbol) {
+    const price = await fetchStockPrice(symbol);
+    if (price != null) {
+      document.getElementById("price").value = price;
+    } else {
+      alert("查無此股票代碼或查價失敗，請重新確認。");
     }
-  });
+  }
+});
+
 
   document.getElementById("currency")?.addEventListener("change", () => {
     const currency = document.getElementById("currency").value;
