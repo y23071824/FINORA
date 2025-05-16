@@ -50,6 +50,7 @@ button {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 button:hover {
@@ -77,6 +78,13 @@ li {
   border-radius: 6px;
 }
 
+li[data-type="股票"] { border-left-color: #4caf50; }
+li[data-type="定存"] { border-left-color: #f9a825; }
+li[data-type="現金"] { border-left-color: #ff7043; }
+li[data-type="房產"] { border-left-color: #42a5f5; }
+li[data-type="儲蓄保險"] { border-left-color: #ab47bc; }
+li[data-type="其他"] { border-left-color: #90a4ae; }
+
 .button-group {
   display: flex;
   justify-content: space-between;
@@ -92,6 +100,7 @@ li {
   background-color: #5a9bd4;
   border: none;
   border-radius: 4px;
+  transition: background-color 0.3s ease;
 }
 
 .button-group button:hover {
@@ -102,4 +111,14 @@ li {
   font-weight: bold;
   color: #2a3f4f;
   margin-top: 0.5rem;
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 0.5rem;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+  }
 }
