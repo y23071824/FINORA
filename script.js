@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let bankHistory = JSON.parse(localStorage.getItem("banks") || "[]");
   let editIndex = null;
 
+  // 匯率與股價 API
   async function fetchExchangeRates() {
     try {
       const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
@@ -35,6 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // 股票代碼查詢自動帶入現價
   document.getElementById("stock-symbol")?.addEventListener("blur", async () => {
     const symbol = document.getElementById("stock-symbol").value.trim();
     if (symbol) {
@@ -43,6 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // 幣別切換匯率提示
   document.getElementById("currency")?.addEventListener("change", () => {
     const currency = document.getElementById("currency").value;
     const rates = JSON.parse(localStorage.getItem("exchangeRates") || "{}");
@@ -64,7 +67,10 @@ document.addEventListener("DOMContentLoaded", () => {
     assetList.innerHTML = "";
     totalsList.innerHTML = "";
     profitList.innerHTML = "";
-    let totals = {}, profits = {}, groupedAssets = {};
+
+    let totals = {};
+    let profits = {};
+    const groupedAssets = {};
 
     assets.forEach((item, index) => {
       if (!groupedAssets[item.type]) groupedAssets[item.type] = [];
@@ -77,7 +83,9 @@ document.addEventListener("DOMContentLoaded", () => {
       assetList.appendChild(header);
 
       groupedAssets[type].forEach(({ item, index }) => {
-        let extra = "", currency = item.currency, amount = 0;
+        let extra = "";
+        let currency = item.currency;
+        let amount = 0;
 
         if (item.type === "股票") {
           const cost = item.shares * item.cost;
@@ -166,6 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     localStorage.setItem("assets", JSON.stringify(assets));
+
     const bank = asset.bank;
     if (bank && !bankHistory.includes(bank)) {
       bankHistory.push(bank);
