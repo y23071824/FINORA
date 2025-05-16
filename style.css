@@ -6,14 +6,12 @@ body {
   max-width: 600px;
   margin: auto;
 }
-
 h1 {
   color: #2a3f4f;
   font-size: 1.8rem;
   text-align: center;
   margin-bottom: 1rem;
 }
-
 h2 {
   font-size: 1.4rem;
   color: #3a7ca5;
@@ -21,20 +19,25 @@ h2 {
   border-bottom: 2px solid #c0d6e4;
   padding-bottom: 0.3rem;
 }
-
-form label, #exchange-section label {
+h3 {
+  font-size: 1.2rem;
+  margin-top: 1.5rem;
+  color: #666;
+}
+form label,
+#exchange-section label {
   display: block;
   margin-bottom: 0.5rem;
 }
-
-input, select, button {
+input,
+select,
+button {
   width: 100%;
   padding: 0.4rem;
   margin-bottom: 1rem;
   font-size: 1rem;
   box-sizing: border-box;
 }
-
 button {
   background-color: #3a7ca5;
   color: white;
@@ -42,23 +45,20 @@ button {
   border-radius: 5px;
   cursor: pointer;
 }
-
 button:hover {
   opacity: 0.9;
 }
-
-#records-section, #exchange-section {
+#records-section,
+#exchange-section {
   background: #e8f4f8;
   padding: 1rem;
   margin-top: 2rem;
   border-radius: 8px;
 }
-
 ul {
   list-style: none;
   padding-left: 0;
 }
-
 li {
   margin-bottom: 1rem;
   padding: 0.5rem;
@@ -66,14 +66,26 @@ li {
   border-left: 4px solid #3a7ca5;
   border-radius: 6px;
 }
-
 .button-group {
   display: flex;
   justify-content: space-between;
   gap: 0.5rem;
+  margin-top: 0.5rem;
 }
-
+.button-group button {
+  flex: 1;
+  font-size: 0.9rem;
+  padding: 0.4rem 0.6rem;
+  margin: 0;
+  background-color: #5a9bd4;
+  border: none;
+  border-radius: 4px;
+}
+.button-group button:hover {
+  background-color: #488cc3;
+}
 #converted-result {
   font-weight: bold;
   color: #2a3f4f;
+  margin-top: 0.5rem;
 }
