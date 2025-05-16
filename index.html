@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="zh-Hant">
+<!DOCTYPE html>
+<html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -6,7 +7,8 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>FINORA 資產登記</h1>  <form id="asset-form">
+  <h1>FINORA 資產登記</h1>
+  <form id="asset-form">
     <label>種類：
       <select id="type">
         <option value="">請選擇</option>
@@ -17,79 +19,74 @@
         <option value="儲蓄保險">儲蓄保險</option>
         <option value="其他">其他</option>
       </select>
-    </label><!-- 股票欄位 -->
-<!-- 股票欄位 -->
-<div id="stock-fields" style="display: none;">
-  <label>股票代碼（如 QQQM）：
-    <input type="text" id="stock-symbol" placeholder="輸入股票代碼後自動查價" />
-  </label>
+    </label>
 
-  <label>股票類型：
-    <select id="stock-category">
-      <option value="台股">台股</option>
-      <option value="美股">美股</option>
-      <option value="ETF">ETF</option>
-      <option value="權證">權證</option>
-      <option value="期貨">期貨</option>
-    </select>
-  </label>
+    <div id="stock-fields" style="display: none;">
+      <label>股票代碼（如 QQQM）：
+        <input type="text" id="stock-symbol" placeholder="輸入股票代碼後自動查價" />
+      </label>
+      <label>股票類型：
+        <select id="stock-category">
+          <option value="台股">台股</option>
+          <option value="美股">美股</option>
+          <option value="ETF">ETF</option>
+          <option value="權證">權證</option>
+          <option value="期貨">期貨</option>
+        </select>
+      </label>
+      <label>股數：<input type="number" id="shares" /></label>
+      <label>成本（每股）：<input type="number" id="cost" step="0.01" /></label>
+      <label>現價（每股）：<input type="number" id="price" step="0.01" /></label>
+    </div>
 
-  <label>股數：
-    <input type="number" id="shares" />
-  </label>
+    <div id="insurance-fields" style="display: none;">
+      <label>保單名稱：<input type="text" id="policy-name" /></label>
+      <label>保額：<input type="number" id="policy-amount" /></label>
+      <label>年期：<input type="number" id="policy-years" /></label>
+      <label>每年保費：<input type="number" id="policy-premium" /></label>
+    </div>
 
-  <label>成本（每股）：
-    <input type="number" id="cost" step="0.01" />
-  </label>
+    <div id="amount-field">
+      <label>金額：<input type="number" id="amount" /></label>
+    </div>
 
-  <label>現價（每股）：
-    <input type="number" id="price" step="0.01" />
-  </label>
-</div>
-<!-- 儲蓄保險欄位 -->
-<div id="insurance-fields" style="display: none;">
-  <label>保單名稱：<input type="text" id="policy-name" /></label>
-  <label>保額：<input type="number" id="policy-amount" /></label>
-  <label>年期：<input type="number" id="policy-years" /></label>
-  <label>每年保費：<input type="number" id="policy-premium" /></label>
-</div>
+    <label>幣別：
+      <select id="currency">
+        <option value="TWD">TWD</option>
+        <option value="USD">USD</option>
+        <option value="JPY">JPY</option>
+        <option value="EUR">EUR</option>
+      </select>
+    </label>
 
-<!-- 一般金額欄位 -->
-<div id="amount-field">
-  <label>金額：<input type="number" id="amount" /></label>
-</div>
+    <label>銀行：
+      <input type="text" id="bank" list="bank-list" />
+      <datalist id="bank-list"></datalist>
+    </label>
 
-<label>幣別：
-  <select id="currency">
-    <option value="TWD">TWD</option>
-    <option value="USD">USD</option>
-    <option value="JPY">JPY</option>
-    <option value="EUR">EUR</option>
-  </select>
-</label>
+    <label>備註：
+      <input type="text" id="note" />
+    </label>
 
-<label>銀行：
-  <input type="text" id="bank" list="bank-list" />
-  <datalist id="bank-list"></datalist>
-</label>
+    <button type="submit">儲存資產</button>
+  </form>
 
-<label>備註：
-  <input type="text" id="note" />
-</label>
-
-<button type="submit">儲存資產</button>
-
-  </form>  <!-- 資產紀錄 -->  <section id="records-section">
+  <section id="records-section">
     <h2>資產紀錄</h2>
     <ul id="asset-list"></ul>
     <h3>幣別加總</h3>
     <ul id="totals-list"></ul>
     <ul id="stock-profit-list"></ul>
-  </section>  <!-- 匯率換算 -->  <section id="exchange-section">
+  </section>
+
+  <section id="exchange-section">
     <h2>匯率換算計算機</h2>
     <label>金額：<input type="number" id="input-amount" /></label>
     <label>匯率：<input type="number" id="input-rate" value="30" step="0.01" /></label>
     <button onclick="convertCurrency()">換算</button>
     <p id="converted-result"></p>
-  </section>  <script src="script.js"></script></body>
+  </section>
+
+  <script src="script.js"></script>
+</body>
 </html>
