@@ -1,5 +1,5 @@
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {  
   const form = document.getElementById("asset-form");
   const typeSelect = document.getElementById("type");
   const stockFields = document.getElementById("stock-fields");
@@ -12,55 +12,47 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let assets = JSON.parse(localStorage.getItem("assets") || "[]");
   let bankHistory = JSON.parse(localStorage.getItem("banks") || "[]");
+  let exchangeRates = {};
   let editIndex = null;
 
   async function fetchExchangeRates() {
     try {
       const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
       const data = await res.json();
-      localStorage.setItem("exchangeRates", JSON.stringify(data.rates));
+      exchangeRates = data.rates;
+      localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
     } catch (e) {
       console.error("匯率載入失敗", e);
     }
   }
 
-  async function fetchStockPrice(symbol, marketType) {
+  async function fetchStockPrice(symbol, category) {
     try {
-      if (marketType === "台股") {
-        const res = await fetch(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbol}.TW`);
+      if (category === "台股") {
+        symbol += ".TW";
+        const res = await fetch(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbol}`);
         const data = await res.json();
-        const quote = data.quoteResponse.result[0];
-        return quote?.regularMarketPrice || null;
+        return data.quoteResponse.result[0]?.regularMarketPrice || null;
       } else {
-        const apikey = "de909496c6754a89bc33db0306c2def8";
-        const url = `https://api.twelvedata.com/price?symbol=${symbol}&apikey=${apikey}`;
+        const apiKey = "de909496c6754a89bc33db0306c2def8";
+        const url = `https://api.twelvedata.com/price?symbol=${symbol}&apikey=${apiKey}`;
         const res = await fetch(url);
         const data = await res.json();
-        if (data.price) return parseFloat(data.price);
-        else return null;
+        return data.price ? parseFloat(data.price) : null;
       }
     } catch (e) {
-      console.error("查價錯誤", e);
+      console.error("查詢股價錯誤", e);
       return null;
     }
   }
 
   document.getElementById("stock-symbol")?.addEventListener("blur", async () => {
-    let symbol = document.getElementById("stock-symbol").value.trim().toUpperCase();
+    const symbol = document.getElementById("stock-symbol").value.trim().toUpperCase();
     const category = document.getElementById("stock-category").value;
-
-    if (category === "台股" && /^\d+$/.test(symbol)) {
-      symbol += ".TW";
-    }
-
-    if (symbol) {
-      const price = await fetchStockPrice(symbol);
-      if (price != null) {
-        document.getElementById("price").value = price;
-      } else {
-        alert("查無此股票代碼或查價失敗，請重新確認。");
-      }
-    }
+    if (!symbol) return;
+    const price = await fetchStockPrice(symbol, category);
+    if (price !== null) document.getElementById("price").value = price;
+    else alert("查無此股票代碼或查價失敗");
   });
 
   document.getElementById("currency")?.addEventListener("change", () => {
@@ -84,9 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
     assetList.innerHTML = "";
     totalsList.innerHTML = "";
     profitList.innerHTML = "";
-
-    let totals = {}, profits = {}, groupedAssets = {};
-    const rates = JSON.parse(localStorage.getItem("exchangeRates") || "{}");
+    let totals = {}, profits = {}, groupedAssets = {}, totalTWD = 0;
 
     assets.forEach((item, index) => {
       if (!groupedAssets[item.type]) groupedAssets[item.type] = [];
@@ -118,7 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
           amount = item.policyAmount;
           extra = `
             <br>保單名稱：${item.policyName}
-            <br>保額：$${item.policyAmount}, 年期：${item.policyYears} 年, 年繳保費：$${item.policyPremium}`;
+            <br>保額：$${item.policyAmount}, 年期：${item.policyYears}, 保費：$${item.policyPremium}`;
         } else {
           amount = parseFloat(item.amount) || 0;
           extra = `<br>金額：$${amount.toLocaleString()}`;
@@ -131,33 +121,34 @@ document.addEventListener("DOMContentLoaded", () => {
           ${item.currency} (${item.bank}) ${item.note ? '- ' + item.note : ''}
           ${extra}
           <div class="button-group">
-            <button onclick="editAsset(${index})">往上編輯</button>
+            <button onclick="editAsset(${index})">編輯</button>
             <button onclick="deleteAsset(${index})">刪除</button>
-          </div>
-        `;
+          </div>`;
         assetList.appendChild(li);
       });
     }
 
     for (const ccy in totals) {
-      const profitValue = profits[ccy] || 0;
-      const totalValue = totals[ccy] + profitValue;
-      const rate = rates[ccy] || 1;
-      const twdValue = totalValue * rate;
-      const profitTWD = profitValue * rate;
+      const rate = ccy === "TWD" ? 1 : (exchangeRates[ccy] || 0);
+      const total = totals[ccy];
+      const profit = profits[ccy] || 0;
+      const totalTwd = (total + profit) * rate;
+      totalTWD += totalTwd;
       const li = document.createElement("li");
-      li.innerHTML = `
-        ${ccy}: $${totalValue.toLocaleString()}（盈餘：$${profitValue.toLocaleString()}）
-        <br>折合台幣：$${twdValue.toLocaleString(undefined, { maximumFractionDigits: 2 })}
-        （盈餘折合台幣：$${profitTWD.toLocaleString(undefined, { maximumFractionDigits: 2 })}）
-      `;
+      li.innerHTML = `${ccy}: $${(total + profit).toLocaleString()}（盈餘：$${profit.toLocaleString()}）
+        <br>折合台幣：$${totalTwd.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
       totalsList.appendChild(li);
     }
 
+    const totalLine = document.createElement("li");
+    totalLine.style.fontWeight = "bold";
+    totalLine.textContent = `全體總資產（台幣計）約 NT$ ${totalTWD.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+    totalsList.appendChild(totalLine);
+
     bankDatalist.innerHTML = "";
-    bankHistory.forEach(bank => {
+    bankHistory.forEach(b => {
       const opt = document.createElement("option");
-      opt.value = bank;
+      opt.value = b;
       bankDatalist.appendChild(opt);
     });
   }
@@ -197,10 +188,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     localStorage.setItem("assets", JSON.stringify(assets));
-
-    const bank = asset.bank;
-    if (bank && !bankHistory.includes(bank)) {
-      bankHistory.push(bank);
+    if (asset.bank && !bankHistory.includes(asset.bank)) {
+      bankHistory.push(asset.bank);
       localStorage.setItem("banks", JSON.stringify(bankHistory));
     }
 
@@ -210,7 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   window.deleteAsset = (index) => {
-    if (confirm("確定要刪除這筆資產嗎？")) {
+    if (confirm("確定要刪除？")) {
       assets.splice(index, 1);
       localStorage.setItem("assets", JSON.stringify(assets));
       render();
@@ -225,8 +214,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("bank").value = item.bank;
     document.getElementById("note").value = item.note;
     toggleFields();
-    window.scrollTo({ top: 0, behavior: "smooth" });
-
     if (item.type === "股票") {
       document.getElementById("stock-category").value = item.stockCategory;
       document.getElementById("stock-symbol").value = item.stockSymbol;
@@ -241,6 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       document.getElementById("amount").value = item.amount;
     }
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   window.convertCurrency = () => {
