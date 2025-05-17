@@ -148,7 +148,12 @@ document.addEventListener("DOMContentLoaded", () => {
     totalLine.style.fontWeight = "bold";
     totalLine.textContent = `全體總資產（台幣計）約 NT$ ${totalTWD.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
     totalsList.appendChild(totalLine);
-
+for (const ccy in profits) {
+  const profit = profits[ccy];
+  const li = document.createElement("li");
+  li.textContent = `${ccy} 股票盈餘：$${profit.toLocaleString()}`;
+  profitList.appendChild(li);
+}
     bankDatalist.innerHTML = "";
     bankHistory.forEach(b => {
       const opt = document.createElement("option");
@@ -156,7 +161,6 @@ document.addEventListener("DOMContentLoaded", () => {
       bankDatalist.appendChild(opt);
     });
   }
-
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     const type = document.getElementById("type").value;
