@@ -127,15 +127,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     for (const ccy in totals) {
-      const rate = ccy === "TWD" ? 1 : (exchangeRates[ccy] || 0);
-      const total = totals[ccy];
-      const profit = profits[ccy] || 0;
-      const totalTwd = rate ? (total + profit) * rate : 0;
-      totalTWD += totalTwd;
-      const li = document.createElement("li");
-      li.innerHTML = `${ccy}: $${(total + profit).toLocaleString()}（盈餘：$${profit.toLocaleString()}）
-        <br>折合台幣：$${totalTwd.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-      totalsList.appendChild(li);
+  const rate = ccy === "TWD" ? 1 : exchangeRates[ccy];
+  const total = totals[ccy];
+  const profit = profits[ccy] || 0;
+
+  let totalTwd = 0;
+  let rateText = "查無匯率";
+  if (typeof rate === "number" && rate > 0) {
+    totalTwd = (total + profit) * rate;
+    totalTWD += totalTwd;
+    rateText = `$${totalTwd.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+  }
+
+  const li = document.createElement("li");
+  li.innerHTML = `${ccy}: $${(total + profit).toLocaleString()}（盈餘：$${profit.toLocaleString()}）<br>折合台幣：${rateText}`;
+  totalsList.appendChild(li);
     }
 
     const totalLine = document.createElement("li");
