@@ -1,4 +1,4 @@
-
+// script.js
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("asset-form");
   const typeSelect = document.getElementById("type");
@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
       const data = await res.json();
       exchangeRates = data.rates;
+      exchangeRates["TWD"] = 1; // 固定台幣為1
       localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
     } catch (e) {
       console.error("匯率載入失敗", e);
@@ -67,107 +68,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const type = typeSelect.value;
     stockFields.style.display = type === "股票" ? "block" : "none";
     insuranceFields.style.display = type === "儲蓄保險" ? "block" : "none";
-    amountField.style.display = type !== "股票" && type !== "儲蓄保險" ? "block" : "none";
+    amountField.style.display = (type !== "股票" && type !== "儲蓄保險") ? "block" : "none";
   }
 
   typeSelect.addEventListener("change", toggleFields);
 
-  function render() {
-    if (!exchangeRates || Object.keys(exchangeRates).length === 0) {
-      exchangeRates = JSON.parse(localStorage.getItem("exchangeRates") || "{}");
-    }
-
-    assetList.innerHTML = "";
-    totalsList.innerHTML = "";
-    profitList.innerHTML = "";
-    let totals = {}, profits = {}, groupedAssets = {}, totalTWD = 0;
-
-    assets.forEach((item, index) => {
-      if (!groupedAssets[item.type]) groupedAssets[item.type] = [];
-      groupedAssets[item.type].push({ item, index });
-    });
-
-    for (const type in groupedAssets) {
-      const header = document.createElement("h3");
-      header.textContent = `【${type}】`;
-      assetList.appendChild(header);
-
-      groupedAssets[type].forEach(({ item, index }) => {
-        let currency = item.currency;
-        let amount = 0;
-        let extra = "";
-
-        if (item.type === "股票") {
-          const cost = item.shares * item.cost;
-          const value = item.shares * item.price;
-          const profit = value - cost;
-          amount = cost;
-          profits[currency] = (profits[currency] || 0) + profit;
-          extra = `<br>股票代碼：${item.stockSymbol}
-                   <br>股票類型：${item.stockCategory}
-                   <br>股數：${item.shares}, 成本：$${item.cost}, 現價：$${item.price}
-                   <br>總成本：$${cost.toFixed(2)}, 市值：$${value.toFixed(2)}, 盈餘：$${profit.toFixed(2)}`;
-        } else if (item.type === "儲蓄保險") {
-          amount = item.policyAmount;
-          extra = `<br>保單名稱：${item.policyName}
-                   <br>保額：$${item.policyAmount}, 年期：${item.policyYears}, 保費：$${item.policyPremium}`;
-        } else {
-          amount = parseFloat(item.amount) || 0;
-          extra = `<br>金額：$${amount.toLocaleString()}`;
-        }
-
-        totals[currency] = (totals[currency] || 0) + amount;
-
-        const li = document.createElement("li");
-        li.innerHTML = `${currency} (${item.bank}) ${item.note || ""}${extra}
-                        <div class="button-group">
-                          <button onclick="editAsset(${index})">編輯</button>
-                          <button onclick="deleteAsset(${index})">刪除</button>
-                        </div>`;
-        assetList.appendChild(li);
-      });
-    }
-
-    for (const ccy in totals) {
-      const rate = ccy === "TWD" ? 1 : (exchangeRates[ccy] || 0);
-      const total = totals[ccy];
-      const profit = profits[ccy] || 0;
-      let totalTwd = 0;
-      let rateText = "查無匯率";
-      if (typeof rate === "number" && rate > 0) {
-        totalTwd = (total + profit) * rate;
-        totalTWD += totalTwd;
-        rateText = `$${totalTwd.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-      }
-
-      const li = document.createElement("li");
-      li.innerHTML = `${ccy}: $${(total + profit).toLocaleString()}（盈餘：$${profit.toLocaleString()}）<br>折合台幣：${rateText}`;
-      totalsList.appendChild(li);
-    }
-
-    const totalLine = document.createElement("li");
-    totalLine.style.fontWeight = "bold";
-    totalLine.textContent = `全體總資產（台幣計）約 NT$ ${totalTWD.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-    totalsList.appendChild(totalLine);
-
-    for (const ccy in profits) {
-      const profit = profits[ccy];
-      const li = document.createElement("li");
-      li.textContent = `${ccy} 股票盈餘：$${profit.toLocaleString()}`;
-      profitList.appendChild(li);
-    }
-
-    bankDatalist.innerHTML = "";
-    bankHistory.forEach(b => {
-      const opt = document.createElement("option");
-      opt.value = b;
-      bankDatalist.appendChild(opt);
-    });
-  }
-
   form.addEventListener("submit", (e) => {
     e.preventDefault();
-    const type = document.getElementById("type").value;
+
+    const type = typeSelect.value;
     if (!type) return alert("請選擇資產種類");
 
     const asset = {
@@ -210,14 +119,15 @@ document.addEventListener("DOMContentLoaded", () => {
     render();
   });
 
-  window.editAsset = function(index) {
+  window.editAsset = function (index) {
     const item = assets[index];
     editIndex = index;
-    document.getElementById("type").value = item.type;
+    typeSelect.value = item.type;
     document.getElementById("currency").value = item.currency;
     document.getElementById("bank").value = item.bank;
     document.getElementById("note").value = item.note;
     toggleFields();
+
     if (item.type === "股票") {
       document.getElementById("stock-category").value = item.stockCategory;
       document.getElementById("stock-symbol").value = item.stockSymbol;
@@ -232,10 +142,11 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       document.getElementById("amount").value = item.amount;
     }
+
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  window.deleteAsset = function(index) {
+  window.deleteAsset = function (index) {
     if (confirm("確定要刪除？")) {
       assets.splice(index, 1);
       localStorage.setItem("assets", JSON.stringify(assets));
@@ -253,6 +164,76 @@ document.addEventListener("DOMContentLoaded", () => {
       result.textContent = `換算後金額：$${(amt * rate).toLocaleString()}`;
     }
   };
+
+  function render() {
+    if (!exchangeRates || Object.keys(exchangeRates).length === 0) {
+      exchangeRates = JSON.parse(localStorage.getItem("exchangeRates") || "{}");
+    }
+
+    assetList.innerHTML = "";
+    totalsList.innerHTML = "";
+    profitList.innerHTML = "";
+    let totals = {}, profits = {}, totalTWD = 0;
+
+    assets.forEach((item, index) => {
+      let display = "", currency = item.currency, amount = 0, profit = 0;
+
+      if (item.type === "股票") {
+        const cost = item.shares * item.cost;
+        const value = item.shares * item.price;
+        profit = value - cost;
+        amount = cost;
+        profits[currency] = (profits[currency] || 0) + profit;
+        display = `股票代碼：${item.stockSymbol}｜類型：${item.stockCategory}｜股數：${item.shares}<br>成本：$${item.cost}，現價：$${item.price}<br>總成本：$${cost.toFixed(2)}，市值：$${value.toFixed(2)}，盈餘：$${profit.toFixed(2)}`;
+      } else if (item.type === "儲蓄保險") {
+        amount = item.policyAmount;
+        display = `保單：${item.policyName}<br>保額：$${item.policyAmount}，年期：${item.policyYears}，保費：$${item.policyPremium}`;
+      } else {
+        amount = item.amount || 0;
+        display = `金額：$${amount.toLocaleString()}`;
+      }
+
+      totals[currency] = (totals[currency] || 0) + amount;
+
+      const li = document.createElement("li");
+      li.innerHTML = `<strong>${item.type}</strong>（${currency}｜${item.bank}）${item.note ? "｜備註：" + item.note : ""}<br>${display}
+        <div class="button-group">
+          <button onclick="editAsset(${index})">編輯</button>
+          <button onclick="deleteAsset(${index})">刪除</button>
+        </div>`;
+      assetList.appendChild(li);
+    });
+
+    for (const ccy in totals) {
+      const total = totals[ccy] + (profits[ccy] || 0);
+      const rate = exchangeRates[ccy] || 0;
+      const twd = rate * total;
+      totalTWD += twd;
+
+      const li = document.createElement("li");
+      li.innerHTML = `${ccy} 總資產：$${total.toLocaleString()}（盈餘 $${(profits[ccy] || 0).toLocaleString()}）<br>折合台幣：NT$ ${twd.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+      totalsList.appendChild(li);
+    }
+
+    const totalLine = document.createElement("li");
+    totalLine.style.fontWeight = "bold";
+    totalLine.textContent = `全體總資產（折合台幣）：NT$ ${totalTWD.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+    totalsList.appendChild(totalLine);
+
+    for (const ccy in profits) {
+      const li = document.createElement("li");
+      li.textContent = `${ccy} 股票盈餘：$${profits[ccy].toLocaleString()}`;
+      profitList.appendChild(li);
+    }
+
+    // 更新銀行選單
+    bankDatalist.innerHTML = "";
+    bankHistory.forEach(bank => {
+      const opt = document.createElement("option");
+      opt.value = bank;
+      bankDatalist.appendChild(opt);
+    });
+  }
 
   fetchExchangeRates().then(() => {
     toggleFields();
