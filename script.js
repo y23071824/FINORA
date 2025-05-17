@@ -49,9 +49,9 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("stock-symbol")?.addEventListener("blur", async () => {
     const symbol = document.getElementById("stock-symbol").value.trim().toUpperCase();
     const category = document.getElementById("stock-category").value;
-    if (!symbol) return;
+    if (!symbol || !category) return;
     const price = await fetchStockPrice(symbol, category);
-    if (price !== null) document.getElementById("price").value = price;
+    if (price !== null) document.getElementById("price").value = price.toFixed(2);
     else alert("查無此股票代碼或查價失敗");
   });
 
