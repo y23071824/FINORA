@@ -1,9 +1,11 @@
-fetchExchangeRates().then(() => {
-  render();
-  toggleFields();
-});
-
 document.addEventListener("DOMContentLoaded", () => {
+  fetchExchangeRates().then(() => {
+    toggleFields();
+    render();
+  });
+
+  typeSelect.addEventListener("change", toggleFields);
+});
   const form = document.getElementById("asset-form");
   const typeSelect = document.getElementById("type");
   const stockFields = document.getElementById("stock-fields");
@@ -11,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const amountField = document.getElementById("amount-field");
   const assetList = document.getElementById("asset-list");
   const totalsList = document.getElementById("totals-list");
-  const profitList = document.getElementByI7d("stock-profit-list");
+  const profitList = document.getElementById("stock-profit-list"); 
   const bankDatalist = document.getElementById("bank-list");
 
   let assets = JSON.parse(localStorage.getItem("assets") || "[]");
