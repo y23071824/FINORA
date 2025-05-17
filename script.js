@@ -127,7 +127,7 @@ typeSelect.addEventListener("change", toggleFields);
     }
 
     for (const ccy in totals) {
-      const rate = ccy === "TWD" ? 1 : exchangeRates[ccy];
+      const rate = ccy === "TWD" ? 1 : (exchangeRates[ccy] || 0);
       const total = totals[ccy];
       const profit = profits[ccy] || 0;
       let totalTwd = 0;
