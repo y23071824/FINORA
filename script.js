@@ -1,4 +1,3 @@
-// script.js
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("asset-form");
   const typeSelect = document.getElementById("type");
@@ -79,21 +78,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const type = typeSelect.value;
     if (!type) return alert("請選擇資產種類");
 
-if (type === "股票") {
-  const shares = parseFloat(document.getElementById("shares").value) || 0;
-  const cost = parseFloat(document.getElementById("cost").value) || 0;
-  if (shares === 0 || cost === 0) return alert("請輸入股票股數與成本");
-} else if (type === "儲蓄保險") {
-  const amt = parseFloat(document.getElementById("policy-amount").value) || 0;
-  if (amt === 0) return alert("請輸入保單金額");
-} else {
-  const amount = parseFloat(document.getElementById("amount").value) || 0;
-  if (amount === 0) return alert("請輸入金額");
-}
-else {
-  amount = parseFloat(item.amount) || 0;
-  display = `金額：$${amount.toLocaleString()}`;
-}
+    if (type === "股票") {
+      const shares = parseFloat(document.getElementById("shares").value) || 0;
+      const cost = parseFloat(document.getElementById("cost").value) || 0;
+      if (shares === 0 || cost === 0) return alert("請輸入股票股數與成本");
+    } else if (type === "儲蓄保險") {
+      const amt = parseFloat(document.getElementById("policy-amount").value) || 0;
+      if (amt === 0) return alert("請輸入保單金額");
+    } else {
+      const amount = parseFloat(document.getElementById("amount").value) || 0;
+      if (amount === 0) return alert("請輸入金額");
+    }
+
     const asset = {
       type,
       currency: document.getElementById("currency").value,
@@ -204,7 +200,7 @@ else {
         amount = item.policyAmount;
         display = `保單：${item.policyName}<br>保額：$${item.policyAmount}，年期：${item.policyYears}，保費：$${item.policyPremium}`;
       } else {
-        amount = item.amount || 0;
+        amount = parseFloat(item.amount) || 0;
         display = `金額：$${amount.toLocaleString()}`;
       }
 
