@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
     insuranceFields.style.display = type === "儲蓄保險" ? "block" : "none";
     amountField.style.display = type !== "股票" && type !== "儲蓄保險" ? "block" : "none";
   }
-
+typeSelect.addEventListener("change", toggleFields);
   function render() {
     if (!exchangeRates || Object.keys(exchangeRates).length === 0) {
       exchangeRates = JSON.parse(localStorage.getItem("exchangeRates") || "{}");
