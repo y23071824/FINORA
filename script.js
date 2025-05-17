@@ -90,7 +90,10 @@ if (type === "股票") {
   const amount = parseFloat(document.getElementById("amount").value) || 0;
   if (amount === 0) return alert("請輸入金額");
 }
-
+else {
+  amount = parseFloat(item.amount) || 0;
+  display = `金額：$${amount.toLocaleString()}`;
+}
     const asset = {
       type,
       currency: document.getElementById("currency").value,
