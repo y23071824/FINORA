@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const amountField = document.getElementById("amount-field");
   const assetList = document.getElementById("asset-list");
   const totalsList = document.getElementById("totals-list");
-  const profitList = document.getElementById("stock-profit-list");
+  const profitList = document.getElementByI7d("stock-profit-list");
   const bankDatalist = document.getElementById("bank-list");
 
   let assets = JSON.parse(localStorage.getItem("assets") || "[]");
@@ -502,7 +502,7 @@ toggleFields();  // ← 最後才呼叫！
     }
   };
 
-  fetchExchangeRates().then(() => {
+fetchExchangeRates().then(() => {
   render();
   toggleFields();
 });
