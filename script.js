@@ -64,12 +64,17 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function toggleFields() {
-    const type = typeSelect.value;
-    stockFields.style.display = type === "股票" ? "block" : "none";
-    insuranceFields.style.display = type === "儲蓄保險" ? "block" : "none";
-    amountField.style.display = type !== "股票" && type !== "儲蓄保險" ? "block" : "none";
-  }
+  const type = typeSelect.value;
+  stockFields.style.display = type === "股票" ? "block" : "none";
+  insuranceFields.style.display = type === "儲蓄保險" ? "block" : "none";
+  amountField.style.display = type !== "股票" && type !== "儲蓄保險" ? "block" : "none";
+}
 typeSelect.addEventListener("change", toggleFields);
+
+// 放到 DOM 全部讀取後才呼叫 toggleFields()
+fetchExchangeRates();
+render();
+toggleFields();  // ← 最後才呼叫！
   function render() {
     if (!exchangeRates || Object.keys(exchangeRates).length === 0) {
       exchangeRates = JSON.parse(localStorage.getItem("exchangeRates") || "{}");
