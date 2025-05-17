@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("asset-form");
   const typeSelect = document.getElementById("type");
@@ -20,7 +21,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await res.json();
       exchangeRates = data.rates;
       localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
-      console.log("最新匯率資料", exchangeRates);
     } catch (e) {
       console.error("匯率載入失敗", e);
     }
