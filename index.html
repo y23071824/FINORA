@@ -65,6 +65,14 @@
   <label>匯率：<input type="number" id="input-rate" /></label>
   <button onclick="convertCurrency()">換算</button>
   <div id="converted-result"></div>
+  <hr>
+<h2>Debug 工具</h2>
+<button onclick="alert(localStorage.getItem('assets'))">
+  查看目前儲存的資產資料
+</button>
+<button onclick="localStorage.removeItem('assets'); alert('已清除資產資料'); location.reload();">
+  清除資產資料並重整頁面
+</button>
   <script src="script.js"></script>
 </body>
 </html>
