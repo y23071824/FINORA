@@ -1,3 +1,7 @@
+fetchExchangeRates().then(() => {
+  render();
+  toggleFields();
+});
 
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("asset-form");
@@ -501,8 +505,3 @@ toggleFields();  // ← 最後才呼叫！
       result.textContent = `換算後金額：$${(amt * rate).toLocaleString()}`;
     }
   };
-
-fetchExchangeRates().then(() => {
-  render();
-  toggleFields();
-});
