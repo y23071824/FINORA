@@ -70,8 +70,6 @@ document.addEventListener("DOMContentLoaded", () => {
     amountField.style.display = type !== "股票" && type !== "儲蓄保險" ? "block" : "none";
   }
 
-  typeSelect.addEventListener("change", toggleFields);
-
   function render() {
     if (!exchangeRates || Object.keys(exchangeRates).length === 0) {
       exchangeRates = JSON.parse(localStorage.getItem("exchangeRates") || "{}");
