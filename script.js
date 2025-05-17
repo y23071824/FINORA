@@ -71,11 +71,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   typeSelect.addEventListener("change", toggleFields);
   function render() {
-    assetList.innerHTML = "";
-    totalsList.innerHTML = "";
-    profitList.innerHTML = "";
-    let totals = {}, profits = {}, groupedAssets = {}, totalTWD = 0;
+  // 若匯率尚未載入，則從 localStorage 回填
+  if (!exchangeRates || Object.keys(exchangeRates).length === 0) {
+    exchangeRates = JSON.parse(localStorage.getItem("exchangeRates") || "{}");
+  }
 
+  assetList.innerHTML = "";
+  totalsList.innerHTML = "";
+  profitList.innerHTML = "";
+  let totals = {}, profits = {}, groupedAssets = {}, totalTWD = 0;
     assets.forEach((item, index) => {
       if (!groupedAssets[item.type]) groupedAssets[item.type] = [];
       groupedAssets[item.type].push({ item, index });
