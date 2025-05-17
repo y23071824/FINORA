@@ -20,6 +20,7 @@
         <option value="其他">其他</option>
       </select>
     </label>
+
     <div id="stock-fields" style="display: none;">
       <label>股票類型：
         <select id="stock-category">
@@ -30,17 +31,20 @@
       <label>股票代碼：<input type="text" id="stock-symbol" /></label>
       <label>股數：<input type="number" id="shares" /></label>
       <label>成本（每股）：<input type="number" id="cost" /></label>
-      <label>現價（每股）：<input type="number" id="price" step="0.00001" /></label>
+      <label>現價（每股）：<input type="number" id="price" step="0.0001" /></label>
     </div>
+
     <div id="insurance-fields" style="display: none;">
       <label>保單名稱：<input type="text" id="policy-name" /></label>
       <label>保額：<input type="number" id="policy-amount" /></label>
       <label>年期：<input type="number" id="policy-years" /></label>
       <label>年繳保費：<input type="number" id="policy-premium" /></label>
     </div>
+
     <div id="amount-field">
       <label>金額：<input type="number" id="amount" /></label>
     </div>
+
     <label>幣別：
       <select id="currency">
         <option value="TWD">TWD</option>
@@ -49,6 +53,7 @@
         <option value="EUR">EUR</option>
       </select>
     </label>
+
     <label>銀行：<input type="text" id="bank" list="bank-list" /></label>
     <label>備註：<input type="text" id="note" /></label>
     <button type="submit">儲存資產</button>
