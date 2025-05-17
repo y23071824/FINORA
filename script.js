@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
       const data = await res.json();
       exchangeRates = data.rates;
-      exchangeRates["TWD"] = 1; // 固定台幣為1
+      exchangeRates["TWD"] = 1;
       localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
     } catch (e) {
       console.error("匯率載入失敗", e);
@@ -237,7 +237,6 @@ document.addEventListener("DOMContentLoaded", () => {
       profitList.appendChild(li);
     }
 
-    // 更新銀行選單
     bankDatalist.innerHTML = "";
     bankHistory.forEach(bank => {
       const opt = document.createElement("option");
