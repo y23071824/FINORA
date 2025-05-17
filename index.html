@@ -20,7 +20,6 @@
         <option value="其他">其他</option>
       </select>
     </label>
-
     <div id="stock-fields" style="display: none;">
       <label>股票類型：
         <select id="stock-category">
@@ -33,18 +32,15 @@
       <label>成本（每股）：<input type="number" id="cost" /></label>
       <label>現價（每股）：<input type="number" id="price" step="0.0001" /></label>
     </div>
-
     <div id="insurance-fields" style="display: none;">
       <label>保單名稱：<input type="text" id="policy-name" /></label>
       <label>保額：<input type="number" id="policy-amount" /></label>
       <label>年期：<input type="number" id="policy-years" /></label>
       <label>年繳保費：<input type="number" id="policy-premium" /></label>
     </div>
-
     <div id="amount-field">
       <label>金額：<input type="number" id="amount" /></label>
     </div>
-
     <label>幣別：
       <select id="currency">
         <option value="TWD">TWD</option>
@@ -53,29 +49,22 @@
         <option value="EUR">EUR</option>
       </select>
     </label>
-
     <label>銀行：<input type="text" id="bank" list="bank-list" /></label>
     <label>備註：<input type="text" id="note" /></label>
     <button type="submit">儲存資產</button>
   </form>
-
   <datalist id="bank-list"></datalist>
-
   <h2>資產列表</h2>
   <ul id="asset-list"></ul>
-
   <h2>幣別加總</h2>
   <ul id="totals-list"></ul>
-
   <h2>股票盈餘</h2>
   <ul id="stock-profit-list"></ul>
-
   <h2>匯率換算計算機</h2>
   <label>金額：<input type="number" id="input-amount" /></label>
   <label>匯率：<input type="number" id="input-rate" /></label>
   <button onclick="convertCurrency()">換算</button>
   <div id="converted-result"></div>
-
   <script src="script.js"></script>
 </body>
 </html>

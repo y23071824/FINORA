@@ -24,8 +24,7 @@ h3 {
   margin-top: 1.5rem;
   color: #666;
 }
-form label,
-#exchange-section label {
+form label {
   display: block;
   margin-bottom: 0.5rem;
 }
@@ -47,13 +46,6 @@ button {
 }
 button:hover {
   opacity: 0.9;
-}
-#records-section,
-#exchange-section {
-  background: #e8f4f8;
-  padding: 1rem;
-  margin-top: 2rem;
-  border-radius: 8px;
 }
 ul {
   list-style: none;
