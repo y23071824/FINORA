@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {  
+document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("asset-form");
   const typeSelect = document.getElementById("type");
   const stockFields = document.getElementById("stock-fields");
@@ -20,6 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await res.json();
       exchangeRates = data.rates;
       localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
+      console.log("最新匯率資料", exchangeRates);
     } catch (e) {
       console.error("匯率載入失敗", e);
     }
@@ -69,17 +70,16 @@ document.addEventListener("DOMContentLoaded", () => {
     amountField.style.display = type !== "股票" && type !== "儲蓄保險" ? "block" : "none";
   }
 
-  typeSelect.addEventListener("change", toggleFields);
   function render() {
-  // 若匯率尚未載入，則從 localStorage 回填
-  if (!exchangeRates || Object.keys(exchangeRates).length === 0) {
-    exchangeRates = JSON.parse(localStorage.getItem("exchangeRates") || "{}");
-  }
+    if (!exchangeRates || Object.keys(exchangeRates).length === 0) {
+      exchangeRates = JSON.parse(localStorage.getItem("exchangeRates") || "{}");
+    }
 
-  assetList.innerHTML = "";
-  totalsList.innerHTML = "";
-  profitList.innerHTML = "";
-  let totals = {}, profits = {}, groupedAssets = {}, totalTWD = 0;
+    assetList.innerHTML = "";
+    totalsList.innerHTML = "";
+    profitList.innerHTML = "";
+    let totals = {}, profits = {}, groupedAssets = {}, totalTWD = 0;
+
     assets.forEach((item, index) => {
       if (!groupedAssets[item.type]) groupedAssets[item.type] = [];
       groupedAssets[item.type].push({ item, index });
@@ -91,9 +91,9 @@ document.addEventListener("DOMContentLoaded", () => {
       assetList.appendChild(header);
 
       groupedAssets[type].forEach(({ item, index }) => {
-        let extra = "";
         let currency = item.currency;
         let amount = 0;
+        let extra = "";
 
         if (item.type === "股票") {
           const cost = item.shares * item.cost;
@@ -101,16 +101,14 @@ document.addEventListener("DOMContentLoaded", () => {
           const profit = value - cost;
           amount = cost;
           profits[currency] = (profits[currency] || 0) + profit;
-          extra = `
-            <br>股票代碼：${item.stockSymbol || "未填寫"}
-            <br>股票類型：${item.stockCategory}
-            <br>股數：${item.shares}, 成本：$${item.cost}, 現價：$${item.price}
-            <br>總成本：$${cost.toFixed(2)}, 市值：$${value.toFixed(2)}, 盈餘：$${profit.toFixed(2)}`;
+          extra = `<br>股票代碼：${item.stockSymbol}
+                   <br>股票類型：${item.stockCategory}
+                   <br>股數：${item.shares}, 成本：$${item.cost}, 現價：$${item.price}
+                   <br>總成本：$${cost.toFixed(2)}, 市值：$${value.toFixed(2)}, 盈餘：$${profit.toFixed(2)}`;
         } else if (item.type === "儲蓄保險") {
           amount = item.policyAmount;
-          extra = `
-            <br>保單名稱：${item.policyName}
-            <br>保額：$${item.policyAmount}, 年期：${item.policyYears}, 保費：$${item.policyPremium}`;
+          extra = `<br>保單名稱：${item.policyName}
+                   <br>保額：$${item.policyAmount}, 年期：${item.policyYears}, 保費：$${item.policyPremium}`;
         } else {
           amount = parseFloat(item.amount) || 0;
           extra = `<br>金額：$${amount.toLocaleString()}`;
@@ -119,33 +117,30 @@ document.addEventListener("DOMContentLoaded", () => {
         totals[currency] = (totals[currency] || 0) + amount;
 
         const li = document.createElement("li");
-        li.innerHTML = `
-          ${item.currency} (${item.bank}) ${item.note ? '- ' + item.note : ''}
-          ${extra}
-          <div class="button-group">
-            <button onclick="editAsset(${index})">編輯</button>
-            <button onclick="deleteAsset(${index})">刪除</button>
-          </div>`;
+        li.innerHTML = `${currency} (${item.bank}) ${item.note || ""}${extra}
+                        <div class="button-group">
+                          <button onclick="editAsset(${index})">編輯</button>
+                          <button onclick="deleteAsset(${index})">刪除</button>
+                        </div>`;
         assetList.appendChild(li);
       });
     }
 
     for (const ccy in totals) {
-  const rate = ccy === "TWD" ? 1 : exchangeRates[ccy];
-  const total = totals[ccy];
-  const profit = profits[ccy] || 0;
+      const rate = ccy === "TWD" ? 1 : exchangeRates[ccy];
+      const total = totals[ccy];
+      const profit = profits[ccy] || 0;
+      let totalTwd = 0;
+      let rateText = "查無匯率";
+      if (typeof rate === "number" && rate > 0) {
+        totalTwd = (total + profit) * rate;
+        totalTWD += totalTwd;
+        rateText = `$${totalTwd.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+      }
 
-  let totalTwd = 0;
-  let rateText = "查無匯率";
-  if (typeof rate === "number" && rate > 0) {
-    totalTwd = (total + profit) * rate;
-    totalTWD += totalTwd;
-    rateText = `$${totalTwd.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-  }
-
-  const li = document.createElement("li");
-  li.innerHTML = `${ccy}: $${(total + profit).toLocaleString()}（盈餘：$${profit.toLocaleString()}）<br>折合台幣：${rateText}`;
-  totalsList.appendChild(li);
+      const li = document.createElement("li");
+      li.innerHTML = `${ccy}: $${(total + profit).toLocaleString()}（盈餘：$${profit.toLocaleString()}）<br>折合台幣：${rateText}`;
+      totalsList.appendChild(li);
     }
 
     const totalLine = document.createElement("li");
@@ -160,6 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
       bankDatalist.appendChild(opt);
     });
   }
+
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     const type = document.getElementById("type").value;
@@ -205,15 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
     render();
   });
 
-  window.deleteAsset = (index) => {
-    if (confirm("確定要刪除？")) {
-      assets.splice(index, 1);
-      localStorage.setItem("assets", JSON.stringify(assets));
-      render();
-    }
-  };
-
-  window.editAsset = (index) => {
+  window.editAsset = function(index) {
     const item = assets[index];
     editIndex = index;
     document.getElementById("type").value = item.type;
@@ -238,15 +226,23 @@ document.addEventListener("DOMContentLoaded", () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  window.convertCurrency = () => {
+  window.deleteAsset = function(index) {
+    if (confirm("確定要刪除？")) {
+      assets.splice(index, 1);
+      localStorage.setItem("assets", JSON.stringify(assets));
+      render();
+    }
+  };
+
+  window.convertCurrency = function () {
     const amt = parseFloat(document.getElementById("input-amount").value);
     const rate = parseFloat(document.getElementById("input-rate").value);
     const result = document.getElementById("converted-result");
     if (isNaN(amt) || isNaN(rate)) {
       result.textContent = "請輸入正確金額與匯率";
-      return;
+    } else {
+      result.textContent = `換算後金額：$${(amt * rate).toLocaleString()}`;
     }
-    result.textContent = `換算後金額：$${(amt * rate).toLocaleString()}`;
   };
 
   fetchExchangeRates();
