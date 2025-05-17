@@ -219,7 +219,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     for (const ccy in totals) {
       const total = totals[ccy] + (profits[ccy] || 0);
-      const rate = exchangeRates[ccy] || 0;
+      const rate = parseFloat(exchangeRates[ccy]) || 0;
       const twd = rate * total;
       totalTWD += twd;
 
