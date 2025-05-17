@@ -177,6 +177,8 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   function render() {
+    console.log("目前資產：", assets);
+
     if (!exchangeRates || Object.keys(exchangeRates).length === 0) {
       exchangeRates = JSON.parse(localStorage.getItem("exchangeRates") || "{}");
     }
@@ -197,7 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
         profits[currency] = (profits[currency] || 0) + profit;
         display = `股票代碼：${item.stockSymbol}｜類型：${item.stockCategory}｜股數：${item.shares}<br>成本：$${item.cost}，現價：$${item.price}<br>總成本：$${cost.toFixed(2)}，市值：$${value.toFixed(2)}，盈餘：$${profit.toFixed(2)}`;
       } else if (item.type === "儲蓄保險") {
-        amount = item.policyAmount;
+        amount = parseFloat(item.policyAmount) || 0;
         display = `保單：${item.policyName}<br>保額：$${item.policyAmount}，年期：${item.policyYears}，保費：$${item.policyPremium}`;
       } else {
         amount = parseFloat(item.amount) || 0;
