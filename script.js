@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", () => {  
   const form = document.getElementById("asset-form");
   const typeSelect = document.getElementById("type");
@@ -71,7 +70,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   typeSelect.addEventListener("change", toggleFields);
-
   function render() {
     assetList.innerHTML = "";
     totalsList.innerHTML = "";
@@ -132,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const rate = ccy === "TWD" ? 1 : (exchangeRates[ccy] || 0);
       const total = totals[ccy];
       const profit = profits[ccy] || 0;
-      const totalTwd = (total + profit) * rate;
+      const totalTwd = rate ? (total + profit) * rate : 0;
       totalTWD += totalTwd;
       const li = document.createElement("li");
       li.innerHTML = `${ccy}: $${(total + profit).toLocaleString()}（盈餘：$${profit.toLocaleString()}）
@@ -152,7 +150,6 @@ document.addEventListener("DOMContentLoaded", () => {
       bankDatalist.appendChild(opt);
     });
   }
-
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     const type = document.getElementById("type").value;
