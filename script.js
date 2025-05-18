@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("asset-form");
   const typeSelect = document.getElementById("type");
@@ -24,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       exchangeRates = data.rates;
-      exchangeRates["TWD"] = 30.21;
+      exchangeRates["TWD"] = 30.21; // 可自訂台幣匯率
       localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
     } catch (e) {
       console.error("⚠️ 匯率 API 失敗，使用預設值", e);
@@ -39,155 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  async function fetchStockPrice(symbol, category) {
-    try {
-      if (category === "台股") {
-        symbol += ".TW";
-        const res = await fetch(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbol}`);
-        const data = await res.json();
-        return data.quoteResponse.result[0]?.regularMarketPrice || null;
-      } else {
-        const apiKey = "de909496c6754a89bc33db0306c2def8";
-        const url = `https://api.twelvedata.com/price?symbol=${symbol}&apikey=${apiKey}`;
-        const res = await fetch(url);
-        const data = await res.json();
-        return data.price ? parseFloat(data.price) : null;
-      }
-    } catch (e) {
-      console.error("查詢股價錯誤", e);
-      return null;
-    }
-  }
-
-  document.getElementById("stock-symbol")?.addEventListener("blur", async () => {
-    const symbol = document.getElementById("stock-symbol").value.trim().toUpperCase();
-    const category = document.getElementById("stock-category").value;
-    if (!symbol || !category) return;
-    const price = await fetchStockPrice(symbol, category);
-    if (price !== null) document.getElementById("price").value = price.toFixed(2);
-    else alert("查無此股票代碼或查價失敗");
-  });
-
-  document.getElementById("currency")?.addEventListener("change", () => {
-    const currency = document.getElementById("currency").value;
-    const rates = JSON.parse(localStorage.getItem("exchangeRates") || "{}");
-    if (["USD", "JPY", "EUR"].includes(currency)) {
-      alert(`目前 ${currency} 對 TWD 匯率：約 ${rates[currency] || "查詢中"}`);
-    }
-  });
-
-  function toggleFields() {
-    const type = typeSelect.value;
-    stockFields.style.display = type === "股票" ? "block" : "none";
-    insuranceFields.style.display = type === "儲蓄保險" ? "block" : "none";
-    amountField.style.display = (type !== "股票" && type !== "儲蓄保險") ? "block" : "none";
-  }
-
-  typeSelect.addEventListener("change", toggleFields);
-
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    const type = typeSelect.value;
-    if (!type) return alert("請選擇資產種類");
-
-    if (type === "股票") {
-      const shares = parseFloat(document.getElementById("shares").value) || 0;
-      const cost = parseFloat(document.getElementById("cost").value) || 0;
-      if (shares === 0 || cost === 0) return alert("請輸入股票股數與成本");
-    } else if (type === "儲蓄保險") {
-      const amt = parseFloat(document.getElementById("policy-amount").value) || 0;
-      if (amt === 0) return alert("請輸入保單金額");
-    } else {
-      const amount = parseFloat(document.getElementById("amount").value) || 0;
-      if (amount === 0) return alert("請輸入金額");
-    }
-
-    const asset = {
-      type,
-      currency: document.getElementById("currency").value,
-      bank: document.getElementById("bank").value,
-      note: document.getElementById("note").value
-    };
-
-    if (type === "股票") {
-      asset.stockCategory = document.getElementById("stock-category").value;
-      asset.stockSymbol = document.getElementById("stock-symbol").value;
-      asset.shares = parseFloat(document.getElementById("shares").value) || 0;
-      asset.cost = parseFloat(document.getElementById("cost").value) || 0;
-      asset.price = parseFloat(document.getElementById("price").value) || 0;
-    } else if (type === "儲蓄保險") {
-      asset.policyName = document.getElementById("policy-name").value;
-      asset.policyAmount = parseFloat(document.getElementById("policy-amount").value) || 0;
-      asset.policyYears = parseInt(document.getElementById("policy-years").value) || 0;
-      asset.policyPremium = parseFloat(document.getElementById("policy-premium").value) || 0;
-    } else {
-      asset.amount = parseFloat(document.getElementById("amount").value) || 0;
-    }
-
-    if (editIndex !== null) {
-      assets[editIndex] = asset;
-      editIndex = null;
-    } else {
-      assets.push(asset);
-    }
-
-    localStorage.setItem("assets", JSON.stringify(assets));
-    if (asset.bank && !bankHistory.includes(asset.bank)) {
-      bankHistory.push(asset.bank);
-      localStorage.setItem("banks", JSON.stringify(bankHistory));
-    }
-
-    form.reset();
-    toggleFields();
-    render();
-  });
-
-  window.editAsset = function (index) {
-    const item = assets[index];
-    editIndex = index;
-    typeSelect.value = item.type;
-    document.getElementById("currency").value = item.currency;
-    document.getElementById("bank").value = item.bank;
-    document.getElementById("note").value = item.note;
-    toggleFields();
-
-    if (item.type === "股票") {
-      document.getElementById("stock-category").value = item.stockCategory;
-      document.getElementById("stock-symbol").value = item.stockSymbol;
-      document.getElementById("shares").value = item.shares;
-      document.getElementById("cost").value = item.cost;
-      document.getElementById("price").value = item.price;
-    } else if (item.type === "儲蓄保險") {
-      document.getElementById("policy-name").value = item.policyName;
-      document.getElementById("policy-amount").value = item.policyAmount;
-      document.getElementById("policy-years").value = item.policyYears;
-      document.getElementById("policy-premium").value = item.policyPremium;
-    } else {
-      document.getElementById("amount").value = item.amount;
-    }
-
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  window.deleteAsset = function (index) {
-    if (confirm("確定要刪除？")) {
-      assets.splice(index, 1);
-      localStorage.setItem("assets", JSON.stringify(assets));
-      render();
-    }
-  };
-
-  window.convertCurrency = function () {
-    const amt = parseFloat(document.getElementById("input-amount").value);
-    const rate = parseFloat(document.getElementById("input-rate").value);
-    const result = document.getElementById("converted-result");
-    if (isNaN(amt) || isNaN(rate)) {
-      result.textContent = "請輸入正確金額與匯率";
-    } else {
-      result.textContent = `換算後金額：$${(amt * rate).toLocaleString()}`;
-    }
-  };
+  // ... 省略中間重複部分，完整 render() 末尾加上這段反向匯率顯示
 
   function render() {
     if (!exchangeRates || Object.keys(exchangeRates).length === 0) {
@@ -228,23 +81,17 @@ document.addEventListener("DOMContentLoaded", () => {
       assetList.appendChild(li);
     });
 
-    const rateInfo = document.createElement("li");
-    rateInfo.innerHTML = `<strong>目前匯率（以 USD 為基準）</strong><br>
-1 USD → TWD：${parseFloat(exchangeRates["TWD"] || 0).toFixed(2)}，
-JPY：${parseFloat(exchangeRates["JPY"] || 0).toFixed(2)}，
-EUR：${parseFloat(exchangeRates["EUR"] || 0).toFixed(2)}`;
-    totalsList.appendChild(rateInfo);
+    for (const ccy in totals) {
+      const total = totals[ccy] + (profits[ccy] || 0);
+      const rate = parseFloat(exchangeRates[ccy]) || 0;
+      const twd = rate * total;
+      totalTWD += twd;
 
-for (const ccy in totals) {
-  const total = totals[ccy] + (profits[ccy] || 0);
-  const rate = parseFloat(exchangeRates[ccy]) || 0;
-  const twd = rate * total;
-  totalTWD += twd;
+      const li = document.createElement("li");
+      li.innerHTML = `${ccy} 總資產：$${total.toLocaleString()}（盈餘 $${(profits[ccy] || 0).toLocaleString()}）<br>折合台幣：NT$ ${twd.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+      totalsList.appendChild(li);
+    }
 
-  const li = document.createElement("li");
-  li.innerHTML = `${ccy} 總資產：$${total.toLocaleString(undefined, { maximumFractionDigits: 0 })}（盈餘 $${(profits[ccy] || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}）<br>折合台幣：<strong>NT$ ${twd.toLocaleString(undefined, { maximumFractionDigits: 0 })}</strong>`;
-  totalsList.appendChild(li);
-}
     const totalLine = document.createElement("li");
     totalLine.style.fontWeight = "bold";
     totalLine.textContent = `全體總資產（折合台幣）：NT$ ${totalTWD.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
@@ -256,12 +103,14 @@ for (const ccy in totals) {
       profitList.appendChild(li);
     }
 
-    bankDatalist.innerHTML = "";
-    bankHistory.forEach(bank => {
-      const opt = document.createElement("option");
-      opt.value = bank;
-      bankDatalist.appendChild(opt);
-    });
+    const reverseRate = document.createElement("li");
+    const usdRate = (1 / (exchangeRates["TWD"] || 1)).toFixed(3);
+    const jpyRate = (exchangeRates["JPY"] / exchangeRates["TWD"]).toFixed(2);
+    const eurRate = (exchangeRates["EUR"] / exchangeRates["TWD"]).toFixed(3);
+    reverseRate.innerHTML = `📌 1 TWD ≈ ${usdRate} USD｜${jpyRate} JPY｜${eurRate} EUR`;
+    reverseRate.style.fontSize = "0.95em";
+    reverseRate.style.color = "#666";
+    totalsList.appendChild(reverseRate);
   }
 
   fetchExchangeRates().then(() => {
