@@ -15,16 +15,31 @@ document.addEventListener("DOMContentLoaded", () => {
   let exchangeRates = {};
   let editIndex = null;
 
-  async function fetchExchangeRates() {
-    try {
-      const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
-      const data = await res.json();
-      exchangeRates = data.rates;
-      exchangeRates["TWD"] = 1;
-      localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
-    } catch (e) {
-      console.error("匯率載入失敗", e);
+ async function fetchExchangeRates() {
+  try {
+    const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
+    const data = await res.json();
+
+    if (!data || !data.rates || Object.keys(data.rates).length === 0) {
+      throw new Error("API 回傳資料為空");
     }
+
+    exchangeRates = data.rates;
+    exchangeRates["TWD"] = 1;
+    localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
+  } catch (e) {
+    console.error("⚠️ 匯率 API 失敗，使用備用預設值", e);
+    exchangeRates = {
+      USD: 1,
+      TWD: 1,
+      JPY: 0.0067,
+      EUR: 1.1
+    };
+    localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
+    alert("⚠️ 無法取得即時匯率，已套用預設值（僅供參考）");
+  }
+}
+
   }
 
   async function fetchStockPrice(symbol, category) {
