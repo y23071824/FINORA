@@ -40,47 +40,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
- document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("asset-form");
-  const typeSelect = document.getElementById("type");
-  const stockFields = document.getElementById("stock-fields");
-  const insuranceFields = document.getElementById("insurance-fields");
-  const amountField = document.getElementById("amount-field");
-  const assetList = document.getElementById("asset-list");
-  const totalsList = document.getElementById("totals-list");
-  const profitList = document.getElementById("stock-profit-list");
-  const bankDatalist = document.getElementById("bank-list");
-
-  let assets = JSON.parse(localStorage.getItem("assets") || "[]");
-  let bankHistory = JSON.parse(localStorage.getItem("banks") || "[]");
-  let exchangeRates = {};
-  let editIndex = null;
-
-  async function fetchExchangeRates() {
-    try {
-      const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
-      const data = await res.json();
-
-      if (!data || !data.rates || Object.keys(data.rates).length === 0) {
-        throw new Error("API 回傳資料為空");
-      }
-
-      exchangeRates = data.rates;
-      exchangeRates["TWD"] = 1;
-      localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
-    } catch (e) {
-      console.error("⚠️ 匯率 API 失敗，使用預設值", e);
-      exchangeRates = {
-        USD: 1,
-        TWD: 1,
-        JPY: 0.0067,
-        EUR: 1.1
-      };
-      localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
-      alert("⚠️ 無法取得即時匯率，已使用預設值（僅供參考）");
-    }
-  }
-
   async function fetchStockPrice(symbol, category) {
     try {
       if (category === "台股") {
