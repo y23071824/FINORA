@@ -1,6 +1,3 @@
-
-// Finora 資產登記系統 JS
-
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("asset-form");
   const typeSelect = document.getElementById("type");
@@ -21,17 +18,12 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
       const data = await res.json();
-      if (!data || !data.rates || Object.keys(data.rates).length === 0) {
-        throw new Error("API 回傳資料為空");
-      }
-
       exchangeRates = {
         USD: 1,
         TWD: data.rates.TWD || 30.21,
         JPY: data.rates.JPY || 151.4,
         EUR: data.rates.EUR || 0.92
       };
-
       localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
     } catch (e) {
       console.error("⚠️ 匯率 API 失敗，使用預設值", e);
@@ -65,8 +57,8 @@ document.addEventListener("DOMContentLoaded", () => {
       return null;
     }
   }
-
-  document.getElementById("stock-symbol")?.addEventListener("blur", async () => {
+  // ===== Part 2：表單處理與存儲 =====
+document.getElementById("stock-symbol")?.addEventListener("blur", async () => {
     const symbol = document.getElementById("stock-symbol").value.trim().toUpperCase();
     const category = document.getElementById("stock-category").value;
     if (!symbol || !category) return;
@@ -94,6 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
+
     const type = typeSelect.value;
     if (!type) return alert("請選擇資產種類");
 
@@ -171,10 +164,10 @@ document.addEventListener("DOMContentLoaded", () => {
       render();
     }
   };
-
-  window.convertCurrency = function () {
-    const amt = parseFloat(document.getElementById("input-amount").value);
-    const rate = parseFloat(document.getElementById("input-rate").value);
+  // ===== Part 3：畫面渲染與計算 =====
+window.convertCurrency = function () {
+    const amt = parseFloat(document.getElementById("input-amount")?.value);
+    const rate = parseFloat(document.getElementById("input-rate")?.value);
     const result = document.getElementById("converted-result");
     if (isNaN(amt) || isNaN(rate)) {
       result.textContent = "請輸入正確金額與匯率";
@@ -267,9 +260,12 @@ EUR：${parseFloat(exchangeRates["EUR"] || 0).toFixed(2)}`;
       bankDatalist.appendChild(opt);
     });
   }
-
+// ===== Part 4：啟動函式與其他 =====
+// 初始化匯率與畫面
   fetchExchangeRates().then(() => {
     toggleFields();
     render();
   });
 });
+
+
