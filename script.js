@@ -19,16 +19,14 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
       const data = await res.json();
-
       if (!data || !data.rates || Object.keys(data.rates).length === 0) {
         throw new Error("API 回傳資料為空");
       }
-
       exchangeRates = data.rates;
-      exchangeRates["TWD"] = 30.21; // 可自訂台幣匯率
+      exchangeRates["TWD"] = 30.21;
       localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
     } catch (e) {
-      console.error("⚠️ 匯率 API 失敗，使用預設值", e);
+      console.error("\u26a0\ufe0f 匯率 API 失敗，使用預設值", e);
       exchangeRates = {
         USD: 1,
         TWD: 30.21,
@@ -36,13 +34,13 @@ document.addEventListener("DOMContentLoaded", () => {
         EUR: 0.92
       };
       localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
-      alert("⚠️ 無法取得即時匯率，已使用預設值（僅供參考）");
+      alert("\u26a0\ufe0f 無法取得即時匯率，已使用預設值（僅供參考）");
     }
   }
 
   async function fetchStockPrice(symbol, category) {
     try {
-      if (category === "台股") {
+      if (category === "\u53f0\u80a1") {
         symbol += ".TW";
         const res = await fetch(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbol}`);
         const data = await res.json();
@@ -55,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return data.price ? parseFloat(data.price) : null;
       }
     } catch (e) {
-      console.error("查詢股價錯誤", e);
+      console.error("\u67e5\u8a62\u80a1\u50f9\u932f\u8aa4", e);
       return null;
     }
   }
@@ -66,22 +64,22 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!symbol || !category) return;
     const price = await fetchStockPrice(symbol, category);
     if (price !== null) document.getElementById("price").value = price.toFixed(2);
-    else alert("查無此股票代碼或查價失敗");
+    else alert("\u67e5\u7121\u6b64\u80a1\u7968\u4ee3\u78bc\u6216\u67e5\u50f9\u5931\u6557");
   });
 
   document.getElementById("currency")?.addEventListener("change", () => {
     const currency = document.getElementById("currency").value;
     const rates = JSON.parse(localStorage.getItem("exchangeRates") || "{}");
     if (["USD", "JPY", "EUR"].includes(currency)) {
-      alert(`目前 ${currency} 對 TWD 匯率：約 ${rates[currency] || "查詢中"}`);
+      alert(`\u76ee\u524d ${currency} \u5c0d TWD \u532f\u7387\uff1a\u7d04 ${rates[currency] || "\u67e5\u8a62\u4e2d"}`);
     }
   });
 
   function toggleFields() {
     const type = typeSelect.value;
-    stockFields.style.display = type === "股票" ? "block" : "none";
-    insuranceFields.style.display = type === "儲蓄保險" ? "block" : "none";
-    amountField.style.display = (type !== "股票" && type !== "儲蓄保險") ? "block" : "none";
+    stockFields.style.display = type === "\u80a1\u7968" ? "block" : "none";
+    insuranceFields.style.display = type === "\u5132\u84c4\u4fdd\u96aa" ? "block" : "none";
+    amountField.style.display = (type !== "\u80a1\u7968" && type !== "\u5132\u84c4\u4fdd\u96aa") ? "block" : "none";
   }
 
   typeSelect.addEventListener("change", toggleFields);
