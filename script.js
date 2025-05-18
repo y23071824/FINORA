@@ -24,15 +24,15 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       exchangeRates = data.rates;
-      exchangeRates["TWD"] = 30;
+      exchangeRates["TWD"] = 30.21;
       localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
     } catch (e) {
       console.error("⚠️ 匯率 API 失敗，使用預設值", e);
       exchangeRates = {
         USD: 1,
         TWD: 30.21,
-        JPY: 145.94,
-        EUR: 0.9
+        JPY: 151.4,
+        EUR: 0.92
       };
       localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
       alert("⚠️ 無法取得即時匯率，已使用預設值（僅供參考）");
@@ -235,17 +235,16 @@ JPY：${parseFloat(exchangeRates["JPY"] || 0).toFixed(2)}，
 EUR：${parseFloat(exchangeRates["EUR"] || 0).toFixed(2)}`;
     totalsList.appendChild(rateInfo);
 
-    for (const ccy in totals) {
-      const total = totals[ccy] + (profits[ccy] || 0);
-      const rate = parseFloat(exchangeRates[ccy]) || 0;
-      const twd = rate * total;
-      totalTWD += twd;
+for (const ccy in totals) {
+  const total = totals[ccy] + (profits[ccy] || 0);
+  const rate = parseFloat(exchangeRates[ccy]) || 0;
+  const twd = rate * total;
+  totalTWD += twd;
 
-      const li = document.createElement("li");
-      li.innerHTML = `${ccy} 總資產：$${total.toLocaleString()}（盈餘 $${(profits[ccy] || 0).toLocaleString()}）<br>折合台幣：NT$ ${twd.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-      totalsList.appendChild(li);
-    }
-
+  const li = document.createElement("li");
+  li.innerHTML = `${ccy} 總資產：$${total.toLocaleString(undefined, { maximumFractionDigits: 0 })}（盈餘 $${(profits[ccy] || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}）<br>折合台幣：<strong>NT$ ${twd.toLocaleString(undefined, { maximumFractionDigits: 0 })}</strong>`;
+  totalsList.appendChild(li);
+}
     const totalLine = document.createElement("li");
     totalLine.style.fontWeight = "bold";
     totalLine.textContent = `全體總資產（折合台幣）：NT$ ${totalTWD.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
