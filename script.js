@@ -17,28 +17,35 @@ document.addEventListener("DOMContentLoaded", () => {
   let editIndex = null;
 
   async function fetchExchangeRates() {
-    try {
-      const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
-      const data = await res.json();
+  try {
+    const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
+    const data = await res.json();
 
-      if (!data || !data.rates || Object.keys(data.rates).length === 0) {
-        throw new Error("API 回傳資料為空");
-      }
-
-      exchangeRates = data.rates;
-      exchangeRates["TWD"] = 30.21; // 強制設定 TWD 匯率
-      localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
-    } catch (e) {
-      console.error("⚠️ 匯率 API 失敗，使用預設值", e);
-      exchangeRates = {
-        USD: 1,
-        TWD: 30.21,
-        JPY: 151.4,
-        EUR: 0.92
-      };
-      localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
-      alert("⚠️ 無法取得即時匯率，已使用預設值（僅供參考）");
+    if (!data || !data.rates || Object.keys(data.rates).length === 0) {
+      throw new Error("API 回傳資料為空");
     }
+
+    // 安全寫入匯率，若缺少任一幣別就使用預設值補齊
+    exchangeRates = {
+      USD: 1,
+      TWD: data.rates.TWD || 30.21,
+      JPY: data.rates.JPY || 151.4,
+      EUR: data.rates.EUR || 0.92
+    };
+
+    localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
+  } catch (e) {
+    console.error("⚠️ 匯率 API 失敗，使用預設值", e);
+    exchangeRates = {
+      USD: 1,
+      TWD: 30.21,
+      JPY: 151.4,
+      EUR: 0.92
+    };
+    localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
+    alert("⚠️ 無法取得即時匯率，已使用預設值（僅供參考）");
+  }
+}
 
   async function fetchStockPrice(symbol, category) {
     try {
