@@ -217,36 +217,54 @@ document.addEventListener("DOMContentLoaded", () => {
       assetList.appendChild(li);
     });
 
-    for (const ccy in totals) {
-      const total = totals[ccy] + (profits[ccy] || 0);
-      const rate = parseFloat(exchangeRates[ccy]) || 0;
-      const twd = rate * total;
-      totalTWD += twd;
+    totals[currency] = (totals[currency] || 0) + amount;
 
-      const li = document.createElement("li");
-      li.innerHTML = `${ccy} 總資產：$${total.toLocaleString()}（盈餘 $${(profits[ccy] || 0).toLocaleString()}）<br>折合台幣：NT$ ${twd.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-      totalsList.appendChild(li);
-    }
+    const li = document.createElement("li");
+    li.innerHTML = `<strong>${item.type}</strong>（${currency}｜${item.bank}）${item.note ? "｜備註：" + item.note : ""}<br>${display}
+      <div class="button-group">
+        <button onclick="editAsset(${index})">編輯</button>
+        <button onclick="deleteAsset(${index})">刪除</button>
+      </div>`;
+    assetList.appendChild(li);
+  });
 
-    const totalLine = document.createElement("li");
-    totalLine.style.fontWeight = "bold";
-    totalLine.textContent = `全體總資產（折合台幣）：NT$ ${totalTWD.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-    totalsList.appendChild(totalLine);
+  // 顯示目前匯率（放在幣別加總最上方）
+  const rateInfo = document.createElement("li");
+  rateInfo.innerHTML = `<strong>目前匯率</strong><br>
+    USD → TWD：${parseFloat(exchangeRates["USD"] || 0).toFixed(2)}，
+    JPY → TWD：${parseFloat(exchangeRates["JPY"] || 0).toFixed(2)}，
+    EUR → TWD：${parseFloat(exchangeRates["EUR"] || 0).toFixed(2)}`;
+  totalsList.appendChild(rateInfo);
 
-    for (const ccy in profits) {
-      const li = document.createElement("li");
-      li.textContent = `${ccy} 股票盈餘：$${profits[ccy].toLocaleString()}`;
-      profitList.appendChild(li);
-    }
+  for (const ccy in totals) {
+    const total = totals[ccy] + (profits[ccy] || 0);
+    const rate = parseFloat(exchangeRates[ccy]) || 0;
+    const twd = rate * total;
+    totalTWD += twd;
 
-    bankDatalist.innerHTML = "";
-    bankHistory.forEach(bank => {
-      const opt = document.createElement("option");
-      opt.value = bank;
-      bankDatalist.appendChild(opt);
-    });
+    const li = document.createElement("li");
+    li.innerHTML = `${ccy} 總資產：$${total.toLocaleString()}（盈餘 $${(profits[ccy] || 0).toLocaleString()}）<br>折合台幣：NT$ ${twd.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+    totalsList.appendChild(li);
   }
 
+  const totalLine = document.createElement("li");
+  totalLine.style.fontWeight = "bold";
+  totalLine.textContent = `全體總資產（折合台幣）：NT$ ${totalTWD.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+  totalsList.appendChild(totalLine);
+
+  for (const ccy in profits) {
+    const li = document.createElement("li");
+    li.textContent = `${ccy} 股票盈餘：$${profits[ccy].toLocaleString()}`;
+    profitList.appendChild(li);
+  }
+
+  bankDatalist.innerHTML = "";
+  bankHistory.forEach(bank => {
+    const opt = document.createElement("option");
+    opt.value = bank;
+    bankDatalist.appendChild(opt);
+  });
+  }
   fetchExchangeRates().then(() => {
     toggleFields();
     render();
