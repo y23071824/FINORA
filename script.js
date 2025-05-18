@@ -24,7 +24,6 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error("API 回傳資料為空");
       }
       exchangeRates = data.rates;
-      exchangeRates["TWD"] = 30.21; // 可自訂台幣匯率
       localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
     } catch (e) {
       console.error("\u26a0\ufe0f 匯率 API 失敗，使用預設值", e);
