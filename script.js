@@ -29,10 +29,10 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (e) {
       console.error("⚠️ 匯率 API 失敗，使用預設值", e);
       exchangeRates = {
-        USD: 30,
-        TWD: 1,
-        JPY: 0.21,
-        EUR: 33.7
+        USD: 1,
+        TWD: 30.21,
+        JPY: 145.94,
+        EUR: 0.9
       };
       localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
       alert("⚠️ 無法取得即時匯率，已使用預設值（僅供參考）");
