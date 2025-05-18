@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       exchangeRates = data.rates;
-      exchangeRates["TWD"] = 1;
+      exchangeRates["TWD"] = 30;
       localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
     } catch (e) {
       console.error("⚠️ 匯率 API 失敗，使用預設值", e);
