@@ -244,14 +244,14 @@ EUR：${parseFloat(exchangeRates["EUR"] || 0).toFixed(2)}`;
     totalsList.appendChild(rateInfo);
 
     for (const ccy in totals) {
-      const total = totals[ccy] + (profits[ccy] || 0);
-      const rate = parseFloat(exchangeRates[ccy]) || 0;
-      const twd = rate * total;
-      totalTWD += twd;
+  const total = totals[ccy] + (profits[ccy] || 0);
+  const rate = parseFloat(exchangeRates[ccy]) || 0;
+  const twd = rate * total;
+  totalTWD += twd;
 
-      const li = document.createElement("li");
-      li.innerHTML = `${ccy} 總資產：$${total.toLocaleString()}（盈餘 $${(profits[ccy] || 0).toLocaleString()}）<br>折合台幣：NT$ ${twd.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-      totalsList.appendChild(li);
+  const li = document.createElement("li");
+  li.innerHTML = `${ccy} 總資產：$${total.toLocaleString()}（盈餘 $${(profits[ccy] || 0).toLocaleString()}）<br>折合台幣：NT$ ${twd.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+  totalsList.appendChild(li);
     }
 
     const totalLine = document.createElement("li");
@@ -280,7 +280,8 @@ EUR：${parseFloat(exchangeRates["EUR"] || 0).toFixed(2)}`;
     });
   }
 
-  fetchExchangeRates().then(() => {
+  fetchExchangeRates(exchangeRates["USD"] = 1;        // 美金對美金自己是1
+exchangeRates["TWD"] = 30.21;    // 強制台幣補值).then(() => {
     toggleFields();
     render();
   });
