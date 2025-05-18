@@ -280,9 +280,7 @@ EUR：${parseFloat(exchangeRates["EUR"] || 0).toFixed(2)}`;
     });
   }
 
-  fetchExchangeRates(exchangeRates["USD"] = 1;        // 美金對美金自己是1
-exchangeRates["TWD"] = 30.21;    // 強制台幣補值).then(() => {
-    toggleFields();
-    render();
-  });
+fetchExchangeRates().then(() => {
+  toggleFields();
+  render();
 });
