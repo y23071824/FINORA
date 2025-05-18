@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("asset-form");
   const typeSelect = document.getElementById("type");
@@ -15,31 +14,29 @@ document.addEventListener("DOMContentLoaded", () => {
   let exchangeRates = {};
   let editIndex = null;
 
- async function fetchExchangeRates() {
-  try {
-    const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
-    const data = await res.json();
+  async function fetchExchangeRates() {
+    try {
+      const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
+      const data = await res.json();
 
-    if (!data || !data.rates || Object.keys(data.rates).length === 0) {
-      throw new Error("API 回傳資料為空");
+      if (!data || !data.rates || Object.keys(data.rates).length === 0) {
+        throw new Error("API 回傳資料為空");
+      }
+
+      exchangeRates = data.rates;
+      exchangeRates["TWD"] = 1;
+      localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
+    } catch (e) {
+      console.error("⚠️ 匯率 API 失敗，使用預設值", e);
+      exchangeRates = {
+        USD: 1,
+        TWD: 1,
+        JPY: 0.0067,
+        EUR: 1.1
+      };
+      localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
+      alert("⚠️ 無法取得即時匯率，已使用預設值（僅供參考）");
     }
-
-    exchangeRates = data.rates;
-    exchangeRates["TWD"] = 1;
-    localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
-  } catch (e) {
-    console.error("⚠️ 匯率 API 失敗，使用備用預設值", e);
-    exchangeRates = {
-      USD: 1,
-      TWD: 1,
-      JPY: 0.0067,
-      EUR: 1.1
-    };
-    localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
-    alert("⚠️ 無法取得即時匯率，已套用預設值（僅供參考）");
-  }
-}
-
   }
 
   async function fetchStockPrice(symbol, category) {
@@ -193,8 +190,6 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   function render() {
-    console.log("目前資產：", assets);
-
     if (!exchangeRates || Object.keys(exchangeRates).length === 0) {
       exchangeRates = JSON.parse(localStorage.getItem("exchangeRates") || "{}");
     }
@@ -233,12 +228,11 @@ document.addEventListener("DOMContentLoaded", () => {
       assetList.appendChild(li);
     });
 
-    // 顯示目前匯率
     const rateInfo = document.createElement("li");
     rateInfo.innerHTML = `<strong>目前匯率（以 USD 為基準）</strong><br>
-  1 USD → TWD：${parseFloat(exchangeRates["TWD"] || 0).toFixed(2)}，
-  JPY：${parseFloat(exchangeRates["JPY"] || 0).toFixed(2)}，
-  EUR：${parseFloat(exchangeRates["EUR"] || 0).toFixed(2)}`;
+1 USD → TWD：${parseFloat(exchangeRates["TWD"] || 0).toFixed(2)}，
+JPY：${parseFloat(exchangeRates["JPY"] || 0).toFixed(2)}，
+EUR：${parseFloat(exchangeRates["EUR"] || 0).toFixed(2)}`;
     totalsList.appendChild(rateInfo);
 
     for (const ccy in totals) {
