@@ -220,10 +220,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 顯示目前匯率
     const rateInfo = document.createElement("li");
-    rateInfo.innerHTML = `<strong>目前匯率</strong><br>
-      USD → TWD：${parseFloat(exchangeRates["USD"] || 0).toFixed(2)}，
-      JPY → TWD：${parseFloat(exchangeRates["JPY"] || 0).toFixed(2)}，
-      EUR → TWD：${parseFloat(exchangeRates["EUR"] || 0).toFixed(2)}`;
+    rateInfo.innerHTML = `<strong>目前匯率（以 USD 為基準）</strong><br>
+  1 USD → TWD：${parseFloat(exchangeRates["TWD"] || 0).toFixed(2)}，
+  JPY：${parseFloat(exchangeRates["JPY"] || 0).toFixed(2)}，
+  EUR：${parseFloat(exchangeRates["EUR"] || 0).toFixed(2)}`;
     totalsList.appendChild(rateInfo);
 
     for (const ccy in totals) {
