@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
         EUR: 0.92
       };
       localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
-      alert("⚠️ 無法取得即時匯率，已使用預設值（僅供參考）");
+      // alert 已移除，避免彈跳視窗干擾使用者
     }
   }
 
@@ -57,6 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return null;
     }
   }
+});
   // ===== Part 2：表單處理與存儲 =====
 document.getElementById("stock-symbol")?.addEventListener("blur", async () => {
     const symbol = document.getElementById("stock-symbol").value.trim().toUpperCase();
