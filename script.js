@@ -1,4 +1,3 @@
-document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("asset-form");
   const typeSelect = document.getElementById("type");
   const stockFields = document.getElementById("stock-fields");
@@ -34,7 +33,6 @@ document.addEventListener("DOMContentLoaded", () => {
         EUR: 0.92
       };
       localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
-      // alert 已移除，避免彈跳視窗干擾使用者
     }
   }
 
@@ -42,12 +40,12 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       if (category === "台股") {
         symbol += ".TW";
-        const res = await fetch(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbol}`);
+        const res = await fetch(https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbol});
         const data = await res.json();
         return data.quoteResponse.result[0]?.regularMarketPrice || null;
       } else {
         const apiKey = "de909496c6754a89bc33db0306c2def8";
-        const url = `https://api.twelvedata.com/price?symbol=${symbol}&apikey=${apiKey}`;
+        const url = https://api.twelvedata.com/price?symbol=${symbol}&apikey=${apiKey};
         const res = await fetch(url);
         const data = await res.json();
         return data.price ? parseFloat(data.price) : null;
@@ -57,7 +55,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return null;
     }
   }
-});
   // ===== Part 2：表單處理與存儲 =====
 document.getElementById("stock-symbol")?.addEventListener("blur", async () => {
     const symbol = document.getElementById("stock-symbol").value.trim().toUpperCase();
