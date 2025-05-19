@@ -223,16 +223,15 @@ EUR：${parseFloat(exchangeRates["EUR"] || 0).toFixed(2)}`;
     totalsList.appendChild(rateInfo);
 
     for (const ccy in totals) {
-      const total = totals[ccy] + (profits[ccy] || 0);
-      const rate = parseFloat(exchangeRates[ccy]) || 0;
-      const twd = rate * total;
-      totalTWD += twd;
+  const total = totals[ccy] + (profits[ccy] || 0);
+  const rate = exchangeRates[ccy] || 1;
+  const twd = total * (exchangeRates["TWD"] / rate);  // ✅ 正確換算台幣
+  totalTWD += twd;
 
-      const li = document.createElement("li");
-      li.innerHTML = `${ccy} 總資產：$${total.toLocaleString()}（盈餘 $${(profits[ccy] || 0).toLocaleString()}）<br>折合台幣：NT$ ${twd.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-      totalsList.appendChild(li);
-    }
-
+  const li = document.createElement("li");
+  li.innerHTML = `${ccy} 總資產：$${total.toLocaleString()}（盈餘 $${(profits[ccy] || 0).toLocaleString()}）<br>折合台幣：NT$ ${twd.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+  totalsList.appendChild(li);
+}
     const totalLine = document.createElement("li");
     totalLine.style.fontWeight = "bold";
     totalLine.textContent = `全體總資產（折合台幣）：NT$ ${totalTWD.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
