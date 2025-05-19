@@ -274,8 +274,8 @@ EUR：${parseFloat(exchangeRates["EUR"] || 0).toFixed(2)}`;
   }
 // ===== Part 4：啟動函式與其他 =====
 // 初始化匯率與畫面
-  fetchExchangeRates().then(() => {
-    toggleFields();
+fetchExchangeRates().then(() => {
+    toggleFields(); // 頁面載入時顯示正確欄位
     render();
   });
 });
