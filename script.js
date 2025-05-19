@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // ===== Part 1：初始化與匯率查詢 =====
   const form = document.getElementById("asset-form");
   const typeSelect = document.getElementById("type");
   const stockFields = document.getElementById("stock-fields");
@@ -14,7 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
   let exchangeRates = {};
   let editIndex = null;
 
-  // 匯率查詢（使用 exchangerate.host）
   async function fetchExchangeRates() {
     try {
       const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
@@ -38,7 +38,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // 股價查詢（支援台股+美股）
   async function fetchStockPrice(symbol, category) {
     try {
       if (category === "台股") {
@@ -51,13 +50,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const url = `https://api.twelvedata.com/price?symbol=${symbol}&apikey=${apiKey}`;
         const res = await fetch(url);
         const data = await res.json();
-
-        // 錯誤處理（避免使用額度超過或無效 symbol）
         if (data.status === "error" || data.code || !data.price) {
           console.warn("Twelve Data 回傳錯誤：", data);
           return null;
         }
-
         return parseFloat(data.price);
       }
     } catch (e) {
@@ -66,12 +62,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // 👇 後續初始化會在 Part 4 使用這些函式：
-  // fetchExchangeRates().then(() => { render(); });
-});
-
   // ===== Part 2：表單處理與存儲 =====
-document.getElementById("stock-symbol")?.addEventListener("blur", async () => {
+  function toggleFields() {
+    const type = typeSelect.value;
+    stockFields.style.display = type === "股票" ? "block" : "none";
+    insuranceFields.style.display = type === "儲蓄保險" ? "block" : "none";
+    amountField.style.display = (type !== "股票" && type !== "儲蓄保險") ? "block" : "none";
+  }
+
+  typeSelect.addEventListener("change", toggleFields);
+
+  document.getElementById("stock-symbol")?.addEventListener("blur", async () => {
     const symbol = document.getElementById("stock-symbol").value.trim().toUpperCase();
     const category = document.getElementById("stock-category").value;
     if (!symbol || !category) return;
@@ -88,18 +89,8 @@ document.getElementById("stock-symbol")?.addEventListener("blur", async () => {
     }
   });
 
-  function toggleFields() {
-    const type = typeSelect.value;
-    stockFields.style.display = type === "股票" ? "block" : "none";
-    insuranceFields.style.display = type === "儲蓄保險" ? "block" : "none";
-    amountField.style.display = (type !== "股票" && type !== "儲蓄保險") ? "block" : "none";
-  }
-
-  typeSelect.addEventListener("change", toggleFields);
-
   form.addEventListener("submit", (e) => {
     e.preventDefault();
-
     const type = typeSelect.value;
     if (!type) return alert("請選擇資產種類");
 
@@ -177,8 +168,9 @@ document.getElementById("stock-symbol")?.addEventListener("blur", async () => {
       render();
     }
   };
+
   // ===== Part 3：畫面渲染與計算 =====
-window.convertCurrency = function () {
+  window.convertCurrency = function () {
     const amt = parseFloat(document.getElementById("input-amount")?.value);
     const rate = parseFloat(document.getElementById("input-rate")?.value);
     const result = document.getElementById("converted-result");
@@ -236,15 +228,16 @@ EUR：${parseFloat(exchangeRates["EUR"] || 0).toFixed(2)}`;
     totalsList.appendChild(rateInfo);
 
     for (const ccy in totals) {
-  const total = totals[ccy] + (profits[ccy] || 0);
-  const rate = exchangeRates[ccy] || 1;
-  const twd = total * (exchangeRates["TWD"] / rate);  // ✅ 正確換算台幣
-  totalTWD += twd;
+      const total = totals[ccy] + (profits[ccy] || 0);
+      const rate = exchangeRates[ccy] || 1;
+      const twd = total * (exchangeRates["TWD"] / rate);
+      totalTWD += twd;
 
-  const li = document.createElement("li");
-  li.innerHTML = `${ccy} 總資產：$${total.toLocaleString()}（盈餘 $${(profits[ccy] || 0).toLocaleString()}）<br>折合台幣：NT$ ${twd.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-  totalsList.appendChild(li);
-}
+      const li = document.createElement("li");
+      li.innerHTML = `${ccy} 總資產：$${total.toLocaleString()}（盈餘 $${(profits[ccy] || 0).toLocaleString()}）<br>折合台幣：NT$ ${twd.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+      totalsList.appendChild(li);
+    }
+
     const totalLine = document.createElement("li");
     totalLine.style.fontWeight = "bold";
     totalLine.textContent = `全體總資產（折合台幣）：NT$ ${totalTWD.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
@@ -272,12 +265,10 @@ EUR：${parseFloat(exchangeRates["EUR"] || 0).toFixed(2)}`;
       bankDatalist.appendChild(opt);
     });
   }
-// ===== Part 4：啟動函式與其他 =====
-// 初始化匯率與畫面
-fetchExchangeRates().then(() => {
-    toggleFields(); // 頁面載入時顯示正確欄位
+
+  // ===== Part 4：啟動函式與其他 =====
+  fetchExchangeRates().then(() => {
+    toggleFields();
     render();
   });
 });
-
-
