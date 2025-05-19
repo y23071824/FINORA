@@ -1,3 +1,4 @@
+document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("asset-form");
   const typeSelect = document.getElementById("type");
   const stockFields = document.getElementById("stock-fields");
@@ -13,6 +14,7 @@
   let exchangeRates = {};
   let editIndex = null;
 
+  // 匯率查詢（使用 exchangerate.host）
   async function fetchExchangeRates() {
     try {
       const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
@@ -36,25 +38,38 @@
     }
   }
 
+  // 股價查詢（支援台股+美股）
   async function fetchStockPrice(symbol, category) {
     try {
       if (category === "台股") {
         symbol += ".TW";
-        const res = await fetch(https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbol});
+        const res = await fetch(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbol}`);
         const data = await res.json();
         return data.quoteResponse.result[0]?.regularMarketPrice || null;
       } else {
         const apiKey = "de909496c6754a89bc33db0306c2def8";
-        const url = https://api.twelvedata.com/price?symbol=${symbol}&apikey=${apiKey};
+        const url = `https://api.twelvedata.com/price?symbol=${symbol}&apikey=${apiKey}`;
         const res = await fetch(url);
         const data = await res.json();
-        return data.price ? parseFloat(data.price) : null;
+
+        // 錯誤處理（避免使用額度超過或無效 symbol）
+        if (data.status === "error" || data.code || !data.price) {
+          console.warn("Twelve Data 回傳錯誤：", data);
+          return null;
+        }
+
+        return parseFloat(data.price);
       }
     } catch (e) {
       console.error("查詢股價錯誤", e);
       return null;
     }
   }
+
+  // 👇 後續初始化會在 Part 4 使用這些函式：
+  // fetchExchangeRates().then(() => { render(); });
+});
+
   // ===== Part 2：表單處理與存儲 =====
 document.getElementById("stock-symbol")?.addEventListener("blur", async () => {
     const symbol = document.getElementById("stock-symbol").value.trim().toUpperCase();
