@@ -38,29 +38,47 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  async function fetchStockPrice(symbol, category) {
-    try {
-      if (category === "台股") {
-        symbol += ".TW";
-        const res = await fetch(`https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbol}`);
-        const data = await res.json();
-        return data.quoteResponse.result[0]?.regularMarketPrice || null;
-      } else {
-        const apiKey = "de909496c6754a89bc33db0306c2def8";
-        const url = `https://api.twelvedata.com/price?symbol=${symbol}&apikey=${apiKey}`;
-        const res = await fetch(url);
-        const data = await res.json();
-        if (data.status === "error" || data.code || !data.price) {
-          console.warn("Twelve Data 回傳錯誤：", data);
-          return null;
-        }
-        return parseFloat(data.price);
+async function fetchStockPrice(symbol, category) {
+  try {
+    if (category === "台股") {
+      // 抓今天日期（TWSE 要用 yyyymmdd）
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, "0");
+      const dd = String(now.getDate()).padStart(2, "0");
+      const date = `${yyyy}${mm}${dd}`;
+
+      const url = `https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=${date}&stockNo=${symbol}`;
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (data.stat !== "OK" || !data.data?.length) {
+        alert("台股查價失敗，請稍後再試或手動輸入");
+        return null;
       }
-    } catch (e) {
-      console.error("查詢股價錯誤", e);
-      return null;
+
+      // 抓取最後一筆資料（該月最新交易日）
+      const lastRow = data.data[data.data.length - 1];
+      const close = parseFloat(lastRow[6].replace(/,/g, ""));
+      return close;
+    } else {
+      // 其他類別（美股、ETF、港股等） → 用 Twelve Data
+      const apiKey = "de909496c6754a89bc33db0306c2def8";
+      const url = `https://api.twelvedata.com/price?symbol=${symbol}&apikey=${apiKey}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      if (data.status === "error" || data.code || !data.price) {
+        console.warn("Twelve Data 回傳錯誤：", data);
+        return null;
+      }
+      return parseFloat(data.price);
     }
+  } catch (e) {
+    console.error("查詢股價錯誤", e);
+    alert("查詢失敗，請檢查代碼或稍後再試");
+    return null;
   }
+}
 
   // ===== Part 2：表單處理與存儲 =====
   function toggleFields() {
