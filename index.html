@@ -20,13 +20,19 @@
         <option value="其他">其他</option>
       </select>
     </label>
-    <div id="stock-fields" style="display: none;">
-      <label>股票類型：
-        <select id="stock-category">
-          <option value="美股">美股</option>
-          <option value="台股">台股</option>
-        </select>
-      </label>
+<div id="stock-fields" style="display: none;">
+  <label>股票類型：
+    <select id="stock-category">
+      <option value="">請選擇</option>
+      <option value="美股">美股</option>
+      <option value="台股">台股</option>
+      <option value="ETF">ETF</option>
+      <option value="港股">港股</option>
+      <option value="REITs">REITs</option>
+      <option value="自訂">自訂</option>
+    </select>
+  </label>
+</div>
       <label>股票代碼：<input type="text" id="stock-symbol" /></label>
       <label>股數：<input type="number" id="shares" /></label>
       <label>成本（每股）：<input type="number" id="cost" /></label>
