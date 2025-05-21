@@ -187,7 +187,7 @@ async function fetchStockPrice(symbol, category) {
     }
   };
 
-  // ===== Part 3：畫面渲染與計算 =====
+   // ===== Part 3：畫面渲染與計算 =====
   window.convertCurrency = function () {
     const amt = parseFloat(document.getElementById("input-amount")?.value);
     const rate = parseFloat(document.getElementById("input-rate")?.value);
@@ -209,21 +209,37 @@ async function fetchStockPrice(symbol, category) {
     profitList.innerHTML = "";
     let totals = {}, profits = {}, totalTWD = 0;
 
-    assets.forEach((item, index) => {
+    // ✅ 重排順序：股票 > 儲蓄保險 > 其他
+    const sortedAssets = [
+      ...assets.filter(a => a.type === "股票"),
+      ...assets.filter(a => a.type === "儲蓄保險"),
+      ...assets.filter(a => a.type !== "股票" && a.type !== "儲蓄保險")
+    ];
+
+    sortedAssets.forEach((item, index) => {
       let display = "", currency = item.currency, amount = 0, profit = 0;
 
       if (item.type === "股票") {
-        const cost = item.shares * item.cost;
-        const value = item.shares * item.price;
-        profit = value - cost;
-        amount = cost;
+        const shares = parseFloat(item.shares) || 0;
+        const cost = parseFloat(item.cost) || 0;
+        const price = parseFloat(item.price) || 0;
+        const totalCost = shares * cost;
+        const value = shares * price;
+        profit = value - totalCost;
+        amount = isNaN(totalCost) ? 0 : totalCost;
         profits[currency] = (profits[currency] || 0) + profit;
-        display = `股票代碼：${item.stockSymbol}｜類型：${item.stockCategory}｜股數：${item.shares}<br>成本：$${item.cost}，現價：$${item.price}<br>總成本：$${cost.toFixed(2)}，市值：$${value.toFixed(2)}，盈餘：$${profit.toFixed(2)}`;
+
+        display = `股票代碼：${item.stockSymbol}｜類型：${item.stockCategory}｜股數：${shares}<br>
+成本：$${cost}，現價：$${price}<br>
+總成本：$${totalCost.toFixed(2)}，市值：$${value.toFixed(2)}，盈餘：$${profit.toFixed(2)}`;
       } else if (item.type === "儲蓄保險") {
         amount = parseFloat(item.policyAmount) || 0;
-        display = `保單：${item.policyName}<br>保額：$${item.policyAmount}，年期：${item.policyYears}，保費：$${item.policyPremium}`;
+        if (isNaN(amount)) amount = 0;
+        display = `保單：${item.policyName}<br>
+保額：$${item.policyAmount}，年期：${item.policyYears}，保費：$${item.policyPremium}`;
       } else {
         amount = parseFloat(item.amount) || 0;
+        if (isNaN(amount)) amount = 0;
         display = `金額：$${amount.toLocaleString()}`;
       }
 
@@ -238,6 +254,7 @@ async function fetchStockPrice(symbol, category) {
       assetList.appendChild(li);
     });
 
+    // ✅ 匯率資訊
     const rateInfo = document.createElement("li");
     rateInfo.innerHTML = `<strong>目前匯率（以 USD 為基準）</strong><br>
 1 USD → TWD：${parseFloat(exchangeRates["TWD"] || 0).toFixed(2)}，
@@ -276,6 +293,7 @@ EUR：${parseFloat(exchangeRates["EUR"] || 0).toFixed(2)}`;
       profitList.appendChild(li);
     }
 
+    // ✅ 銀行記憶顯示
     bankDatalist.innerHTML = "";
     bankHistory.forEach(bank => {
       const opt = document.createElement("option");
