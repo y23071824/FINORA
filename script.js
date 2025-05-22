@@ -109,14 +109,6 @@ document.getElementById("stock-symbol")?.addEventListener("blur", async () => {
   else alert("查無此股票代碼或查價失敗");
 });
 
-document.getElementById("currency")?.addEventListener("change", () => {
-  const currency = document.getElementById("currency").value;
-  const rates = JSON.parse(localStorage.getItem("exchangeRates") || "{}");
-  if (["USD", "JPY", "EUR"].includes(currency)) {
-    alert(`目前 ${currency} 對 TWD 匯率：約 ${rates[currency] || "查詢中"}`);
-  }
-});
-
 form.addEventListener("submit", (e) => {
   e.preventDefault();
   const type = typeSelect.value;
