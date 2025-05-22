@@ -1,47 +1,48 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // ===== Part 1：初始化與匯率查詢 =====
-  const form = document.getElementById("asset-form");
-  const typeSelect = document.getElementById("type");
-  const stockFields = document.getElementById("stock-fields");
-  const insuranceFields = document.getElementById("insurance-fields");
-  const amountField = document.getElementById("amount-field");
-  const assetList = document.getElementById("asset-list");
-  const totalsList = document.getElementById("totals-list");
-  const profitList = document.getElementById("stock-profit-list");
-  const bankDatalist = document.getElementById("bank-list");
+// ===== Part 1：初始化與匯率查詢 =====
+const form = document.getElementById("asset-form");
+const typeSelect = document.getElementById("type");
+const stockFields = document.getElementById("stock-fields");
+const insuranceFields = document.getElementById("insurance-fields");
+const amountField = document.getElementById("amount-field");
+const assetList = document.getElementById("asset-list");
+const totalsList = document.getElementById("totals-list");
+const profitList = document.getElementById("stock-profit-list");
+const bankDatalist = document.getElementById("bank-list");
 
-  let assets = JSON.parse(localStorage.getItem("assets") || "[]");
-  let bankHistory = JSON.parse(localStorage.getItem("banks") || "[]");
-  let exchangeRates = {};
-  let editIndex = null;
+let assets = JSON.parse(localStorage.getItem("assets") || "[]");
+let bankHistory = JSON.parse(localStorage.getItem("banks") || "[]");
+let exchangeRates = {};
+let editIndex = null;
 
-  async function fetchExchangeRates() {
-    try {
-      const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
-      const data = await res.json();
-      exchangeRates = {
-        USD: 1,
-        TWD: data.rates.TWD || 30.21,
-        JPY: data.rates.JPY || 151.4,
-        EUR: data.rates.EUR || 0.92
-      };
-      localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
-    } catch (e) {
-      console.error("⚠️ 匯率 API 失敗，使用預設值", e);
-      exchangeRates = {
-        USD: 1,
-        TWD: 30.21,
-        JPY: 151.4,
-        EUR: 0.92
-      };
-      localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
-    }
+// ✅ 匯率查詢
+async function fetchExchangeRates() {
+  try {
+    const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
+    const data = await res.json();
+    exchangeRates = {
+      USD: 1,
+      TWD: data.rates.TWD || 30.21,
+      JPY: data.rates.JPY || 151.4,
+      EUR: data.rates.EUR || 0.92
+    };
+    localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
+  } catch (e) {
+    console.error("⚠️ 匯率 API 失敗，使用預設值", e);
+    exchangeRates = {
+      USD: 1,
+      TWD: 30.21,
+      JPY: 151.4,
+      EUR: 0.92
+    };
+    localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
   }
+}
 
+// ✅ 查詢單一股票現價（TWSE or Twelve Data）
 async function fetchStockPrice(symbol, category) {
   try {
     if (category === "台股") {
-      // 抓今天日期（TWSE 要用 yyyymmdd）
       const now = new Date();
       const yyyy = now.getFullYear();
       const mm = String(now.getMonth() + 1).padStart(2, "0");
@@ -57,12 +58,10 @@ async function fetchStockPrice(symbol, category) {
         return null;
       }
 
-      // 抓取最後一筆資料（該月最新交易日）
       const lastRow = data.data[data.data.length - 1];
       const close = parseFloat(lastRow[6].replace(/,/g, ""));
       return close;
     } else {
-      // 其他類別（美股、ETF、港股等） → 用 Twelve Data
       const apiKey = "de909496c6754a89bc33db0306c2def8";
       const url = `https://api.twelvedata.com/price?symbol=${symbol}&apikey=${apiKey}`;
       const res = await fetch(url);
@@ -80,6 +79,20 @@ async function fetchStockPrice(symbol, category) {
   }
 }
 
+// ✅ 自動更新所有已儲存股票的現價（啟動時執行）
+async function updateAllStockPrices() {
+  const updatedAssets = await Promise.all(assets.map(async (item) => {
+    if (item.type === "股票" && item.stockSymbol && item.stockCategory) {
+      const newPrice = await fetchStockPrice(item.stockSymbol, item.stockCategory);
+      if (newPrice !== null) {
+        item.price = newPrice;
+      }
+    }
+    return item;
+  }));
+  assets = updatedAssets;
+  localStorage.setItem("assets", JSON.stringify(assets));
+}
   // ===== Part 2：表單處理與存儲 =====
   function toggleFields() {
     const type = typeSelect.value;
@@ -302,9 +315,13 @@ EUR：${parseFloat(exchangeRates["EUR"] || 0).toFixed(2)}`;
     });
   }
 
-  // ===== Part 4：啟動函式與其他 =====
-  fetchExchangeRates().then(() => {
+
+// ===== Part 4：啟動函式與其他 =====
+
+fetchExchangeRates().then(() => {
+  updateAllStockPrices().then(() => {
     toggleFields();
     render();
   });
 });
+
