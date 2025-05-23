@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>提領試算｜FINORA</title>
+  <title>退休提領試算｜FINORA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="../style.css" />
   <style>
@@ -38,9 +38,9 @@
     }
     #result {
       margin-top: 2rem;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       color: #444;
-      text-align: center;
+      line-height: 1.6;
     }
     a {
       display: block;
@@ -55,6 +55,7 @@
   <h1>退休提領試算</h1>
   <label>目前資產總額（元）：<input type="number" id="total" /></label>
   <label>每月提領金額（元）：<input type="number" id="monthly" /></label>
+  <label>提領比率（％）：<input type="number" id="withdraw-rate" value="4" step="0.1" /></label>
   <button onclick="calculateWithdraw()">開始試算</button>
 
   <div id="result"></div>
@@ -64,18 +65,31 @@
     function calculateWithdraw() {
       const total = parseFloat(document.getElementById("total").value);
       const monthly = parseFloat(document.getElementById("monthly").value);
+      const rate = parseFloat(document.getElementById("withdraw-rate").value);
       const result = document.getElementById("result");
 
-      if (isNaN(total) || isNaN(monthly) || monthly === 0) {
-        result.textContent = "請輸入完整資料（且每月提領金額需大於 0）";
+      if (isNaN(total) || total <= 0 || isNaN(rate) || rate <= 0) {
+        result.textContent = "請輸入正確的資產金額與提領比率";
         return;
       }
 
-      const totalMonths = Math.floor(total / monthly);
-      const years = Math.floor(totalMonths / 12);
-      const months = totalMonths % 12;
+      let output = "";
 
-      result.textContent = `可以提領：約 ${years} 年 ${months} 個月`;
+      // 一般提領法
+      if (!isNaN(monthly) && monthly > 0) {
+        const totalMonths = Math.floor(total / monthly);
+        const years = Math.floor(totalMonths / 12);
+        const months = totalMonths % 12;
+        output += `【一般提領試算】<br>以每月 NT$ ${monthly.toLocaleString()} 提領，可支撐約 ${years} 年 ${months} 個月。<br><br>`;
+      }
+
+      // 自訂比率法
+      const annualWithdrawal = total * (rate / 100);
+      const monthlyWithdrawal = annualWithdrawal / 12;
+      output += `【${rate}% 法則試算】<br>每年可提領：約 NT$ ${annualWithdrawal.toLocaleString(undefined, { maximumFractionDigits: 0 })}<br>`;
+      output += `每月可提領：約 NT$ ${monthlyWithdrawal.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+
+      result.innerHTML = output;
     }
   </script>
 </body>
