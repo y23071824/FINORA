@@ -21,7 +21,7 @@
       display: block;
       margin: 1rem 0 0.3rem;
     }
-    input {
+    input, select {
       width: 100%;
       padding: 0.5rem;
       font-size: 1rem;
@@ -52,11 +52,17 @@
   </style>
 </head>
 <body>
-  <h1>複利試算器（含定期定額）</h1>
+  <h1>複利試算器</h1>
   <label>初始本金（元）：<input type="number" id="principal" /></label>
   <label>年利率（％）：<input type="number" id="rate" step="0.01" /></label>
   <label>投資年數：<input type="number" id="years" /></label>
-  <label>每年定期投入金額（元）：<input type="number" id="annual" /></label>
+  <label>定期投入金額（元）：<input type="number" id="regular" /></label>
+  <label>投入頻率：
+    <select id="frequency">
+      <option value="yearly" selected>每年</option>
+      <option value="monthly">每月</option>
+    </select>
+  </label>
   <button onclick="calculateCompound()">開始計算</button>
 
   <div id="result"></div>
@@ -64,19 +70,28 @@
 
   <script>
     function calculateCompound() {
-      const principal = parseFloat(document.getElementById("principal").value) || 0;
-      const rate = parseFloat(document.getElementById("rate").value) || 0;
+      const P = parseFloat(document.getElementById("principal").value) || 0;
+      const r = parseFloat(document.getElementById("rate").value) || 0;
       const years = parseInt(document.getElementById("years").value) || 0;
-      const annual = parseFloat(document.getElementById("annual").value) || 0;
+      const regular = parseFloat(document.getElementById("regular").value) || 0;
+      const freq = document.getElementById("frequency").value;
+      let total = P;
 
-      if (years <= 0 || rate < 0) {
+      if (years <= 0 || r < 0) {
         document.getElementById("result").textContent = "請輸入正確數值";
         return;
       }
 
-      let total = principal;
-      for (let i = 1; i <= years; i++) {
-        total = total * (1 + rate / 100) + annual;
+      if (freq === "yearly") {
+        for (let i = 1; i <= years; i++) {
+          total = total * (1 + r / 100) + regular;
+        }
+      } else {
+        const n = years * 12;
+        const monthlyRate = r / 100 / 12;
+        for (let i = 1; i <= n; i++) {
+          total = total * (1 + monthlyRate) + regular;
+        }
       }
 
       document.getElementById("result").textContent =
