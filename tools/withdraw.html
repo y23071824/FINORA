@@ -61,29 +61,38 @@
   <div id="result"></div>
   <a href="../index.html">← 返回首頁</a>
 
-  <script>
-    function calculateWithdraw() {
-      const total = parseFloat(document.getElementById("total").value);
-      const monthly = parseFloat(document.getElementById("monthly").value);
-      const rate = parseFloat(document.getElementById("withdraw-rate").value);
-      const result = document.getElementById("result");
+<script>
+  function calculateWithdraw() {
+    const total = parseFloat(document.getElementById("total").value);
+    const monthly = parseFloat(document.getElementById("monthly").value);
+    const rate = parseFloat(document.getElementById("withdraw-rate").value);
+    const result = document.getElementById("result");
 
-      if (isNaN(total) || total <= 0 || isNaN(rate) || rate <= 0) {
-        result.textContent = "請輸入正確的資產金額與提領比率";
-        return;
-      }
+    if (isNaN(total) || total <= 0) {
+      result.textContent = "請輸入正確的資產總額";
+      return;
+    }
 
-      let output = "";
+    const hasMonthly = !isNaN(monthly) && monthly > 0;
+    const hasRate = !isNaN(rate) && rate > 0;
 
-      // 一般提領法
-      if (!isNaN(monthly) && monthly > 0) {
-        const totalMonths = Math.floor(total / monthly);
-        const years = Math.floor(totalMonths / 12);
-        const months = totalMonths % 12;
-        output += `【一般月領試算】<br>每月提領 NT$ ${monthly.toLocaleString()} 可支撐約 ${years} 年 ${months} 個月。<br><br>`;
-      }
+    if (!hasMonthly && !hasRate) {
+      result.textContent = "請輸入「每月提領金額」或「提領比率」其中之一";
+      return;
+    }
 
-      // 自訂比率試算
+    let output = "";
+
+    // 一般月領試算
+    if (hasMonthly) {
+      const totalMonths = Math.floor(total / monthly);
+      const years = Math.floor(totalMonths / 12);
+      const months = totalMonths % 12;
+      output += `【一般月領試算】<br>每月提領 NT$ ${monthly.toLocaleString()} 可支撐約 ${years} 年 ${months} 個月。<br><br>`;
+    }
+
+    // 自訂提領比率試算
+    if (hasRate) {
       const annualWithdrawal = total * (rate / 100);
       const monthlyWithdrawal = annualWithdrawal / 12;
       const durationYears = total / annualWithdrawal;
@@ -92,9 +101,10 @@
       output += `每年可提領：約 NT$ ${annualWithdrawal.toLocaleString(undefined, { maximumFractionDigits: 0 })}<br>`;
       output += `每月可提領：約 NT$ ${monthlyWithdrawal.toLocaleString(undefined, { maximumFractionDigits: 0 })}<br>`;
       output += `此比率下，可支撐約 ${durationYears.toFixed(1)} 年`;
-
-      result.innerHTML = output;
     }
-  </script>
+
+    result.innerHTML = output;
+  }
+</script>
 </body>
 </html>
