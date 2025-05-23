@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>複利試算器｜FINORA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../style.css" />
+  <style>
+    body {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 2rem;
+      background: #fffaf8;
+      font-family: sans-serif;
+    }
+    h1 {
+      text-align: center;
+      color: #c96374;
+    }
+    label {
+      display: block;
+      margin: 1rem 0 0.3rem;
+    }
+    input {
+      width: 100%;
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+    button {
+      margin-top: 1.5rem;
+      width: 100%;
+      padding: 0.8rem;
+      background-color: #c96374;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    #result {
+      margin-top: 2rem;
+      font-size: 1.2rem;
+      color: #444;
+      text-align: center;
+    }
+    a {
+      display: block;
+      text-align: center;
+      margin-top: 2rem;
+      color: #c96374;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>複利試算器</h1>
+  <label>初始本金（元）：<input type="number" id="principal" /></label>
+  <label>年利率（％）：<input type="number" id="rate" step="0.01" /></label>
+  <label>投資年數：<input type="number" id="years" /></label>
+  <button onclick="calculateCompound()">開始計算</button>
+
+  <div id="result"></div>
+  <a href="../index.html">← 返回首頁</a>
+
+  <script>
+    function calculateCompound() {
+      const principal = parseFloat(document.getElementById("principal").value);
+      const rate = parseFloat(document.getElementById("rate").value);
+      const years = parseInt(document.getElementById("years").value);
+
+      if (isNaN(principal) || isNaN(rate) || isNaN(years)) {
+        document.getElementById("result").textContent = "請輸入完整資料";
+        return;
+      }
+
+      const finalAmount = principal * Math.pow(1 + rate / 100, years);
+      document.getElementById("result").textContent =
+        `累積資產：約 NT$ ${finalAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+    }
+  </script>
+</body>
+</html>
