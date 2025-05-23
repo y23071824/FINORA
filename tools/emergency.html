@@ -52,4 +52,35 @@
   </style>
 </head>
 <body>
-  <h1
+  <h1>緊急預備金試算</h1>
+  <label>每月支出金額（元）：<input type="number" id="monthly-expense" /></label>
+  <label>預備金涵蓋月數：
+    <select id="months">
+      <option value="3">3 個月</option>
+      <option value="6" selected>6 個月</option>
+      <option value="9">9 個月</option>
+      <option value="12">12 個月</option>
+    </select>
+  </label>
+  <button onclick="calculateEmergency()">開始試算</button>
+
+  <div id="result"></div>
+  <a href="../index.html">← 返回首頁</a>
+
+  <script>
+    function calculateEmergency() {
+      const monthly = parseFloat(document.getElementById("monthly-expense").value);
+      const months = parseInt(document.getElementById("months").value);
+      const result = document.getElementById("result");
+
+      if (isNaN(monthly) || monthly <= 0) {
+        result.textContent = "請輸入有效的月支出金額";
+        return;
+      }
+
+      const total = monthly * months;
+      result.textContent = `建議準備緊急預備金：約 NT$ ${total.toLocaleString()}`;
+    }
+  </script>
+</body>
+</html>
