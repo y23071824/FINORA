@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>複利試算器｜FINORA</title>
+  <title>複利試算｜FINORA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="../style.css" />
   <style>
@@ -38,9 +38,9 @@
     }
     #result {
       margin-top: 2rem;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       color: #444;
-      text-align: center;
+      line-height: 1.6;
     }
     a {
       display: block;
@@ -52,15 +52,15 @@
   </style>
 </head>
 <body>
-  <h1>複利試算器</h1>
+  <h1>複利試算</h1>
   <label>初始本金（元）：<input type="number" id="principal" /></label>
-  <label>年利率（％）：<input type="number" id="rate" step="0.01" /></label>
-  <label>投資年數：<input type="number" id="years" /></label>
-  <label>定期投入金額（元）：<input type="number" id="regular" /></label>
+  <label>預估年報酬率（％）：<input type="number" id="rate" step="0.1" /></label>
+  <label>投資期間（年）：<input type="number" id="years" /></label>
+  <label>定期定額投入金額（元）：<input type="number" id="regular" /></label>
   <label>投入頻率：
     <select id="frequency">
-      <option value="yearly" selected>每年</option>
-      <option value="monthly">每月</option>
+      <option value="yearly">每年投入</option>
+      <option value="monthly">每月投入</option>
     </select>
   </label>
   <button onclick="calculateCompound()">開始計算</button>
@@ -75,6 +75,7 @@
       const years = parseInt(document.getElementById("years").value) || 0;
       const regular = parseFloat(document.getElementById("regular").value) || 0;
       const freq = document.getElementById("frequency").value;
+
       let total = P;
 
       if (years <= 0 || r < 0) {
@@ -94,6 +95,10 @@
         }
       }
 
+      // 儲存到 localStorage
+      localStorage.setItem("compoundResult", total.toFixed(0));
+
+      // 顯示結果
       document.getElementById("result").textContent =
         `累積資產：約 NT$ ${total.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
     }
