@@ -67,20 +67,52 @@
   <div id="result"></div>
   <a href="../index.html">← 返回首頁</a>
 
-  <script>
-    function calculateEmergency() {
-      const monthly = parseFloat(document.getElementById("monthly-expense").value);
-      const months = parseInt(document.getElementById("months").value);
-      const result = document.getElementById("result");
+<script>
+  function calculateEmergency() {
+    const monthly = parseFloat(document.getElementById("monthly-expense").value);
+    const months = parseInt(document.getElementById("months").value);
+    const result = document.getElementById("result");
 
-      if (isNaN(monthly) || monthly <= 0) {
-        result.textContent = "請輸入有效的月支出金額";
-        return;
+    if (isNaN(monthly) || monthly <= 0) {
+      result.textContent = "請輸入有效的月支出金額";
+      return;
+    }
+
+    const total = monthly * months;
+    result.textContent = `建議準備緊急預備金：約 NT$ ${total.toLocaleString()}`;
+  }
+
+  // 自動顯示資產總額（折合台幣）
+  document.addEventListener("DOMContentLoaded", () => {
+    const assets = JSON.parse(localStorage.getItem("assets") || "[]");
+    const rates = JSON.parse(localStorage.getItem("exchangeRates") || "{}");
+    let totalTWD = 0;
+
+    assets.forEach(item => {
+      let amount = 0;
+      const ccy = item.currency;
+      const rate = rates["TWD"] / (rates[ccy] || 1);
+
+      if (item.type === "股票") {
+        amount = parseFloat(item.shares) * parseFloat(item.price);
+      } else if (item.type === "儲蓄保險") {
+        amount = parseFloat(item.policyAmount) || 0;
+      } else {
+        amount = parseFloat(item.amount) || 0;
       }
 
-      const total = monthly * months;
-      result.textContent = `建議準備緊急預備金：約 NT$ ${total.toLocaleString()}`;
-    }
-  </script>
+      if (!isNaN(amount)) {
+        totalTWD += amount * rate;
+      }
+    });
+
+    const info = document.createElement("p");
+    info.style.marginTop = "1.5rem";
+    info.style.fontSize = "1.1rem";
+    info.style.color = "#666";
+    info.textContent = `目前已登記資產總額（折合台幣）：NT$ ${totalTWD.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+    document.body.insertBefore(info, document.getElementById("result"));
+  });
+</script>
 </body>
 </html>
