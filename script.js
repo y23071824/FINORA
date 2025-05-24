@@ -263,7 +263,7 @@ ${display}
       const total = currencyTotals[currency];
       const twd = total * (exchangeRates["TWD"] / (exchangeRates[currency] || 1));
       const li = document.createElement("li");
-      li.innerHTML = `幣別總和 ${currency}：$${total.toLocaleString()} ≈ NT$ ${twd.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+      li.innerHTML = `資產加總 ${currency}：$${total.toLocaleString()} ≈ NT$ ${twd.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
       totalsList.appendChild(li);
     }
 
