@@ -202,7 +202,7 @@ function render() {
     assetList.innerHTML = "";
     totalsList.innerHTML = "";
     profitList.innerHTML = "";
-    let typeTotals = {}, totalTWD = 0;
+    let categoryTotals = {}, currencyTotals = {}, totalTWD = 0;
 
     assets.forEach((item, index) => {
       let display = "", amount = 0, profit = 0;
@@ -228,14 +228,16 @@ function render() {
         display = `金額：$${amount.toLocaleString()}`;
       }
 
-      const type = item.type;
-      const currency = item.currency;
-      typeTotals[type] = typeTotals[type] || { amount: 0, profit: 0, currency };
-      typeTotals[type].amount += amount;
-      if (type === "股票") typeTotals[type].profit += profit;
+      const categoryKey = `${item.type}｜${item.currency}`;
+      categoryTotals[categoryKey] = categoryTotals[categoryKey] || { amount: 0, profit: 0, currency: item.currency };
+      categoryTotals[categoryKey].amount += amount;
+      if (item.type === "股票") categoryTotals[categoryKey].profit += profit;
+
+      currencyTotals[item.currency] = currencyTotals[item.currency] || 0;
+      currencyTotals[item.currency] += amount + (item.type === "股票" ? profit : 0);
 
       const li = document.createElement("li");
-      li.innerHTML = `<strong>${type}</strong>（${currency}｜${item.bank}）${item.note ? "｜備註：" + item.note : ""}<br>
+      li.innerHTML = `<strong>${item.type}</strong>（${item.currency}｜${item.bank}）${item.note ? "｜備註：" + item.note : ""}<br>
 ${display}
 <div class="button-group">
   <button onclick="editAsset(${index})">編輯</button>
@@ -244,15 +246,24 @@ ${display}
       assetList.appendChild(li);
     });
 
-    for (const type in typeTotals) {
-      const item = typeTotals[type];
-      const rate = exchangeRates[item.currency] || 1;
+    for (const key in categoryTotals) {
+      const [type, currency] = key.split("｜");
+      const item = categoryTotals[key];
+      const rate = exchangeRates[currency] || 1;
       const total = item.amount + (item.profit || 0);
       const twd = total * (exchangeRates["TWD"] / rate);
       totalTWD += twd;
 
       const li = document.createElement("li");
-      li.innerHTML = `${type}：$${total.toLocaleString()} ${item.currency}${item.profit ? `（盈餘 $${item.profit.toLocaleString()}）` : ""} ≈ NT$ ${twd.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+      li.innerHTML = `${type}（${currency}）：$${total.toLocaleString()} ${currency}${item.profit ? `（盈餘 $${item.profit.toLocaleString()}）` : ""} ≈ NT$ ${twd.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+      totalsList.appendChild(li);
+    }
+
+    for (const currency in currencyTotals) {
+      const total = currencyTotals[currency];
+      const twd = total * (exchangeRates["TWD"] / (exchangeRates[currency] || 1));
+      const li = document.createElement("li");
+      li.innerHTML = `幣別總和 ${currency}：$${total.toLocaleString()} ≈ NT$ ${twd.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
       totalsList.appendChild(li);
     }
 
@@ -261,7 +272,6 @@ ${display}
     totalLine.textContent = `全體總資產（折合台幣）：NT$ ${totalTWD.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
     totalsList.appendChild(totalLine);
 
-    // 顯示股票盈餘明細（幣別分類）
     const profitsByCurrency = {};
     assets.forEach(item => {
       if (item.type === "股票") {
@@ -279,11 +289,9 @@ ${display}
       profitList.appendChild(li);
     }
 
-    // 匯率時間
     const updateTime = new Date().toLocaleString();
     document.getElementById("rate-time").textContent = `匯率更新時間：${updateTime}`;
 
-    // 銀行名稱記憶列表
     bankDatalist.innerHTML = "";
     bankHistory.forEach(bank => {
       const opt = document.createElement("option");
