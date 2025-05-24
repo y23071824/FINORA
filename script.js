@@ -270,6 +270,15 @@ ${display}
     
     }
 
+    const reverseRate = document.createElement("li");
+    const usdRate = (1 / (exchangeRates["TWD"] || 1)).toFixed(3);
+    const jpyRate = (exchangeRates["JPY"] / exchangeRates["TWD"]).toFixed(2);
+    const eurRate = (exchangeRates["EUR"] / exchangeRates["TWD"]).toFixed(3);
+    reverseRate.innerHTML = `📌 1 TWD ≈ ${usdRate} USD｜${jpyRate} JPY｜${eurRate} EUR`;
+    reverseRate.style.fontSize = "0.95em";
+    reverseRate.style.color = "#666";
+    totalsList.appendChild(reverseRate);
+
     const updateTime = new Date().toLocaleString();
     document.getElementById("rate-time").textContent = `匯率更新時間：${updateTime}`;
 
