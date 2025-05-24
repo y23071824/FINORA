@@ -19,6 +19,11 @@ async function fetchExchangeRates() {
   try {
     const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
     const data = await res.json();
+
+    if (!data || !data.rates) {
+      throw new Error("回傳格式錯誤");
+    }
+
     exchangeRates = {
       USD: 1,
       TWD: data.rates.TWD || 30.21,
@@ -27,7 +32,7 @@ async function fetchExchangeRates() {
     };
     localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
   } catch (e) {
-    console.error("⚠️ 匯率 API 失敗，使用預設值", e);
+    console.warn("⚠️ 匯率 API 失敗，使用預設值", e);
     exchangeRates = {
       USD: 1,
       TWD: 30.21,
