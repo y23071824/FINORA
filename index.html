@@ -54,7 +54,7 @@
     <a href="tools/emergency.html">緊急預備金計算</a>
   </div>
 
-  <!-- 🔐 Firebase 登入按鈕區塊 -->
+  <!-- 🔐 Firebase 登入區塊 -->
   <div id="firebase-auth" style="text-align: center; margin-top: 2em;">
     <button id="login-btn">🔐 使用 Google 帳號登入</button>
     <button id="logout-btn" style="display:none;">🚪 登出</button>
@@ -62,43 +62,36 @@
   </div>
 
   <!-- ✅ 載入 Firebase 同步功能 -->
- <!-- ✅ 只需要這一段 -->
-<script type="module">
-  import {
-    signInWithGoogle,
-    signOutFromGoogle,
-    onUserChanged
-  } from "./firebase-sync.js";
+  <script src="firebase-sync.js"></script>
+  <script>
+    const loginBtn = document.getElementById("login-btn");
+    const logoutBtn = document.getElementById("logout-btn");
+    const userEmail = document.getElementById("user-email");
 
-  const loginBtn = document.getElementById("login-btn");
-  const logoutBtn = document.getElementById("logout-btn");
-  const userEmail = document.getElementById("user-email");
+    loginBtn?.addEventListener("click", async () => {
+      const user = await window.FINORA_AUTH.signInWithGoogle();
+      if (user) {
+        userEmail.textContent = `已登入：${user.email}`;
+        loginBtn.style.display = "none";
+        logoutBtn.style.display = "inline-block";
+      }
+    });
 
-  loginBtn?.addEventListener("click", async () => {
-    const user = await signInWithGoogle();
-    if (user) {
-      userEmail.textContent = `已登入：${user.email}`;
-      loginBtn.style.display = "none";
-      logoutBtn.style.display = "inline-block";
-    }
-  });
+    logoutBtn?.addEventListener("click", () => {
+      window.FINORA_AUTH.signOutFromGoogle();
+    });
 
-  logoutBtn?.addEventListener("click", () => {
-    signOutFromGoogle();
-  });
-
-  onUserChanged(user => {
-    if (user) {
-      userEmail.textContent = `已登入：${user.email}`;
-      loginBtn.style.display = "none";
-      logoutBtn.style.display = "inline-block";
-    } else {
-      userEmail.textContent = "";
-      loginBtn.style.display = "inline-block";
-      logoutBtn.style.display = "none";
-    }
-  });
-</script>
+    window.FINORA_AUTH.onUserChanged((user) => {
+      if (user) {
+        userEmail.textContent = `已登入：${user.email}`;
+        loginBtn.style.display = "none";
+        logoutBtn.style.display = "inline-block";
+      } else {
+        userEmail.textContent = "";
+        loginBtn.style.display = "inline-block";
+        logoutBtn.style.display = "none";
+      }
+    });
+  </script>
 </body>
 </html>
-
