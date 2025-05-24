@@ -56,6 +56,11 @@ button {
   border: none;
 }
 
+button:hover,
+.button-group button:hover {
+  background-color: #b85163;
+}
+
 ul {
   list-style-type: none;
   padding: 0;
