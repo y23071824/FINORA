@@ -70,24 +70,15 @@
 <datalist id="bank-list"></datalist>
   <h2>資產列表</h2>
   <ul id="asset-list"></ul>
-  <h2>幣別加總</h2>
+ <h2>資產加總</h2>
 <ul id="totals-list"></ul>
 <p id="rate-time" style="font-size: 0.9em; color: #666;"></p>
-  <h2>股票盈餘</h2>
-  <ul id="stock-profit-list"></ul>
   <h2>匯率換算計算機</h2>
   <label>金額：<input type="number" id="input-amount" /></label>
   <label>匯率：<input type="number" id="input-rate" /></label>
   <button onclick="convertCurrency()">換算</button>
   <div id="converted-result"></div>
   <hr>
-<h2>Debug 工具</h2>
-<button onclick="alert(localStorage.getItem('assets'))">
-  查看目前儲存的資產資料
-</button>
-<button onclick="localStorage.removeItem('assets'); alert('已清除資產資料'); location.reload();">
-  清除資產資料並重整頁面
-</button>
   <script src="script.js"></script>
 </body>
 </html>
