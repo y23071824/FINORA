@@ -20,9 +20,7 @@ async function fetchExchangeRates() {
     const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
     const data = await res.json();
 
-    if (!data || !data.rates) {
-      throw new Error("回傳格式錯誤");
-    }
+    if (!data || !data.rates) throw new Error("API 無效或回傳格式錯誤");
 
     exchangeRates = {
       USD: 1,
