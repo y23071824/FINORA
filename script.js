@@ -17,19 +17,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function fetchExchangeRates() {
     try {
-      const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
-      const data = await res.json();
+const res = await fetch("https://open.er-api.com/v6/latest/USD");
+const data = await res.json();
 
-      if (!data || !data.rates || typeof data.rates.TWD === "undefined") {
-        throw new Error("API 回傳格式錯誤");
-      }
+if (!data || !data.rates) {
+  throw new Error("API 回傳格式錯誤");
+}
 
-      exchangeRates = {
-        USD: 1,
-        TWD: data.rates.TWD,
-        JPY: data.rates.JPY,
-        EUR: data.rates.EUR
-      };
+exchangeRates = {
+  USD: 1,
+  TWD: data.rates.TWD,
+  JPY: data.rates.JPY,
+  EUR: data.rates.EUR
+};
 
       localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
     } catch (e) {
