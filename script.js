@@ -259,16 +259,10 @@ ${display}
       totalsList.appendChild(li);
     }
 
-    
-    }
-
     const totalLine = document.createElement("li");
     totalLine.style.fontWeight = "bold";
     totalLine.textContent = `全體總資產（所有幣別列出），折合台幣：NT$ ${totalTWD.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
     totalsList.appendChild(totalLine);
-
-    
-    }
 
     const reverseRate = document.createElement("li");
     const usdRate = (1 / (exchangeRates["TWD"] || 1)).toFixed(3);
