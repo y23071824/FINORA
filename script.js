@@ -323,16 +323,10 @@ EUR：${parseFloat(exchangeRates["EUR"] || 0).toFixed(2)}`;
   }
 }
 // ===== Part 4：啟動函式與其他 =====
-document.addEventListener("DOMContentLoaded", async () => {
-  try {
-    await fetchExchangeRates();         // 取得最新匯率
-    await updateAllStockPrices();       // 自動更新股票現價
-    toggleFields();                     // 顯示對應欄位
-    render();                           // 渲染畫面與計算
-  } catch (e) {
-    console.error("❌ 初始化失敗", e);
-    alert("系統初始化錯誤，請重新整理頁面");
-  }
-});
+fetchExchangeRates().then(() => {
+  updateAllStockPrices().then(() => {
+    toggleFields();
+    render();
+  });
 });
 });
