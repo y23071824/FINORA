@@ -329,6 +329,3 @@ document.addEventListener("DOMContentLoaded", async () => {
   toggleFields();                     // 初始欄位顯示切換
   render();                           // 畫面渲染與計算總資產
 });
-});
-});
-
