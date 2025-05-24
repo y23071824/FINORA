@@ -96,6 +96,15 @@
         userEmail.textContent = `已登入：${user.email}`;
         loginBtn.style.display = "none";
         logoutBtn.style.display = "inline-block";
+
+        const cloudAssets = await FINORA_AUTH.loadUserAssets();
+        const localAssets = JSON.parse(localStorage.getItem("assets") || "[]");
+
+        if (cloudAssets.length > 0 && localAssets.length === 0) {
+          localStorage.setItem("assets", JSON.stringify(cloudAssets));
+        } else if (localAssets.length > 0) {
+          await FINORA_AUTH.saveUserAssets(localAssets);
+        }
       }
     });
 
