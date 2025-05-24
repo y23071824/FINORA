@@ -41,6 +41,21 @@
     .button-group a:hover {
       background-color: #a04d5d;
     }
+    #firebase-auth {
+      margin-top: 2rem;
+    }
+    #login-btn, #logout-btn {
+      background-color: #c96374;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.2rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #login-btn:hover, #logout-btn:hover {
+      background-color: #a04d5d;
+    }
   </style>
 </head>
 <body>
@@ -54,22 +69,29 @@
     <a href="tools/emergency.html">緊急預備金計算</a>
   </div>
 
-  <!-- 🔐 Firebase 登入區塊 -->
-  <div id="firebase-auth" style="text-align: center; margin-top: 2em;">
+  <!-- 🔐 Firebase 登入按鈕區塊 -->
+  <div id="firebase-auth">
     <button id="login-btn">🔐 使用 Google 帳號登入</button>
     <button id="logout-btn" style="display:none;">🚪 登出</button>
     <p id="user-email" style="font-size: 0.9em; color: #666;"></p>
   </div>
 
-  <!-- ✅ 載入 Firebase 同步功能 -->
+  <!-- ✅ Firebase SDKs（v8 適用於非模組用法）-->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <!-- ✅ 載入雲端同步功能 -->
   <script src="firebase-sync.js"></script>
+
+  <!-- ✅ 登入狀態監控與切換 -->
   <script>
     const loginBtn = document.getElementById("login-btn");
     const logoutBtn = document.getElementById("logout-btn");
     const userEmail = document.getElementById("user-email");
 
     loginBtn?.addEventListener("click", async () => {
-      const user = await window.FINORA_AUTH.signInWithGoogle();
+      const user = await FINORA_AUTH.signInWithGoogle();
       if (user) {
         userEmail.textContent = `已登入：${user.email}`;
         loginBtn.style.display = "none";
@@ -78,10 +100,10 @@
     });
 
     logoutBtn?.addEventListener("click", () => {
-      window.FINORA_AUTH.signOutFromGoogle();
+      FINORA_AUTH.signOutFromGoogle();
     });
 
-    window.FINORA_AUTH.onUserChanged((user) => {
+    FINORA_AUTH.onUserChanged(user => {
       if (user) {
         userEmail.textContent = `已登入：${user.email}`;
         loginBtn.style.display = "none";
