@@ -289,13 +289,14 @@ ${display}
 }
 
   // ===== Part 4：啟動初始化流程 =====
-  await fetchExchangeRates();
-  console.log("✅ 匯率查詢完成");
+await fetchExchangeRates();
+console.log("✅ 匯率查詢完成");
 
-  await updateAllStockPrices();
-  console.log("✅ 股票現價更新完成");
+await updateAllStockPrices();
+console.log("✅ 股票現價更新完成");
 
-  toggleFields();
-  render();
-  console.log("✅ 初始化完成");
+toggleFields();
+render();
+console.log("✅ 初始化完成");
+
 }); // ✅ 這是最外層 document.addEventListener 的結尾，不能少
