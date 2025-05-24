@@ -6,6 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
   <style>
+   <!-- 🔐 Firebase 登入按鈕區塊 -->
+<div id="firebase-auth" style="text-align: center; margin-top: 2em;">
+  <button id="login-btn">🔐 使用 Google 帳號登入</button>
+  <button id="logout-btn" style="display:none;">🚪 登出</button>
+  <p id="user-email" style="font-size: 0.9em; color: #666;"></p>
+</div>
+
+<!-- ✅ 載入 Firebase 同步功能 -->
+<script type="module" src="firebase-sync.js"></script>
     body {
       text-align: center;
       font-family: sans-serif;
