@@ -201,6 +201,7 @@ function render() {
 
     assetList.innerHTML = "";
     totalsList.innerHTML = "";
+    profitList.innerHTML = "";
     let categoryTotals = {}, currencyTotals = {}, totalTWD = 0;
 
     assets.forEach((item, index) => {
@@ -268,6 +269,12 @@ ${display}
     totalsList.appendChild(totalLine);
 
     // 匯率提示區
+    const rateTip = document.createElement("li");
+    rateTip.innerHTML = `📌 1 USD = ${exchangeRates["TWD"]} TWD｜${exchangeRates["JPY"]} JPY｜${exchangeRates["EUR"]} EUR`;
+    rateTip.style.fontSize = "0.95em";
+    rateTip.style.color = "#666";
+    totalsList.appendChild(rateTip);
+
     const reverseRate = document.createElement("li");
     const usdRate = (1 / (exchangeRates["TWD"] || 1)).toFixed(3);
     const jpyRate = (exchangeRates["JPY"] / exchangeRates["TWD"]).toFixed(2);
