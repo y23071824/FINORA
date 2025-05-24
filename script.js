@@ -192,7 +192,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   };
 
- // ===== Part 3：畫面渲染與計算 =====
+// ===== Part 3：畫面渲染與計算 =====
 function render() {
   try {
     if (!exchangeRates || Object.keys(exchangeRates).length === 0) {
