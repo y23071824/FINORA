@@ -259,34 +259,15 @@ ${display}
       totalsList.appendChild(li);
     }
 
-    for (const currency in currencyTotals) {
-      const total = currencyTotals[currency];
-      const twd = total * (exchangeRates["TWD"] / (exchangeRates[currency] || 1));
-      const li = document.createElement("li");
-      li.innerHTML = `資產加總 ${currency}：$${total.toLocaleString()} ≈ NT$ ${twd.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-      totalsList.appendChild(li);
+    
     }
 
     const totalLine = document.createElement("li");
     totalLine.style.fontWeight = "bold";
-    totalLine.textContent = `全體總資產（折合台幣）：NT$ ${totalTWD.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+    totalLine.textContent = `全體總資產（所有幣別列出），折合台幣：NT$ ${totalTWD.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
     totalsList.appendChild(totalLine);
 
-    const profitsByCurrency = {};
-    assets.forEach(item => {
-      if (item.type === "股票") {
-        const shares = parseFloat(item.shares) || 0;
-        const cost = parseFloat(item.cost) || 0;
-        const price = parseFloat(item.price) || 0;
-        const profit = (shares * price) - (shares * cost);
-        profitsByCurrency[item.currency] = (profitsByCurrency[item.currency] || 0) + profit;
-      }
-    });
-
-    for (const ccy in profitsByCurrency) {
-      const li = document.createElement("li");
-      li.textContent = `${ccy} 股票盈餘：$${profitsByCurrency[ccy].toLocaleString()}`;
-      profitList.appendChild(li);
+    
     }
 
     const updateTime = new Date().toLocaleString();
