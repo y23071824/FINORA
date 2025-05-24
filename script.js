@@ -312,7 +312,8 @@ EUR：${parseFloat(exchangeRates["EUR"] || 0).toFixed(2)}`;
     }
   }
 
-  // ===== Part 4：啟動初始化流程 =====
+ // ===== Part 4：啟動初始化流程 =====
+document.addEventListener("DOMContentLoaded", async () => {
   try {
     await fetchExchangeRates();
     console.log("✅ 匯率查詢完成");
