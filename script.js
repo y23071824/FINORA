@@ -246,6 +246,7 @@ ${display}
       assetList.appendChild(li);
     });
 
+    // 類別＋幣別分類加總顯示
     for (const key in categoryTotals) {
       const [type, currency] = key.split("｜");
       const item = categoryTotals[key];
@@ -259,11 +260,15 @@ ${display}
       totalsList.appendChild(li);
     }
 
+    // 幣別分開列出
+    const currencyBreakdown = Object.entries(currencyTotals).map(([ccy, value]) => `$${value.toLocaleString()} ${ccy}`).join("，");
+
     const totalLine = document.createElement("li");
     totalLine.style.fontWeight = "bold";
-    totalLine.textContent = `全體總資產（所有幣別列出），折合台幣：NT$ ${totalTWD.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+    totalLine.textContent = `全體總資產：${currencyBreakdown}，折合台幣：NT$ ${totalTWD.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
     totalsList.appendChild(totalLine);
 
+    // 匯率提示區
     const reverseRate = document.createElement("li");
     const usdRate = (1 / (exchangeRates["TWD"] || 1)).toFixed(3);
     const jpyRate = (exchangeRates["JPY"] / exchangeRates["TWD"]).toFixed(2);
@@ -273,9 +278,11 @@ ${display}
     reverseRate.style.color = "#666";
     totalsList.appendChild(reverseRate);
 
+    // 匯率更新時間
     const updateTime = new Date().toLocaleString();
     document.getElementById("rate-time").textContent = `匯率更新時間：${updateTime}`;
 
+    // 銀行記憶
     bankDatalist.innerHTML = "";
     bankHistory.forEach(bank => {
       const opt = document.createElement("option");
