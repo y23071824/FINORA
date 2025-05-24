@@ -251,7 +251,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const exchangeRateUsed = exchangeRates["TWD"] / (exchangeRates[currency] || 1);
         const li = document.createElement("li");
         li.innerHTML = `<strong>${item.type}</strong>（${currency}｜${item.bank}）${item.note ? "｜備註：" + item.note : ""}<br>
-${display}<br><small style="color: #888;">折算匯率：1 ${currency} ≈ NT$ ${exchangeRateUsed.toFixed(2)}</small>
+${display}<br>
 <div class="button-group">
   <button onclick="editAsset(${index})">編輯</button>
   <button onclick="deleteAsset(${index})">刪除</button>
