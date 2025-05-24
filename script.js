@@ -265,7 +265,7 @@ ${display}
 
     const totalLine = document.createElement("li");
     totalLine.style.fontWeight = "bold";
-    totalLine.textContent = `全體總資產（所有幣別列出）：${currencyBreakdown}，折合台幣：NT$ ${totalTWD.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+    totalLine.textContent = `全體總資產：${currencyBreakdown}，折合台幣：NT$ ${totalTWD.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
     totalsList.appendChild(totalLine);
 
     // 匯率提示區
@@ -294,7 +294,6 @@ ${display}
     alert("畫面更新失敗，請檢查資料內容或重新整理");
   }
 }
-
 
   // ===== Part 4：啟動初始化流程 =====
 await fetchExchangeRates();
