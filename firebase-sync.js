@@ -1,18 +1,4 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.1/firebase-app.js";
-import {
-  getAuth,
-  signInWithPopup,
-  GoogleAuthProvider,
-  signOut,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/11.8.1/firebase-auth.js";
-import {
-  getFirestore,
-  doc,
-  getDoc,
-  setDoc
-} from "https://www.gstatic.com/firebasejs/11.8.1/firebase-firestore.js";
-
+// firebase-sync.js（非 module，不使用 import）
 const firebaseConfig = {
   apiKey: "AIzaSyBJE12oIoK4gr153jkNBokQ-d3ohnN4aWE",
   authDomain: "finora-d8cb3.firebaseapp.com",
@@ -23,17 +9,17 @@ const firebaseConfig = {
   measurementId: "G-KGS1T8F00Y"
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const provider = new GoogleAuthProvider();
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+const provider = new firebase.auth.GoogleAuthProvider();
+
 let currentUser = null;
 
 window.FINORA_AUTH = {
-  // ✅ 1. 登入
   signInWithGoogle: async () => {
     try {
-      const result = await signInWithPopup(auth, provider);
+      const result = await auth.signInWithPopup(provider);
       currentUser = result.user;
       return currentUser;
     } catch (e) {
@@ -42,31 +28,27 @@ window.FINORA_AUTH = {
     }
   },
 
-  // ✅ 2. 登出
   signOutFromGoogle: () => {
-    signOut(auth);
+    auth.signOut();
   },
 
-  // ✅ 3. 監聽登入狀態
   onUserChanged: (callback) => {
-    onAuthStateChanged(auth, (user) => {
+    auth.onAuthStateChanged(user => {
       currentUser = user;
       callback(user);
     });
   },
 
-  // ✅ 4. 載入雲端資產資料
   loadUserAssets: async () => {
     if (!currentUser) return null;
-    const ref = doc(db, "users", currentUser.uid);
-    const snap = await getDoc(ref);
-    return snap.exists() ? snap.data().assets || [] : [];
+    const ref = db.collection("users").doc(currentUser.uid);
+    const snap = await ref.get();
+    return snap.exists ? snap.data().assets || [] : [];
   },
 
-  // ✅ 5. 儲存資產資料至雲端
   saveUserAssets: async (assets) => {
     if (!currentUser) return;
-    const ref = doc(db, "users", currentUser.uid);
-    await setDoc(ref, { assets }, { merge: true });
+    const ref = db.collection("users").doc(currentUser.uid);
+    await ref.set({ assets }, { merge: true });
   }
 };
