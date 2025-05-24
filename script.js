@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-document.addEventListener("DOMContentLoaded", () => {
   // ===== Part 1：初始化與匯率查詢 =====
   const form = document.getElementById("asset-form");
   const typeSelect = document.getElementById("type");
