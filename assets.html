@@ -8,77 +8,80 @@
 </head>
 <body>
   <h1>FINORA 資產登記</h1>
- <form id="asset-form">
-  <label>種類：
-    <select id="type">
-      <option value="">請選擇</option>
-      <option value="股票">股票</option>
-      <option value="定存">定存</option>
-      <option value="現金">現金</option>
-      <option value="房產">房產</option>
-      <option value="儲蓄保險">儲蓄保險</option>
-      <option value="其他">其他</option>
-    </select>
-  </label>
 
-  <!-- ✅ 股票欄位通通包進這個區塊 -->
-  <div id="stock-fields" style="display: none;">
-    <label>股票類型：
-      <select id="stock-category">
+  <form id="asset-form">
+    <label>種類：
+      <select id="type">
         <option value="">請選擇</option>
-        <option value="美股">美股</option>
-        <option value="台股">台股</option>
-        <option value="ETF">ETF</option>
-        <option value="港股">港股</option>
-        <option value="REITs">REITs</option>
-        <option value="自訂">自訂</option>
+        <option value="股票">股票</option>
+        <option value="定存">定存</option>
+        <option value="現金">現金</option>
+        <option value="房產">房產</option>
+        <option value="儲蓄保險">儲蓄保險</option>
+        <option value="其他">其他</option>
       </select>
     </label>
-    <label>股票代碼：<input type="text" id="stock-symbol" /></label>
-    <label>股數：<input type="number" id="shares" /></label>
-    <label>成本（每股）：<input type="number" id="cost" step="0.0001" /></label>
-    <label>現價（每股）：<input type="number" id="price" step="0.0001" /></label>
-  </div>
 
-  <!-- ✅ 保單欄位 -->
-  <div id="insurance-fields" style="display: none;">
-    <label>保單名稱：<input type="text" id="policy-name" /></label>
-    <label>保額：<input type="number" id="policy-amount" /></label>
-    <label>年期：<input type="number" id="policy-years" /></label>
-    <label>年繳保費：<input type="number" id="policy-premium" /></label>
-  </div>
+    <div id="stock-fields" style="display: none;">
+      <label>股票類型：
+        <select id="stock-category">
+          <option value="">請選擇</option>
+          <option value="美股">美股</option>
+          <option value="台股">台股</option>
+          <option value="ETF">ETF</option>
+          <option value="港股">港股</option>
+          <option value="REITs">REITs</option>
+          <option value="自訂">自訂</option>
+        </select>
+      </label>
+      <label>股票代碼：<input type="text" id="stock-symbol" /></label>
+      <label>股數：<input type="number" id="shares" /></label>
+      <label>成本（每股）：<input type="number" id="cost" step="0.0001" /></label>
+      <label>現價（每股）：<input type="number" id="price" step="0.0001" /></label>
+    </div>
 
-  <!-- ✅ 一般金額欄位（非股票與保單時顯示） -->
-  <div id="amount-field">
-    <label>金額：<input type="number" id="amount" /></label>
-  </div>
+    <div id="insurance-fields" style="display: none;">
+      <label>保單名稱：<input type="text" id="policy-name" /></label>
+      <label>保額：<input type="number" id="policy-amount" /></label>
+      <label>年期：<input type="number" id="policy-years" /></label>
+      <label>年繳保費：<input type="number" id="policy-premium" /></label>
+    </div>
 
-  <label>幣別：
-    <select id="currency">
-      <option value="TWD">TWD</option>
-      <option value="USD">USD</option>
-      <option value="JPY">JPY</option>
-      <option value="EUR">EUR</option>
-    </select>
-  </label>
+    <div id="amount-field">
+      <label>金額：<input type="number" id="amount" /></label>
+    </div>
 
-  <label>銀行：<input type="text" id="bank" list="bank-list" /></label>
-  <label>備註：<input type="text" id="note" /></label>
+    <label>幣別：
+      <select id="currency">
+        <option value="TWD">TWD</option>
+        <option value="USD">USD</option>
+        <option value="JPY">JPY</option>
+        <option value="EUR">EUR</option>
+      </select>
+    </label>
 
-  <button type="submit">儲存資產</button>
-</form>
-<datalist id="bank-list"></datalist>
+    <label>銀行：<input type="text" id="bank" list="bank-list" /></label>
+    <label>備註：<input type="text" id="note" /></label>
+
+    <button type="submit">儲存資產</button>
+  </form>
+
+  <datalist id="bank-list"></datalist>
+
   <h2>資產列表</h2>
   <ul id="asset-list"></ul>
- <h2>資產加總</h2>
-<ul id="totals-list"></ul>
-<p id="rate-time" style="font-size: 0.9em; color: #666;"></p>
+
+  <h2>資產加總</h2>
+  <ul id="totals-list"></ul>
+  <p id="rate-time" style="font-size: 0.9em; color: #666;"></p>
+
   <h2>匯率換算計算機</h2>
   <label>金額：<input type="number" id="input-amount" /></label>
   <label>匯率：<input type="number" id="input-rate" /></label>
   <button onclick="convertCurrency()">換算</button>
   <div id="converted-result"></div>
-  <hr>
+
+  <hr />
   <script src="script.js"></script>
 </body>
 </html>
