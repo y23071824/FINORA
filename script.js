@@ -334,4 +334,4 @@ document.addEventListener("DOMContentLoaded", async () => {
     alert("系統初始化錯誤，請重新整理頁面");
   }
 });
-
+});
