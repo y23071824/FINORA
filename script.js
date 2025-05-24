@@ -201,7 +201,7 @@ function render() {
 
     assetList.innerHTML = "";
     totalsList.innerHTML = "";
-    profitList.innerHTML = "";
+    if (profitList) profitList.innerHTML = "";
     let categoryTotals = {}, currencyTotals = {}, totalTWD = 0;
 
     assets.forEach((item, index) => {
