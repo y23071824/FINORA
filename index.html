@@ -63,6 +63,42 @@
 
   <!-- ✅ 載入 Firebase 同步功能 -->
   <script type="module" src="firebase-sync.js"></script>
+  <script type="module">
+  import {
+    signInWithGoogle,
+    signOutFromGoogle,
+    onUserChanged
+  } from "./firebase-sync.js";
+
+  const loginBtn = document.getElementById("login-btn");
+  const logoutBtn = document.getElementById("logout-btn");
+  const userEmail = document.getElementById("user-email");
+
+  loginBtn?.addEventListener("click", async () => {
+    const user = await signInWithGoogle();
+    if (user) {
+      userEmail.textContent = `已登入：${user.email}`;
+      loginBtn.style.display = "none";
+      logoutBtn.style.display = "inline-block";
+    }
+  });
+
+  logoutBtn?.addEventListener("click", () => {
+    signOutFromGoogle();
+  });
+
+  onUserChanged(user => {
+    if (user) {
+      userEmail.textContent = `已登入：${user.email}`;
+      loginBtn.style.display = "none";
+      logoutBtn.style.display = "inline-block";
+    } else {
+      userEmail.textContent = "";
+      loginBtn.style.display = "inline-block";
+      logoutBtn.style.display = "none";
+    }
+  });
+</script>
 </body>
 </html>
 
