@@ -312,20 +312,14 @@ EUR：${parseFloat(exchangeRates["EUR"] || 0).toFixed(2)}`;
     }
   }
 
- // ===== Part 4：啟動初始化流程 =====
-document.addEventListener("DOMContentLoaded", async () => {
-  try {
-    await fetchExchangeRates();
-    console.log("✅ 匯率查詢完成");
+  // ===== Part 4：啟動初始化流程 =====
+  await fetchExchangeRates();
+  console.log("✅ 匯率查詢完成");
 
-    await updateAllStockPrices();
-    console.log("✅ 股票現價更新完成");
+  await updateAllStockPrices();
+  console.log("✅ 股票現價更新完成");
 
-    toggleFields();
-    render();
-    console.log("✅ 初始化完成");
-  } catch (e) {
-    console.error("❌ 初始化失敗", e);
-    alert("系統初始化錯誤，請重新整理頁面");
-  }
+  toggleFields();
+  render();
+  console.log("✅ 初始化完成");
 });
