@@ -322,4 +322,4 @@ EUR：${parseFloat(exchangeRates["EUR"] || 0).toFixed(2)}`;
   toggleFields();
   render();
   console.log("✅ 初始化完成");
-});
+}); // ✅ 這是最外層 document.addEventListener 的結尾，不能少
