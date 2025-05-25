@@ -72,7 +72,7 @@
     }
 
     const updateTime = new Date().toLocaleString();
-    const usdTo = `1 USD = ${exchangeRates.TWD} TWD｜${exchangeRates.JPY} JPY｜${exchangeRates.EUR} EUR`;
+    const usdTo = `📌1 USD = ${exchangeRates.TWD} TWD｜${exchangeRates.JPY} JPY｜${exchangeRates.EUR} EUR`;
     const twdTo = `📌 1 TWD ≈ ${(1/exchangeRates.TWD).toFixed(3)} USD｜${(exchangeRates.JPY/exchangeRates.TWD).toFixed(2)} JPY｜${(exchangeRates.EUR/exchangeRates.TWD).toFixed(3)} EUR`;
     document.getElementById("rate-time").innerHTML = `${usdTo}<br>${twdTo}<br>匯率更新時間：${updateTime}`;
 
