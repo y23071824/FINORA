@@ -19,7 +19,6 @@
 
   <div id="result"></div>
 
-  <!-- ✅ 顯示目前總資產（折合台幣） -->
   <div id="total-assets" style="margin-top: 2rem; font-size: 1.1rem; color: #444;"></div>
 
   <a href="../assets.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374">← 返回首頁</a>
@@ -30,8 +29,7 @@
     const assets = JSON.parse(localStorage.getItem("assets") || "[]");
 
     if (assets.length > 0 && exchangeRates.TWD) {
-      let currencyTotals = {};
-      let totalTWD = 0;
+      let categoryTotals = {}, currencyTotals = {}, totalTWD = 0;
 
       assets.forEach(item => {
         let amount = 0, profit = 0;
@@ -48,13 +46,18 @@
         }
 
         const ccy = item.currency;
+        const key = `${item.type}（${ccy}）`;
         const total = amount + (item.type === "股票" ? profit : 0);
+        categoryTotals[key] = (categoryTotals[key] || 0) + total;
+
         currencyTotals[ccy] = (currencyTotals[ccy] || 0) + total;
         totalTWD += total * (exchangeRates.TWD / (exchangeRates[ccy] || 1));
       });
 
-      const lines = Object.entries(currencyTotals).map(([ccy, val]) => `💰 ${ccy}: $${val.toLocaleString()}`);
-      lines.push(`<strong>折合台幣：NT$ ${Math.round(totalTWD).toLocaleString()}</strong>`);
+      const lines = Object.entries(categoryTotals).map(([k, v]) => `📊 ${k}：$${v.toLocaleString()}`);
+      const currencyLine = Object.entries(currencyTotals).map(([ccy, val]) => `${ccy}: $${val.toLocaleString()}`).join("， ");
+
+      lines.push(`<strong>全體總資產：${currencyLine}，折合台幣：NT$ ${Math.round(totalTWD).toLocaleString()}</strong>`);
       totalEl.innerHTML = lines.join("<br>");
     }
 
