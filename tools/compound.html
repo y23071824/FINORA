@@ -17,7 +17,7 @@
     <button type="submit">開始模擬</button>
   </form>
 
-  <div id="result"></div>
+  <div id="result" style="margin-top: 1rem;"></div>
 
   <div id="total-assets" style="margin-top: 2rem; font-size: 1.1rem; color: #444;"></div>
 
@@ -29,10 +29,13 @@
     const assets = JSON.parse(localStorage.getItem("assets") || "[]");
 
     if (assets.length > 0 && exchangeRates.TWD) {
-      let categoryTotals = {}, totalTWD = 0;
+      let categoryTotals = {};
+      let currencyTotals = {};
+      let totalTWD = 0;
 
       assets.forEach(item => {
         let amount = 0, profit = 0;
+
         if (item.type === "股票") {
           const shares = parseFloat(item.shares) || 0;
           const cost = parseFloat(item.cost) || 0;
@@ -45,24 +48,44 @@
           amount = parseFloat(item.amount) || 0;
         }
 
-        const ccy = item.currency;
-        const key = `${item.type}｜${ccy}`;
-        if (!categoryTotals[key]) categoryTotals[key] = { amount: 0, profit: 0, currency: ccy };
-        categoryTotals[key].amount += amount;
-        if (item.type === "股票") categoryTotals[key].profit += profit;
+        const total = amount + (item.type === "股票" ? profit : 0);
+        const currency = item.currency;
+        const categoryKey = `${item.type}（${currency}）`;
+
+        categoryTotals[categoryKey] = (categoryTotals[categoryKey] || 0) + total;
+        currencyTotals[currency] = (currencyTotals[currency] || 0) + total;
+
+        totalTWD += total * (exchangeRates.TWD / (exchangeRates[currency] || 1));
       });
 
-      const lines = [];
-      for (const key in categoryTotals) {
-        const [type, currency] = key.split("｜");
-        const item = categoryTotals[key];
-        const rate = exchangeRates[currency] || 1;
-        const total = item.amount + (item.profit || 0);
-        const twd = total * (exchangeRates.TWD / rate);
-        totalTWD += twd;
-        lines.push(`${type}（${currency}）：$${total.toLocaleString()} ${currency}${item.profit ? `（盈餘 $${item.profit.toLocaleString()}）` : ""} ≈ NT$ ${Math.round(twd).toLocaleString()}`);
-      }
-      lines.push(`<strong>全體總資產（所有幣別列出），折合台幣：NT$ ${Math.round(totalTWD).toLocaleString()}</strong>`);
+      const lines = Object.entries(categoryTotals).map(([label, val]) => {
+        const match = label.match(/（(.+?)）/);
+        const ccy = match ? match[1] : "";
+        const rate = exchangeRates.TWD / (exchangeRates[ccy] || 1);
+        const twd = val * rate;
+        return `💰 ${label}：$${val.toLocaleString()} ≈ NT$ ${Math.round(twd).toLocaleString()}`;
+      });
+
+      const currencyLine = Object.entries(currencyTotals)
+        .map(([ccy, val]) => `${ccy} $${val.toLocaleString()}`)
+        .join(" + ");
+
+      lines.push(`📊 全體資產：${currencyLine}，折合台幣：NT$ ${Math.round(totalTWD).toLocaleString()}`);
+
+      const updateTime = new Date().toLocaleString();
+      const usdToTwd = (exchangeRates.TWD).toFixed(2);
+      const jpyToTwd = (exchangeRates.TWD / exchangeRates.JPY).toFixed(2);
+      const eurToTwd = (exchangeRates.TWD / exchangeRates.EUR).toFixed(2);
+      const twdToUsd = (1 / exchangeRates.TWD).toFixed(3);
+      const twdToJpy = (exchangeRates.JPY / exchangeRates.TWD).toFixed(3);
+      const twdToEur = (exchangeRates.EUR / exchangeRates.TWD).toFixed(3);
+
+      lines.push(`📌 匯率資訊（更新時間：${updateTime}）`);
+      lines.push(`1 USD → TWD：${usdToTwd}`);
+      lines.push(`1 JPY → TWD：${jpyToTwd}`);
+      lines.push(`1 EUR → TWD：${eurToTwd}`);
+      lines.push(`1 TWD ≈ ${twdToUsd} USD｜${twdToJpy} JPY｜${twdToEur} EUR`);
+
       totalEl.innerHTML = lines.join("<br>");
     }
 
