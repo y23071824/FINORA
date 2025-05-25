@@ -46,19 +46,21 @@
         }
 
         const ccy = item.currency;
-        const key = `${item.type}（${ccy}）`;
-        categoryTotals[key] = categoryTotals[key] || { amount: 0, profit: 0, currency: ccy };
+        const key = `${item.type}｜${ccy}`;
+        if (!categoryTotals[key]) categoryTotals[key] = { amount: 0, profit: 0, currency: ccy };
         categoryTotals[key].amount += amount;
         if (item.type === "股票") categoryTotals[key].profit += profit;
       });
 
       const lines = [];
       for (const key in categoryTotals) {
-        const { amount, profit, currency } = categoryTotals[key];
-        const total = amount + (profit || 0);
-        const twd = total * (exchangeRates.TWD / (exchangeRates[currency] || 1));
+        const [type, currency] = key.split("｜");
+        const item = categoryTotals[key];
+        const rate = exchangeRates[currency] || 1;
+        const total = item.amount + (item.profit || 0);
+        const twd = total * (exchangeRates.TWD / rate);
         totalTWD += twd;
-        lines.push(`${key}：$${total.toLocaleString()} ${currency}${profit ? `（盈餘 $${profit.toLocaleString()}）` : ""} ≈ NT$ ${twd.toLocaleString(undefined, { maximumFractionDigits: 0 })}`);
+        lines.push(`${type}（${currency}）：$${total.toLocaleString()} ${currency}${item.profit ? `（盈餘 $${item.profit.toLocaleString()}）` : ""} ≈ NT$ ${Math.round(twd).toLocaleString()}`);
       }
       lines.push(`<strong>全體總資產（所有幣別列出），折合台幣：NT$ ${Math.round(totalTWD).toLocaleString()}</strong>`);
       totalEl.innerHTML = lines.join("<br>");
