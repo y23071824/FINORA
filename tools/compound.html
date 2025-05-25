@@ -21,7 +21,7 @@
 
   <div id="total-assets" style="margin-top: 2rem; font-size: 1.1rem; color: #444;"></div>
 
-  <a href="../assets.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374">← 返回首頁</a>
+  <a href="../index.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374">← 返回首頁</a>
 
   <script>
     const totalEl = document.getElementById("total-assets");
@@ -29,7 +29,7 @@
     const assets = JSON.parse(localStorage.getItem("assets") || "[]");
 
     if (assets.length > 0 && exchangeRates.TWD) {
-      let categoryTotals = {}, currencyTotals = {}, totalTWD = 0;
+      let categoryTotals = {}, totalTWD = 0;
 
       assets.forEach(item => {
         let amount = 0, profit = 0;
@@ -47,17 +47,20 @@
 
         const ccy = item.currency;
         const key = `${item.type}（${ccy}）`;
-        const total = amount + (item.type === "股票" ? profit : 0);
-        categoryTotals[key] = (categoryTotals[key] || 0) + total;
-
-        currencyTotals[ccy] = (currencyTotals[ccy] || 0) + total;
-        totalTWD += total * (exchangeRates.TWD / (exchangeRates[ccy] || 1));
+        categoryTotals[key] = categoryTotals[key] || { amount: 0, profit: 0, currency: ccy };
+        categoryTotals[key].amount += amount;
+        if (item.type === "股票") categoryTotals[key].profit += profit;
       });
 
-      const lines = Object.entries(categoryTotals).map(([k, v]) => `📊 ${k}：$${v.toLocaleString()}`);
-      const currencyLine = Object.entries(currencyTotals).map(([ccy, val]) => `${ccy}: $${val.toLocaleString()}`).join("， ");
-
-      lines.push(`<strong>全體總資產：${currencyLine}，折合台幣：NT$ ${Math.round(totalTWD).toLocaleString()}</strong>`);
+      const lines = [];
+      for (const key in categoryTotals) {
+        const { amount, profit, currency } = categoryTotals[key];
+        const total = amount + (profit || 0);
+        const twd = total * (exchangeRates.TWD / (exchangeRates[currency] || 1));
+        totalTWD += twd;
+        lines.push(`${key}：$${total.toLocaleString()} ${currency}${profit ? `（盈餘 $${profit.toLocaleString()}）` : ""} ≈ NT$ ${twd.toLocaleString(undefined, { maximumFractionDigits: 0 })}`);
+      }
+      lines.push(`<strong>全體總資產（所有幣別列出），折合台幣：NT$ ${Math.round(totalTWD).toLocaleString()}</strong>`);
       totalEl.innerHTML = lines.join("<br>");
     }
 
