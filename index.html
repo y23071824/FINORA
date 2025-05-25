@@ -76,10 +76,10 @@
     <p id="user-email" style="font-size: 0.9em; color: #666;"></p>
   </div>
 
-  <!-- ✅ Firebase SDKs（v10 適用於模組方式）-->
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
+  <!-- ✅ Firebase SDKs（v8 非模組語法）-->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
   <!-- ✅ 載入雲端同步功能 -->
   <script src="firebase-sync.js"></script>
@@ -108,8 +108,9 @@
       }
     });
 
-    logoutBtn?.addEventListener("click", () => {
-      FINORA_AUTH.signOutFromGoogle();
+    logoutBtn?.addEventListener("click", async () => {
+      await FINORA_AUTH.signOutFromGoogle();
+      localStorage.removeItem("assets");
     });
 
     FINORA_AUTH.onUserChanged(user => {
