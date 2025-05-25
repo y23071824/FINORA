@@ -62,22 +62,9 @@
       });
 
       const lines = Object.entries(categoryTotals).map(([k, v]) => `📊 ${k}：$${v.toLocaleString()}`);
-      const usdToTwd = (exchangeRates.TWD).toFixed(2);
-      const jpyToTwd = (exchangeRates.TWD / exchangeRates.JPY).toFixed(2);
-      const eurToTwd = (exchangeRates.TWD / exchangeRates.EUR).toFixed(2);
-      const twdToUsd = (1 / exchangeRates.TWD).toFixed(3);
-      const twdToJpy = (exchangeRates.JPY / exchangeRates.TWD).toFixed(3);
-      const twdToEur = (exchangeRates.EUR / exchangeRates.TWD).toFixed(3);
-
-      lines.push(`📌 匯率資訊（更新時間：${updateTime}）`);
-      lines.push(`1 USD → TWD：${usdToTwd}`);
-      lines.push(`1 JPY → TWD：${jpyToTwd}`);
-      lines.push(`1 EUR → TWD：${eurToTwd}`);
-      lines.push(`1 TWD ≈ ${twdToUsd} USD｜${twdToJpy} JPY｜${twdToEur} EUR`);
-k}：$${v.toLocaleString()}`);
       lines.push("<hr>");
       Object.entries(currencyTotals).forEach(([ccy, val]) => {
-        const toTWD = val * (exchangeRates.TWD / (exchangeRates[ccy] || 1));      
+        const toTWD = val * (exchangeRates.TWD / (exchangeRates[ccy] || 1));
         lines.push(`💰 ${ccy}：$${val.toLocaleString()} ≈ NT$ ${Math.round(toTWD).toLocaleString()}`);
       });
       lines.push(`<strong>全體總資產：${Object.entries(currencyTotals).map(([ccy, val]) => `${ccy}: $${val.toLocaleString()}`).join(" + ")}，折合台幣：NT$ ${Math.round(totalTWD).toLocaleString()}</strong>`);
