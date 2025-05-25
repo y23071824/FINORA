@@ -42,6 +42,11 @@
       color: #444;
       line-height: 1.6;
     }
+    #compound-info {
+      margin-top: 2rem;
+      font-size: 1.1rem;
+      color: #444;
+    }
     a {
       display: block;
       text-align: center;
@@ -59,6 +64,9 @@
   <button onclick="calculateWithdraw()">開始試算</button>
 
   <div id="result"></div>
+
+  <div id="compound-info"></div>
+
   <a href="../index.html">← 返回首頁</a>
 
   <script>
@@ -83,7 +91,6 @@
 
       let output = "";
 
-      // 一般提領法
       if (hasMonthly) {
         const totalMonths = Math.floor(total / monthly);
         const years = Math.floor(totalMonths / 12);
@@ -91,7 +98,6 @@
         output += `【一般月領試算】<br>每月提領 NT$ ${monthly.toLocaleString()} 可支撐約 ${years} 年 ${months} 個月。<br><br>`;
       }
 
-      // 自訂提領比率試算
       if (hasRate) {
         const annualWithdrawal = total * (rate / 100);
         const monthlyWithdrawal = annualWithdrawal / 12;
@@ -106,16 +112,12 @@
       result.innerHTML = output;
     }
 
-    // 顯示複利試算器產生的結果
+    // 顯示複利試算器的最後一次計算結果
     document.addEventListener("DOMContentLoaded", () => {
       const saved = localStorage.getItem("compoundResult");
       if (saved) {
-        const info = document.createElement("p");
-        info.style.marginTop = "1rem";
-        info.style.fontSize = "1.05rem";
-        info.style.color = "#666";
-        info.textContent = `最後一次複利試算累積資產結果：約 NT$ ${Number(saved).toLocaleString()}`;
-        document.body.insertBefore(info, document.getElementById("result"));
+        const infoBox = document.getElementById("compound-info");
+        infoBox.innerHTML = `💰 最近一次複利試算資產總額：<strong>NT$ ${Number(saved).toLocaleString()}</strong>`;
       }
     });
   </script>
