@@ -17,9 +17,15 @@
     <button type="submit">開始模擬</button>
   </form>
 
-  <div id="result" style="margin-top: 1rem;"></div>
+  <div id="result"></div>
 
   <div id="total-assets" style="margin-top: 2rem; font-size: 1.1rem; color: #444;"></div>
+
+  <h2>匯率換算計算機</h2>
+  <label>金額：<input type="number" id="input-amount" /></label>
+  <label>匯率：<input type="number" id="input-rate" /></label>
+  <button onclick="convertCurrency()">換算</button>
+  <div id="converted-result" style="margin-bottom: 2rem;"></div>
 
   <a href="../index.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374">← 返回首頁</a>
 
@@ -29,13 +35,11 @@
     const assets = JSON.parse(localStorage.getItem("assets") || "[]");
 
     if (assets.length > 0 && exchangeRates.TWD) {
-      let categoryTotals = {};
       let currencyTotals = {};
       let totalTWD = 0;
 
       assets.forEach(item => {
         let amount = 0, profit = 0;
-
         if (item.type === "股票") {
           const shares = parseFloat(item.shares) || 0;
           const cost = parseFloat(item.cost) || 0;
@@ -48,43 +52,17 @@
           amount = parseFloat(item.amount) || 0;
         }
 
+        const ccy = item.currency;
         const total = amount + (item.type === "股票" ? profit : 0);
-        const currency = item.currency;
-        const categoryKey = `${item.type}（${currency}）`;
-
-        categoryTotals[categoryKey] = (categoryTotals[categoryKey] || 0) + total;
-        currencyTotals[currency] = (currencyTotals[currency] || 0) + total;
-
-        totalTWD += total * (exchangeRates.TWD / (exchangeRates[currency] || 1));
+        currencyTotals[ccy] = (currencyTotals[ccy] || 0) + total;
+        totalTWD += total * (exchangeRates.TWD / (exchangeRates[ccy] || 1));
       });
 
-      const lines = Object.entries(categoryTotals).map(([label, val]) => {
-        const match = label.match(/（(.+?)）/);
-        const ccy = match ? match[1] : "";
-        const rate = exchangeRates.TWD / (exchangeRates[ccy] || 1);
-        const twd = val * rate;
-        return `💰 ${label}：$${val.toLocaleString()} ≈ NT$ ${Math.round(twd).toLocaleString()}`;
-      });
-
-      const currencyLine = Object.entries(currencyTotals)
-        .map(([ccy, val]) => `${ccy} $${val.toLocaleString()}`)
-        .join(" + ");
-
-      lines.push(`📊 全體資產：${currencyLine}，折合台幣：NT$ ${Math.round(totalTWD).toLocaleString()}`);
+      const lines = Object.entries(currencyTotals).map(([ccy, val]) => `💰 ${ccy}: $${val.toLocaleString()}`);
+      lines.push(`<strong>折合台幣：NT$ ${Math.round(totalTWD).toLocaleString()}</strong>`);
 
       const updateTime = new Date().toLocaleString();
-      const usdToTwd = (exchangeRates.TWD).toFixed(2);
-      const jpyToTwd = (exchangeRates.TWD / exchangeRates.JPY).toFixed(2);
-      const eurToTwd = (exchangeRates.TWD / exchangeRates.EUR).toFixed(2);
-      const twdToUsd = (1 / exchangeRates.TWD).toFixed(3);
-      const twdToJpy = (exchangeRates.JPY / exchangeRates.TWD).toFixed(3);
-      const twdToEur = (exchangeRates.EUR / exchangeRates.TWD).toFixed(3);
-
-      lines.push(`📌 匯率資訊（更新時間：${updateTime}）`);
-      lines.push(`1 USD → TWD：${usdToTwd}`);
-      lines.push(`1 JPY → TWD：${jpyToTwd}`);
-      lines.push(`1 EUR → TWD：${eurToTwd}`);
-      lines.push(`1 TWD ≈ ${twdToUsd} USD｜${twdToJpy} JPY｜${twdToEur} EUR`);
+      lines.push(`<div style="margin-top:0.5rem; font-size:0.9em; color:#666;">匯率同步時間：${updateTime}</div>`);
 
       totalEl.innerHTML = lines.join("<br>");
     }
@@ -100,6 +78,17 @@
 
       document.getElementById("result").innerHTML = `<p>模擬結果：<strong>$${FV.toFixed(2)}</strong></p>`;
     });
+
+    function convertCurrency() {
+      const amt = parseFloat(document.getElementById("input-amount")?.value);
+      const rate = parseFloat(document.getElementById("input-rate")?.value);
+      const result = document.getElementById("converted-result");
+      if (isNaN(amt) || isNaN(rate)) {
+        result.textContent = "請輸入正確金額與匯率";
+      } else {
+        result.textContent = `換算後金額：$${(amt * rate).toLocaleString()}`;
+      }
+    }
   </script>
 </body>
 </html>
