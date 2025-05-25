@@ -2,106 +2,73 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>複利試算｜FINORA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>複利成長模擬器</title>
   <link rel="stylesheet" href="../style.css" />
-  <style>
-    body {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 2rem;
-      background: #fffaf8;
-      font-family: sans-serif;
-    }
-    h1 {
-      text-align: center;
-      color: #c96374;
-    }
-    label {
-      display: block;
-      margin: 1rem 0 0.3rem;
-    }
-    input, select {
-      width: 100%;
-      padding: 0.5rem;
-      font-size: 1rem;
-    }
-    button {
-      margin-top: 1.5rem;
-      width: 100%;
-      padding: 0.8rem;
-      background-color: #c96374;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-    }
-    #result {
-      margin-top: 2rem;
-      font-size: 1.1rem;
-      color: #444;
-      line-height: 1.6;
-    }
-    a {
-      display: block;
-      text-align: center;
-      margin-top: 2rem;
-      color: #c96374;
-      text-decoration: none;
-    }
-  </style>
 </head>
 <body>
-  <h1>複利試算</h1>
-  <label>初始本金（元）：<input type="number" id="principal" /></label>
-  <label>預估年報酬率（％）：<input type="number" id="rate" step="0.1" /></label>
-  <label>投資期間（年）：<input type="number" id="years" /></label>
-  <label>定期定額投入金額（元）：<input type="number" id="regular" /></label>
-  <label>投入頻率：
-    <select id="frequency">
-      <option value="yearly">每年投入</option>
-      <option value="monthly">每月投入</option>
-    </select>
-  </label>
-  <button onclick="calculateCompound()">開始計算</button>
+  <h1>複利成長模擬器</h1>
+
+  <form id="compound-form">
+    <label>初始金額：<input type="number" id="initial-amount" required /></label>
+    <label>年利率（%）：<input type="number" id="interest-rate" step="0.01" required /></label>
+    <label>投資年數：<input type="number" id="years" required /></label>
+    <label>每月定期投入金額：<input type="number" id="monthly" required /></label>
+    <button type="submit">開始模擬</button>
+  </form>
 
   <div id="result"></div>
-  <a href="../index.html">← 返回首頁</a>
+
+  <!-- ✅ 顯示目前總資產（折合台幣） -->
+  <div id="total-assets" style="margin-top: 2rem; font-size: 1.1rem; color: #444;"></div>
+
+  <a href="../assets.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374">← 返回首頁</a>
 
   <script>
-    function calculateCompound() {
-      const P = parseFloat(document.getElementById("principal").value) || 0;
-      const r = parseFloat(document.getElementById("rate").value) || 0;
-      const years = parseInt(document.getElementById("years").value) || 0;
-      const regular = parseFloat(document.getElementById("regular").value) || 0;
-      const freq = document.getElementById("frequency").value;
+    const totalEl = document.getElementById("total-assets");
+    const exchangeRates = JSON.parse(localStorage.getItem("exchangeRates") || "{}");
+    const assets = JSON.parse(localStorage.getItem("assets") || "[]");
 
-      let total = P;
+    if (assets.length > 0 && exchangeRates.TWD) {
+      let currencyTotals = {};
+      let totalTWD = 0;
 
-      if (years <= 0 || r < 0) {
-        document.getElementById("result").textContent = "請輸入正確數值";
-        return;
-      }
-
-      if (freq === "yearly") {
-        for (let i = 1; i <= years; i++) {
-          total = total * (1 + r / 100) + regular;
+      assets.forEach(item => {
+        let amount = 0, profit = 0;
+        if (item.type === "股票") {
+          const shares = parseFloat(item.shares) || 0;
+          const cost = parseFloat(item.cost) || 0;
+          const price = parseFloat(item.price) || 0;
+          amount = shares * cost;
+          profit = shares * price - amount;
+        } else if (item.type === "儲蓄保險") {
+          amount = parseFloat(item.policyAmount) || 0;
+        } else {
+          amount = parseFloat(item.amount) || 0;
         }
-      } else {
-        const n = years * 12;
-        const monthlyRate = r / 100 / 12;
-        for (let i = 1; i <= n; i++) {
-          total = total * (1 + monthlyRate) + regular;
-        }
-      }
 
-      // 儲存到 localStorage
-      localStorage.setItem("compoundResult", total.toFixed(0));
+        const ccy = item.currency;
+        const total = amount + (item.type === "股票" ? profit : 0);
+        currencyTotals[ccy] = (currencyTotals[ccy] || 0) + total;
+        totalTWD += total * (exchangeRates.TWD / (exchangeRates[ccy] || 1));
+      });
 
-      // 顯示結果
-      document.getElementById("result").textContent =
-        `累積資產：約 NT$ ${total.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+      const lines = Object.entries(currencyTotals).map(([ccy, val]) => `💰 ${ccy}: $${val.toLocaleString()}`);
+      lines.push(`<strong>折合台幣：NT$ ${Math.round(totalTWD).toLocaleString()}</strong>`);
+      totalEl.innerHTML = lines.join("<br>");
     }
+
+    document.getElementById("compound-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const P = parseFloat(document.getElementById("initial-amount").value);
+      const r = parseFloat(document.getElementById("interest-rate").value) / 100 / 12;
+      const n = parseInt(document.getElementById("years").value) * 12;
+      const m = parseFloat(document.getElementById("monthly").value);
+
+      const FV = P * Math.pow(1 + r, n) + m * ((Math.pow(1 + r, n) - 1) / r);
+
+      document.getElementById("result").innerHTML = `<p>模擬結果：<strong>$${FV.toFixed(2)}</strong></p>`;
+    });
   </script>
 </body>
 </html>
