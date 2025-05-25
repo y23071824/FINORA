@@ -100,7 +100,14 @@
         const cloudAssets = await FINORA_AUTH.loadUserAssets();
         const localAssets = JSON.parse(localStorage.getItem("assets") || "[]");
 
-        if (cloudAssets.length > 0 && localAssets.length === 0) {
+        if (cloudAssets.length > 0 && localAssets.length > 0) {
+          const useCloud = confirm("偵測到雲端與本機都有資料，要使用雲端資料覆蓋本地嗎？點選取消則保留本地資料並覆蓋雲端。")
+          if (useCloud) {
+            localStorage.setItem("assets", JSON.stringify(cloudAssets));
+          } else {
+            await FINORA_AUTH.saveUserAssets(localAssets);
+          }
+        } else if (cloudAssets.length > 0) {
           localStorage.setItem("assets", JSON.stringify(cloudAssets));
         } else if (localAssets.length > 0) {
           await FINORA_AUTH.saveUserAssets(localAssets);
