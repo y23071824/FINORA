@@ -36,7 +36,7 @@
       cursor: pointer;
       border-radius: 8px;
     }
-    #result, #exchange-rates, #totals, #converter-result {
+    #result, #exchange-rates, #totals {
       margin-top: 1.5rem;
       background: #fdf0f2;
       padding: 1rem;
@@ -52,6 +52,7 @@
 </head>
 <body>
   <h1>複利成長試算</h1>
+
   <label>初始投入金額</label>
   <input type="number" id="principal" placeholder="例如：100000" />
 
@@ -74,7 +75,7 @@
   <div id="asset-list"></div>
   <div id="totals"></div>
 
-  <h2>即時匯率與換算</h2>
+  <h2>即時匯率</h2>
   <div id="exchange-rates"></div>
 
   <script>
@@ -97,11 +98,9 @@
         if (m % 12 === 0) total += annual;
       }
 
-      document.getElementById("result").textContent =
-        `投入 ${years} 年後，期末總資產：約 ${total.toFixed(2)} 元`;
-
-      localStorage.setItem("compoundResult", total.toFixed(2)); // 儲存給 withdraw.html 使用
-      renderAssets(); // 同步更新資產清單
+      const resultText = `投入 ${years} 年後，期末總資產：約 ${total.toFixed(2)} 元`;
+      document.getElementById("result").textContent = resultText;
+      localStorage.setItem("compoundResult", total.toFixed(2)); // 儲存試算結果
     }
 
     function renderAssets() {
@@ -119,14 +118,14 @@
         div.textContent = `${asset.type}｜${asset.amount} ${asset.currency}`;
         listDiv.appendChild(div);
 
-        if (!totals[asset.currency]) totals[asset.currency] = 0;
-        totals[asset.currency] += parseFloat(asset.amount);
+        const cur = asset.currency;
+        totals[cur] = (totals[cur] || 0) + parseFloat(asset.amount);
       });
 
       totalsDiv.innerHTML = "<b>幣別總額與折合台幣：</b><br>";
       for (const [currency, amount] of Object.entries(totals)) {
         const rate = exchangeRates[currency];
-        const twd = rate ? amount / rate * exchangeRates.TWD : "?";
+        const twd = rate ? amount / rate * exchangeRates["TWD"] : "?";
         totalsDiv.innerHTML += `${currency}：${amount.toFixed(2)}（約 TWD ${twd !== "?" ? twd.toFixed(0) : "?"}）<br>`;
       }
     }
@@ -138,20 +137,27 @@
         exchangeRates = data.rates;
 
         const div = document.getElementById("exchange-rates");
-        div.innerHTML = "<b>即時匯率（1 USD = X）：</b><br>";
+        div.innerHTML = "<b>1 USD 對：</b><br>";
         for (const [curr, rate] of Object.entries(exchangeRates)) {
-          if (curr !== "USD") {
-            div.innerHTML += `1 USD = ${rate.toFixed(2)} ${curr}<br>`;
-          }
+          if (curr !== "USD") div.innerHTML += `${curr}：${rate.toFixed(2)}<br>`;
         }
 
         renderAssets();
       } catch (e) {
         console.error("匯率查詢失敗", e);
+        document.getElementById("exchange-rates").textContent = "⚠️ 匯率查詢失敗";
       }
     }
 
-    document.addEventListener("DOMContentLoaded", fetchRates);
+    // 載入時：顯示上次複利結果、載入匯率與資產
+    document.addEventListener("DOMContentLoaded", () => {
+      const saved = localStorage.getItem("compoundResult");
+      if (saved) {
+        document.getElementById("result").textContent =
+          `🔁 最近一次試算結果：約 ${Number(saved).toLocaleString()} 元`;
+      }
+      fetchRates();
+    });
   </script>
 </body>
 </html>
