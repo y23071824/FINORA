@@ -89,10 +89,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // ===== Part 2：表單處理與存儲 =====
   function toggleFields() {
-    const type = typeSelect.value;
-    stockFields.style.display = type === "股票" ? "block" : "none";
-    insuranceFields.style.display = type === "儲蓄保險" ? "block" : "none";
-    amountField.style.display = (type !== "股票" && type !== "儲蓄保險") ? "block" : "none";
+  const type = document.getElementById("type").value;
+
+  document.getElementById("stock-fields").style.display = type === "股票" ? "block" : "none";
+  document.getElementById("insurance-fields").style.display = type === "儲蓄保險" ? "block" : "none";
+  document.getElementById("amount-field").style.display = type === "現金" || type === "定存" || type === "房產" || type === "其他" ? "block" : "none";
+  document.getElementById("fund-fields").style.display = type === "基金" ? "block" : "none";
+  document.getElementById("crypto-fields").style.display = type === "加密貨幣" ? "block" : "none";
   }
 
   typeSelect.addEventListener("change", toggleFields);
