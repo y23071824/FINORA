@@ -22,7 +22,6 @@
       margin: 1rem 0 0.3rem;
     }
     input, select {
-      width: 100%;
       padding: 0.5rem;
       font-size: 1rem;
     }
@@ -36,36 +35,53 @@
       font-size: 1rem;
       cursor: pointer;
     }
+
+    /* Flex 排版：40% + 40% + 20% */
     .item-group {
-.item-group {
-  display: flex;
-  align-items: center;
-  gap: 1.2rem; /* 增加欄位間距 */
-  margin-top: 1rem; /* 增加上下留白 */
-}
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    .item-group input[type="text"] {
+      width: 40%;
+      font-size: 1.1rem;
+      padding: 0.6rem;
+      border-radius: 6px;
+    }
+    .item-group input[type="number"] {
+      width: 40%;
+      font-size: 1.1rem;
+      padding: 0.6rem;
+      border-radius: 6px;
+    }
+    .item-group .delete-btn {
+      width: 20%;
+      text-align: center;
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      color: #bbb;
+      cursor: pointer;
+      height: 3rem;
+    }
+    .item-group .delete-btn:hover {
+      color: #c96374;
+    }
 
-.item-group input[type="text"],
-.item-group input[type="number"] {
-  flex: 1;
-  font-size: 1.2rem;
-  padding: 0.8rem;
-  height: 3rem;
-  border-radius: 8px;
-}
-
-.delete-btn {
-  background: none;
-  border: none;
-  font-size: 1.4rem;
-  color: #bbb;
-  cursor: pointer;
-  padding: 0 0.5rem;
-  line-height: 1;
-  height: 3rem;
-}
-.delete-btn:hover {
-  color: #c96374;
-}
+    #result {
+      margin-top: 2rem;
+      font-size: 1.2rem;
+      color: #444;
+      text-align: center;
+    }
+    a {
+      display: block;
+      text-align: center;
+      margin-top: 2rem;
+      color: #c96374;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
@@ -177,5 +193,4 @@
   });
 </script>
 </body>
-  
-</html>
+</
