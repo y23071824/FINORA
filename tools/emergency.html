@@ -37,45 +37,35 @@
       cursor: pointer;
     }
     .item-group {
+.item-group {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-top: 0.7rem;
+  gap: 1.5rem; /* 增加欄位間距 */
+  margin-top: 1rem; /* 增加上下留白 */
 }
+
 .item-group input[type="text"],
 .item-group input[type="number"] {
   flex: 1;
-  font-size: 1.1rem;
-  padding: 0.6rem;
-  height: 2.6rem;
-  border-radius: 6px;
+  font-size: 1.2rem;
+  padding: 0.8rem;
+  height: 3rem;
+  border-radius: 8px;
 }
+
 .delete-btn {
   background: none;
   border: none;
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   color: #bbb;
   cursor: pointer;
-  padding: 0 0.3rem;
+  padding: 0 0.5rem;
   line-height: 1;
-  height: 2.6rem;
+  height: 3rem;
 }
 .delete-btn:hover {
   color: #c96374;
 }
-    #result {
-      margin-top: 2rem;
-      font-size: 1.2rem;
-      color: #444;
-      text-align: center;
-    }
-    a {
-      display: block;
-      text-align: center;
-      margin-top: 2rem;
-      color: #c96374;
-      text-decoration: none;
-    }
   </style>
 </head>
 <body>
