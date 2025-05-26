@@ -90,7 +90,6 @@
     </a>
   </div>
 
-  <!-- ✅ 所有 script 放在頁面最下方，避免函式未定義錯誤 -->
   <script>
     let exchangeRates = {};
 
@@ -126,18 +125,28 @@
       totalsDiv.innerHTML = "";
 
       if (assetList.length === 0) {
-        listDiv.innerHTML = "<p style='color: #999;'>尚無資產資料，請回首頁新增</p>";
+        listDiv.innerHTML = "<p style='color: #999;'>尚無資產資料</p>";
         return;
       }
 
       assetList.forEach(asset => {
+        const type = asset.type || "未分類";
+        const currency = asset.currency || "未指定";
+        const amount = parseFloat(asset.amount);
+
+        const valid = !isNaN(amount);
+        const display = valid
+          ? `${type}｜${amount.toLocaleString()} ${currency}`
+          : `${type}｜（資料不完整）`;
+
         const div = document.createElement("div");
         div.className = "asset-item";
-        div.textContent = `${asset.type}｜${asset.amount} ${asset.currency}`;
+        div.textContent = display;
         listDiv.appendChild(div);
 
-        const cur = asset.currency;
-        totals[cur] = (totals[cur] || 0) + parseFloat(asset.amount);
+        if (valid) {
+          totals[currency] = (totals[currency] || 0) + amount;
+        }
       });
 
       totalsDiv.innerHTML = "<b>幣別總額與折合台幣：</b><br>";
@@ -153,6 +162,7 @@
         const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR,USD");
         const data = await res.json();
         exchangeRates = data.rates;
+        localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
 
         document.getElementById("exchange-rates").innerHTML =
           "<b>1 USD 對：</b><br>" +
@@ -165,13 +175,17 @@
       } catch (e) {
         console.error("匯率查詢失敗", e);
 
-        // 預設備援匯率
-        exchangeRates = {
-          USD: 1,
-          TWD: 32,
-          JPY: 0.22,
-          EUR: 1.08
-        };
+        // 嘗試從 localStorage 讀取備援
+        exchangeRates = JSON.parse(localStorage.getItem("exchangeRates") || "{}");
+
+        if (!exchangeRates || Object.keys(exchangeRates).length === 0) {
+          exchangeRates = {
+            USD: 1,
+            TWD: 32,
+            JPY: 0.22,
+            EUR: 1.08
+          };
+        }
 
         document.getElementById("exchange-rates").innerHTML =
           "<b>使用備援匯率：</b><br>" +
