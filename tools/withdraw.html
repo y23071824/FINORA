@@ -46,6 +46,10 @@
       margin-top: 2rem;
       font-size: 1.1rem;
       color: #444;
+      background: #fdf0f2;
+      padding: 1rem;
+      border-left: 5px solid #c96374;
+      border-radius: 6px;
     }
     a {
       display: block;
@@ -64,7 +68,6 @@
   <button onclick="calculateWithdraw()">開始試算</button>
 
   <div id="result"></div>
-
   <div id="compound-info"></div>
 
   <a href="../index.html">← 返回首頁</a>
@@ -112,12 +115,18 @@
       result.innerHTML = output;
     }
 
-    // 顯示複利試算器的最後一次計算結果
+    // 自動帶入最近一次複利試算結果
     document.addEventListener("DOMContentLoaded", () => {
       const saved = localStorage.getItem("compoundResult");
-      if (saved) {
-        const infoBox = document.getElementById("compound-info");
-        infoBox.innerHTML = `💰 最近一次複利試算資產總額：<strong>NT$ ${Number(saved).toLocaleString()}</strong>`;
+      const infoBox = document.getElementById("compound-info");
+      const inputTotal = document.getElementById("total");
+
+      if (saved && !isNaN(saved)) {
+        const value = Number(saved);
+        infoBox.innerHTML = `💰 最近一次複利試算結果已載入：<strong>NT$ ${value.toLocaleString()}</strong>`;
+        inputTotal.value = value;
+      } else {
+        infoBox.innerHTML = `尚未儲存複利試算結果，請先至「複利計算」頁執行試算。`;
       }
     });
   </script>
