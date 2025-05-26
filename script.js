@@ -257,18 +257,26 @@ window.deleteAsset = function (index) {
 // ===== Part 3：畫面渲染與計算 =====
 function render() {
   try {
+    // 1. 取得匯率資料（從記憶體或 localStorage）
     if (!exchangeRates || Object.keys(exchangeRates).length === 0) {
       exchangeRates = JSON.parse(localStorage.getItem("exchangeRates") || "{}");
     }
 
+    // 2. 初始化畫面區塊
     assetList.innerHTML = "";
     totalsList.innerHTML = "";
     if (profitList) profitList.innerHTML = "";
-    let categoryTotals = {}, currencyTotals = {}, totalTWD = 0;
 
+    // 3. 宣告總和用變數
+    let categoryTotals = {};  // 儲存各資產類型 + 幣別的加總
+    let currencyTotals = {};  // 儲存幣別總額（含盈餘）
+    let totalTWD = 0;         // 最後折合台幣的總資產
+
+    // 4. 開始處理每筆資產資料
     assets.forEach((item, index) => {
       let display = "", amount = 0, profit = 0;
 
+      // 4-1 股票處理：自動計算盈餘與總成本
       if (item.type === "股票") {
         const shares = parseFloat(item.shares) || 0;
         const cost = parseFloat(item.cost) || 0;
@@ -281,37 +289,48 @@ function render() {
         display = `股票代碼：${item.stockSymbol}｜類型：${item.stockCategory}｜股數：${shares}<br>
 成本：$${cost}，現價：$${price}<br>
 總成本：$${totalCost.toFixed(2)}，市值：$${value.toFixed(2)}，盈餘：$${profit.toFixed(2)}`;
+
+      // 4-2 儲蓄保險處理：以保額為金額
       } else if (item.type === "儲蓄保險") {
         amount = parseFloat(item.policyAmount) || 0;
         display = `保單：${item.policyName}<br>
 保額：$${item.policyAmount}，年期：${item.policyYears}，保費：$${item.policyPremium}`;
+
+      // 4-3 基金處理：單位數 × 淨值
+      } else if (item.type === "基金") {
+        const units = parseFloat(item.fundUnits) || 0;
+        const nav = parseFloat(item.fundNav) || 0;
+        amount = units * nav;
+        display = `基金：${item.fundName}<br>
+單位數：${units}，淨值：$${nav}<br>
+總市值：$${amount.toFixed(2)}`;
+
+      // 4-4 加密貨幣處理：數量 × 現價
+      } else if (item.type === "加密貨幣") {
+        const qty = parseFloat(item.cryptoAmount) || 0;
+        const price = parseFloat(item.cryptoPrice) || 0;
+        amount = qty * price;
+        display = `幣種：${item.cryptoSymbol}<br>
+數量：${qty}，現價：$${price}<br>
+總價值：$${amount.toFixed(2)}`;
+
+      // 4-5 現金、定存、房產、其他處理
       } else {
         amount = parseFloat(item.amount) || 0;
         display = `金額：$${amount.toLocaleString()}`;
       }
-      } else if (item.type === "基金") {
-  const units = parseFloat(item.fundUnits) || 0;
-  const nav = parseFloat(item.fundNav) || 0;
-  amount = units * nav;
-  display = `基金：${item.fundName}<br>
-單位數：${units}，淨值：$${nav}<br>
-總市值：$${amount.toFixed(2)}`;
-      } else if (item.type === "加密貨幣") {
-  const qty = parseFloat(item.cryptoAmount) || 0;
-  const price = parseFloat(item.cryptoPrice) || 0;
-  amount = qty * price;
-  display = `幣種：${item.cryptoSymbol}<br>
-數量：${qty}，現價：$${price}<br>
-總價值：$${amount.toFixed(2)}`;
 
+      // 5. 統計分類加總與盈餘
       const categoryKey = `${item.type}｜${item.currency}`;
       categoryTotals[categoryKey] = categoryTotals[categoryKey] || { amount: 0, profit: 0, currency: item.currency };
       categoryTotals[categoryKey].amount += amount;
       if (item.type === "股票") categoryTotals[categoryKey].profit += profit;
 
+      // 6. 幣別總和計算（含盈餘）
       currencyTotals[item.currency] = currencyTotals[item.currency] || 0;
       currencyTotals[item.currency] += amount + (item.type === "股票" ? profit : 0);
 
+      // 7. 渲染資產列表項目
       const li = document.createElement("li");
       li.innerHTML = `<strong>${item.type}</strong>（${item.currency}｜${item.bank}）${item.note ? "｜備註：" + item.note : ""}<br>
 ${display}
@@ -322,7 +341,7 @@ ${display}
       assetList.appendChild(li);
     });
 
-    // 類別＋幣別分類加總顯示
+    // 8. 渲染分類加總
     for (const key in categoryTotals) {
       const [type, currency] = key.split("｜");
       const item = categoryTotals[key];
@@ -336,7 +355,7 @@ ${display}
       totalsList.appendChild(li);
     }
 
-    // 幣別分開列出
+    // 9. 全體總資產與幣別列出
     const currencyBreakdown = Object.entries(currencyTotals).map(([ccy, value]) => `$${value.toLocaleString()} ${ccy}`).join("，");
 
     const totalLine = document.createElement("li");
@@ -344,13 +363,14 @@ ${display}
     totalLine.textContent = `全體總資產：${currencyBreakdown}，折合台幣：NT$ ${totalTWD.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
     totalsList.appendChild(totalLine);
 
-    // 匯率提示區
+    // 10. 匯率提示（正向）
     const rateTip = document.createElement("li");
     rateTip.innerHTML = `📌 1 USD = ${exchangeRates["TWD"]} TWD｜${exchangeRates["JPY"]} JPY｜${exchangeRates["EUR"]} EUR`;
     rateTip.style.fontSize = "0.95em";
     rateTip.style.color = "#666";
     totalsList.appendChild(rateTip);
 
+    // 11. 匯率提示（反向）
     const reverseRate = document.createElement("li");
     const usdRate = (1 / (exchangeRates["TWD"] || 1)).toFixed(3);
     const jpyRate = (exchangeRates["JPY"] / exchangeRates["TWD"]).toFixed(2);
@@ -360,21 +380,23 @@ ${display}
     reverseRate.style.color = "#666";
     totalsList.appendChild(reverseRate);
 
-    // 匯率更新時間
+    // 12. 顯示匯率更新時間
     const updateTime = new Date().toLocaleString();
     document.getElementById("rate-time").textContent = `匯率更新時間：${updateTime}`;
 
-    // 銀行記憶
+    // 13. 銀行輸入提示記憶選項
     bankDatalist.innerHTML = "";
     bankHistory.forEach(bank => {
       const opt = document.createElement("option");
       opt.value = bank;
       bankDatalist.appendChild(opt);
     });
+
   } catch (e) {
     console.error("❌ render() 錯誤：", e);
     alert("畫面更新失敗，請檢查資料內容或重新整理");
   }
+}
 }
 
   // ===== Part 4：啟動初始化流程 =====
