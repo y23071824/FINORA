@@ -27,7 +27,7 @@
       font-size: 1rem;
     }
     button {
-      margin-top: 1.5rem;
+      margin-top: 1rem;
       width: 100%;
       padding: 0.8rem;
       background-color: #c96374;
@@ -35,6 +35,17 @@
       border: none;
       border-radius: 8px;
       font-size: 1rem;
+    }
+    .item-group {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .item-group input[type="text"] {
+      flex: 1.2;
+    }
+    .item-group input[type="number"] {
+      flex: 0.8;
     }
     #result {
       margin-top: 2rem;
@@ -53,7 +64,12 @@
 </head>
 <body>
   <h1>緊急預備金試算</h1>
-  <label>每月支出金額（元）：<input type="number" id="monthly-expense" /></label>
+
+  <h2>每月固定支出清單</h2>
+  <div id="expenses"></div>
+  <button onclick="addExpense()">＋ 新增支出項目</button>
+  <p id="monthly-total" style="margin-top: 1rem; font-weight: bold;"></p>
+
   <label>預備金涵蓋月數：
     <select id="months">
       <option value="3">3 個月</option>
@@ -68,13 +84,42 @@
   <a href="../index.html">← 返回首頁</a>
 
 <script>
-  function calculateEmergency() {
-    const monthly = parseFloat(document.getElementById("monthly-expense").value);
-    const months = parseInt(document.getElementById("months").value);
-    const result = document.getElementById("result");
+  function addExpense(name = "", amount = "") {
+    const container = document.getElementById("expenses");
+    const group = document.createElement("div");
+    group.className = "item-group";
+    group.innerHTML = `
+      <input type="text" placeholder="項目名稱" value="${name}" />
+      <input type="number" placeholder="金額" value="${amount}" />
+    `;
+    container.appendChild(group);
+    group.querySelectorAll("input").forEach(input => {
+      input.addEventListener("input", updateMonthlyTotal);
+    });
+  }
 
-    if (isNaN(monthly) || monthly <= 0) {
-      result.textContent = "請輸入有效的月支出金額";
+  function updateMonthlyTotal() {
+    const inputs = document.querySelectorAll("#expenses input[type='number']");
+    let total = 0;
+    inputs.forEach(input => {
+      const val = parseFloat(input.value);
+      if (!isNaN(val)) total += val;
+    });
+    document.getElementById("monthly-total").textContent = `目前每月總支出：NT$ ${total.toLocaleString()}`;
+  }
+
+  function calculateEmergency() {
+    const months = parseInt(document.getElementById("months").value);
+    const amountInputs = document.querySelectorAll("#expenses input[type='number']");
+    let monthly = 0;
+    amountInputs.forEach(input => {
+      const val = parseFloat(input.value);
+      if (!isNaN(val)) monthly += val;
+    });
+
+    const result = document.getElementById("result");
+    if (monthly <= 0) {
+      result.textContent = "請輸入至少一筆支出金額";
       return;
     }
 
@@ -82,7 +127,7 @@
     result.textContent = `建議準備緊急預備金：約 NT$ ${total.toLocaleString()}`;
   }
 
-  // 自動顯示資產總額（折合台幣）
+  // 顯示資產總額（折合台幣）
   document.addEventListener("DOMContentLoaded", () => {
     const assets = JSON.parse(localStorage.getItem("assets") || "[]");
     const rates = JSON.parse(localStorage.getItem("exchangeRates") || "{}");
@@ -112,6 +157,10 @@
     info.style.color = "#666";
     info.textContent = `目前已登記資產總額（折合台幣）：NT$ ${totalTWD.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
     document.body.insertBefore(info, document.getElementById("result"));
+
+    addExpense("房租", "");
+    addExpense("食物", "");
+    addExpense("交通", "");
   });
 </script>
 </body>
