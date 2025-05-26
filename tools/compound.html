@@ -2,32 +2,33 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>複利成長試算｜FINORA</title>
+  <title>資產複利總覽｜FINORA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="../style.css" />
+  <link rel="stylesheet" href="style.css" />
   <style>
     body {
-      max-width: 700px;
+      max-width: 720px;
       margin: 0 auto;
       padding: 2rem;
       background: #fffaf8;
       font-family: sans-serif;
     }
-    h1 {
+    h1, h2 {
       text-align: center;
       color: #c96374;
     }
     label {
       display: block;
-      margin: 1rem 0 0.3rem;
+      margin-top: 1rem;
     }
-    input {
+    input, select {
       width: 100%;
       padding: 0.5rem;
+      margin-top: 0.3rem;
       font-size: 1rem;
     }
     button {
-      margin-top: 1.5rem;
+      margin-top: 1rem;
       width: 100%;
       padding: 0.7rem;
       font-size: 1.1rem;
@@ -37,21 +38,17 @@
       cursor: pointer;
       border-radius: 8px;
     }
-    #result {
-      margin-top: 2rem;
-      font-size: 1.2rem;
-      text-align: center;
-      color: #2a3f4f;
-      padding: 1rem;
+    #result, #exchange-rates, #totals, #converter-result {
+      margin-top: 1.5rem;
       background: #fdf0f2;
+      padding: 1rem;
       border-left: 5px solid #c96374;
       border-radius: 6px;
+      font-size: 1.1rem;
     }
-    canvas {
-      display: block;
-      margin: 2rem auto;
-      max-width: 100%;
-      border: 1px solid #ccc;
+    .asset-item {
+      border-bottom: 1px dashed #ccc;
+      padding: 0.3rem 0;
     }
   </style>
 </head>
@@ -66,18 +63,43 @@
   <label for="years">投資年數</label>
   <input type="number" id="years" placeholder="例如：30" />
 
-  <label for="annual">每年固定投入金額（選填）</label>
+  <label for="annual">每年固定投入金額</label>
   <input type="number" id="annual" placeholder="例如：10000" />
 
-  <label for="monthly">每月固定投入金額（選填）</label>
+  <label for="monthly">每月固定投入金額</label>
   <input type="number" id="monthly" placeholder="例如：1000" />
 
   <button onclick="calculate()">試算</button>
-
   <div id="result"></div>
-  <canvas id="chart" width="600" height="300"></canvas>
+
+  <h2>目前資產分類總覽</h2>
+  <div id="asset-list"></div>
+  <div id="totals"></div>
+
+  <h2>匯率計算機</h2>
+  <label for="amount">金額</label>
+  <input type="number" id="amount" placeholder="例如：100" />
+  <label for="from">從幣別</label>
+  <select id="from">
+    <option value="USD">USD</option>
+    <option value="TWD">TWD</option>
+    <option value="JPY">JPY</option>
+    <option value="EUR">EUR</option>
+  </select>
+  <label for="to">兌換成</label>
+  <select id="to">
+    <option value="TWD">TWD</option>
+    <option value="USD">USD</option>
+    <option value="JPY">JPY</option>
+    <option value="EUR">EUR</option>
+  </select>
+  <button onclick="convert()">計算</button>
+  <div id="converter-result"></div>
+  <div id="exchange-rates"></div>
 
   <script>
+    let exchangeRates = {};
+
     function calculate() {
       const principal = parseFloat(document.getElementById('principal').value) || 0;
       const annualRate = parseFloat(document.getElementById('rate').value) / 100 || 0;
@@ -88,64 +110,68 @@
       const months = years * 12;
       const monthlyRate = annualRate / 12;
       let total = principal;
-      const yearlyData = [total];
 
       for (let m = 1; m <= months; m++) {
         total *= (1 + monthlyRate);
         total += monthly;
-        if (m % 12 === 0) {
-          total += annual;
-          yearlyData.push(total);
-        }
+        if (m % 12 === 0) total += annual;
       }
 
-      // 顯示結果
       document.getElementById('result').textContent =
-        `投入 ${years} 年後，期末總資產：約 ${total.toFixed(2)} 元（含初始投入 ${principal} 元、每年投入 ${annual} 元、每月投入 ${monthly} 元）`;
-
-      drawChart(yearlyData);
+        `投入 ${years} 年後，期末總資產：約 ${total.toFixed(2)} 元`;
     }
 
-    function drawChart(data) {
-      const canvas = document.getElementById('chart');
-      const ctx = canvas.getContext('2d');
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    function renderAssets() {
+      const assetList = JSON.parse(localStorage.getItem("assets") || "[]");
+      const listDiv = document.getElementById("asset-list");
+      const totals = {};
+      listDiv.innerHTML = "";
+      assetList.forEach(asset => {
+        const div = document.createElement("div");
+        div.className = "asset-item";
+        div.textContent = `${asset.type}｜${asset.amount} ${asset.currency}`;
+        listDiv.appendChild(div);
 
-      const padding = 40;
-      const chartHeight = canvas.height - padding * 2;
-      const chartWidth = canvas.width - padding * 2;
-      const max = Math.max(...data);
-      const stepX = chartWidth / (data.length - 1);
-
-      // 畫軸線
-      ctx.beginPath();
-      ctx.moveTo(padding, padding);
-      ctx.lineTo(padding, canvas.height - padding);
-      ctx.lineTo(canvas.width - padding, canvas.height - padding);
-      ctx.strokeStyle = "#666";
-      ctx.stroke();
-
-      // 畫折線
-      ctx.beginPath();
-      data.forEach((val, i) => {
-        const x = padding + i * stepX;
-        const y = canvas.height - padding - (val / max) * chartHeight;
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+        if (!totals[asset.currency]) totals[asset.currency] = 0;
+        totals[asset.currency] += parseFloat(asset.amount);
       });
-      ctx.strokeStyle = "#c96374";
-      ctx.lineWidth = 2;
-      ctx.stroke();
 
-      // 標註年份
-      ctx.fillStyle = "#444";
-      ctx.font = "12px sans-serif";
-      for (let i = 0; i < data.length; i++) {
-        const x = padding + i * stepX;
-        const y = canvas.height - padding + 15;
-        ctx.fillText(`第${i}年`, x - 10, y);
+      const totalsDiv = document.getElementById("totals");
+      totalsDiv.innerHTML = "<b>各幣別總額：</b><br>";
+      for (const [currency, amount] of Object.entries(totals)) {
+        const twdValue = exchangeRates["TWD"] && exchangeRates[currency] ? (amount / exchangeRates[currency]) * exchangeRates["TWD"] : "-";
+        totalsDiv.innerHTML += `${currency}：${amount.toFixed(2)}（約 TWD ${twdValue !== "-" ? twdValue.toFixed(0) : "?"}）<br>`;
       }
     }
+
+    function convert() {
+      const amt = parseFloat(document.getElementById("amount").value);
+      const from = document.getElementById("from").value;
+      const to = document.getElementById("to").value;
+      if (!exchangeRates[from] || !exchangeRates[to]) return;
+
+      const baseToEUR = amt / exchangeRates[from];
+      const result = baseToEUR * exchangeRates[to];
+      document.getElementById("converter-result").textContent = `換算結果：約 ${result.toFixed(2)} ${to}`;
+    }
+
+    async function fetchRates() {
+      try {
+        const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR,USD");
+        const data = await res.json();
+        exchangeRates = data.rates;
+        const div = document.getElementById("exchange-rates");
+        div.innerHTML = "<b>即時匯率：</b><br>";
+        for (const [curr, rate] of Object.entries(exchangeRates)) {
+          if (curr !== "USD") div.innerHTML += `1 USD = ${rate.toFixed(2)} ${curr}<br>`;
+        }
+        renderAssets();
+      } catch (e) {
+        console.error("匯率查詢失敗", e);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", fetchRates);
   </script>
 </body>
 </html>
