@@ -28,16 +28,17 @@
     }
     button {
       margin-top: 1rem;
-      width: 100%;
-      padding: 0.8rem;
+      padding: 0.5rem 1rem;
       background-color: #c96374;
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 6px;
       font-size: 1rem;
+      cursor: pointer;
     }
     .item-group {
       display: flex;
+      align-items: center;
       gap: 0.5rem;
       margin-top: 0.5rem;
     }
@@ -46,6 +47,11 @@
     }
     .item-group input[type="number"] {
       flex: 0.8;
+    }
+    .item-group button {
+      background: #aaa;
+      font-size: 1.1rem;
+      padding: 0.3rem 0.6rem;
     }
     #result {
       margin-top: 2rem;
@@ -91,11 +97,18 @@
     group.innerHTML = `
       <input type="text" placeholder="項目名稱" value="${name}" />
       <input type="number" placeholder="金額" value="${amount}" />
+      <button type="button" onclick="removeExpense(this)">🗑</button>
     `;
     container.appendChild(group);
     group.querySelectorAll("input").forEach(input => {
       input.addEventListener("input", updateMonthlyTotal);
     });
+  }
+
+  function removeExpense(button) {
+    const group = button.parentElement;
+    group.remove();
+    updateMonthlyTotal();
   }
 
   function updateMonthlyTotal() {
