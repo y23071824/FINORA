@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="../style.css" />
   <style>
     body {
-      max-width: 600px;
+      max-width: 700px;
       margin: 0 auto;
       padding: 2rem;
       background: #fffaf8;
@@ -47,6 +47,12 @@
       border-left: 5px solid #c96374;
       border-radius: 6px;
     }
+    canvas {
+      display: block;
+      margin: 2rem auto;
+      max-width: 100%;
+      border: 1px solid #ccc;
+    }
   </style>
 </head>
 <body>
@@ -69,6 +75,7 @@
   <button onclick="calculate()">試算</button>
 
   <div id="result"></div>
+  <canvas id="chart" width="600" height="300"></canvas>
 
   <script>
     function calculate() {
@@ -81,17 +88,63 @@
       const months = years * 12;
       const monthlyRate = annualRate / 12;
       let total = principal;
+      const yearlyData = [total];
 
       for (let m = 1; m <= months; m++) {
-        total *= (1 + monthlyRate);     // 複利增長
-        total += monthly;               // 每月投入
+        total *= (1 + monthlyRate);
+        total += monthly;
         if (m % 12 === 0) {
-          total += annual;              // 每年年底投入
+          total += annual;
+          yearlyData.push(total);
         }
       }
 
+      // 顯示結果
       document.getElementById('result').textContent =
         `投入 ${years} 年後，期末總資產：約 ${total.toFixed(2)} 元（含初始投入 ${principal} 元、每年投入 ${annual} 元、每月投入 ${monthly} 元）`;
+
+      drawChart(yearlyData);
+    }
+
+    function drawChart(data) {
+      const canvas = document.getElementById('chart');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const padding = 40;
+      const chartHeight = canvas.height - padding * 2;
+      const chartWidth = canvas.width - padding * 2;
+      const max = Math.max(...data);
+      const stepX = chartWidth / (data.length - 1);
+
+      // 畫軸線
+      ctx.beginPath();
+      ctx.moveTo(padding, padding);
+      ctx.lineTo(padding, canvas.height - padding);
+      ctx.lineTo(canvas.width - padding, canvas.height - padding);
+      ctx.strokeStyle = "#666";
+      ctx.stroke();
+
+      // 畫折線
+      ctx.beginPath();
+      data.forEach((val, i) => {
+        const x = padding + i * stepX;
+        const y = canvas.height - padding - (val / max) * chartHeight;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.strokeStyle = "#c96374";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // 標註年份
+      ctx.fillStyle = "#444";
+      ctx.font = "12px sans-serif";
+      for (let i = 0; i < data.length; i++) {
+        const x = padding + i * stepX;
+        const y = canvas.height - padding + 15;
+        ctx.fillText(`第${i}年`, x - 10, y);
+      }
     }
   </script>
 </body>
