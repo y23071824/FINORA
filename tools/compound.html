@@ -42,6 +42,10 @@
       font-size: 1.2rem;
       text-align: center;
       color: #2a3f4f;
+      padding: 1rem;
+      background: #fdf0f2;
+      border-left: 5px solid #c96374;
+      border-radius: 6px;
     }
   </style>
 </head>
@@ -59,6 +63,9 @@
   <label for="annual">每年固定投入金額（選填）</label>
   <input type="number" id="annual" placeholder="例如：10000" />
 
+  <label for="monthly">每月固定投入金額（選填）</label>
+  <input type="number" id="monthly" placeholder="例如：1000" />
+
   <button onclick="calculate()">試算</button>
 
   <div id="result"></div>
@@ -66,18 +73,25 @@
   <script>
     function calculate() {
       const principal = parseFloat(document.getElementById('principal').value) || 0;
-      const rate = parseFloat(document.getElementById('rate').value) / 100 || 0;
+      const annualRate = parseFloat(document.getElementById('rate').value) / 100 || 0;
       const years = parseInt(document.getElementById('years').value) || 0;
       const annual = parseFloat(document.getElementById('annual').value) || 0;
+      const monthly = parseFloat(document.getElementById('monthly').value) || 0;
 
+      const months = years * 12;
+      const monthlyRate = annualRate / 12;
       let total = principal;
 
-      for (let i = 0; i < years; i++) {
-        total *= (1 + rate);
-        total += annual;
+      for (let m = 1; m <= months; m++) {
+        total *= (1 + monthlyRate);     // 複利增長
+        total += monthly;               // 每月投入
+        if (m % 12 === 0) {
+          total += annual;              // 每年年底投入
+        }
       }
 
-      document.getElementById('result').textContent = `期末總資產：約 ${total.toFixed(2)} 元`;
+      document.getElementById('result').textContent =
+        `投入 ${years} 年後，期末總資產：約 ${total.toFixed(2)} 元（含初始投入 ${principal} 元、每年投入 ${annual} 元、每月投入 ${monthly} 元）`;
     }
   </script>
 </body>
