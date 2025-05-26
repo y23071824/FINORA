@@ -158,46 +158,55 @@
     }
 
     async function fetchRates() {
-      try {
-        const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR,USD");
-        const data = await res.json();
-        exchangeRates = data.rates;
-        localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
+  try {
+    const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR,USD");
+    const data = await res.json();
+    exchangeRates = data.rates;
+    if (!exchangeRates || typeof exchangeRates !== "object") throw new Error("格式錯誤");
 
-        document.getElementById("exchange-rates").innerHTML =
-          "<b>1 USD 對：</b><br>" +
-          Object.entries(exchangeRates)
-            .filter(([curr]) => curr !== "USD")
-            .map(([curr, rate]) => `${curr}：${rate.toFixed(2)}`)
-            .join("<br>");
+    localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
 
-        renderAssets();
-      } catch (e) {
-        console.error("匯率查詢失敗", e);
+    document.getElementById("exchange-rates").innerHTML =
+      "<b>1 USD 對：</b><br>" +
+      Object.entries(exchangeRates)
+        .filter(([curr]) => curr !== "USD")
+        .map(([curr, rate]) => `${curr}：${rate.toFixed(2)}`)
+        .join("<br>");
 
-        // 嘗試從 localStorage 讀取備援
-        exchangeRates = JSON.parse(localStorage.getItem("exchangeRates") || "{}");
+    renderAssets();
 
-        if (!exchangeRates || Object.keys(exchangeRates).length === 0) {
-          exchangeRates = {
-            USD: 1,
-            TWD: 32,
-            JPY: 0.22,
-            EUR: 1.08
-          };
-        }
+  } catch (e) {
+    console.error("匯率查詢失敗", e);
 
-        document.getElementById("exchange-rates").innerHTML =
-          "<b>使用備援匯率：</b><br>" +
-          Object.entries(exchangeRates)
-            .filter(([curr]) => curr !== "USD")
-            .map(([curr, rate]) => `${curr}：${rate.toFixed(2)}`)
-            .join("<br>");
-
-        renderAssets();
-      }
+    // 嘗試從 localStorage 載入安全資料
+    try {
+      const stored = localStorage.getItem("exchangeRates");
+      const parsed = (stored && stored !== "undefined") ? JSON.parse(stored) : null;
+      exchangeRates = (parsed && typeof parsed === "object") ? parsed : null;
+    } catch (e2) {
+      exchangeRates = null;
     }
 
+    // 若仍無效，使用預設值
+    if (!exchangeRates || typeof exchangeRates !== "object" || Object.keys(exchangeRates).length === 0) {
+      exchangeRates = {
+        USD: 1,
+        TWD: 32,
+        JPY: 0.22,
+        EUR: 1.08
+      };
+    }
+
+    document.getElementById("exchange-rates").innerHTML =
+      "<b>使用備援匯率：</b><br>" +
+      Object.entries(exchangeRates)
+        .filter(([curr]) => curr !== "USD")
+        .map(([curr, rate]) => `${curr}：${rate.toFixed(2)}`)
+        .join("<br>");
+
+    renderAssets();
+  }
+}
     document.addEventListener("DOMContentLoaded", () => {
       const saved = localStorage.getItem("compoundResult");
       if (saved) {
