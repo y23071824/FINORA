@@ -36,7 +36,7 @@
       cursor: pointer;
       border-radius: 8px;
     }
-    #result, #exchange-rates, #totals {
+    #result, #exchange-rates, #totals, #category-totals {
       margin-top: 1.5rem;
       background: #fdf0f2;
       padding: 1rem;
@@ -77,6 +77,7 @@
 
   <h2>目前資產分類總覽</h2>
   <div id="asset-list"></div>
+  <div id="category-totals"></div>
   <div id="totals"></div>
 
   <h2>即時匯率</h2>
@@ -118,10 +119,13 @@
     function renderAssets() {
       const assetList = JSON.parse(localStorage.getItem("assets") || "[]");
       const listDiv = document.getElementById("asset-list");
+      const categoryDiv = document.getElementById("category-totals");
       const totalsDiv = document.getElementById("totals");
       const totals = {};
+      const categories = {};
 
       listDiv.innerHTML = "";
+      categoryDiv.innerHTML = "";
       totalsDiv.innerHTML = "";
 
       if (assetList.length === 0) {
@@ -134,8 +138,6 @@
         const currency = asset.currency || "未指定";
 
         let amount = parseFloat(asset.amount);
-
-        // ✅ 若為股票，沒有直接 amount 就用 shares * cost 補上
         if ((isNaN(amount) || amount === 0) && type === "股票" && asset.shares && asset.cost) {
           const shares = parseFloat(asset.shares);
           const cost = parseFloat(asset.cost);
@@ -156,8 +158,15 @@
 
         if (valid) {
           totals[currency] = (totals[currency] || 0) + amount;
+          const key = `${type}｜${currency}`;
+          categories[key] = (categories[key] || 0) + amount;
         }
       });
+
+      categoryDiv.innerHTML = "<b>📊 資產分類加總：</b><br>";
+      for (const [key, amount] of Object.entries(categories)) {
+        categoryDiv.innerHTML += `${key}：${amount.toLocaleString()}<br>`;
+      }
 
       totalsDiv.innerHTML = "<b>幣別總額與折合台幣：</b><br>";
       for (const [currency, amount] of Object.entries(totals)) {
@@ -171,17 +180,14 @@
       try {
         const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR,USD");
         const data = await res.json();
-
         if (data && data.rates && typeof data.rates === "object") {
           exchangeRates = data.rates;
           localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
         } else {
           throw new Error("API 回傳格式錯誤");
         }
-
       } catch (e) {
         console.warn("⚠️ 匯率查詢失敗，改用備援或 localStorage", e);
-
         try {
           const stored = localStorage.getItem("exchangeRates");
           const parsed = (stored && stored !== "undefined") ? JSON.parse(stored) : null;
@@ -189,7 +195,6 @@
         } catch {
           exchangeRates = null;
         }
-
         if (!exchangeRates || Object.keys(exchangeRates).length === 0) {
           exchangeRates = {
             USD: 1,
