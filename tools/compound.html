@@ -50,6 +50,13 @@
       border-bottom: 1px dashed #ccc;
       padding: 0.3rem 0;
     }
+    .back-button {
+      margin-top: 3rem;
+      text-align: center;
+    }
+    .back-button a button {
+      background-color: #999;
+    }
   </style>
 </head>
 <body>
@@ -97,6 +104,12 @@
   <div id="converter-result"></div>
   <div id="exchange-rates"></div>
 
+  <div class="back-button">
+    <a href="index.html">
+      <button>返回首頁</button>
+    </a>
+  </div>
+
   <script>
     let exchangeRates = {};
 
@@ -119,6 +132,8 @@
 
       document.getElementById('result').textContent =
         `投入 ${years} 年後，期末總資產：約 ${total.toFixed(2)} 元`;
+
+      renderAssets(); // 試算後立即同步更新資產清單
     }
 
     function renderAssets() {
