@@ -2,9 +2,8 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>資產複利總覽｜FINORA</title>
+  <title>複利成長試算｜FINORA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css" />
   <style>
     body {
       max-width: 720px;
@@ -21,10 +20,9 @@
       display: block;
       margin-top: 1rem;
     }
-    input, select {
+    input {
       width: 100%;
       padding: 0.5rem;
-      margin-top: 0.3rem;
       font-size: 1rem;
     }
     button {
@@ -50,75 +48,44 @@
       border-bottom: 1px dashed #ccc;
       padding: 0.3rem 0;
     }
-    .back-button {
-      margin-top: 3rem;
-      text-align: center;
-    }
-    .back-button a button {
-      background-color: #999;
-    }
   </style>
 </head>
 <body>
   <h1>複利成長試算</h1>
-  <label for="principal">初始投入金額</label>
+  <label>初始投入金額</label>
   <input type="number" id="principal" placeholder="例如：100000" />
 
-  <label for="rate">年報酬率（%）</label>
+  <label>年報酬率（%）</label>
   <input type="number" id="rate" placeholder="例如：5" />
 
-  <label for="years">投資年數</label>
+  <label>投資年數</label>
   <input type="number" id="years" placeholder="例如：30" />
 
-  <label for="annual">每年固定投入金額</label>
+  <label>每年固定投入金額</label>
   <input type="number" id="annual" placeholder="例如：10000" />
 
-  <label for="monthly">每月固定投入金額</label>
+  <label>每月固定投入金額</label>
   <input type="number" id="monthly" placeholder="例如：1000" />
 
-  <button onclick="calculate()">試算</button>
+  <button onclick="calculate()">開始試算</button>
   <div id="result"></div>
 
   <h2>目前資產分類總覽</h2>
   <div id="asset-list"></div>
   <div id="totals"></div>
 
-  <h2>匯率計算機</h2>
-  <label for="amount">金額</label>
-  <input type="number" id="amount" placeholder="例如：100" />
-  <label for="from">從幣別</label>
-  <select id="from">
-    <option value="USD">USD</option>
-    <option value="TWD">TWD</option>
-    <option value="JPY">JPY</option>
-    <option value="EUR">EUR</option>
-  </select>
-  <label for="to">兌換成</label>
-  <select id="to">
-    <option value="TWD">TWD</option>
-    <option value="USD">USD</option>
-    <option value="JPY">JPY</option>
-    <option value="EUR">EUR</option>
-  </select>
-  <button onclick="convert()">計算</button>
-  <div id="converter-result"></div>
+  <h2>即時匯率與換算</h2>
   <div id="exchange-rates"></div>
-
-  <div class="back-button">
-    <a href="index.html">
-      <button>返回首頁</button>
-    </a>
-  </div>
 
   <script>
     let exchangeRates = {};
 
     function calculate() {
-      const principal = parseFloat(document.getElementById('principal').value) || 0;
-      const annualRate = parseFloat(document.getElementById('rate').value) / 100 || 0;
-      const years = parseInt(document.getElementById('years').value) || 0;
-      const annual = parseFloat(document.getElementById('annual').value) || 0;
-      const monthly = parseFloat(document.getElementById('monthly').value) || 0;
+      const principal = parseFloat(document.getElementById("principal").value) || 0;
+      const annualRate = parseFloat(document.getElementById("rate").value) / 100 || 0;
+      const years = parseInt(document.getElementById("years").value) || 0;
+      const annual = parseFloat(document.getElementById("annual").value) || 0;
+      const monthly = parseFloat(document.getElementById("monthly").value) || 0;
 
       const months = years * 12;
       const monthlyRate = annualRate / 12;
@@ -130,17 +97,22 @@
         if (m % 12 === 0) total += annual;
       }
 
-      document.getElementById('result').textContent =
+      document.getElementById("result").textContent =
         `投入 ${years} 年後，期末總資產：約 ${total.toFixed(2)} 元`;
 
-      renderAssets(); // 試算後立即同步更新資產清單
+      localStorage.setItem("compoundResult", total.toFixed(2)); // 儲存給 withdraw.html 使用
+      renderAssets(); // 同步更新資產清單
     }
 
     function renderAssets() {
       const assetList = JSON.parse(localStorage.getItem("assets") || "[]");
       const listDiv = document.getElementById("asset-list");
+      const totalsDiv = document.getElementById("totals");
       const totals = {};
+
       listDiv.innerHTML = "";
+      totalsDiv.innerHTML = "";
+
       assetList.forEach(asset => {
         const div = document.createElement("div");
         div.className = "asset-item";
@@ -151,23 +123,12 @@
         totals[asset.currency] += parseFloat(asset.amount);
       });
 
-      const totalsDiv = document.getElementById("totals");
-      totalsDiv.innerHTML = "<b>各幣別總額：</b><br>";
+      totalsDiv.innerHTML = "<b>幣別總額與折合台幣：</b><br>";
       for (const [currency, amount] of Object.entries(totals)) {
-        const twdValue = exchangeRates["TWD"] && exchangeRates[currency] ? (amount / exchangeRates[currency]) * exchangeRates["TWD"] : "-";
-        totalsDiv.innerHTML += `${currency}：${amount.toFixed(2)}（約 TWD ${twdValue !== "-" ? twdValue.toFixed(0) : "?"}）<br>`;
+        const rate = exchangeRates[currency];
+        const twd = rate ? amount / rate * exchangeRates.TWD : "?";
+        totalsDiv.innerHTML += `${currency}：${amount.toFixed(2)}（約 TWD ${twd !== "?" ? twd.toFixed(0) : "?"}）<br>`;
       }
-    }
-
-    function convert() {
-      const amt = parseFloat(document.getElementById("amount").value);
-      const from = document.getElementById("from").value;
-      const to = document.getElementById("to").value;
-      if (!exchangeRates[from] || !exchangeRates[to]) return;
-
-      const baseToEUR = amt / exchangeRates[from];
-      const result = baseToEUR * exchangeRates[to];
-      document.getElementById("converter-result").textContent = `換算結果：約 ${result.toFixed(2)} ${to}`;
     }
 
     async function fetchRates() {
@@ -175,11 +136,15 @@
         const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR,USD");
         const data = await res.json();
         exchangeRates = data.rates;
+
         const div = document.getElementById("exchange-rates");
-        div.innerHTML = "<b>即時匯率：</b><br>";
+        div.innerHTML = "<b>即時匯率（1 USD = X）：</b><br>";
         for (const [curr, rate] of Object.entries(exchangeRates)) {
-          if (curr !== "USD") div.innerHTML += `1 USD = ${rate.toFixed(2)} ${curr}<br>`;
+          if (curr !== "USD") {
+            div.innerHTML += `1 USD = ${rate.toFixed(2)} ${curr}<br>`;
+          }
         }
+
         renderAssets();
       } catch (e) {
         console.error("匯率查詢失敗", e);
