@@ -90,6 +90,7 @@
     </a>
   </div>
 
+  <!-- ✅ 所有 script 放在頁面最下方，避免函式未定義錯誤 -->
   <script>
     let exchangeRates = {};
 
@@ -106,3 +107,91 @@
 
       for (let m = 1; m <= months; m++) {
         total *= (1 + monthlyRate);
+        total += monthly;
+        if (m % 12 === 0) total += annual;
+      }
+
+      const resultText = `投入 ${years} 年後，期末總資產：約 ${total.toFixed(2)} 元`;
+      document.getElementById("result").textContent = resultText;
+      localStorage.setItem("compoundResult", total.toFixed(2));
+    }
+
+    function renderAssets() {
+      const assetList = JSON.parse(localStorage.getItem("assets") || "[]");
+      const listDiv = document.getElementById("asset-list");
+      const totalsDiv = document.getElementById("totals");
+      const totals = {};
+
+      listDiv.innerHTML = "";
+      totalsDiv.innerHTML = "";
+
+      if (assetList.length === 0) {
+        listDiv.innerHTML = "<p style='color: #999;'>尚無資產資料，請回首頁新增</p>";
+        return;
+      }
+
+      assetList.forEach(asset => {
+        const div = document.createElement("div");
+        div.className = "asset-item";
+        div.textContent = `${asset.type}｜${asset.amount} ${asset.currency}`;
+        listDiv.appendChild(div);
+
+        const cur = asset.currency;
+        totals[cur] = (totals[cur] || 0) + parseFloat(asset.amount);
+      });
+
+      totalsDiv.innerHTML = "<b>幣別總額與折合台幣：</b><br>";
+      for (const [currency, amount] of Object.entries(totals)) {
+        const rate = exchangeRates[currency];
+        const twd = rate ? (amount / rate) * exchangeRates["TWD"] : "?";
+        totalsDiv.innerHTML += `${currency}：${amount.toFixed(2)}（約 TWD ${twd !== "?" ? twd.toFixed(0) : "?"}）<br>`;
+      }
+    }
+
+    async function fetchRates() {
+      try {
+        const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR,USD");
+        const data = await res.json();
+        exchangeRates = data.rates;
+
+        document.getElementById("exchange-rates").innerHTML =
+          "<b>1 USD 對：</b><br>" +
+          Object.entries(exchangeRates)
+            .filter(([curr]) => curr !== "USD")
+            .map(([curr, rate]) => `${curr}：${rate.toFixed(2)}`)
+            .join("<br>");
+
+        renderAssets();
+      } catch (e) {
+        console.error("匯率查詢失敗", e);
+
+        // 預設備援匯率
+        exchangeRates = {
+          USD: 1,
+          TWD: 32,
+          JPY: 0.22,
+          EUR: 1.08
+        };
+
+        document.getElementById("exchange-rates").innerHTML =
+          "<b>使用備援匯率：</b><br>" +
+          Object.entries(exchangeRates)
+            .filter(([curr]) => curr !== "USD")
+            .map(([curr, rate]) => `${curr}：${rate.toFixed(2)}`)
+            .join("<br>");
+
+        renderAssets();
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const saved = localStorage.getItem("compoundResult");
+      if (saved) {
+        document.getElementById("result").textContent =
+          `🔁 最近一次試算結果：約 ${Number(saved).toLocaleString()} 元`;
+      }
+      fetchRates();
+    });
+  </script>
+</body>
+</html>
