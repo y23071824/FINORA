@@ -20,7 +20,7 @@
       display: block;
       margin-top: 1rem;
     }
-    input {
+    input, select {
       width: 100%;
       padding: 0.5rem;
       font-size: 1rem;
@@ -43,10 +43,6 @@
       border-left: 5px solid #c96374;
       border-radius: 6px;
       font-size: 1.1rem;
-    }
-    .asset-item {
-      border-bottom: 1px dashed #ccc;
-      padding: 0.3rem 0;
     }
     .back-btn {
       text-align: center;
@@ -75,13 +71,33 @@
   <button onclick="calculate()">開始試算</button>
   <div id="result"></div>
 
-  <h2>目前資產分類總覽</h2>
-  <div id="asset-list"></div>
+  ／／part 2
+  <h2>目前資產總覽</h2>
   <div id="category-totals"></div>
   <div id="totals"></div>
 
   <h2>即時匯率</h2>
   <div id="exchange-rates"></div>
+
+  <h2>匯率計算機</h2>
+  <label>金額</label>
+  <input type="number" id="fx-amount" value="100" />
+  <label>從幣別</label>
+  <select id="fx-from">
+    <option value="USD">USD</option>
+    <option value="TWD">TWD</option>
+    <option value="JPY">JPY</option>
+    <option value="EUR">EUR</option>
+  </select>
+  <label>轉換成幣別</label>
+  <select id="fx-to">
+    <option value="TWD">TWD</option>
+    <option value="USD">USD</option>
+    <option value="JPY">JPY</option>
+    <option value="EUR">EUR</option>
+  </select>
+  <button onclick="convert()">匯率換算</button>
+  <div id="fx-result"></div>
 
   <div class="back-btn">
     <a href="../index.html">
@@ -91,72 +107,45 @@
     </a>
   </div>
 
+  //part 3
   <script>
     let exchangeRates = {};
 
     function calculate() {
-      const principal = parseFloat(document.getElementById("principal").value) || 0;
-      const annualRate = parseFloat(document.getElementById("rate").value) / 100 || 0;
-      const years = parseInt(document.getElementById("years").value) || 0;
+      const p = parseFloat(document.getElementById("principal").value) || 0;
+      const r = (parseFloat(document.getElementById("rate").value) || 0) / 100;
+      const y = parseInt(document.getElementById("years").value) || 0;
       const annual = parseFloat(document.getElementById("annual").value) || 0;
       const monthly = parseFloat(document.getElementById("monthly").value) || 0;
-
-      const months = years * 12;
-      const monthlyRate = annualRate / 12;
-      let total = principal;
-
+      let total = p;
+      const months = y * 12;
+      const monthlyRate = r / 12;
       for (let m = 1; m <= months; m++) {
         total *= (1 + monthlyRate);
         total += monthly;
         if (m % 12 === 0) total += annual;
       }
-
-      const resultText = `投入 ${years} 年後，期末總資產：約 ${total.toFixed(2)} 元`;
-      document.getElementById("result").textContent = resultText;
+      document.getElementById("result").textContent = `投入 ${y} 年後，期末總資產：約 ${total.toFixed(2)} 元`;
       localStorage.setItem("compoundResult", total.toFixed(2));
     }
 
     function renderAssets() {
-      const assetList = JSON.parse(localStorage.getItem("assets") || "[]");
-      const listDiv = document.getElementById("asset-list");
+      const list = JSON.parse(localStorage.getItem("assets") || "[]");
+      const totals = {}, categories = {};
       const categoryDiv = document.getElementById("category-totals");
       const totalsDiv = document.getElementById("totals");
-      const totals = {};
-      const categories = {};
+      categoryDiv.innerHTML = ""; totalsDiv.innerHTML = "";
 
-      listDiv.innerHTML = "";
-      categoryDiv.innerHTML = "";
-      totalsDiv.innerHTML = "";
-
-      if (assetList.length === 0) {
-        listDiv.innerHTML = "<p style='color: #999;'>尚無資產資料</p>";
-        return;
-      }
-
-      assetList.forEach(asset => {
+      list.forEach(asset => {
         const type = asset.type || "未分類";
         const currency = asset.currency || "未指定";
-
         let amount = parseFloat(asset.amount);
         if ((isNaN(amount) || amount === 0) && type === "股票" && asset.shares && asset.cost) {
           const shares = parseFloat(asset.shares);
           const cost = parseFloat(asset.cost);
-          if (!isNaN(shares) && !isNaN(cost)) {
-            amount = shares * cost;
-          }
+          if (!isNaN(shares) && !isNaN(cost)) amount = shares * cost;
         }
-
-        const valid = !isNaN(amount) && amount > 0;
-        const display = valid
-          ? `${type}｜${amount.toLocaleString()} ${currency}`
-          : `${type}｜（資料不完整）`;
-
-        const div = document.createElement("div");
-        div.className = "asset-item";
-        div.textContent = display;
-        listDiv.appendChild(div);
-
-        if (valid) {
+        if (!isNaN(amount) && amount > 0) {
           totals[currency] = (totals[currency] || 0) + amount;
           const key = `${type}｜${currency}`;
           categories[key] = (categories[key] || 0) + amount;
@@ -164,15 +153,15 @@
       });
 
       categoryDiv.innerHTML = "<b>📊 資產分類加總：</b><br>";
-      for (const [key, amount] of Object.entries(categories)) {
-        categoryDiv.innerHTML += `${key}：${amount.toLocaleString()}<br>`;
+      for (const [key, val] of Object.entries(categories)) {
+        categoryDiv.innerHTML += `${key}：${val.toLocaleString()}<br>`;
       }
 
       totalsDiv.innerHTML = "<b>幣別總額與折合台幣：</b><br>";
-      for (const [currency, amount] of Object.entries(totals)) {
-        const rate = exchangeRates[currency];
-        const twd = rate ? (amount / rate) * exchangeRates["TWD"] : "?";
-        totalsDiv.innerHTML += `${currency}：${amount.toFixed(2)}（約 TWD ${twd !== "?" ? twd.toFixed(0) : "?"}）<br>`;
+      for (const [cur, amt] of Object.entries(totals)) {
+        const rate = exchangeRates[cur];
+        const twd = rate ? (amt / rate) * exchangeRates["TWD"] : "?";
+        totalsDiv.innerHTML += `${cur}：${amt.toFixed(2)}（約 TWD ${twd !== "?" ? twd.toFixed(0) : "?"}）<br>`;
       }
     }
 
@@ -183,19 +172,12 @@
         if (data && data.rates && typeof data.rates === "object") {
           exchangeRates = data.rates;
           localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
-        } else {
-          throw new Error("API 回傳格式錯誤");
-        }
-      } catch (e) {
-        console.warn("⚠️ 匯率查詢失敗，改用備援或 localStorage", e);
+        } else throw new Error("格式錯誤");
+      } catch {
         try {
           const stored = localStorage.getItem("exchangeRates");
-          const parsed = (stored && stored !== "undefined") ? JSON.parse(stored) : null;
-          exchangeRates = (parsed && typeof parsed === "object") ? parsed : null;
+          exchangeRates = stored && stored !== "undefined" ? JSON.parse(stored) : {};
         } catch {
-          exchangeRates = null;
-        }
-        if (!exchangeRates || Object.keys(exchangeRates).length === 0) {
           exchangeRates = {
             USD: 1,
             TWD: 32,
@@ -206,13 +188,20 @@
       }
 
       document.getElementById("exchange-rates").innerHTML =
-        "<b>匯率資訊：</b><br>" +
         Object.entries(exchangeRates)
-          .filter(([curr]) => curr !== "USD")
-          .map(([curr, rate]) => `${curr}：${rate.toFixed(2)}`)
-          .join("<br>");
-
+        .filter(([k]) => k !== "USD")
+        .map(([k, v]) => `1 USD = ${v.toFixed(2)} ${k}`)
+        .join("<br>");
       renderAssets();
+    }
+
+    function convert() {
+      const amt = parseFloat(document.getElementById("fx-amount").value) || 0;
+      const from = document.getElementById("fx-from").value;
+      const to = document.getElementById("fx-to").value;
+      if (!exchangeRates[from] || !exchangeRates[to]) return;
+      const result = (amt / exchangeRates[from]) * exchangeRates[to];
+      document.getElementById("fx-result").innerText = `${amt} ${from} ≈ ${result.toFixed(2)} ${to}`;
     }
 
     document.addEventListener("DOMContentLoaded", () => {
