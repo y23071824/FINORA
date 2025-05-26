@@ -19,6 +19,8 @@
         <option value="現金">現金</option>
         <option value="房產">房產</option>
         <option value="儲蓄保險">儲蓄保險</option>
+        <option value="基金">基金</option>
+        <option value="加密貨幣">加密貨幣</option>
         <option value="其他">其他</option>
       </select>
     </label>
@@ -48,6 +50,18 @@
       <label>年繳保費：<input type="number" id="policy-premium" /></label>
     </div>
 
+<div id="fund-fields" style="display: none;">
+  <label>基金名稱：<input type="text" id="fund-name" /></label>
+  <label>單位數：<input type="number" id="fund-units" /></label>
+  <label>淨值：<input type="number" id="fund-nav" step="0.0001" /></label>
+</div>
+
+    <div id="crypto-fields" style="display: none;">
+  <label>幣種（如 BTC/ETH）：<input type="text" id="crypto-symbol" /></label>
+  <label>數量：<input type="number" id="crypto-amount" /></label>
+  <label>現價（每單位）：<input type="number" id="crypto-price" step="0.0001" /></label>
+    </div>
+    
     <div id="amount-field">
       <label>金額：<input type="number" id="amount" /></label>
     </div>
