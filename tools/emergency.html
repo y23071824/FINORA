@@ -116,8 +116,12 @@
       <button type="button" class="delete-btn" onclick="removeExpense(this)">🗑</button>
     `;
     container.appendChild(group);
+
     group.querySelectorAll("input").forEach(input => {
-      input.addEventListener("input", updateMonthlyTotal);
+      input.addEventListener("input", () => {
+        updateMonthlyTotal();
+        saveToLocal();
+      });
     });
   }
 
@@ -125,6 +129,7 @@
     const group = button.parentElement;
     group.remove();
     updateMonthlyTotal();
+    saveToLocal();
   }
 
   function updateMonthlyTotal() {
@@ -154,6 +159,33 @@
 
     const total = monthly * months;
     result.textContent = `建議準備緊急預備金：約 NT$ ${total.toLocaleString()}`;
+  }
+
+  function saveToLocal() {
+    const inputs = document.querySelectorAll("#expenses .item-group");
+    const data = [];
+    inputs.forEach(group => {
+      const name = group.querySelector("input[type='text']").value.trim();
+      const amount = group.querySelector("input[type='number']").value;
+      if (name || amount) {
+        data.push({ name, amount });
+      }
+    });
+    localStorage.setItem("emergencyExpenses", JSON.stringify(data));
+  }
+
+  function loadFromLocal() {
+    const saved = JSON.parse(localStorage.getItem("emergencyExpenses") || "[]");
+    if (saved.length > 0) {
+      saved.forEach(item => {
+        addExpense(item.name, item.amount);
+      });
+    } else {
+      addExpense("房租", "");
+      addExpense("食物", "");
+      addExpense("交通", "");
+    }
+    updateMonthlyTotal();
   }
 
   document.addEventListener("DOMContentLoaded", () => {
@@ -186,10 +218,7 @@
     info.textContent = `目前已登記資產總額（折合台幣）：NT$ ${totalTWD.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
     document.body.insertBefore(info, document.getElementById("result"));
 
-    // 預設三項
-    addExpense("房租", "");
-    addExpense("食物", "");
-    addExpense("交通", "");
+    loadFromLocal();
   });
 </script>
 </body>
