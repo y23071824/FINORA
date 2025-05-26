@@ -230,6 +230,20 @@ function render() {
         amount = parseFloat(item.amount) || 0;
         display = `金額：$${amount.toLocaleString()}`;
       }
+      } else if (item.type === "基金") {
+  const units = parseFloat(item.fundUnits) || 0;
+  const nav = parseFloat(item.fundNav) || 0;
+  amount = units * nav;
+  display = `基金：${item.fundName}<br>
+單位數：${units}，淨值：$${nav}<br>
+總市值：$${amount.toFixed(2)}`;
+      } else if (item.type === "加密貨幣") {
+  const qty = parseFloat(item.cryptoAmount) || 0;
+  const price = parseFloat(item.cryptoPrice) || 0;
+  amount = qty * price;
+  display = `幣種：${item.cryptoSymbol}<br>
+數量：${qty}，現價：$${price}<br>
+總價值：$${amount.toFixed(2)}`;
 
       const categoryKey = `${item.type}｜${item.currency}`;
       categoryTotals[categoryKey] = categoryTotals[categoryKey] || { amount: 0, profit: 0, currency: item.currency };
