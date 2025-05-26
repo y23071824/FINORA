@@ -38,20 +38,26 @@
     }
     .item-group {
       display: flex;
-      align-items: center;
       gap: 0.5rem;
       margin-top: 0.5rem;
     }
-    .item-group input[type="text"] {
-      flex: 1.2;
-    }
+    .item-group input[type="text"],
     .item-group input[type="number"] {
-      flex: 0.8;
+      flex: 1;
+      font-size: 1rem;
+      padding: 0.4rem;
     }
-    .item-group button {
-      background: #aaa;
-      font-size: 1.1rem;
-      padding: 0.3rem 0.6rem;
+    .item-group .delete-btn {
+      background: none;
+      border: none;
+      font-size: 1rem;
+      color: #999;
+      cursor: pointer;
+      padding: 0 0.5rem;
+      line-height: 1;
+    }
+    .item-group .delete-btn:hover {
+      color: #c96374;
     }
     #result {
       margin-top: 2rem;
@@ -97,7 +103,7 @@
     group.innerHTML = `
       <input type="text" placeholder="項目名稱" value="${name}" />
       <input type="number" placeholder="金額" value="${amount}" />
-      <button type="button" onclick="removeExpense(this)">🗑</button>
+      <button type="button" class="delete-btn" onclick="removeExpense(this)">✕</button>
     `;
     container.appendChild(group);
     group.querySelectorAll("input").forEach(input => {
@@ -140,7 +146,6 @@
     result.textContent = `建議準備緊急預備金：約 NT$ ${total.toLocaleString()}`;
   }
 
-  // 顯示資產總額（折合台幣）
   document.addEventListener("DOMContentLoaded", () => {
     const assets = JSON.parse(localStorage.getItem("assets") || "[]");
     const rates = JSON.parse(localStorage.getItem("exchangeRates") || "{}");
@@ -171,6 +176,7 @@
     info.textContent = `目前已登記資產總額（折合台幣）：NT$ ${totalTWD.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
     document.body.insertBefore(info, document.getElementById("result"));
 
+    // 預設三項
     addExpense("房租", "");
     addExpense("食物", "");
     addExpense("交通", "");
