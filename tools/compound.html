@@ -2,102 +2,83 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
+  <title>複利成長試算｜FINORA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>複利成長模擬器</title>
   <link rel="stylesheet" href="../style.css" />
+  <style>
+    body {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 2rem;
+      background: #fffaf8;
+      font-family: sans-serif;
+    }
+    h1 {
+      text-align: center;
+      color: #c96374;
+    }
+    label {
+      display: block;
+      margin: 1rem 0 0.3rem;
+    }
+    input {
+      width: 100%;
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+    button {
+      margin-top: 1.5rem;
+      width: 100%;
+      padding: 0.7rem;
+      font-size: 1.1rem;
+      background-color: #c96374;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+    #result {
+      margin-top: 2rem;
+      font-size: 1.2rem;
+      text-align: center;
+      color: #2a3f4f;
+    }
+  </style>
 </head>
 <body>
-  <h1>複利成長模擬器</h1>
+  <h1>複利成長試算</h1>
+  <label for="principal">初始投入金額</label>
+  <input type="number" id="principal" placeholder="例如：100000" />
 
-  <form id="compound-form">
-    <label>初始金額：<input type="number" id="initial-amount" required /></label>
-    <label>年利率（%）：<input type="number" id="interest-rate" step="0.01" required /></label>
-    <label>投資年數：<input type="number" id="years" required /></label>
-    <label>每月定期投入金額：<input type="number" id="monthly" required /></label>
-    <button type="submit">開始模擬</button>
-  </form>
+  <label for="rate">年報酬率（%）</label>
+  <input type="number" id="rate" placeholder="例如：5" />
+
+  <label for="years">投資年數</label>
+  <input type="number" id="years" placeholder="例如：30" />
+
+  <label for="annual">每年固定投入金額（選填）</label>
+  <input type="number" id="annual" placeholder="例如：10000" />
+
+  <button onclick="calculate()">試算</button>
 
   <div id="result"></div>
 
-  <div id="total-assets" style="margin-top: 2rem; font-size: 1.1rem; color: #444;"></div>
-
-  <h2>匯率換算計算機</h2>
-  <label>金額：<input type="number" id="input-amount" /></label>
-  <label>匯率：<input type="number" id="input-rate" /></label>
-  <button onclick="convertCurrency()">換算</button>
-  <div id="converted-result"></div>
-
-  <p id="rate-time" style="font-size: 0.9em; color: #666;"></p>
-
-  <a href="../index.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374">← 返回首頁</a>
-
   <script>
-    const totalEl = document.getElementById("total-assets");
-    const exchangeRates = JSON.parse(localStorage.getItem("exchangeRates") || "{}");
-    const assets = JSON.parse(localStorage.getItem("assets") || "[]");
+    function calculate() {
+      const principal = parseFloat(document.getElementById('principal').value) || 0;
+      const rate = parseFloat(document.getElementById('rate').value) / 100 || 0;
+      const years = parseInt(document.getElementById('years').value) || 0;
+      const annual = parseFloat(document.getElementById('annual').value) || 0;
 
-    if (assets.length > 0 && exchangeRates.TWD) {
-      let categoryTotals = {}, currencyTotals = {}, totalTWD = 0;
+      let total = principal;
 
-      assets.forEach(item => {
-        let amount = 0, profit = 0;
-        if (item.type === "股票") {
-          const shares = parseFloat(item.shares) || 0;
-          const cost = parseFloat(item.cost) || 0;
-          const price = parseFloat(item.price) || 0;
-          amount = shares * cost;
-          profit = shares * price - amount;
-        } else if (item.type === "儲蓄保險") {
-          amount = parseFloat(item.policyAmount) || 0;
-        } else {
-          amount = parseFloat(item.amount) || 0;
-        }
-
-        const ccy = item.currency;
-        const categoryKey = `${item.type}（${ccy}）`;
-        const total = amount + (item.type === "股票" ? profit : 0);
-        categoryTotals[categoryKey] = (categoryTotals[categoryKey] || 0) + total;
-        currencyTotals[ccy] = (currencyTotals[ccy] || 0) + total;
-        totalTWD += total * (exchangeRates.TWD / (exchangeRates[ccy] || 1));
-      });
-
-      const lines = Object.entries(categoryTotals).map(([k, v]) => `📊 ${k}：$${v.toLocaleString()}`);
-      lines.push("<hr>");
-      Object.entries(currencyTotals).forEach(([ccy, val]) => {
-        const toTWD = val * (exchangeRates.TWD / (exchangeRates[ccy] || 1));
-        lines.push(`💰 ${ccy}：$${val.toLocaleString()} ≈ NT$ ${Math.round(toTWD).toLocaleString()}`);
-      });
-      lines.push(`<strong>全體總資產：${Object.entries(currencyTotals).map(([ccy, val]) => `${ccy}: $${val.toLocaleString()}`).join(" + ")}，折合台幣：NT$ ${Math.round(totalTWD).toLocaleString()}</strong>`);
-      totalEl.innerHTML = lines.join("<br>");
-    }
-
-    const updateTime = new Date().toLocaleString();
-    const usdTo = `📌1 USD = ${exchangeRates.TWD} TWD｜${exchangeRates.JPY} JPY｜${exchangeRates.EUR} EUR`;
-    const twdTo = `📌 1 TWD ≈ ${(1/exchangeRates.TWD).toFixed(3)} USD｜${(exchangeRates.JPY/exchangeRates.TWD).toFixed(2)} JPY｜${(exchangeRates.EUR/exchangeRates.TWD).toFixed(3)} EUR`;
-    document.getElementById("rate-time").innerHTML = `${usdTo}<br>${twdTo}<br>匯率更新時間：${updateTime}`;
-
-    function convertCurrency() {
-      const amt = parseFloat(document.getElementById("input-amount")?.value);
-      const rate = parseFloat(document.getElementById("input-rate")?.value);
-      const result = document.getElementById("converted-result");
-      if (isNaN(amt) || isNaN(rate)) {
-        result.textContent = "請輸入正確金額與匯率";
-      } else {
-        result.textContent = `換算後金額：$${(amt * rate).toLocaleString()}`;
+      for (let i = 0; i < years; i++) {
+        total *= (1 + rate);
+        total += annual;
       }
+
+      document.getElementById('result').textContent = `期末總資產：約 ${total.toFixed(2)} 元`;
     }
-
-    document.getElementById("compound-form").addEventListener("submit", (e) => {
-      e.preventDefault();
-      const P = parseFloat(document.getElementById("initial-amount").value);
-      const r = parseFloat(document.getElementById("interest-rate").value) / 100 / 12;
-      const n = parseInt(document.getElementById("years").value) * 12;
-      const m = parseFloat(document.getElementById("monthly").value);
-
-      const FV = P * Math.pow(1 + r, n) + m * ((Math.pow(1 + r, n) - 1) / r);
-
-      document.getElementById("result").innerHTML = `<p>模擬結果：<strong>$${FV.toFixed(2)}</strong></p>`;
-    });
   </script>
 </body>
 </html>
