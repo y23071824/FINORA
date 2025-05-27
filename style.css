@@ -1,84 +1,110 @@
+/* === 整體版面設定 === */
 body {
-  font-family: sans-serif;
-  background: #fffaf8;
-  color: #333;
-  padding: 2rem;
-  font-size: 1rem;
-  max-width: 700px;
-  margin: 0 auto;
+  font-family: sans-serif;             /* 字型設定為無襯線體 */
+  background: #fffaf8;                 /* 背景色為柔和的粉膚白 */
+  color: #333;                         /* 主要文字顏色為深灰 */
+  padding: 2rem;                       /* 內邊距設為2rem */
+  font-size: 1rem;                     /* 基本文字大小 */
+  max-width: 600px;                    /* 最大寬度限制為 700px */
+  margin: 0 auto;                      /* 置中顯示 */
 }
 
+/* === 標題樣式 === */
 h1, h2 {
-  text-align: center;
-  color: #c96374;
+  text-align: center;                  /* 標題置中 */
+  color: #c96374;                      /* 粉膚紅色標題 */
 }
 
+/* === 表單標籤文字樣式 === */
 label {
-  display: block;
-  margin-top: 1.2rem;
+  display: block;                      /* 單獨一行顯示 */
+  margin-top: 1.2rem;                  /* 與上一個元素的距離 */
 }
 
+/* === 表單輸入框與下拉選單樣式 === */
 input, select {
-  width: 100%;
-  padding: 0.6rem;
-  font-size: 1rem;
-  margin-top: 0.2rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  box-sizing: border-box;
+  width: 90%;                         /* 滿版寬度 */
+  padding: 0.6rem;                     /* 內邊距 */
+  font-size: 1rem;                     /* 字體大小 */
+  margin-top: 0.2rem;                  /* 與 label 的間距 */
+  border: 1px solid #ccc;             /* 淺灰邊框 */
+  border-radius: 6px;                  /* 圓角邊框 */
+  box-sizing: border-box;             /* 避免 padding 影響寬度 */
 }
 
+/* === 主要操作按鈕樣式（提交、匯率換算、試算等）=== */
 button {
-  margin-top: 1.8rem;
-  width: 100%;
-  padding: 0.9rem;
-  background-color: #c96374;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
+  margin-top: 1.8rem;                  /* 與前元素間距 */
+  width: 100%;                         /* 滿版按鈕 */
+  padding: 0.9rem;                     /* 內邊距 */
+  background-color: #c96374;          /* 主色：粉膚紅 */
+  color: white;                        /* 白字 */
+  border: none;                        /* 移除邊框 */
+  border-radius: 8px;                  /* 圓角 */
+  font-size: 1rem;                     /* 字體大小 */
 }
 
+/* === 編輯／刪除按鈕群組樣式 === */
 .button-group {
-  margin-top: 0.8rem;
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
+  margin-top: 0.8rem;                  /* 與資產說明間距 */
+  display: flex;                       /* 彈性盒模型排列 */
+  justify-content: center;            /* 水平置中 */
+  gap: 1rem;                           /* 按鈕間距 */
 }
 
 .button-group button {
-  flex: 1;
-  padding: 0.6rem;
-  font-size: 0.95rem;
-  border-radius: 6px;
-  background-color: #c96374; /* 主色與儲存一致 */
-  color: white;
-  border: none;
+  flex: 1;                             /* 平均寬度分配 */
+  padding: 0.6rem;                     /* 內邊距 */
+  font-size: 0.95rem;                  /* 稍小字體 */
+  border-radius: 6px;                  /* 圓角 */
+  background-color: #c96374;          /* 主色與儲存一致 */
+  color: white;                        /* 白字 */
+  border: none;                        /* 無邊框 */
 }
 
+/* === 所有按鈕 hover 效果 === */
 button:hover,
 .button-group button:hover {
-  background-color: #b85163;
+  background-color: #b85163;          /* 深一階紅，滑鼠懸停時使用 */
 }
 
+/* === 資產列表區塊樣式 === */
 ul {
-  list-style-type: none;
-  padding: 0;
+  list-style-type: none;              /* 移除原本的圓點樣式 */
+  padding: 0;                         /* 無縮排 */
 }
 
 ul li {
-  background: white;
-  padding: 1rem;
-  margin: 0.8rem 0;
-  border-radius: 8px;
-  box-shadow: 0 0 4px rgba(0,0,0,0.08);
+  background: white;                  /* 每個資產項背景白色 */
+  padding: 1rem;                      /* 內邊距 */
+  margin: 0.5rem 0;                   /* 每個項目上下間距 */
+  border-radius: 8px;                 /* 圓角 */
+  box-shadow: 0 0 4px rgba(0,0,0,0.08); /* 淺陰影 */
 }
 
+/* === 返回連結樣式 === */
 a {
-  color: #c96374;
-  text-decoration: none;
-  display: block;
+  color: #c96374;                     /* 粉膚紅字 */
+  text-decoration: none;              /* 移除底線 */
+  display: block;                     /* 單獨一行 */
+  margin-top: 2rem;                   /* 與上方內容的距離 */
+  text-align: center;                 /* 置中顯示 */
+  font-size: 0.95rem;                 /* 字體略小 */
+}
+/* === 返回首頁按鈕統一樣式 === */
+.home-btn {
+  background-color: #c96374;
+  color: white;
+  font-size: 1.1rem;
+  padding: 0.7rem 1.4rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
   margin-top: 2rem;
-  text-align: center;
-  font-size: 0.95rem;
+  display: inline-block;
+}
+
+.home-btn:hover {
+  background-color: #a6485c;
 }
