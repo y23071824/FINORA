@@ -12,24 +12,19 @@
       font-family: sans-serif;
       background-color: #fffaf8;
       padding: 2rem;
-      <div id="theme-selector">
-  <label>主題風格：</label>
-  <select id="theme-select">
-    <option value="light">米白</option>
-    <option value="pink">粉膚</option>
-    <option value="dark">深灰夜間</option>
-  </select>
-</div>
     }
+
     h1 {
       font-size: 2.5rem;
       color: #c96374;
     }
+
     p {
       font-size: 1.2rem;
       color: #555;
       margin-bottom: 2rem;
     }
+
     .button-group {
       display: flex;
       flex-direction: column;
@@ -37,6 +32,7 @@
       max-width: 300px;
       margin: 0 auto;
     }
+
     .button-group a {
       display: block;
       background-color: #c96374;
@@ -47,12 +43,15 @@
       font-weight: bold;
       transition: background 0.2s;
     }
+
     .button-group a:hover {
       background-color: #a04d5d;
     }
+
     #firebase-auth {
       margin-top: 2rem;
     }
+
     #login-btn, #logout-btn {
       background-color: #c96374;
       color: white;
@@ -62,6 +61,7 @@
       border-radius: 8px;
       cursor: pointer;
     }
+
     #login-btn:hover, #logout-btn:hover {
       background-color: #a04d5d;
     }
@@ -70,6 +70,16 @@
 <body>
   <h1>FINORA</h1>
   <p>讓資產更有力，退休不焦慮</p>
+
+  <!-- ✅ 主題風格選擇 -->
+  <div id="theme-selector" style="margin-bottom: 2rem;">
+    <label for="theme-select">主題風格：</label>
+    <select id="theme-select">
+      <option value="light">米白</option>
+      <option value="pink">粉膚</option>
+      <option value="dark">深灰夜間</option>
+    </select>
+  </div>
 
   <div class="button-group">
     <a href="assets.html">開始管理資產</a>
@@ -141,33 +151,26 @@
       }
     });
   </script>
+
+  <!-- ✅ 主題切換功能 -->
   <script>
-  const themeSelect = document.getElementById("theme-select");
+    const themeSelect = document.getElementById("theme-select");
 
-  // 套用主題
-  function applyTheme(theme) {
-    document.body.classList.remove("theme-light", "theme-pink", "theme-dark");
-    document.body.classList.add("theme-" + theme);
-    localStorage.setItem("theme", theme); // 儲存使用者選擇
-  }
+    function applyTheme(theme) {
+      document.body.classList.remove("theme-light", "theme-pink", "theme-dark");
+      document.body.classList.add("theme-" + theme);
+      localStorage.setItem("theme", theme);
+    }
 
-  // 載入時套用已儲存的主題
-  document.addEventListener("DOMContentLoaded", () => {
-    const savedTheme = localStorage.getItem("theme") || "light";
-    applyTheme(savedTheme);
-    themeSelect.value = savedTheme;
-  });
+    document.addEventListener("DOMContentLoaded", () => {
+      const savedTheme = localStorage.getItem("theme") || "light";
+      applyTheme(savedTheme);
+      themeSelect.value = savedTheme;
+    });
 
-  // 當使用者更換選單時
-  themeSelect.addEventListener("change", () => {
-    applyTheme(themeSelect.value);
-  });
+    themeSelect.addEventListener("change", () => {
+      applyTheme(themeSelect.value);
+    });
   </script>
-  <label for="theme-select">主題風格：</label>
-<select id="theme-select">
-  <option value="light">米白</option>
-  <option value="pink">粉膚</option>
-  <option value="dark">深灰夜間</option>
-</select>
 </body>
 </html>
