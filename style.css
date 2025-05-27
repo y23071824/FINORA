@@ -136,3 +136,9 @@ a {
   background-color: #a04d5d;
 }
 
+.subtitle {
+  font-size: 1.5rem;     /* ✅ 字體變大 */
+  text-align: center;    /* ✅ 置中 */
+  margin-top: 1rem;
+  color: #555;
+}
