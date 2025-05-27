@@ -5,7 +5,7 @@ body {
   color: #333;                         /* 主要文字顏色為深灰 */
   padding: 2rem;                       /* 內邊距設為2rem */
   font-size: 1rem;                     /* 基本文字大小 */
-  max-width: 600px;                    /* 最大寬度限制為 700px */
+  max-width: 700px;                    /* 最大寬度限制為 700px */
   margin: 0 auto;                      /* 置中顯示 */
 }
 
