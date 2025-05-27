@@ -6,65 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
   <script src="theme.js" defer></script>
-  <style>
-    body {
-      text-align: center;
-      font-family: sans-serif;
-      background-color: #fffaf8;
-      padding: 2rem;
-    }
-    h1 {
-      font-size: 2.5rem;
-      color: #c96374;
-    }
-    p {
-      font-size: 1.2rem;
-      color: #555;
-      margin-bottom: 1rem;
-    }
-    .button-group {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      max-width: 300px;
-      margin: 0 auto;
-    }
-    .button-group a {
-      display: block;
-      background-color: #c96374;
-      color: white;
-      text-decoration: none;
-      padding: 1rem;
-      border-radius: 10px;
-      font-weight: bold;
-      transition: background 0.2s;
-    }
-    .button-group a:hover {
-      background-color: #a04d5d;
-    }
-    #firebase-auth {
-      margin-top: 2rem;
-    }
-    #login-btn, #logout-btn {
-      background-color: #c96374;
-      color: white;
-      border: none;
-      padding: 0.75rem 1.2rem;
-      font-size: 1rem;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    #login-btn:hover, #logout-btn:hover {
-      background-color: #a04d5d;
-    }
-  </style>
 </head>
 <body>
   <h1>FINORA</h1>
   <p>讓資產更有力，退休不焦慮</p>
 
-  <!-- 主題選擇器 -->
-  <div style="margin-bottom:1.5rem;">
+  <!-- ✅ 主題選單區塊 -->
+  <div id="theme-selector" style="margin-top: 1.5rem;">
     <label for="theme-select">主題風格：</label>
     <select id="theme-select">
       <option value="light">米白</option>
@@ -73,6 +21,7 @@
     </select>
   </div>
 
+  <!-- ✅ 功能導覽按鈕區塊 -->
   <div class="button-group">
     <a href="assets.html">開始管理資產</a>
     <a href="tools/compound.html">複利成長模擬器</a>
@@ -80,20 +29,22 @@
     <a href="tools/emergency.html">緊急預備金計算</a>
   </div>
 
-  <!-- 🔐 Firebase 登入按鈕區塊 -->
+  <!-- ✅ Firebase 登入按鈕 -->
   <div id="firebase-auth">
     <button id="login-btn">🔐 使用 Google 帳號登入</button>
     <button id="logout-btn" style="display:none;">🚪 登出</button>
     <p id="user-email" style="font-size: 0.9em; color: #666;"></p>
   </div>
 
-  <!-- ✅ Firebase SDKs -->
+  <!-- ✅ Firebase SDK v8 -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <!-- ✅ 雲端同步邏輯 -->
   <script src="firebase-sync.js"></script>
 
-  <!-- ✅ 登入邏輯 -->
+  <!-- ✅ 登入與同步邏輯 -->
   <script>
     const loginBtn = document.getElementById("login-btn");
     const logoutBtn = document.getElementById("logout-btn");
@@ -139,27 +90,6 @@
         loginBtn.style.display = "inline-block";
         logoutBtn.style.display = "none";
       }
-    });
-  </script>
-
-  <!-- ✅ 主題切換邏輯 -->
-  <script>
-    const themeSelect = document.getElementById("theme-select");
-
-    function applyTheme(theme) {
-      document.body.classList.remove("theme-light", "theme-pink", "theme-dark");
-      document.body.classList.add("theme-" + theme);
-      localStorage.setItem("theme", theme);
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const savedTheme = localStorage.getItem("theme") || "light";
-      applyTheme(savedTheme);
-      themeSelect.value = savedTheme;
-
-      themeSelect.addEventListener("change", () => {
-        applyTheme(themeSelect.value);
-      });
     });
   </script>
 </body>
