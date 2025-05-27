@@ -110,32 +110,29 @@ a {
   background-color: #a6485c;        /* 滑鼠移上去變深色 */
 }
 
-/* === 主題樣式 === */
-
-/* 預設（米白） */
-body.theme-light {
-  background-color: #fffaf8;
-  color: #333;
+.grid-button-group {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 每列2個 */
+  gap: 1.5rem;
+  max-width: 600px;
+  margin: 2rem auto;
 }
 
-/* 粉膚 */
-body.theme-pink {
-  background-color: #fef5f1;
-  color: #333;
-}
-
-/* 深灰夜間 */
-body.theme-dark a,
-body.theme-dark .button-group a {
-  color: #f0f0f0;
-}
-
-body.theme-dark .button-group a {
+.grid-button-group a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1 / 1; /* 正方形按鈕 */
   background-color: #c96374;
+  color: white;
+  text-decoration: none;
+  border-radius: 20px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  transition: background-color 0.2s;
 }
 
-body.theme-dark .button-group a:hover {
-  background-color: #a6485c;
+.grid-button-group a:hover {
+  background-color: #a04d5d;
 }
-
 
