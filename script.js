@@ -1,5 +1,4 @@
 // ===== Finora 資產登記 App =====
-document.addEventListener("DOMContentLoaded", async () => {
 // ===== Part 1：初始化與匯率查詢 =====
 
 // 取得畫面中會用到的 HTML 元件
