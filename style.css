@@ -23,7 +23,7 @@ label {
 
 /* === 表單輸入框與下拉選單樣式 === */
 input, select {
-  width: 90%;                         /* 滿版寬度 */
+  width: 100%;                         /* 滿版寬度 */
   padding: 0.6rem;                     /* 內邊距 */
   font-size: 1rem;                     /* 字體大小 */
   margin-top: 0.2rem;                  /* 與 label 的間距 */
