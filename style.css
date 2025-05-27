@@ -55,7 +55,7 @@ button {
 .button-group button {
   flex: 1;                             /* 平均寬度分配 */
   padding: 0.6rem;                     /* 內邊距 */
-  font-size: 0.95rem;                  /* 稍小字體 */
+  font-size: 0.8rem;                  /* 稍小字體 */
   border-radius: 6px;                  /* 圓角 */
   background-color: #c96374;          /* 主色與儲存一致 */
   color: white;                        /* 白字 */
@@ -89,7 +89,7 @@ a {
   display: block;                     /* 單獨一行 */
   margin-top: 2rem;                   /* 與上方內容的距離 */
   text-align: center;                 /* 置中顯示 */
-  font-size: 0.95rem;                 /* 字體略小 */
+  font-size: 0.8rem;                 /* 字體略小 */
 }
 /* === 返回首頁按鈕統一樣式 === */
 /* 定義一種按鈕樣式，給 class="home-btn" 用的 */
