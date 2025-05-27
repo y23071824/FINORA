@@ -1,6 +1,6 @@
 // ===== Finora 資產登記 App =====
 // ===== Part 1：初始化與匯率查詢 =====
-
+document.addEventListener("DOMContentLoaded", async () => {
 // 取得畫面中會用到的 HTML 元件
 const form = document.getElementById("asset-form");
 const typeSelect = document.getElementById("type");
@@ -441,7 +441,6 @@ ${display}
     console.error("❌ render() 錯誤：", e);
     alert("畫面更新失敗，請檢查資料內容或重新整理");
   }
-}
 }
 
   // ===== Part 4：啟動初始化流程 =====
