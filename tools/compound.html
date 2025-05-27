@@ -135,21 +135,31 @@
       const totalsDiv = document.getElementById("totals");
       categoryDiv.innerHTML = ""; totalsDiv.innerHTML = "";
 
-      list.forEach(asset => {
-        const type = asset.type || "未分類";
-        const currency = asset.currency || "未指定";
-        let amount = parseFloat(asset.amount);
-        if ((isNaN(amount) || amount === 0) && type === "股票" && asset.shares && asset.cost) {
-          const shares = parseFloat(asset.shares);
-          const cost = parseFloat(asset.cost);
-          if (!isNaN(shares) && !isNaN(cost)) amount = shares * cost;
-        }
-        if (!isNaN(amount) && amount > 0) {
-          totals[currency] = (totals[currency] || 0) + amount;
-          const key = `${type}｜${currency}`;
-          categories[key] = (categories[key] || 0) + amount;
-        }
-      });
+     list.forEach(asset => {
+  const type = asset.type || "未分類";
+  const currency = asset.currency || "未指定";
+  let amount = parseFloat(asset.amount);
+
+  // 股票補充邏輯
+  if ((isNaN(amount) || amount === 0) && type === "股票" && asset.shares && asset.cost) {
+    const shares = parseFloat(asset.shares);
+    const cost = parseFloat(asset.cost);
+    if (!isNaN(shares) && !isNaN(cost)) amount = shares * cost;
+  }
+
+  // ✅ 加密貨幣補充邏輯
+  if ((isNaN(amount) || amount === 0) && type === "加密貨幣" && asset.cryptoAmount && asset.cryptoPrice) {
+    const qty = parseFloat(asset.cryptoAmount);
+    const price = parseFloat(asset.cryptoPrice);
+    if (!isNaN(qty) && !isNaN(price)) amount = qty * price;
+  }
+
+  if (!isNaN(amount) && amount > 0) {
+    totals[currency] = (totals[currency] || 0) + amount;
+    const key = `${type}｜${currency}`;
+    categories[key] = (categories[key] || 0) + amount;
+  }
+});
 
       categoryDiv.innerHTML = "<b>📊 資產分類加總：</b><br>";
       for (const [key, val] of Object.entries(categories)) {
