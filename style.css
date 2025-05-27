@@ -125,30 +125,17 @@ body.theme-pink {
 }
 
 /* 深灰夜間 */
-body.theme-dark {
-  background-color: #1f1f1f;
+body.theme-dark a,
+body.theme-dark .button-group a {
   color: #f0f0f0;
 }
 
-body.theme-dark select,
-body.theme-dark input {
-  background-color: #333;
-  color: #f0f0f0;
-  border: 1px solid #888;
-}
-
-/* ✅ 修正這段，恢復原本主色按鈕樣式 */
-body.theme-dark button,
-body.theme-dark .button-group button,
-body.theme-dark .home-btn {
+body.theme-dark .button-group a {
   background-color: #c96374;
-  color: white;
-  border: none;
 }
 
-body.theme-dark button:hover,
-body.theme-dark .button-group button:hover,
-body.theme-dark .home-btn:hover {
+body.theme-dark .button-group a:hover {
   background-color: #a6485c;
 }
+
 
