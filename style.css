@@ -92,19 +92,21 @@ a {
   font-size: 0.95rem;                 /* 字體略小 */
 }
 /* === 返回首頁按鈕統一樣式 === */
+/* 定義一種按鈕樣式，給 class="home-btn" 用的 */
 .home-btn {
-  background-color: #c96374;
-  color: white;
-  font-size: 1.1rem;
-  padding: 0.7rem 1.4rem;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  margin-top: 2rem;
-  display: inline-block;
+  background-color: #c96374;        /* 按鈕底色（粉紅系） */
+  color: white;                     /* 文字顏色白色 */
+  font-size: 1.1rem;                /* 字體大小 */
+  padding: 0.7rem 1.4rem;           /* 上下＆左右內距 */
+  border: none;                     /* 去掉邊框 */
+  border-radius: 10px;              /* 圓角邊框 */
+  cursor: pointer;                  /* 滑鼠變成小手 */
+  transition: background-color 0.3s;/* 漸變動畫 */
+  margin-top: 2rem;                 /* 上方空白 */
+  display: inline-block;            /* 可以置中對齊 */
 }
 
 .home-btn:hover {
-  background-color: #a6485c;
+  background-color: #a6485c;        /* 滑鼠移上去變深色 */
 }
+
