@@ -140,5 +140,27 @@
       }
     });
   </script>
+  <script>
+  const themeSelect = document.getElementById("theme-select");
+
+  // 套用主題
+  function applyTheme(theme) {
+    document.body.classList.remove("theme-light", "theme-pink", "theme-dark");
+    document.body.classList.add("theme-" + theme);
+    localStorage.setItem("theme", theme); // 儲存使用者選擇
+  }
+
+  // 載入時套用已儲存的主題
+  document.addEventListener("DOMContentLoaded", () => {
+    const savedTheme = localStorage.getItem("theme") || "light";
+    applyTheme(savedTheme);
+    themeSelect.value = savedTheme;
+  });
+
+  // 當使用者更換選單時
+  themeSelect.addEventListener("change", () => {
+    applyTheme(themeSelect.value);
+  });
+  </script>
 </body>
 </html>
