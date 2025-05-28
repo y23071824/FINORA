@@ -17,6 +17,7 @@ const db = firebase.firestore();
 const provider = new firebase.auth.GoogleAuthProvider();
 
 let currentUser = null;
+let selectedAccount = localStorage.getItem("selectedAccount") || null;
 
 function getAccountAssetRef() {
   if (!currentUser) throw new Error("尚未登入");
@@ -61,6 +62,11 @@ window.FINORA_AUTH = {
           }
         }
       }
+      getCurrentAccount: () => selectedAccount,
+setSelectedAccount: (name) => {
+  selectedAccount = name;
+  localStorage.setItem("selectedAccount", name);
+},
       callback(user);
     });
   },
