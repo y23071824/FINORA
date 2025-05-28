@@ -11,6 +11,15 @@
   <div id="theme-selector" style="text-align:center; margin-bottom:1.5rem;">
     </select>
   </div>
+<!-- 帳戶選擇彈窗 -->
+<div id="account-selector-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#0008; z-index:9999;">
+  <div style="background:#fff; max-width:400px; margin:15% auto; padding:2rem; border-radius:1rem; text-align:center;">
+    <h2>選擇或建立帳戶</h2>
+    <div id="account-list"></div>
+    <input type="text" id="new-account-name" placeholder="輸入帳戶名稱" style="margin-top:1rem; width:80%; padding:0.5rem;" />
+    <button id="create-account-btn" style="margin-top:1rem;">➕ 建立帳戶</button>
+  </div>
+</div>
 
   <h1>FINORA</h1>
  <p class="subtitle">讓資產更有力，退休不焦慮。</p>
@@ -80,6 +89,92 @@
         logoutBtn.style.display = "none";
       }
     });
+    if (user) {
+  userEmail.textContent = `已登入：${user.email}`;
+  loginBtn.style.display = "none";
+  logoutBtn.style.display = "inline-block";
+
+  // 新增：帳戶選擇流程
+  const showAccountSelector = async () => {
+    const db = firebase.firestore();
+    const accountsRef = db.collection("users").doc(user.uid).collection("accounts");
+    const accountListEl = document.getElementById("account-list");
+    const modal = document.getElementById("account-selector-modal");
+    const newAccountInput = document.getElementById("new-account-name");
+    const createBtn = document.getElementById("create-account-btn");
+
+    accountListEl.innerHTML = "🔄 載入帳戶中...";
+    modal.style.display = "block";
+
+    const snapshot = await accountsRef.get();
+    accountListEl.innerHTML = "";
+    snapshot.forEach(doc => {
+      const name = doc.id;
+      const btn = document.createElement("button");
+      btn.textContent = `🔓 ${name}`;
+      btn.style.margin = "0.3rem";
+      btn.onclick = async () => {
+        localStorage.setItem("selectedAccount", name);
+        modal.style.display = "none";
+
+        // 下載該帳戶資料
+        const assetSnap = await accountsRef.doc(name).collection("assets").get();
+        const assets = assetSnap.docs.map(d => d.data());
+        localStorage.setItem("assets", JSON.stringify(assets));
+        location.reload();
+      };
+      accountListEl.appendChild(btn);
+    });
+
+    createBtn.onclick = async () => {
+      const name = newAccountInput.value.trim();
+      if (!name) return alert("請輸入帳戶名稱");
+      const exists = (await accountsRef.doc(name).get()).exists;
+      if (exists) return alert("帳戶名稱已存在");
+
+      await accountsRef.doc(name).set({ createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+      localStorage.setItem("selectedAccount", name);
+      modal.style.display = "none";
+      localStorage.setItem("assets", "[]");
+      location.reload();
+    };
+  };
+
+  // 若無帳戶紀錄就跳帳戶選單
+  const selectedAccount = localStorage.getItem("selectedAccount");
+  if (!selectedAccount) await showAccountSelector();
+
+  // 原本的資產下載邏輯（從正確帳戶）
+  const db = firebase.firestore();
+  const account = localStorage.getItem("selectedAccount");
+  const assetSnap = await db.collection("users").doc(user.uid).collection("accounts").doc(account).collection("assets").get();
+  const cloudAssets = assetSnap.docs.map(d => d.data());
+  const localAssets = JSON.parse(localStorage.getItem("assets") || "[]");
+
+  if (cloudAssets.length > 0 && localAssets.length > 0) {
+    const useCloud = confirm("雲端與本地資料皆存在，是否使用雲端資料？\n\n按 [確定] 使用雲端資料\n按 [取消] 保留本地並覆蓋雲端");
+    if (useCloud) {
+      localStorage.setItem("assets", JSON.stringify(cloudAssets));
+    } else {
+      const batch = db.batch();
+      localAssets.forEach(a => {
+        const doc = db.collection("users").doc(user.uid).collection("accounts").doc(account).collection("assets").doc();
+        batch.set(doc, a);
+      });
+      await batch.commit();
+    }
+  } else if (cloudAssets.length > 0) {
+    localStorage.setItem("assets", JSON.stringify(cloudAssets));
+  } else if (localAssets.length > 0) {
+    const batch = db.batch();
+    localAssets.forEach(a => {
+      const doc = db.collection("users").doc(user.uid).collection("accounts").doc(account).collection("assets").doc();
+      batch.set(doc, a);
+    });
+    await batch.commit();
+  }
+}
+
   </script>
 </body>
 </html>
