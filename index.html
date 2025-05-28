@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="zh-Hant">
+<!DOCTYPE html><html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
   <title>FINORA 資產整合工具</title>
@@ -8,41 +7,23 @@
 </head>
 <body>
   <h1>FINORA</h1>
-  <p class="subtitle">讓資產更有力，退休不焦慮。</p>
-
-  <!-- ✅ 功能選單按鈕區塊 -->
-  <div class="grid-button-group">
+  <p class="subtitle">讓資產更有力，退休不焦慮。</p>  <!-- ✅ 功能選單按鈕區塊 -->  <div class="grid-button-group">
     <a href="assets.html">資產管理</a>
     <a href="tools/compound.html">複利試算</a>
     <a href="tools/withdraw.html">退休提領</a>
     <a href="tools/emergency.html">預備金試算</a>
-  </div>
-
-  <!-- ✅ 帳本選擇區塊 -->
-  <section id="account-section" style="margin-top: 2rem;">
+  </div>  <!-- ✅ 帳本選擇區塊 -->  <section id="account-section" style="margin-top: 2rem;">
     <label for="account-select">帳本選擇：</label>
     <select id="account-select"></select>
     <button id="rename-account-btn">✏️ 重新命名</button>
     <button id="new-account-btn">➕ 新增帳本</button>
     <input type="text" id="new-account-name" placeholder="輸入新帳本名稱" style="display:none; margin-top: 0.5rem;" />
     <button id="save-new-account" style="display:none;">儲存新帳本</button>
-  </section>
-
-  <!-- ✅ 登入登出與 Email 顯示 -->
-  <div id="firebase-auth" style="margin-top: 1.5rem;">
+  </section>  <!-- ✅ 登入登出與 Email 顯示 -->  <div id="firebase-auth" style="margin-top: 1.5rem;">
     <button id="login-btn">🔐 使用 Google 帳號登入</button>
     <button id="logout-btn" style="display:none;">🚪 登出</button>
     <p id="user-email" style="font-size: 0.9em; color: #666;"></p>
-  </div>
-
-  <!-- ✅ Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <script src="firebase-sync.js"></script>
-
-  <!-- ✅ 帳本與登入邏輯 -->
-  <script>
+  </div>  <!-- ✅ Firebase SDK -->  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>  <script src="firebase-sync.js"></script>  <!-- ✅ 帳本與登入邏輯 -->  <script>
     const loginBtn = document.getElementById("login-btn");
     const logoutBtn = document.getElementById("logout-btn");
     const userEmail = document.getElementById("user-email");
@@ -134,8 +115,6 @@
       await loadAccounts();
       location.reload();
     });
-  </script>
-
-  <p style="text-align:center; font-size:0.8rem; color:#aaa; margin-top:3rem;">v0.9 beta - 2025-05-29</p>
+  </script>  <p style="text-align:center; font-size:0.8rem; color:#aaa; margin-top:3rem;">v0.9 beta - 2025-05-29</p>
 </body>
 </html>
