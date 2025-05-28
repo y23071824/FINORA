@@ -320,147 +320,167 @@ window.editAsset = function (index) {
 
   } else {
     document.getElementById("amount").value = item.amount;
+// ===== Part 2：表單處理與存儲 =====
+
+function getSelectedAccount() { return localStorage.getItem("selectedAccount") || "default"; } function getLocalStorageKey() { return assets_${getSelectedAccount()}; }
+
+function toggleFields() { const type = document.getElementById("type").value;
+
+document.getElementById("stock-fields").style.display = type === "股票" ? "block" : "none"; document.getElementById("insurance-fields").style.display = type === "儲蓄保險" ? "block" : "none"; document.getElementById("fund-fields").style.display = type === "基金" ? "block" : "none"; document.getElementById("crypto-fields").style.display = type === "加密貨幣" ? "block" : "none"; document.getElementById("amount-field").style.display = ["現金", "定存", "房產", "其他"].includes(type) ? "block" : "none"; }
+
+typeSelect.addEventListener("change", toggleFields);
+
+document.getElementById("stock-symbol")?.addEventListener("blur", async () => { const symbol = document.getElementById("stock-symbol").value.trim().toUpperCase(); const category = document.getElementById("stock-category").value; if (!symbol || !category) return; const price = await fetchStockPrice(symbol, category); if (price !== null) { document.getElementById("price").value = price.toFixed(2); } else { alert("查無此股票代碼或查價失敗"); } });
+
+async function fetchCryptoPrice(symbol) { const idMap = { BTC: "bitcoin", ETH: "ethereum", USDT: "tether", BNB: "binancecoin", XRP: "ripple", DOGE: "dogecoin", ADA: "cardano", SOL: "solana" };
+
+const id = idMap[symbol.toUpperCase()]; if (!id) { alert("⚠️ 不支援的幣種，請輸入 BTC、ETH、USDT 等主流幣種"); return null; }
+
+try { const res = await fetch(https://api.coingecko.com/api/v3/simple/price?ids=${id}&vs_currencies=usd); const data = await res.json(); return data[id]?.usd || null; } catch (e) { console.error("❌ 幣價查詢失敗", e); return null; } }
+
+document.getElementById("crypto-symbol")?.addEventListener("blur", async () => { const symbol = document.getElementById("crypto-symbol").value.trim().toUpperCase(); if (!symbol) return; const price = await fetchCryptoPrice(symbol); if (price !== null) { document.getElementById("crypto-price").value = price.toFixed(4); } else { alert("⚠️ 幣價查詢失敗，請稍後再試"); } });
+
+let assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
+
+form.addEventListener("submit", (e) => { e.preventDefault();
+
+const type = typeSelect.value; if (!type) return alert("⚠️ 請選擇資產種類");
+
+const asset = { type, currency: document.getElementById("currency").value, bank: document.getElementById("bank").value.trim(), note: document.getElementById("note").value, };
+
+if (type === "股票") { const shares = parseFloat(document.getElementById("shares").value); const cost = parseFloat(document.getElementById("cost").value); if (isNaN(shares) || isNaN(cost)) return alert("⚠️ 股票類別請填寫股數與成本"); asset.stockCategory = document.getElementById("stock-category").value; asset.stockSymbol = document.getElementById("stock-symbol").value; asset.shares = shares; asset.cost = cost; asset.price = parseFloat(document.getElementById("price").value) || 0;
+
+} else if (type === "儲蓄保險") { asset.policyName = document.getElementById("policy-name").value; asset.policyAmount = parseFloat(document.getElementById("policy-amount").value) || 0; asset.policyYears = parseInt(document.getElementById("policy-years").value) || 0; asset.policyPremium = parseFloat(document.getElementById("policy-premium").value) || 0;
+
+} else if (type === "基金") { asset.fundName = document.getElementById("fund-name").value; asset.fundUnits = parseFloat(document.getElementById("fund-units").value) || 0; asset.fundNav = parseFloat(document.getElementById("fund-nav").value) || 0;
+
+} else if (type === "加密貨幣") { asset.cryptoSymbol = document.getElementById("crypto-symbol").value; asset.cryptoAmount = parseFloat(document.getElementById("crypto-amount").value) || 0; asset.cryptoPrice = parseFloat(document.getElementById("crypto-price").value) || 0;
+
+} else { asset.amount = parseFloat(document.getElementById("amount").value) || 0; }
+
+if (editIndex !== null) { assets[editIndex] = asset; editIndex = null; } else { assets.push(asset); }
+
+localStorage.setItem(getLocalStorageKey(), JSON.stringify(assets));
+
+if (asset.bank && !bankHistory.includes(asset.bank.toLowerCase())) { bankHistory.push(asset.bank.toLowerCase()); localStorage.setItem("banks", JSON.stringify(bankHistory)); }
+
+if (window.FINORA_AUTH && typeof FINORA_AUTH.saveUserAssets === "function") { FINORA_AUTH.saveUserAssets(assets) .then(() => console.log("✅ 資產已同步至雲端")) .catch(e => console.warn("❗ 雲端同步失敗：", e)); }
+
+alert("✅ 資產已成功儲存！"); form.reset(); toggleFields(); render(); });
+
+// ===== Part 3：畫面渲染與計算 ===== function render() { try { if (!exchangeRates || Object.keys(exchangeRates).length === 0) { exchangeRates = JSON.parse(localStorage.getItem("exchangeRates") || "{}"); }
+
+assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
+
+assetList.innerHTML = "";
+totalsList.innerHTML = "";
+if (profitList) profitList.innerHTML = "";
+
+let categoryTotals = {};
+let currencyTotals = {};
+let totalTWD = 0;
+
+assets.forEach((item, index) => {
+  let display = "", amount = 0, profit = 0;
+  const currency = item.currency || "TWD";
+
+  if (item.type === "股票") {
+    const shares = parseFloat(item.shares) || 0;
+    const cost = parseFloat(item.cost) || 0;
+    const price = parseFloat(item.price) || 0;
+    const totalCost = shares * cost;
+    const value = shares * price;
+    profit = value - totalCost;
+    amount = isNaN(totalCost) ? 0 : totalCost;
+
+    display = `股票代碼：${item.stockSymbol}｜類型：${item.stockCategory}｜股數：${shares}<br>成本：$${cost}，現價：$${price}<br>總成本：$${totalCost.toFixed(2)}，市值：$${value.toFixed(2)}，盈餘：$${profit.toFixed(2)}`;
+  } else if (item.type === "儲蓄保險") {
+    amount = parseFloat(item.policyAmount) || 0;
+    display = `保單：${item.policyName}<br>保額：$${item.policyAmount}，年期：${item.policyYears}，保費：$${item.policyPremium}`;
+  } else if (item.type === "基金") {
+    const units = parseFloat(item.fundUnits) || 0;
+    const nav = parseFloat(item.fundNav) || 0;
+    amount = units * nav;
+    display = `基金：${item.fundName}<br>單位數：${units}，淨值：$${nav}<br>總市值：$${amount.toFixed(2)}`;
+  } else if (item.type === "加密貨幣") {
+    const qty = parseFloat(item.cryptoAmount) || 0;
+    const price = parseFloat(item.cryptoPrice) || 0;
+    amount = qty * price;
+    display = `幣種：${item.cryptoSymbol}<br>數量：${qty}，現價：$${price}<br>總價值：$${amount.toFixed(2)}`;
+  } else {
+    amount = parseFloat(item.amount) || 0;
+    display = `金額：$${amount.toLocaleString()}`;
   }
 
-  window.scrollTo({ top: 0, behavior: "smooth" });
-};
+  const categoryKey = `${item.type}｜${currency}`;
+  categoryTotals[categoryKey] = categoryTotals[categoryKey] || { amount: 0, profit: 0, currency };
+  categoryTotals[categoryKey].amount += amount;
+  if (item.type === "股票") categoryTotals[categoryKey].profit += profit;
 
-// ===== 刪除資產項目 =====
-window.deleteAsset = function (index) {
-  if (confirm("確定要刪除？")) {
-    assets.splice(index, 1);
-    localStorage.setItem(getLocalStorageKey(), JSON.stringify(assets));
-    render();
-  }
-};
+  currencyTotals[currency] = currencyTotals[currency] || 0;
+  currencyTotals[currency] += amount + (item.type === "股票" ? profit : 0);
 
-// ===== Part 3：畫面渲染與計算 =====
-function render() {
-  try {
-    // 1. 取得匯率資料（從記憶體或 localStorage）
-    if (!exchangeRates || Object.keys(exchangeRates).length === 0) {
-      exchangeRates = JSON.parse(localStorage.getItem("exchangeRates") || "{}");
-    }
+  const li = document.createElement("li");
+  li.innerHTML = `
+    <strong>${item.type}</strong>（${currency}｜${item.bank}）${item.note ? "｜備註：" + item.note : ""}<br>
+    ${display}
+    <div class="button-group">
+      <button onclick="editAsset(${index})">編輯</button>
+      <button onclick="deleteAsset(${index})">刪除</button>
+    </div>
+  `;
+  assetList.appendChild(li);
+});
 
-    // ✅ 新增：每次重新抓取目前帳本的資產資料
-    assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
+for (const key in categoryTotals) {
+  const [type, currency] = key.split("｜");
+  const item = categoryTotals[key];
+  const rate = exchangeRates[currency] || 1;
+  const total = item.amount + (item.profit || 0);
+  const twd = total * (exchangeRates["TWD"] / rate);
+  totalTWD += twd;
 
-    // 2. 初始化畫面區塊
-    assetList.innerHTML = "";
-    totalsList.innerHTML = "";
-    if (profitList) profitList.innerHTML = "";
-
-    // 3. 宣告總和用變數
-    let categoryTotals = {};
-    let currencyTotals = {};
-    let totalTWD = 0;
-
-    // 4. 開始處理每筆資產資料
-    assets.forEach((item, index) => {
-      let display = "", amount = 0, profit = 0;
-
-      if (item.type === "股票") {
-        const shares = parseFloat(item.shares) || 0;
-        const cost = parseFloat(item.cost) || 0;
-        const price = parseFloat(item.price) || 0;
-        const totalCost = shares * cost;
-        const value = shares * price;
-        profit = value - totalCost;
-        amount = isNaN(totalCost) ? 0 : totalCost;
-
-        display = `股票代碼：${item.stockSymbol}｜類型：${item.stockCategory}｜股數：${shares}<br>
-成本：$${cost}，現價：$${price}<br>
-總成本：$${totalCost.toFixed(2)}，市值：$${value.toFixed(2)}，盈餘：$${profit.toFixed(2)}`;
-      } else if (item.type === "儲蓄保險") {
-        amount = parseFloat(item.policyAmount) || 0;
-        display = `保單：${item.policyName}<br>
-保額：$${item.policyAmount}，年期：${item.policyYears}，保費：$${item.policyPremium}`;
-      } else if (item.type === "基金") {
-        const units = parseFloat(item.fundUnits) || 0;
-        const nav = parseFloat(item.fundNav) || 0;
-        amount = units * nav;
-        display = `基金：${item.fundName}<br>
-單位數：${units}，淨值：$${nav}<br>
-總市值：$${amount.toFixed(2)}`;
-      } else if (item.type === "加密貨幣") {
-        const qty = parseFloat(item.cryptoAmount) || 0;
-        const price = parseFloat(item.cryptoPrice) || 0;
-        amount = qty * price;
-        display = `幣種：${item.cryptoSymbol}<br>
-數量：${qty}，現價：$${price}<br>
-總價值：$${amount.toFixed(2)}`;
-      } else {
-        amount = parseFloat(item.amount) || 0;
-        display = `金額：$${amount.toLocaleString()}`;
-      }
-
-      const categoryKey = `${item.type}｜${item.currency}`;
-      categoryTotals[categoryKey] = categoryTotals[categoryKey] || { amount: 0, profit: 0, currency: item.currency };
-      categoryTotals[categoryKey].amount += amount;
-      if (item.type === "股票") categoryTotals[categoryKey].profit += profit;
-
-      currencyTotals[item.currency] = currencyTotals[item.currency] || 0;
-      currencyTotals[item.currency] += amount + (item.type === "股票" ? profit : 0);
-
-      const li = document.createElement("li");
-      li.innerHTML = `<strong>${item.type}</strong>（${item.currency}｜${item.bank}）${item.note ? "｜備註：" + item.note : ""}<br>
-${display}
-<div class="button-group">
-  <button onclick="editAsset(${index})">編輯</button>
-  <button onclick="deleteAsset(${index})">刪除</button>
-</div>`;
-      assetList.appendChild(li);
-    });
-
-    for (const key in categoryTotals) {
-      const [type, currency] = key.split("｜");
-      const item = categoryTotals[key];
-      const rate = exchangeRates[currency] || 1;
-      const total = item.amount + (item.profit || 0);
-      const twd = total * (exchangeRates["TWD"] / rate);
-      totalTWD += twd;
-
-      const li = document.createElement("li");
-      li.innerHTML = `${type}（${currency}）：$${total.toLocaleString()} ${currency} ≈ NT$ ${twd.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-      totalsList.appendChild(li);
-    }
-
-    const currencyBreakdown = Object.entries(currencyTotals).map(([ccy, value]) => `$${value.toLocaleString()} ${ccy}`).join("，");
-    const totalLine = document.createElement("li");
-    totalLine.style.fontWeight = "bold";
-    totalLine.textContent = `全體總資產：${currencyBreakdown}，折合台幣：NT$ ${totalTWD.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-    totalsList.appendChild(totalLine);
-
-    const rateTip = document.createElement("li");
-    rateTip.innerHTML = `📌 1 USD = ${exchangeRates["TWD"]} TWD｜${exchangeRates["JPY"]} JPY｜${exchangeRates["EUR"]} EUR`;
-    rateTip.style.fontSize = "0.95em";
-    rateTip.style.color = "#666";
-    totalsList.appendChild(rateTip);
-
-    const reverseRate = document.createElement("li");
-    const usdRate = (1 / (exchangeRates["TWD"] || 1)).toFixed(3);
-    const jpyRate = (exchangeRates["JPY"] / exchangeRates["TWD"]).toFixed(2);
-    const eurRate = (exchangeRates["EUR"] / exchangeRates["TWD"]).toFixed(3);
-    reverseRate.innerHTML = `📌 1 TWD ≈ ${usdRate} USD｜${jpyRate} JPY｜${eurRate} EUR`;
-    reverseRate.style.fontSize = "0.95em";
-    reverseRate.style.color = "#666";
-    totalsList.appendChild(reverseRate);
-
-    const updateTime = new Date().toLocaleString();
-    document.getElementById("rate-time").textContent = `匯率更新時間：${updateTime}`;
-
-    bankDatalist.innerHTML = "";
-    bankHistory.forEach(bank => {
-      const opt = document.createElement("option");
-      opt.value = bank;
-      bankDatalist.appendChild(opt);
-    });
-
-  } catch (e) {
-    console.error("❌ render() 錯誤：", e);
-    alert("畫面更新失敗，請檢查資料內容或重新整理");
-  }
+  const li = document.createElement("li");
+  li.innerHTML = `${type}（${currency}）：$${total.toLocaleString()} ${currency} ≈ NT$ ${twd.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+  totalsList.appendChild(li);
 }
+
+const currencyBreakdown = Object.entries(currencyTotals).map(([ccy, value]) => `$${value.toLocaleString()} ${ccy}`).join("，");
+const totalLine = document.createElement("li");
+totalLine.style.fontWeight = "bold";
+totalLine.textContent = `全體總資產：${currencyBreakdown}，折合台幣：NT$ ${totalTWD.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+totalsList.appendChild(totalLine);
+
+const rateTip = document.createElement("li");
+rateTip.innerHTML = `📌 1 USD = ${exchangeRates["TWD"]} TWD｜${exchangeRates["JPY"]} JPY｜${exchangeRates["EUR"]} EUR`;
+rateTip.style.fontSize = "0.95em";
+rateTip.style.color = "#666";
+totalsList.appendChild(rateTip);
+
+const reverseRate = document.createElement("li");
+const usdRate = (1 / (exchangeRates["TWD"] || 1)).toFixed(3);
+const jpyRate = (exchangeRates["JPY"] / exchangeRates["TWD"]).toFixed(2);
+const eurRate = (exchangeRates["EUR"] / exchangeRates["TWD"]).toFixed(3);
+reverseRate.innerHTML = `📌 1 TWD ≈ ${usdRate} USD｜${jpyRate} JPY｜${eurRate} EUR`;
+reverseRate.style.fontSize = "0.95em";
+reverseRate.style.color = "#666";
+totalsList.appendChild(reverseRate);
+
+const rateTimeEl = document.getElementById("rate-time");
+if (rateTimeEl) {
+  const updateTime = new Date().toLocaleString();
+  rateTimeEl.textContent = `匯率更新時間：${updateTime}`;
+}
+
+bankDatalist.innerHTML = "";
+bankHistory.forEach(bank => {
+  const opt = document.createElement("option");
+  opt.value = bank;
+  bankDatalist.appendChild(opt);
+});
+
+} catch (e) { console.error("❌ render() 錯誤：", e); alert("畫面更新失敗，請檢查資料內容或重新整理"); } }
+
 // ===== Part 4：啟動函式與其他 =====
 document.addEventListener("DOMContentLoaded", async () => {
   try {
