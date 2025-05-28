@@ -23,13 +23,24 @@ function getAccountAssetRef() {
   return db.collection("users").doc(currentUser.uid).collection("accounts").doc(selectedAccount).collection("assets");
 }
 
+async function fetchAccountList() {
+  if (!currentUser) throw new Error("尚未登入");
+  const snapshot = await db.collection("accounts").where("uid", "==", currentUser.uid).get();
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+}
+
+async function setAccountDisplayName(accountId, displayName) {
+  if (!currentUser) throw new Error("尚未登入");
+  const docRef = db.collection("accounts").doc(accountId);
+  await docRef.set({ uid: currentUser.uid, displayName }, { merge: true });
+}
+
 window.FINORA_AUTH = {
   signInWithGoogle: async () => {
     try {
       const result = await auth.signInWithPopup(provider);
       currentUser = result.user;
 
-      // 預設帳戶處理
       if (!selectedAccount) {
         selectedAccount = "default";
         localStorage.setItem("selectedAccount", selectedAccount);
@@ -93,8 +104,13 @@ window.FINORA_AUTH = {
   },
 
   getCurrentAccount: () => selectedAccount,
+
   setSelectedAccount: (name) => {
     selectedAccount = name;
     localStorage.setItem("selectedAccount", name);
-  }
+  },
+
+  // ✅ 補上帳本清單與命名功能
+  fetchAccountList,
+  setAccountDisplayName
 };
