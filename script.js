@@ -236,13 +236,11 @@ window.deleteAsset = function (index) {
   }
 };
 
-// ===== Part 3：畫面渲染與計算 =====
-
 function render() {
   try {
-    assetList.innerHTML = "";
-    totalsList.innerHTML = "";
-    profitList.innerHTML = "";
+    dom.assetList.innerHTML = "";
+    dom.totalsList.innerHTML = "";
+    dom.profitList.innerHTML = "";
 
     const totals = {};
     const profits = {};
@@ -276,41 +274,54 @@ function render() {
       totals[item.currency] = (totals[item.currency] || 0) + value;
 
       li.innerHTML += ` <button onclick="editAsset(${index})">✏️</button> <button onclick="deleteAsset(${index})">🗑️</button>`;
-      assetList.appendChild(li);
+      dom.assetList.appendChild(li);
     });
 
-    // 顯示幣別加總
     for (const [currency, total] of Object.entries(totals)) {
       const li = document.createElement("li");
       li.textContent = `${currency}：${total.toFixed(2)}`;
-      totalsList.appendChild(li);
+      dom.totalsList.appendChild(li);
     }
 
-    // 顯示股票盈餘
     for (const [currency, profit] of Object.entries(profits)) {
       const li = document.createElement("li");
       li.textContent = `📊 股票盈餘（${currency}）：${profit.toFixed(2)}`;
-      profitList.appendChild(li);
+      dom.profitList.appendChild(li);
     }
   } catch (e) {
     console.error("❌ render() 錯誤：", e);
   }
 }
 
-// ===== Part 4：啟動函式與其他 =====
+
 document.addEventListener("DOMContentLoaded", async () => {
   try {
     console.log("🔄 系統初始化中...");
 
-    // 監聽登入
+    // 監聽 Firebase 登入狀態變化（如果有開啟 Firebase 功能）
     if (typeof FINORA_AUTH !== "undefined" && FINORA_AUTH.initAuth) {
       await FINORA_AUTH.initAuth();
     }
 
-    await fetchExchangeRates();         // 匯率查詢
-    await updateAllStockPrices();       // 股票查價（含美股與台股）
-    toggleFields();                     // 表單欄位顯示處理
-    render();                           // 畫面顯示
+    // 匯率查詢
+    if (typeof fetchExchangeRates === "function") {
+      await fetchExchangeRates();
+      console.log("✅ 匯率查詢完成");
+    } else {
+      console.warn("⚠️ 無法載入 fetchExchangeRates()");
+    }
+
+    // 股票現價更新
+    if (typeof updateAllStockPrices === "function") {
+      await updateAllStockPrices();
+      console.log("✅ 股票現價更新完成");
+    } else {
+      console.warn("⚠️ 無法載入 updateAllStockPrices()");
+    }
+
+    toggleFields();
+    render();
+
     console.log("✅ 初始化完成");
   } catch (e) {
     console.error("❌ 初始化失敗", e);
