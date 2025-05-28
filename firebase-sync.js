@@ -1,4 +1,4 @@
-// ✅ firebase-sync.js 修正版
+// ✅ firebase-sync.js
 const firebaseConfig = {
   apiKey: "AIzaSyBJE12oIoK4gr153jkNBokQ-d3ohnN4aWE",
   authDomain: "finora-d8cb3.firebaseapp.com",
@@ -10,7 +10,6 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-
 const auth = firebase.auth();
 const db = firebase.firestore();
 const provider = new firebase.auth.GoogleAuthProvider();
@@ -29,6 +28,18 @@ window.FINORA_AUTH = {
     try {
       const result = await auth.signInWithPopup(provider);
       currentUser = result.user;
+
+      // 預設帳戶處理
+      if (!selectedAccount) {
+        selectedAccount = "default";
+        localStorage.setItem("selectedAccount", selectedAccount);
+      }
+
+      const cloudAssets = await FINORA_AUTH.loadUserAssets();
+      if (cloudAssets.length > 0) {
+        localStorage.setItem("assets", JSON.stringify(cloudAssets));
+      }
+
       return currentUser;
     } catch (e) {
       console.error("登入失敗", e);
@@ -39,6 +50,7 @@ window.FINORA_AUTH = {
   signOutFromGoogle: async () => {
     await auth.signOut();
     currentUser = null;
+    selectedAccount = null;
     localStorage.removeItem("selectedAccount");
     localStorage.removeItem("assets");
   },
@@ -49,13 +61,14 @@ window.FINORA_AUTH = {
       if (user) {
         selectedAccount = localStorage.getItem("selectedAccount") || "default";
         localStorage.setItem("selectedAccount", selectedAccount);
+
         try {
           const ref = getAccountAssetRef();
           const snap = await ref.get();
           const assets = snap.docs.map(d => d.data());
           localStorage.setItem("assets", JSON.stringify(assets));
         } catch (e) {
-          console.warn("讀取帳本資料失敗：", e);
+          console.warn("❗雲端讀取失敗：", e);
         }
       }
       callback(user);
