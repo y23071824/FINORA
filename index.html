@@ -137,16 +137,6 @@
 
 
     FINORA_AUTH.onUserChanged(user => {
-      if (user) {
-        userEmail.textContent = `已登入：${user.email}`;
-        loginBtn.style.display = "none";
-        logoutBtn.style.display = "inline-block";
-      } else {
-        userEmail.textContent = "";
-        loginBtn.style.display = "inline-block";
-        logoutBtn.style.display = "none";
-      }
-    });
     if (user) {
   userEmail.textContent = `已登入：${user.email}`;
   loginBtn.style.display = "none";
