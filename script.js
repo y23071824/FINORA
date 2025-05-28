@@ -1,17 +1,34 @@
 // ===== Finora 資產登記 App =====
-// ===== Part 1：初始化與匯率查詢 =====
-document.addEventListener("DOMContentLoaded", async () => {
-  // 取得畫面中會用到的 HTML 元件
-  const form = document.getElementById("asset-form");
-  const typeSelect = document.getElementById("type");
-  const stockFields = document.getElementById("stock-fields");
-  const insuranceFields = document.getElementById("insurance-fields");
-  const amountField = document.getElementById("amount-field");
-  const assetList = document.getElementById("asset-list");
-  const totalsList = document.getElementById("totals-list");
-  const profitList = document.getElementById("stock-profit-list");
-  const bankDatalist = document.getElementById("bank-list");
+/document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    // === Part 1 ===
+    // 初始化元素與變數（不需再次包一層）
+    const form = document.getElementById("asset-form");
+    const typeSelect = document.getElementById("type");
+    const stockFields = document.getElementById("stock-fields");
+    const insuranceFields = document.getElementById("insurance-fields");
+    const amountField = document.getElementById("amount-field");
+    const assetList = document.getElementById("asset-list");
+    const totalsList = document.getElementById("totals-list");
+    const profitList = document.getElementById("stock-profit-list");
+    const bankDatalist = document.getElementById("bank-list");
 
+    // ✅ 匯率與股價初始化
+    await fetchExchangeRates();
+    console.log("✅ 匯率查詢完成");
+
+    await updateAllStockPrices();
+    console.log("✅ 股票現價更新完成");
+
+    // ✅ 初始化表單與畫面
+    toggleFields();
+    render();
+    console.log("✅ 初始化完成");
+  } catch (e) {
+    console.error("❌ 初始化失敗", e);
+    alert("系統初始化錯誤，請重新整理頁面");
+  }
+});
   // ✅ 帳本相關函式
   function getSelectedAccount() {
     return localStorage.getItem("selectedAccount") || "default";
