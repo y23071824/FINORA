@@ -243,9 +243,18 @@ form.addEventListener("submit", (e) => {
   }
 
   alert("✅ 資產已成功儲存！");
+    // 若登入中，則同步儲存到雲端
+if (typeof FINORA_AUTH !== "undefined" && FINORA_AUTH.saveUserAssets) {
+  FINORA_AUTH.saveUserAssets(assets).then(() => {
+    console.log("✅ 雲端儲存成功");
+  }).catch((err) => {
+    console.warn("⚠️ 雲端儲存失敗", err);
+  });
+}
   form.reset();
   toggleFields(); // 重置欄位顯示狀態
   render();       // 更新畫面
+
 });
 
 // ===== 編輯現有資產（將資料填入表單）=====
@@ -295,6 +304,16 @@ window.deleteAsset = function (index) {
   if (confirm("確定要刪除？")) {
     assets.splice(index, 1);
     localStorage.setItem("assets", JSON.stringify(assets));
+// ✅ 雲端同步
+  if (typeof FINORA_AUTH !== "undefined" && FINORA_AUTH.saveUserAssets) {
+    FINORA_AUTH.saveUserAssets(assets)
+      .then(() => {
+        console.log("✅ 雲端已同步（刪除後）");
+      })
+      .catch((err) => {
+        console.warn("⚠️ 雲端同步失敗（刪除後）", err);
+      });
+  }
     render(); // 重新渲染畫面
   }
 };
