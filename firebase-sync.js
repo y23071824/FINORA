@@ -1,5 +1,4 @@
-// ✅ firebase-sync.js
-
+// ✅ firebase-sync.js 修正版
 const firebaseConfig = {
   apiKey: "AIzaSyBJE12oIoK4gr153jkNBokQ-d3ohnN4aWE",
   authDomain: "finora-d8cb3.firebaseapp.com",
@@ -21,13 +20,11 @@ let selectedAccount = localStorage.getItem("selectedAccount") || null;
 
 function getAccountAssetRef() {
   if (!currentUser) throw new Error("尚未登入");
-  const account = localStorage.getItem("selectedAccount");
-  if (!account) throw new Error("尚未選擇帳戶");
-  return db.collection("users").doc(currentUser.uid).collection("accounts").doc(account).collection("assets");
+  if (!selectedAccount) throw new Error("尚未選擇帳戶");
+  return db.collection("users").doc(currentUser.uid).collection("accounts").doc(selectedAccount).collection("assets");
 }
 
 window.FINORA_AUTH = {
-  // ✅ 使用 Popup 登入（避免 redirect reload 問題）
   signInWithGoogle: async () => {
     try {
       const result = await auth.signInWithPopup(provider);
@@ -50,23 +47,17 @@ window.FINORA_AUTH = {
     auth.onAuthStateChanged(async user => {
       currentUser = user;
       if (user) {
-        const selectedAccount = localStorage.getItem("selectedAccount");
-        if (selectedAccount) {
-          try {
-            const ref = db.collection("users").doc(user.uid).collection("accounts").doc(selectedAccount).collection("assets");
-            const snap = await ref.get();
-            const assets = snap.docs.map(d => d.data());
-            localStorage.setItem("assets", JSON.stringify(assets));
-          } catch (e) {
-            console.warn("讀取帳本資料失敗：", e);
-          }
+        selectedAccount = localStorage.getItem("selectedAccount") || "default";
+        localStorage.setItem("selectedAccount", selectedAccount);
+        try {
+          const ref = getAccountAssetRef();
+          const snap = await ref.get();
+          const assets = snap.docs.map(d => d.data());
+          localStorage.setItem("assets", JSON.stringify(assets));
+        } catch (e) {
+          console.warn("讀取帳本資料失敗：", e);
         }
       }
-      getCurrentAccount: () => selectedAccount,
-setSelectedAccount: (name) => {
-  selectedAccount = name;
-  localStorage.setItem("selectedAccount", name);
-},
       callback(user);
     });
   },
@@ -86,5 +77,11 @@ setSelectedAccount: (name) => {
     docs.forEach(doc => batch.delete(doc.ref));
     assets.forEach(asset => batch.set(ref.doc(), asset));
     await batch.commit();
+  },
+
+  getCurrentAccount: () => selectedAccount,
+  setSelectedAccount: (name) => {
+    selectedAccount = name;
+    localStorage.setItem("selectedAccount", name);
   }
 };
