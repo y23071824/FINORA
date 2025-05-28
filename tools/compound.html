@@ -48,46 +48,37 @@
       text-align: center;
       margin-top: 2rem;
     }
-    
-  .home-btn {
-  background-color: #c96374;
-  color: white;
-  font-size: 1.1rem;
-  padding: 0.7rem 1.4rem;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  margin-top: 2rem;
-  display: inline-block;
-}
-
-.home-btn:hover {
-  background-color: #a6485c;
-}
+    .home-btn {
+      background-color: #c96374;
+      color: white;
+      font-size: 1.1rem;
+      padding: 0.7rem 1.4rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-top: 2rem;
+      display: inline-block;
+    }
+    .home-btn:hover {
+      background-color: #a6485c;
+    }
   </style>
 </head>
 <body>
   <h1>複利成長試算</h1>
-
   <label>初始投入金額</label>
   <input type="number" id="principal" placeholder="例如：100000" />
-
   <label>預估年報酬率（%）</label>
   <input type="number" id="rate" placeholder="例如：5" />
-
   <label>投資年數</label>
   <input type="number" id="years" placeholder="例如：30" />
-
   <label>每年固定投入金額（選填）</label>
   <input type="number" id="annual" placeholder="例如：10000" />
-
   <label>每月固定投入金額（選填）</label>
   <input type="number" id="monthly" placeholder="例如：1000" />
-
   <button onclick="calculate()">開始試算</button>
   <div id="result"></div>
-
 
   <h2>目前資產總覽</h2>
   <div id="category-totals"></div>
@@ -116,11 +107,11 @@
   <button onclick="convert()">匯率換算</button>
   <div id="fx-result"></div>
 
- <div class="back-btn">
-  <a href="../index.html">
-    <button class="home-btn">← 返回首頁</button>
-  </a>
-</div>
+  <div class="back-btn">
+    <a href="../index.html">
+      <button class="home-btn">← 返回首頁</button>
+    </a>
+  </div>
 
   <script>
     let exchangeRates = {};
@@ -150,38 +141,36 @@
       const totalsDiv = document.getElementById("totals");
       categoryDiv.innerHTML = ""; totalsDiv.innerHTML = "";
 
-     list.forEach(asset => {
-  const type = asset.type || "未分類";
-  const currency = asset.currency || "未指定";
-  let amount = parseFloat(asset.amount);
+      list.forEach(asset => {
+        const type = asset.type || "未分類";
+        const currency = asset.currency || "未指定";
+        let amount = parseFloat(asset.amount) || 0;
 
-  // 股票補充邏輯
-  if ((isNaN(amount) || amount === 0) && type === "股票" && asset.shares && asset.cost) {
-    const shares = parseFloat(asset.shares);
-    const cost = parseFloat(asset.cost);
-    if (!isNaN(shares) && !isNaN(cost)) amount = shares * cost;
-  }
+        if (type === "股票" && asset.shares && asset.price) {
+          const shares = parseFloat(asset.shares);
+          const price = parseFloat(asset.price);
+          amount = shares * price;
+        }
 
-  // ✅ 加密貨幣補充邏輯
-  if ((isNaN(amount) || amount === 0) && type === "加密貨幣" && asset.cryptoAmount && asset.cryptoPrice) {
-    const qty = parseFloat(asset.cryptoAmount);
-    const price = parseFloat(asset.cryptoPrice);
-    if (!isNaN(qty) && !isNaN(price)) amount = qty * price;
-  }
+        if (type === "加密貨幣" && asset.cryptoAmount && asset.cryptoPrice) {
+          const qty = parseFloat(asset.cryptoAmount);
+          const price = parseFloat(asset.cryptoPrice);
+          amount = qty * price;
+        }
 
-  if (!isNaN(amount) && amount > 0) {
-    totals[currency] = (totals[currency] || 0) + amount;
-    const key = `${type}｜${currency}`;
-    categories[key] = (categories[key] || 0) + amount;
-  }
-});
+        if (!isNaN(amount) && amount > 0) {
+          totals[currency] = (totals[currency] || 0) + amount;
+          const key = `${type}｜${currency}`;
+          categories[key] = (categories[key] || 0) + amount;
+        }
+      });
 
-      categoryDiv.innerHTML = "<b>📊 資產分類加總：</b><br>";
+      categoryDiv.innerHTML = "<b>📊 資產分類加總（含股票盈餘）：</b><br>";
       for (const [key, val] of Object.entries(categories)) {
         categoryDiv.innerHTML += `${key}：${val.toLocaleString()}<br>`;
       }
 
-      totalsDiv.innerHTML = "<b>幣別總額與折合台幣：</b><br>";
+      totalsDiv.innerHTML = "<b>幣別總額與折合台幣（含浮動市值）：</b><br>";
       for (const [cur, amt] of Object.entries(totals)) {
         const rate = exchangeRates[cur];
         const twd = rate ? (amt / rate) * exchangeRates["TWD"] : "?";
@@ -202,20 +191,15 @@
           const stored = localStorage.getItem("exchangeRates");
           exchangeRates = stored && stored !== "undefined" ? JSON.parse(stored) : {};
         } catch {
-          exchangeRates = {
-            USD: 1,
-            TWD: 32,
-            JPY: 0.22,
-            EUR: 1.08
-          };
+          exchangeRates = { USD: 1, TWD: 32, JPY: 0.22, EUR: 1.08 };
         }
       }
 
       document.getElementById("exchange-rates").innerHTML =
         Object.entries(exchangeRates)
-        .filter(([k]) => k !== "USD")
-        .map(([k, v]) => `1 USD = ${v.toFixed(2)} ${k}`)
-        .join("<br>");
+          .filter(([k]) => k !== "USD")
+          .map(([k, v]) => `1 USD = ${v.toFixed(2)} ${k}`)
+          .join("<br>");
       renderAssets();
     }
 
