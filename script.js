@@ -1,22 +1,60 @@
 // ===== Finora 資產登記 App =====
 // ===== Part 1：初始化與匯率查詢 =====
 document.addEventListener("DOMContentLoaded", async () => {
-// 取得畫面中會用到的 HTML 元件
-const form = document.getElementById("asset-form");
-const typeSelect = document.getElementById("type");
-const stockFields = document.getElementById("stock-fields");
-const insuranceFields = document.getElementById("insurance-fields");
-const amountField = document.getElementById("amount-field");
-const assetList = document.getElementById("asset-list");
-const totalsList = document.getElementById("totals-list");
-const profitList = document.getElementById("stock-profit-list");
-const bankDatalist = document.getElementById("bank-list");
+  // 取得畫面中會用到的 HTML 元件
+  const form = document.getElementById("asset-form");
+  const typeSelect = document.getElementById("type");
+  const stockFields = document.getElementById("stock-fields");
+  const insuranceFields = document.getElementById("insurance-fields");
+  const fundFields = document.getElementById("fund-fields");
+  const cryptoFields = document.getElementById("crypto-fields");
+  const amountField = document.getElementById("amount-field");
+  const assetList = document.getElementById("asset-list");
+  const totalsList = document.getElementById("totals-list");
+  const profitList = document.getElementById("stock-profit-list");
+  const bankDatalist = document.getElementById("bank-list");
 
-// 初始化本地資料變數（讀取 localStorage）
-let assets = JSON.parse(localStorage.getItem("assets") || "[]");         // 所有資產項目
-let bankHistory = JSON.parse(localStorage.getItem("banks") || "[]");    // 銀行記憶清單
-let exchangeRates = {};                                                 // 即時匯率資料
-let editIndex = null;                                                   // 是否處於「編輯模式」
+  // 初始化本地資料變數（讀取 localStorage）
+  let assets = JSON.parse(localStorage.getItem("assets") || "[]");         // 所有資產項目
+  let bankHistory = JSON.parse(localStorage.getItem("banks") || "[]");    // 銀行記憶清單
+  let exchangeRates = {};                                                 // 即時匯率資料
+  let editIndex = null;                                                   // 是否處於「編輯模式」
+
+  // ===== 🔐 Firebase 使用者狀態監聽與同步處理 =====
+  if (typeof FINORA_AUTH !== "undefined" && FINORA_AUTH.onUserChanged) {
+    FINORA_AUTH.onUserChanged(async (user) => {
+      if (user) {
+        console.log("🔐 使用者已登入：", user.email);
+        try {
+          assets = await FINORA_AUTH.loadUserAssets();
+          localStorage.setItem("assets", JSON.stringify(assets));
+        } catch (e) {
+          console.warn("⚠️ 雲端資料載入失敗", e);
+        }
+      } else {
+        console.log("🚪 使用者尚未登入");
+        assets = [];
+        localStorage.removeItem("assets");
+      }
+      render(); // 渲染畫面（不論登入與否）
+    });
+  }
+
+  // ===== 🔄 匯率與股票資料初始化 =====
+  try {
+    await fetchExchangeRates();
+    console.log("✅ 匯率查詢完成");
+
+    await updateAllStockPrices();
+    console.log("✅ 股票現價更新完成");
+  } catch (e) {
+    console.warn("⚠️ 匯率或股價查詢失敗", e);
+  }
+
+  toggleFields(); // 顯示正確欄位
+  render();       // 初始畫面渲染
+  console.log("✅ 初始化完成");
+});
 
 // ===== 匯率查詢函式 =====
 async function fetchExchangeRates() {
