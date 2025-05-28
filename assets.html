@@ -9,6 +9,13 @@
 <body>
   <h1>FINORA 資產登記</h1>
 
+  <!-- 🔐 登入區塊 -->
+  <div style="margin-bottom: 1rem;">
+    <button id="loginBtn">使用 Google 登入</button>
+    <button id="logoutBtn" style="display:none;">登出</button>
+    <span id="userEmail" style="margin-left: 1rem;"></span>
+  </div>
+
   <!-- ✅ 資產表單區塊 -->
   <form id="asset-form">
     <label>種類：
@@ -50,18 +57,18 @@
       <label>年繳保費：<input type="number" id="policy-premium" /></label>
     </div>
 
-<div id="fund-fields" style="display: none;">
-  <label>基金名稱：<input type="text" id="fund-name" /></label>
-  <label>單位數：<input type="number" id="fund-units" /></label>
-  <label>淨值：<input type="number" id="fund-nav" step="0.0001" /></label>
-</div>
+    <div id="fund-fields" style="display: none;">
+      <label>基金名稱：<input type="text" id="fund-name" /></label>
+      <label>單位數：<input type="number" id="fund-units" /></label>
+      <label>淨值：<input type="number" id="fund-nav" step="0.0001" /></label>
+    </div>
 
     <div id="crypto-fields" style="display: none;">
-  <label>幣種（如 BTC/ETH）：<input type="text" id="crypto-symbol" /></label>
-  <label>數量：<input type="number" id="crypto-amount" /></label>
-  <label>現價（每單位）：<input type="number" id="crypto-price" step="0.0001" /></label>
+      <label>幣種（如 BTC/ETH）：<input type="text" id="crypto-symbol" /></label>
+      <label>數量：<input type="number" id="crypto-amount" /></label>
+      <label>現價（每單位）：<input type="number" id="crypto-price" step="0.0001" /></label>
     </div>
-    
+
     <div id="amount-field">
       <label>金額：<input type="number" id="amount" /></label>
     </div>
@@ -89,18 +96,20 @@
 
   <h2>資產加總</h2>
   <ul id="totals-list"></ul>
+  <div id="stock-profit-list"></div>
   <p id="rate-time" style="font-size: 0.9em; color: #666;"></p>
 
-  <!-- ✅ Firebase SDK v8 適用 firebase-sync.js -->
+  <!-- ✅ Firebase SDK v8 -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
-  <!-- ✅ 雲端同步功能（定義 window.FINORA_AUTH）-->
+  <!-- ✅ 雲端同步 -->
   <script src="firebase-sync.js"></script>
 
   <!-- ✅ 主邏輯 -->
   <script src="script.js"></script>
+
   <a href="index.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374">← 返回首頁</a>
 </body>
 </html>
