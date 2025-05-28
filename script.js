@@ -242,6 +242,12 @@ form.addEventListener("submit", (e) => {
     localStorage.setItem("banks", JSON.stringify(bankHistory));
   }
 
+  // ✅ 同步到 Firebase
+  if (window.FINORA_AUTH && typeof FINORA_AUTH.saveUserAssets === "function") {
+    FINORA_AUTH.saveUserAssets(assets)
+      .then(() => console.log("✅ 資產已同步至雲端"))
+      .catch(e => console.warn("❗ 雲端同步失敗：", e));
+  }
   alert("✅ 資產已成功儲存！");
   form.reset();
   toggleFields(); // 重置欄位顯示狀態
