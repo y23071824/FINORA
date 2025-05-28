@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="zh-Hant">
+<!DOCTYPE html><html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
   <title>FINORA 資產整合工具</title>
@@ -7,41 +6,24 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="theme-selector" style="text-align:center; margin-bottom:1.5rem;"></div>
-
-  <!-- 帳戶選擇彈窗 -->
-  <div id="account-selector-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#0008; z-index:9999;">
+  <div id="theme-selector" style="text-align:center; margin-bottom:1.5rem;"></div>  <!-- 帳戶選擇彈窗 -->  <div id="account-selector-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#0008; z-index:9999;">
     <div style="background:#fff; max-width:400px; margin:15% auto; padding:2rem; border-radius:1rem; text-align:center;">
       <h2>選擇或建立帳戶</h2>
       <div id="account-list"></div>
       <input type="text" id="new-account-name" placeholder="輸入帳戶名稱" style="margin-top:1rem; width:80%; padding:0.5rem;" />
       <button id="create-account-btn" style="margin-top:1rem;">➕ 建立帳戶</button>
     </div>
-  </div>
-
-  <h1>FINORA</h1>
-  <p class="subtitle">讓資產更有力，退休不焦慮。</p>
-
-  <div class="grid-button-group">
+  </div>  <h1>FINORA</h1>
+  <p class="subtitle">讓資產更有力，退休不焦慮。</p>  <div class="grid-button-group">
     <a href="assets.html">資產管理</a>
     <a href="tools/compound.html">複利試算</a>
     <a href="tools/withdraw.html">退休提領</a>
     <a href="tools/emergency.html">預備金試算</a>
-  </div>
-
-  <div id="firebase-auth">
+  </div>  <div id="firebase-auth">
     <button id="login-btn">🔐 使用 Google 帳號登入</button>
     <button id="logout-btn" style="display:none;">🚪 登出</button>
     <p id="user-email" style="font-size: 0.9em; color: #666;"></p>
-  </div>
-
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <script src="firebase-sync.js"></script>
-
-  <script>
+  </div>  <!-- Firebase SDK -->  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>  <script src="firebase-sync.js"></script>  <script>
     const loginBtn = document.getElementById("login-btn");
     const logoutBtn = document.getElementById("logout-btn");
     const userEmail = document.getElementById("user-email");
@@ -156,8 +138,6 @@
         logoutBtn.style.display = "none";
       }
     });
-  </script>
-
-  <p style="text-align:center; font-size:0.8rem; color:#aaa; margin-top:3rem;">v0.8 beta - 2025-05-28</p>
+  </script>  <p style="text-align:center; font-size:0.8rem; color:#aaa; margin-top:3rem;">v0.8 beta - 2025-05-28</p>
 </body>
 </html>
