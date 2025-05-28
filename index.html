@@ -49,34 +49,92 @@
     const userEmail = document.getElementById("user-email");
 
     loginBtn?.addEventListener("click", async () => {
-      const user = await FINORA_AUTH.signInWithGoogle();
-      if (user) {
-        userEmail.textContent = `已登入：${user.email}`;
-        loginBtn.style.display = "none";
-        logoutBtn.style.display = "inline-block";
+  const user = await FINORA_AUTH.signInWithGoogle();
+  if (!user) return;
 
-        const cloudAssets = await FINORA_AUTH.loadUserAssets();
-        const localAssets = JSON.parse(localStorage.getItem("assets") || "[]");
+  userEmail.textContent = `已登入：${user.email}`;
+  loginBtn.style.display = "none";
+  logoutBtn.style.display = "inline-block";
 
-        if (cloudAssets.length > 0 && localAssets.length > 0) {
-          const useCloud = confirm("雲端與本地資料皆存在，是否使用雲端資料？\n\n按 [確定] 使用雲端資料\n按 [取消] 保留本地並覆蓋雲端");
-          if (useCloud) {
-            localStorage.setItem("assets", JSON.stringify(cloudAssets));
-          } else {
-            await FINORA_AUTH.saveUserAssets(localAssets);
-          }
-        } else if (cloudAssets.length > 0) {
-          localStorage.setItem("assets", JSON.stringify(cloudAssets));
-        } else if (localAssets.length > 0) {
-          await FINORA_AUTH.saveUserAssets(localAssets);
-        }
-      }
+  const showAccountSelector = async () => {
+    const db = firebase.firestore();
+    const accountsRef = db.collection("users").doc(user.uid).collection("accounts");
+    const accountListEl = document.getElementById("account-list");
+    const modal = document.getElementById("account-selector-modal");
+    const newAccountInput = document.getElementById("new-account-name");
+    const createBtn = document.getElementById("create-account-btn");
+
+    accountListEl.innerHTML = "🔄 載入帳戶中...";
+    modal.style.display = "block";
+
+    const snapshot = await accountsRef.get();
+    accountListEl.innerHTML = "";
+    snapshot.forEach(doc => {
+      const name = doc.id;
+      const btn = document.createElement("button");
+      btn.textContent = `🔓 ${name}`;
+      btn.style.margin = "0.3rem";
+      btn.onclick = async () => {
+        localStorage.setItem("selectedAccount", name);
+        modal.style.display = "none";
+
+        // 下載該帳戶資料
+        const assetSnap = await accountsRef.doc(name).collection("assets").get();
+        const assets = assetSnap.docs.map(d => d.data());
+        localStorage.setItem("assets", JSON.stringify(assets));
+        location.reload();
+      };
+      accountListEl.appendChild(btn);
     });
 
-    logoutBtn?.addEventListener("click", async () => {
-      await FINORA_AUTH.signOutFromGoogle();
-      localStorage.removeItem("assets");
+    createBtn.onclick = async () => {
+      const name = newAccountInput.value.trim();
+      if (!name) return alert("請輸入帳戶名稱");
+      const exists = (await accountsRef.doc(name).get()).exists;
+      if (exists) return alert("帳戶名稱已存在");
+
+      await accountsRef.doc(name).set({ createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+      localStorage.setItem("selectedAccount", name);
+      modal.style.display = "none";
+      localStorage.setItem("assets", "[]");
+      location.reload();
+    };
+  };
+
+  // === 執行帳戶選擇 ===
+  const selectedAccount = localStorage.getItem("selectedAccount");
+  if (!selectedAccount) await showAccountSelector();
+
+  const db = firebase.firestore();
+  const account = localStorage.getItem("selectedAccount");
+  const assetSnap = await db.collection("users").doc(user.uid).collection("accounts").doc(account).collection("assets").get();
+  const cloudAssets = assetSnap.docs.map(d => d.data());
+  const localAssets = JSON.parse(localStorage.getItem("assets") || "[]");
+
+  if (cloudAssets.length > 0 && localAssets.length > 0) {
+    const useCloud = confirm("雲端與本地資料皆存在，是否使用雲端資料？\n\n按 [確定] 使用雲端資料\n按 [取消] 保留本地並覆蓋雲端");
+    if (useCloud) {
+      localStorage.setItem("assets", JSON.stringify(cloudAssets));
+    } else {
+      const batch = db.batch();
+      localAssets.forEach(a => {
+        const doc = db.collection("users").doc(user.uid).collection("accounts").doc(account).collection("assets").doc();
+        batch.set(doc, a);
+      });
+      await batch.commit();
+    }
+  } else if (cloudAssets.length > 0) {
+    localStorage.setItem("assets", JSON.stringify(cloudAssets));
+  } else if (localAssets.length > 0) {
+    const batch = db.batch();
+    localAssets.forEach(a => {
+      const doc = db.collection("users").doc(user.uid).collection("accounts").doc(account).collection("assets").doc();
+      batch.set(doc, a);
     });
+    await batch.commit();
+  }
+});
+
 
     FINORA_AUTH.onUserChanged(user => {
       if (user) {
