@@ -16,6 +16,13 @@ const provider = new firebase.auth.GoogleAuthProvider();
 
 let currentUser = null;
 
+function getAccountAssetRef() {
+  if (!currentUser) throw new Error("尚未登入");
+  const account = localStorage.getItem("selectedAccount");
+  if (!account) throw new Error("尚未選擇帳戶");
+  return db.collection("users").doc(currentUser.uid).collection("accounts").doc(account).collection("assets");
+}
+
 window.FINORA_AUTH = {
   signInWithGoogle: async () => {
     try {
@@ -30,6 +37,7 @@ window.FINORA_AUTH = {
 
   signOutFromGoogle: () => {
     auth.signOut();
+    localStorage.removeItem("selectedAccount");
   },
 
   onUserChanged: (callback) => {
@@ -40,15 +48,19 @@ window.FINORA_AUTH = {
   },
 
   loadUserAssets: async () => {
-    if (!currentUser) return null;
-    const ref = db.collection("users").doc(currentUser.uid);
+    if (!currentUser) return [];
+    const ref = getAccountAssetRef();
     const snap = await ref.get();
-    return snap.exists ? snap.data().assets || [] : [];
+    return snap.docs.map(doc => doc.data());
   },
 
   saveUserAssets: async (assets) => {
     if (!currentUser) return;
-    const ref = db.collection("users").doc(currentUser.uid);
-    await ref.set({ assets }, { merge: true });
+    const ref = getAccountAssetRef();
+    const batch = db.batch();
+    const docs = await ref.get();
+    docs.forEach(doc => batch.delete(doc.ref)); // 清空舊資料
+    assets.forEach(asset => batch.set(ref.doc(), asset));
+    await batch.commit();
   }
 };
