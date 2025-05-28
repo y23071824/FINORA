@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- 主題選單保留 -->
   <div id="theme-selector" style="text-align:center; margin-bottom:1.5rem;"></div>
 
   <!-- 帳戶選擇彈窗 -->
@@ -74,13 +73,18 @@
           btn.textContent = `🔓 ${name}`;
           btn.style.margin = "0.3rem";
           btn.onclick = async () => {
-            localStorage.setItem("selectedAccount", name);
-            modal.style.display = "none";
+            try {
+              localStorage.setItem("selectedAccount", name);
+              modal.style.display = "none";
 
-            const assetSnap = await accountsRef.doc(name).collection("assets").get();
-            const assets = assetSnap.docs.map(d => d.data());
-            localStorage.setItem("assets", JSON.stringify(assets));
-            location.reload();
+              const assetSnap = await accountsRef.doc(name).collection("assets").get();
+              const assets = assetSnap.docs.map(d => d.data());
+              localStorage.setItem("assets", JSON.stringify(assets));
+              location.reload();
+            } catch (e) {
+              alert("❌ 載入帳戶資料失敗，請稍後再試");
+              console.error("錯誤：", e);
+            }
           };
           accountListEl.appendChild(btn);
         });
@@ -104,6 +108,8 @@
 
       const db = firebase.firestore();
       const account = localStorage.getItem("selectedAccount");
+      if (!account) return; // 防呆
+
       const assetSnap = await db.collection("users").doc(user.uid).collection("accounts").doc(account).collection("assets").get();
       const cloudAssets = assetSnap.docs.map(d => d.data());
       const localAssets = JSON.parse(localStorage.getItem("assets") || "[]");
