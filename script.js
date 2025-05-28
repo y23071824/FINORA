@@ -465,26 +465,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     toggleFields();
 
-    // 🔐 登入狀態變化後自動同步資產
-    FINORA_AUTH.onUserChanged(async user => {
-      if (user) {
-        try {
-          const assets = await FINORA_AUTH.loadUserAssets();
-          localStorage.setItem("assets", JSON.stringify(assets));
-          console.log("☁️ 雲端資產已載入");
-        } catch (e) {
-          console.warn("⚠️ 載入雲端資產失敗：", e);
-        }
-      }
-      render();
-    });
+    // 🔐 登入狀態下同步雲端資產
+    if (FINORA_AUTH.getCurrentUser()) {
+      FINORA_AUTH.saveUserAssets(assets)
+        .then(() => console.log("✅ 雲端儲存成功"))
+        .catch((err) => console.warn("⚠️ 雲端儲存失敗", err));
+    } else {
+      console.warn("⚠️ 未登入，無法同步雲端");
+    }
 
-    render(); // 首次畫面渲染（包含未登入時也能顯示）
-
+    render(); // ✅ 確保畫面正常渲染
     console.log("✅ 初始化完成");
   } catch (e) {
     console.error("❌ 初始化失敗", e);
     alert("系統初始化錯誤，請重新整理頁面");
   }
-});
 });
