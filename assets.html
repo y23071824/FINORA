@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="zh-Hant">
+<!DOCTYPE html><html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
   <title>FINORA 資產登記</title>
@@ -7,10 +6,7 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>FINORA 資產登記</h1>
-
-  <!-- ✅ 資產表單區塊 -->
-  <form id="asset-form">
+  <h1>FINORA 資產登記</h1>  <!-- ✅ 資產表單區塊 -->  <form id="asset-form">
     <label>種類：
       <select id="type">
         <option value="">請選擇</option>
@@ -23,86 +19,68 @@
         <option value="加密貨幣">加密貨幣</option>
         <option value="其他">其他</option>
       </select>
-    </label>
+    </label><div id="stock-fields" style="display: none;">
+  <label>股票類型：
+    <select id="stock-category">
+      <option value="">請選擇</option>
+      <option value="美股">美股</option>
+      <option value="台股">台股</option>
+      <option value="ETF">ETF</option>
+      <option value="港股">港股</option>
+      <option value="REITs">REITs</option>
+      <option value="自訂">自訂</option>
+    </select>
+  </label>
+  <label>股票代碼：<input type="text" id="stock-symbol" /></label>
+  <label>股數：<input type="number" id="shares" /></label>
+  <label>成本（每股）：<input type="number" id="cost" step="0.0001" /></label>
+  <label>現價（每股）：<input type="number" id="price" step="0.0001" /></label>
+</div>
 
-    <div id="stock-fields" style="display: none;">
-      <label>股票類型：
-        <select id="stock-category">
-          <option value="">請選擇</option>
-          <option value="美股">美股</option>
-          <option value="台股">台股</option>
-          <option value="ETF">ETF</option>
-          <option value="港股">港股</option>
-          <option value="REITs">REITs</option>
-          <option value="自訂">自訂</option>
-        </select>
-      </label>
-      <label>股票代碼：<input type="text" id="stock-symbol" /></label>
-      <label>股數：<input type="number" id="shares" /></label>
-      <label>成本（每股）：<input type="number" id="cost" step="0.0001" /></label>
-      <label>現價（每股）：<input type="number" id="price" step="0.0001" /></label>
-    </div>
+<div id="insurance-fields" style="display: none;">
+  <label>保單名稱：<input type="text" id="policy-name" /></label>
+  <label>保額：<input type="number" id="policy-amount" /></label>
+  <label>年期：<input type="number" id="policy-years" /></label>
+  <label>年繳保費：<input type="number" id="policy-premium" /></label>
+</div>
 
-    <div id="insurance-fields" style="display: none;">
-      <label>保單名稱：<input type="text" id="policy-name" /></label>
-      <label>保額：<input type="number" id="policy-amount" /></label>
-      <label>年期：<input type="number" id="policy-years" /></label>
-      <label>年繳保費：<input type="number" id="policy-premium" /></label>
-    </div>
+<div id="fund-fields" style="display: none;">
+  <label>基金名稱：<input type="text" id="fund-name" /></label>
+  <label>單位數：<input type="number" id="fund-units" /></label>
+  <label>淨值：<input type="number" id="fund-nav" step="0.0001" /></label>
+</div>
 
-    <div id="fund-fields" style="display: none;">
-      <label>基金名稱：<input type="text" id="fund-name" /></label>
-      <label>單位數：<input type="number" id="fund-units" /></label>
-      <label>淨值：<input type="number" id="fund-nav" step="0.0001" /></label>
-    </div>
+<div id="crypto-fields" style="display: none;">
+  <label>幣種（如 BTC/ETH）：<input type="text" id="crypto-symbol" /></label>
+  <label>數量：<input type="number" id="crypto-amount" /></label>
+  <label>現價（每單位）：<input type="number" id="crypto-price" step="0.0001" /></label>
+</div>
 
-    <div id="crypto-fields" style="display: none;">
-      <label>幣種（如 BTC/ETH）：<input type="text" id="crypto-symbol" /></label>
-      <label>數量：<input type="number" id="crypto-amount" /></label>
-      <label>現價（每單位）：<input type="number" id="crypto-price" step="0.0001" /></label>
-    </div>
+<div id="amount-field">
+  <label>金額：<input type="number" id="amount" /></label>
+</div>
 
-    <div id="amount-field">
-      <label>金額：<input type="number" id="amount" /></label>
-    </div>
+<label>幣別：
+  <select id="currency">
+    <option value="TWD">TWD</option>
+    <option value="USD">USD</option>
+    <option value="JPY">JPY</option>
+    <option value="EUR">EUR</option>
+  </select>
+</label>
 
-    <label>幣別：
-      <select id="currency">
-        <option value="TWD">TWD</option>
-        <option value="USD">USD</option>
-        <option value="JPY">JPY</option>
-        <option value="EUR">EUR</option>
-      </select>
-    </label>
+<label>銀行：<input type="text" id="bank" list="bank-list" /></label>
+<label>備註：<input type="text" id="note" /></label>
 
-    <label>銀行：<input type="text" id="bank" list="bank-list" /></label>
-    <label>備註：<input type="text" id="note" /></label>
+<button type="submit">儲存資產</button>
 
-    <button type="submit">儲存資產</button>
-  </form>
+  </form><datalist id="bank-list"></datalist>
 
-  <datalist id="bank-list"></datalist>
-
-  <!-- ✅ 資產列表與加總區 -->
-  <h2>資產列表</h2>
-  <ul id="asset-list"></ul>
-
-  <h2>資產加總</h2>
+  <!-- ✅ 資產列表與加總區 -->  <h2>資產列表</h2>
+  <ul id="asset-list"></ul>  <h2>資產加總</h2>
   <ul id="totals-list"></ul>
   <div id="stock-profit-list"></div>
-  <p id="rate-time" style="font-size: 0.9em; color: #666;"></p>
+  <p id="rate-time" style="font-size: 0.9em; color: #666;"></p>  <!-- ✅ Firebase SDK v8 -->  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>  <!-- ✅ 雲端同步 -->  <script src="firebase-sync.js"></script>  <!-- ✅ 主邏輯 -->  <script src="script.js"></script><a href="index.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374">← 返回首頁</a>
 
-  <!-- ✅ Firebase SDK v8 -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-
-  <!-- ✅ 雲端同步 -->
-  <script src="firebase-sync.js"></script>
-
-  <!-- ✅ 主邏輯 -->
-  <script src="script.js"></script>
-
-  <a href="index.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374">← 返回首頁</a>
 </body>
 </html>
