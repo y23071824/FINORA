@@ -454,15 +454,36 @@ ${display}
   }
 }
 
-  // ===== Part 4：啟動初始化流程 =====
-await fetchExchangeRates();
-console.log("✅ 匯率查詢完成");
+// ===== Part 4：啟動初始化流程 =====
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    await fetchExchangeRates();
+    console.log("✅ 匯率查詢完成");
 
-await updateAllStockPrices();
-console.log("✅ 股票現價更新完成");
+    await updateAllStockPrices();
+    console.log("✅ 股票現價更新完成");
 
-toggleFields();
-render();
-console.log("✅ 初始化完成");
+    toggleFields();
 
-}); // ✅ 這是最外層 document.addEventListener 的結尾，不能少
+    // 🔐 登入狀態變化後自動同步資產
+    FINORA_AUTH.onUserChanged(async user => {
+      if (user) {
+        try {
+          const assets = await FINORA_AUTH.loadUserAssets();
+          localStorage.setItem("assets", JSON.stringify(assets));
+          console.log("☁️ 雲端資產已載入");
+        } catch (e) {
+          console.warn("⚠️ 載入雲端資產失敗：", e);
+        }
+      }
+      render();
+    });
+
+    render(); // 首次畫面渲染（包含未登入時也能顯示）
+
+    console.log("✅ 初始化完成");
+  } catch (e) {
+    console.error("❌ 初始化失敗", e);
+    alert("系統初始化錯誤，請重新整理頁面");
+  }
+});
