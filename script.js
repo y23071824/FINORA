@@ -103,6 +103,8 @@ async function updateAllStockPrices() {
   );
   assets = updatedAssets;
   localStorage.setItem(getLocalStorageKey(), JSON.stringify(assets));
+ // ✅ 若有登入帳號就同步到 Firebase
+  if (typeof FINORA_AUTH !== "undefined") FINORA_AUTH.saveUserAssets(assets);
 }
 
 // ===== Part 2：表單處理與存儲 =====
