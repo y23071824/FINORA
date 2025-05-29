@@ -1,35 +1,10 @@
 // ===== Finora 資產登記 App =====
-document.addEventListener("DOMContentLoaded", async () => {
-  try {
-    // === Part 1 ===
-    const form = document.getElementById("asset-form");
-    const typeSelect = document.getElementById("type");
-    const stockFields = document.getElementById("stock-fields");
-    const insuranceFields = document.getElementById("insurance-fields");
-    const amountField = document.getElementById("amount-field");
-    const assetList = document.getElementById("asset-list");
-    const totalsList = document.getElementById("totals-list");
-    const profitList = document.getElementById("stock-profit-list");
-    const bankDatalist = document.getElementById("bank-list");
+// ===== Part 1：初始化與查詢 =====
+let assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
+let bankHistory = JSON.parse(localStorage.getItem("banks") || "[]");
+let exchangeRates = {};
+let editIndex = null;
 
-    // ✅ 匯率與股價初始化
-    await fetchExchangeRates();
-    console.log("✅ 匯率查詢完成");
-
-    await updateAllStockPrices();
-    console.log("✅ 股票現價更新完成");
-
-    // ✅ 初始化表單與畫面
-    toggleFields();
-    render();
-    console.log("✅ 初始化完成");
-  } catch (e) {
-    console.error("❌ 初始化失敗", e);
-    alert("系統初始化錯誤，請重新整理頁面");
-  }
-});
-
-// ✅ 帳本相關函式
 function getSelectedAccount() {
   return localStorage.getItem("selectedAccount") || "default";
 }
@@ -38,13 +13,6 @@ function getLocalStorageKey() {
   return `assets_${getSelectedAccount()}`;
 }
 
-// ✅ 初始化本地資料變數
-let assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
-let bankHistory = JSON.parse(localStorage.getItem("banks") || "[]");
-let exchangeRates = {};
-let editIndex = null;
-
-// ===== 匯率查詢函式 =====
 async function fetchExchangeRates() {
   try {
     const res = await fetch("https://open.er-api.com/v6/latest/USD");
@@ -58,22 +26,14 @@ async function fetchExchangeRates() {
       JPY: data.rates.JPY,
       EUR: data.rates.EUR,
     };
-
     localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
   } catch (e) {
     console.warn("⚠️ 匯率 API 失敗，使用預設值", e);
-    exchangeRates = {
-      USD: 1,
-      TWD: 30.21,
-      JPY: 151.4,
-      EUR: 0.92,
-    };
-
+    exchangeRates = { USD: 1, TWD: 30.21, JPY: 151.4, EUR: 0.92 };
     localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
   }
 }
 
-// ===== 股票價格查詢 =====
 async function fetchStockPrice(symbol, category) {
   try {
     if (category === "台股") {
@@ -82,16 +42,10 @@ async function fetchStockPrice(symbol, category) {
       const mm = String(now.getMonth() + 1).padStart(2, "0");
       const dd = String(now.getDate()).padStart(2, "0");
       const date = `${yyyy}${mm}${dd}`;
-
       const url = `https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=${date}&stockNo=${symbol}`;
       const res = await fetch(url);
       const data = await res.json();
-
-      if (data.stat !== "OK" || !data.data?.length) {
-        alert("台股查價失敗，請稍後再試或手動輸入");
-        return null;
-      }
-
+      if (data.stat !== "OK" || !data.data?.length) return null;
       const lastRow = data.data[data.data.length - 1];
       const close = parseFloat(lastRow[6].replace(/,/g, ""));
       return close;
@@ -100,41 +54,33 @@ async function fetchStockPrice(symbol, category) {
       const url = `https://api.twelvedata.com/price?symbol=${symbol}&apikey=${apiKey}`;
       const res = await fetch(url);
       const data = await res.json();
-
       if (data.status === "error" || data.code || !data.price) return null;
       return parseFloat(data.price);
     }
   } catch (e) {
     console.error("查詢股價錯誤", e);
-    alert("查詢失敗，請檢查代碼或稍後再試");
     return null;
   }
 }
 
-// ===== 更新所有股票現價 =====
 async function updateAllStockPrices() {
   const updatedAssets = await Promise.all(
     assets.map(async (item) => {
       if (item.type === "股票" && item.stockSymbol && item.stockCategory) {
         const newPrice = await fetchStockPrice(item.stockSymbol, item.stockCategory);
-        if (newPrice !== null) {
-          item.price = newPrice;
-        }
+        if (newPrice !== null) item.price = newPrice;
       }
       return item;
     })
   );
-
   assets = updatedAssets;
   localStorage.setItem(getLocalStorageKey(), JSON.stringify(assets));
 }
 
-// 🔁 其餘功能（Part 2~4）可繼續補上：如 handleSubmit、render、刪除資產等
-
-
 // ===== Part 2：表單處理與存儲 =====
 
-// 表單提交處理
+const form = document.getElementById("asset-form");
+
 function handleSubmit(e) {
   e.preventDefault();
 
@@ -145,7 +91,6 @@ function handleSubmit(e) {
 
   const asset = { type, currency, bank, note };
 
-  // 根據資產類型填入額外欄位
   if (type === "股票") {
     asset.stockSymbol = document.getElementById("stock-symbol").value;
     asset.stockCategory = document.getElementById("stock-category").value;
@@ -169,7 +114,6 @@ function handleSubmit(e) {
     asset.amount = parseFloat(document.getElementById("amount").value) || 0;
   }
 
-  // 紀錄銀行輸入歷史
   if (bank && !bankHistory.includes(bank)) {
     bankHistory.push(bank);
     localStorage.setItem("banks", JSON.stringify(bankHistory));
@@ -190,7 +134,6 @@ function handleSubmit(e) {
   render();
 }
 
-// 編輯資產
 function handleEdit(index) {
   const item = assets[index];
   editIndex = index;
@@ -226,7 +169,6 @@ function handleEdit(index) {
   }
 }
 
-// 刪除資產
 function handleDelete(index) {
   if (!confirm("確定要刪除這筆資產嗎？")) return;
   assets.splice(index, 1);
@@ -234,6 +176,7 @@ function handleDelete(index) {
   if (typeof FINORA_AUTH !== "undefined") FINORA_AUTH.saveUserAssets(assets);
   render();
 }
+
 
 // ===== Part 3：畫面渲染與計算 =====
 
@@ -246,7 +189,6 @@ function render() {
   const profits = {};
 
   assets.forEach((item, index) => {
-    // 渲染每筆資產
     const li = document.createElement("li");
     let text = "";
 
@@ -270,11 +212,11 @@ function render() {
       text = `[幣] ${item.cryptoSymbol}：${item.cryptoAmount} × ${item.cryptoPrice}｜市值 ${value.toFixed(2)}`;
       totals[item.currency] = (totals[item.currency] || 0) + value;
     } else {
-      text = `[${item.type}] ${item.amount} ${item.currency}`;
-      totals[item.currency] = (totals[item.currency] || 0) + item.amount;
+      const amount = item.amount || 0;
+      text = `[${item.type}] ${amount} ${item.currency}`;
+      totals[item.currency] = (totals[item.currency] || 0) + amount;
     }
 
-    // 附加編輯與刪除按鈕
     const editBtn = document.createElement("button");
     editBtn.textContent = "✏️";
     editBtn.onclick = () => handleEdit(index);
@@ -289,7 +231,7 @@ function render() {
     assetList.appendChild(li);
   });
 
-  // 幣別加總與轉換顯示
+  // 幣別加總與台幣換算
   let totalTWD = 0;
   for (const [currency, amount] of Object.entries(totals)) {
     const rate = exchangeRates[currency] || 1;
@@ -305,7 +247,7 @@ function render() {
   totalLi.innerHTML = `<strong>💰 全體資產折合新台幣：${totalTWD.toLocaleString()} 元</strong>`;
   totalsList.appendChild(totalLi);
 
-  // 股票盈餘顯示
+  // 股票盈餘
   for (const [currency, profit] of Object.entries(profits)) {
     const li = document.createElement("li");
     li.textContent = `${currency} 股票盈餘：${profit.toFixed(2)}`;
@@ -315,12 +257,42 @@ function render() {
 
 // ===== Part 4：啟動函式與其他 =====
 
+// 根據資產類型切換欄位顯示
+function toggleFields() {
+  const type = typeSelect.value;
+
+  stockFields.style.display = type === "股票" ? "block" : "none";
+  insuranceFields.style.display = type === "儲蓄保險" ? "block" : "none";
+  document.getElementById("fund-fields").style.display = type === "基金" ? "block" : "none";
+  document.getElementById("crypto-fields").style.display = type === "加密貨幣" ? "block" : "none";
+  amountField.style.display = ["定存", "現金", "房產", "其他"].includes(type) ? "block" : "none";
+}
+
+// 綁定表單與選單事件
 form.addEventListener("submit", handleSubmit);
 typeSelect.addEventListener("change", toggleFields);
 
-// 載入歷史銀行名稱
-bankHistory.forEach(bank => {
+// 載入歷史銀行選項
+bankHistory.forEach((bank) => {
   const option = document.createElement("option");
   option.value = bank;
   bankDatalist.appendChild(option);
+});
+
+// 初始啟動流程
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    await fetchExchangeRates();         // 匯率查詢
+    console.log("✅ 匯率查詢完成");
+
+    await updateAllStockPrices();       // 股票現價更新
+    console.log("✅ 股票現價更新完成");
+
+    toggleFields();                     // 表單欄位初始化
+    render();                           // 渲染畫面
+    console.log("✅ 初始化完成");
+  } catch (e) {
+    console.error("❌ 初始化失敗", e);
+    alert("系統初始化錯誤，請重新整理頁面");
+  }
 });
