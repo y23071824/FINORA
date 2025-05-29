@@ -282,19 +282,30 @@ function render() {
   const totals = {};
   const profits = {};
   let totalTWD = 0;
-
+  
   assets.forEach((item, i) => {
-    const li = document.createElement("li");
-    li.textContent = `${item.type}：${item.note || "(無備註)"}`;
-    const editBtn = document.createElement("button");
-    editBtn.textContent = "✏️";
-    editBtn.onclick = () => handleEdit(i);
-    const deleteBtn = document.createElement("button");
-    deleteBtn.textContent = "🗑️";
-    deleteBtn.onclick = () => handleDelete(i);
-    li.appendChild(editBtn);
-    li.appendChild(deleteBtn);
-    assetList.appendChild(li);
+  const li = document.createElement("li");
+  li.textContent = `${item.type}：${item.note || "(無備註)"}`;
+
+  // 建立按鈕區塊
+  const actionDiv = document.createElement("span");
+  actionDiv.className = "asset-actions";
+  actionDiv.style.marginLeft = "8px"; // 小間距
+
+  const editBtn = document.createElement("button");
+  editBtn.textContent = "✏️";
+  editBtn.onclick = () => handleEdit(i);
+
+  const deleteBtn = document.createElement("button");
+  deleteBtn.textContent = "🗑️";
+  deleteBtn.onclick = () => handleDelete(i);
+
+  actionDiv.appendChild(editBtn);
+  actionDiv.appendChild(deleteBtn);
+  li.appendChild(actionDiv);
+  assetList.appendChild(li);
+});
+
 
     let value = 0;
     if (item.type === "股票") value = item.shares * item.price;
