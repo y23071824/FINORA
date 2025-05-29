@@ -320,58 +320,11 @@ window.editAsset = function (index) {
 
   } else {
     document.getElementById("amount").value = item.amount;
-// ===== Part 2：表單處理與存儲 =====
 
-function getSelectedAccount() { return localStorage.getItem("selectedAccount") || "default"; } function getLocalStorageKey() { return assets_${getSelectedAccount()}; }
-
-function toggleFields() { const type = document.getElementById("type").value;
-
-document.getElementById("stock-fields").style.display = type === "股票" ? "block" : "none"; document.getElementById("insurance-fields").style.display = type === "儲蓄保險" ? "block" : "none"; document.getElementById("fund-fields").style.display = type === "基金" ? "block" : "none"; document.getElementById("crypto-fields").style.display = type === "加密貨幣" ? "block" : "none"; document.getElementById("amount-field").style.display = ["現金", "定存", "房產", "其他"].includes(type) ? "block" : "none"; }
-
-typeSelect.addEventListener("change", toggleFields);
-
-document.getElementById("stock-symbol")?.addEventListener("blur", async () => { const symbol = document.getElementById("stock-symbol").value.trim().toUpperCase(); const category = document.getElementById("stock-category").value; if (!symbol || !category) return; const price = await fetchStockPrice(symbol, category); if (price !== null) { document.getElementById("price").value = price.toFixed(2); } else { alert("查無此股票代碼或查價失敗"); } });
-
-async function fetchCryptoPrice(symbol) { const idMap = { BTC: "bitcoin", ETH: "ethereum", USDT: "tether", BNB: "binancecoin", XRP: "ripple", DOGE: "dogecoin", ADA: "cardano", SOL: "solana" };
-
-const id = idMap[symbol.toUpperCase()]; if (!id) { alert("⚠️ 不支援的幣種，請輸入 BTC、ETH、USDT 等主流幣種"); return null; }
-
-try { const res = await fetch(https://api.coingecko.com/api/v3/simple/price?ids=${id}&vs_currencies=usd); const data = await res.json(); return data[id]?.usd || null; } catch (e) { console.error("❌ 幣價查詢失敗", e); return null; } }
-
-document.getElementById("crypto-symbol")?.addEventListener("blur", async () => { const symbol = document.getElementById("crypto-symbol").value.trim().toUpperCase(); if (!symbol) return; const price = await fetchCryptoPrice(symbol); if (price !== null) { document.getElementById("crypto-price").value = price.toFixed(4); } else { alert("⚠️ 幣價查詢失敗，請稍後再試"); } });
-
-let assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
-
-form.addEventListener("submit", (e) => { e.preventDefault();
-
-const type = typeSelect.value; if (!type) return alert("⚠️ 請選擇資產種類");
-
-const asset = { type, currency: document.getElementById("currency").value, bank: document.getElementById("bank").value.trim(), note: document.getElementById("note").value, };
-
-if (type === "股票") { const shares = parseFloat(document.getElementById("shares").value); const cost = parseFloat(document.getElementById("cost").value); if (isNaN(shares) || isNaN(cost)) return alert("⚠️ 股票類別請填寫股數與成本"); asset.stockCategory = document.getElementById("stock-category").value; asset.stockSymbol = document.getElementById("stock-symbol").value; asset.shares = shares; asset.cost = cost; asset.price = parseFloat(document.getElementById("price").value) || 0;
-
-} else if (type === "儲蓄保險") { asset.policyName = document.getElementById("policy-name").value; asset.policyAmount = parseFloat(document.getElementById("policy-amount").value) || 0; asset.policyYears = parseInt(document.getElementById("policy-years").value) || 0; asset.policyPremium = parseFloat(document.getElementById("policy-premium").value) || 0;
-
-} else if (type === "基金") { asset.fundName = document.getElementById("fund-name").value; asset.fundUnits = parseFloat(document.getElementById("fund-units").value) || 0; asset.fundNav = parseFloat(document.getElementById("fund-nav").value) || 0;
-
-} else if (type === "加密貨幣") { asset.cryptoSymbol = document.getElementById("crypto-symbol").value; asset.cryptoAmount = parseFloat(document.getElementById("crypto-amount").value) || 0; asset.cryptoPrice = parseFloat(document.getElementById("crypto-price").value) || 0;
-
-} else { asset.amount = parseFloat(document.getElementById("amount").value) || 0; }
-
-if (editIndex !== null) { assets[editIndex] = asset; editIndex = null; } else { assets.push(asset); }
-
-localStorage.setItem(getLocalStorageKey(), JSON.stringify(assets));
-
-if (asset.bank && !bankHistory.includes(asset.bank.toLowerCase())) { bankHistory.push(asset.bank.toLowerCase()); localStorage.setItem("banks", JSON.stringify(bankHistory)); }
-
-if (window.FINORA_AUTH && typeof FINORA_AUTH.saveUserAssets === "function") { FINORA_AUTH.saveUserAssets(assets) .then(() => console.log("✅ 資產已同步至雲端")) .catch(e => console.warn("❗ 雲端同步失敗：", e)); }
-
-alert("✅ 資產已成功儲存！"); form.reset(); toggleFields(); render(); });
-
-// ===== Part 3：畫面渲染與計算 ===== function render() { try { if (!exchangeRates || Object.keys(exchangeRates).length === 0) { exchangeRates = JSON.parse(localStorage.getItem("exchangeRates") || "{}"); }
-
+    // ===== Part 3：畫面渲染與計算 ===== 
+    
+    function render() { try { if (!exchangeRates || Object.keys(exchangeRates).length === 0) { exchangeRates = JSON.parse(localStorage.getItem("exchangeRates") || "{}"); }
 assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
-
 assetList.innerHTML = "";
 totalsList.innerHTML = "";
 if (profitList) profitList.innerHTML = "";
