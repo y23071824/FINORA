@@ -284,10 +284,25 @@ function render() {
   let totalTWD = 0;
 
   assets.forEach((item, i) => {
-    // 顯示每一筆資產
     const li = document.createElement("li");
-    li.textContent = `${item.type}：${item.note || "(無備註)"}`;
 
+    // 顯示不同類型的細節
+    let details = "";
+    if (item.type === "股票") {
+      details = `代碼：${item.stockSymbol}，股數：${item.shares}，成本：${item.cost}，現價：${item.price}`;
+    } else if (item.type === "儲蓄保險") {
+      details = `保單：${item.insuranceName}，保額：${item.insuranceAmount}`;
+    } else if (item.type === "基金") {
+      details = `名稱：${item.fundName}，單位：${item.fundUnits}，淨值：${item.fundNav}`;
+    } else if (item.type === "加密貨幣") {
+      details = `幣種：${item.cryptoSymbol}，數量：${item.cryptoAmount}，現價：${item.cryptoPrice}`;
+    } else {
+      details = `金額：${item.amount}`;
+    }
+
+    li.innerHTML = `<strong>${item.type}</strong>：${item.note || "(無備註)"}<br><small>${details}</small>`;
+
+    // 按鈕區塊
     const actionDiv = document.createElement("span");
     actionDiv.className = "asset-actions";
     actionDiv.style.marginLeft = "8px";
@@ -317,7 +332,7 @@ function render() {
     if (!totals[currency]) totals[currency] = 0;
     totals[currency] += value;
 
-    // 股票盈餘計算
+    // 盈餘計算（僅股票）
     if (item.type === "股票") {
       const cost = item.shares * item.cost;
       const profit = value - cost;
@@ -326,7 +341,7 @@ function render() {
     }
   });
 
-  // 顯示各幣別加總與折合台幣
+  // 幣別加總
   Object.entries(totals).forEach(([cur, amt]) => {
     const rate = exchangeRates[cur] || 1;
     const converted = amt * rate;
@@ -336,18 +351,16 @@ function render() {
     totalsList.appendChild(li);
   });
 
-  // 顯示股票盈餘
+  // 股票盈餘
   Object.entries(profits).forEach(([cur, amt]) => {
     const li = document.createElement("li");
     li.textContent = `股票盈餘 ${cur}：${amt.toFixed(2)}`;
     profitList.appendChild(li);
   });
 
-  // 顯示總資產（台幣）
+  // 顯示總資產（折合台幣）
   const totalLi = document.createElement("li");
   const formatter = new Intl.NumberFormat('zh-Hant', { style: 'currency', currency: 'TWD' });
   totalLi.textContent = `總資產（折合台幣）：${formatter.format(totalTWD)}`;
   totalsList.appendChild(totalLi);
 }
-
-// ===== 啟動事件（DOM Ready）已在 Part 1 實作 =====
