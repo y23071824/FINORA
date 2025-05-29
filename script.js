@@ -18,20 +18,7 @@ let editIndex = null;
 let form, typeSelect, stockFields, insuranceFields, amountField;
 let assetList, totalsList, profitList, bankDatalist;
 
-// DOMContentLoaded 中再做初始化
-document.addEventListener("DOMContentLoaded", async () => {
-  try {
-    // 🔗 元素綁定
-    form = document.getElementById("asset-form");
-    typeSelect = document.getElementById("type");
-    stockFields = document.getElementById("stock-fields");
-    insuranceFields = document.getElementById("insurance-fields");
-    amountField = document.getElementById("amount-field");
-    assetList = document.getElementById("asset-list");
-    totalsList = document.getElementById("totals-list");
-    profitList = document.getElementById("stock-profit-list");
-    bankDatalist = document.getElementById("bank-list");
-    
+// ===== 匯率查詢函式（已搬到全域）=====
 async function fetchExchangeRates() {
   try {
     const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
@@ -46,22 +33,8 @@ async function fetchExchangeRates() {
     exchangeRates = JSON.parse(localStorage.getItem("exchangeRates") || "{}");
   }
 }
-    // 執行初始化功能
-    await fetchExchangeRates();
-    console.log("✅ 匯率查詢完成");
 
-    await updateAllStockPrices();
-    console.log("✅ 股票現價更新完成");
-
-    toggleFields();
-    render();
-    console.log("✅ 初始化完成");
-  } catch (e) {
-    console.error("❌ 初始化失敗", e);
-    alert("系統初始化錯誤，請重新整理頁面");
-  }
-});
-
+// ===== 股票現價查詢函式 =====
 async function fetchStockPrice(symbol, category) {
   try {
     if (category === "台股") {
@@ -91,6 +64,7 @@ async function fetchStockPrice(symbol, category) {
   }
 }
 
+// ===== 更新所有股票現價 =====
 async function updateAllStockPrices() {
   const updatedAssets = await Promise.all(
     assets.map(async (item) => {
@@ -103,9 +77,49 @@ async function updateAllStockPrices() {
   );
   assets = updatedAssets;
   localStorage.setItem(getLocalStorageKey(), JSON.stringify(assets));
- // ✅ 若有登入帳號就同步到 Firebase
   if (typeof FINORA_AUTH !== "undefined") FINORA_AUTH.saveUserAssets(assets);
 }
+
+// ===== DOMContentLoaded 初始化程序 =====
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    // 🔗 元素綁定
+    form = document.getElementById("asset-form");
+    typeSelect = document.getElementById("type");
+    stockFields = document.getElementById("stock-fields");
+    insuranceFields = document.getElementById("insurance-fields");
+    amountField = document.getElementById("amount-field");
+    assetList = document.getElementById("asset-list");
+    totalsList = document.getElementById("totals-list");
+    profitList = document.getElementById("stock-profit-list");
+    bankDatalist = document.getElementById("bank-list");
+
+    // 綁定表單與欄位事件
+    form.addEventListener("submit", handleSubmit);
+    typeSelect.addEventListener("change", toggleFields);
+
+    // 載入銀行輸入記憶
+    bankHistory.forEach((b) => {
+      const option = document.createElement("option");
+      option.value = b;
+      bankDatalist.appendChild(option);
+    });
+
+    // 執行初始化流程
+    await fetchExchangeRates();
+    console.log("✅ 匯率查詢完成");
+
+    await updateAllStockPrices();
+    console.log("✅ 股票現價更新完成");
+
+    toggleFields();
+    render();
+    console.log("✅ 初始化完成");
+  } catch (e) {
+    console.error("❌ 初始化失敗", e);
+    alert("系統初始化錯誤，請重新整理頁面");
+  }
+});
 
 // ===== Part 2：表單處理與存儲 =====
 
@@ -207,6 +221,7 @@ function handleDelete(index) {
 
 // ===== Part 3 + Part 4：畫面渲染與啟動事件 =====
 
+// 類型欄位切換用
 function toggleFields() {
   const type = document.getElementById("type").value;
   document.getElementById("stock-fields").style.display = type === "股票" ? "block" : "none";
@@ -216,10 +231,12 @@ function toggleFields() {
   document.getElementById("amount-field").style.display = ["定存", "現金", "房產", "其他"].includes(type) ? "block" : "none";
 }
 
+// 渲染畫面與加總顯示
 function render() {
   assetList.innerHTML = "";
   totalsList.innerHTML = "";
   profitList.innerHTML = "";
+
   const totals = {};
   const profits = {};
   let totalTWD = 0;
@@ -247,6 +264,7 @@ function render() {
     const currency = item.currency || "TWD";
     if (!totals[currency]) totals[currency] = 0;
     totals[currency] += value;
+
     if (item.type === "股票") {
       const cost = item.shares * item.cost;
       const profit = value - cost;
@@ -270,16 +288,8 @@ function render() {
     profitList.appendChild(li);
   });
 
-const totalLi = document.createElement("li");
-const formatter = new Intl.NumberFormat('zh-Hant', { style: 'currency', currency: 'TWD' });
-totalLi.textContent = `總資產（折合台幣）：${formatter.format(totalTWD)}`;
-totalsList.appendChild(totalLi);
+  const totalLi = document.createElement("li");
+  const formatter = new Intl.NumberFormat('zh-Hant', { style: 'currency', currency: 'TWD' });
+  totalLi.textContent = `總資產（折合台幣）：${formatter.format(totalTWD)}`;
+  totalsList.appendChild(totalLi);
 }
-
-form.addEventListener("submit", handleSubmit);
-typeSelect.addEventListener("change", toggleFields);
-bankHistory.forEach((b) => {
-  const option = document.createElement("option");
-  option.value = b;
-  bankDatalist.appendChild(option);
-});
