@@ -293,20 +293,3 @@ bankHistory.forEach((bank) => {
   bankDatalist.appendChild(option);
 });
 
-// 初始啟動流程
-document.addEventListener("DOMContentLoaded", async () => {
-  try {
-    await fetchExchangeRates();         // 匯率查詢
-    console.log("✅ 匯率查詢完成");
-
-    await updateAllStockPrices();       // 股票現價更新
-    console.log("✅ 股票現價更新完成");
-
-    toggleFields();                     // 表單欄位初始化
-    render();                           // 渲染畫面
-    console.log("✅ 初始化完成");
-  } catch (e) {
-    console.error("❌ 初始化失敗", e);
-    alert("系統初始化錯誤，請重新整理頁面");
-  }
-});
