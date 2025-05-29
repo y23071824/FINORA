@@ -9,6 +9,12 @@
 <body>
   <h1>FINORA 資產登記</h1>
 
+  <!-- ✅ 登入與帳本狀態顯示 -->
+  <div id="auth-status" style="margin-bottom: 1rem; font-size: 0.9rem; color: #555;">
+    使用者：<span id="auth-email">（尚未登入）</span><br />
+    帳本：<span id="account-name">（尚未選擇）</span>
+  </div>
+
   <!-- ✅ 資產表單 -->
   <form id="asset-form">
     <label>種類：
@@ -92,17 +98,24 @@
   <div id="stock-profit-list"></div>
   <p id="rate-time" style="font-size: 0.9em; color: #666;"></p>
 
-  <!-- ✅ Firebase SDK v8 -->
+  <!-- ✅ Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
-  <!-- ✅ 雲端同步 -->
+  <!-- ✅ 雲端同步邏輯 -->
   <script src="firebase-sync.js"></script>
 
   <!-- ✅ 主程式邏輯 -->
   <script src="script.js"></script>
 
-  <a href="index.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374">← 返回首頁</a>
-</body>
-</html>
+  <!-- ✅ 驗證登入與帳本狀態 -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const emailEl = document.getElementById("auth-email");
+      const accountEl = document.getElementById("account-name");
+
+      const accountId = localStorage.getItem("selectedAccount");
+      if (!accountId) {
+        alert("⚠️ 尚未選擇帳本，請返回首頁登入並選擇帳本！");
+        window.location.href =
