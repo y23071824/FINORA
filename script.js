@@ -1,5 +1,5 @@
 // ===== Finora 資產登記 App =====
-/document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", async () => {
   try {
     // === Part 1 ===
     // 初始化元素與變數（不需再次包一層）
