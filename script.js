@@ -18,7 +18,7 @@ let editIndex = null;
 let form, typeSelect, stockFields, insuranceFields, amountField;
 let assetList, totalsList, profitList, bankDatalist;
 
-// ===== 匯率查詢函式（已搬到全域）=====
+// ===== 匯率查詢函式 =====
 async function fetchExchangeRates() {
   try {
     const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
@@ -34,7 +34,7 @@ async function fetchExchangeRates() {
   }
 }
 
-// ===== 股票現價查詢函式 =====
+// ===== 股票現價查詢 =====
 async function fetchStockPrice(symbol, category) {
   try {
     if (category === "台股") {
@@ -51,7 +51,7 @@ async function fetchStockPrice(symbol, category) {
       const close = parseFloat(lastRow[6].replace(/,/g, ""));
       return close;
     } else {
-      const apiKey = "de909496c6754a89bc33db0306c2def8";
+      const apiKey = "de909496c6754a89bc33db0306c2def8"; // 你的 TwelveData API 金鑰
       const url = `https://api.twelvedata.com/price?symbol=${symbol}&apikey=${apiKey}`;
       const res = await fetch(url);
       const data = await res.json();
@@ -94,24 +94,64 @@ document.addEventListener("DOMContentLoaded", async () => {
     profitList = document.getElementById("stock-profit-list");
     bankDatalist = document.getElementById("bank-list");
 
-    // 綁定表單與欄位事件
+    // 表單功能綁定
     form.addEventListener("submit", handleSubmit);
     typeSelect.addEventListener("change", toggleFields);
 
-    // 載入銀行輸入記憶
+    // 銀行選單初始化
     bankHistory.forEach((b) => {
       const option = document.createElement("option");
       option.value = b;
       bankDatalist.appendChild(option);
     });
 
-    // 執行初始化流程
+    // ===== 股票代碼輸入後自動查價 =====
+    const stockSymbolInput = document.getElementById("stock-symbol");
+    const stockCategorySelect = document.getElementById("stock-category");
+    const stockPriceInput = document.getElementById("stock-price");
+
+    if (stockSymbolInput && stockCategorySelect && stockPriceInput) {
+      stockSymbolInput.addEventListener("blur", async () => {
+        const symbol = stockSymbolInput.value.trim();
+        const category = stockCategorySelect.value;
+        if (!symbol || !category) return;
+        const price = await fetchStockPrice(symbol, category);
+        if (price !== null) {
+          stockPriceInput.value = price;
+          console.log(`✅ ${symbol} 價格更新：${price}`);
+        } else {
+          console.warn(`⚠️ 查詢 ${symbol} 價格失敗`);
+        }
+      });
+    }
+
+    // ===== 加密貨幣輸入後自動查價 =====
+    const cryptoSymbolInput = document.getElementById("crypto-symbol");
+    const cryptoPriceInput = document.getElementById("crypto-price");
+
+    if (cryptoSymbolInput && cryptoPriceInput) {
+      cryptoSymbolInput.addEventListener("blur", async () => {
+        const symbol = cryptoSymbolInput.value.trim().toLowerCase();
+        if (!symbol) return;
+        try {
+          const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${symbol}&vs_currencies=usd`);
+          const data = await res.json();
+          const price = data[symbol]?.usd;
+          if (price) {
+            cryptoPriceInput.value = price;
+            console.log(`✅ ${symbol} 價格更新：${price}`);
+          } else {
+            console.warn(`⚠️ 查無 ${symbol} 價格`);
+          }
+        } catch (e) {
+          console.error("❌ 查詢加密貨幣價格錯誤", e);
+        }
+      });
+    }
+
+    // ===== 執行初始化流程 =====
     await fetchExchangeRates();
-    console.log("✅ 匯率查詢完成");
-
     await updateAllStockPrices();
-    console.log("✅ 股票現價更新完成");
-
     toggleFields();
     render();
     console.log("✅ 初始化完成");
@@ -120,6 +160,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     alert("系統初始化錯誤，請重新整理頁面");
   }
 });
+
 
 // ===== Part 2：表單處理與存儲 =====
 
