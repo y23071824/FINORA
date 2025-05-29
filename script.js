@@ -24,6 +24,7 @@ async function fetchExchangeRates() {
     const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
     const data = await res.json();
     exchangeRates = data.rates;
+    exchangeRates["USD"] = 1; // ✅ 補上 USD 匯率
     exchangeRates["TWD"] = exchangeRates["TWD"] || 30;
     exchangeRates["JPY"] = exchangeRates["JPY"] || 150;
     exchangeRates["EUR"] = exchangeRates["EUR"] || 0.9;
