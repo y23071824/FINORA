@@ -131,7 +131,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 }); 
   // 🔁 初始化流程中的其他函式（如 render 等）應寫在後續 Part 2～4
-});
 
 // ===== Part 2：表單處理與存儲 =====
 
