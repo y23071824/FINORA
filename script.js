@@ -270,9 +270,10 @@ function render() {
     profitList.appendChild(li);
   });
 
-  const totalLi = document.createElement("li");
-  totalLi.textContent = `總資產（折合台幣）：${totalTWD.toFixed(0)} TWD`;
-  totalsList.appendChild(totalLi);
+const totalLi = document.createElement("li");
+const formatter = new Intl.NumberFormat('zh-Hant', { style: 'currency', currency: 'TWD' });
+totalLi.textContent = `總資產（折合台幣）：${formatter.format(totalTWD)}`;
+totalsList.appendChild(totalLi);
 }
 
 form.addEventListener("submit", handleSubmit);
