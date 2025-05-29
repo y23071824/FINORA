@@ -93,7 +93,7 @@ async function updateAllStockPrices() {
 
 // ===== Part 2：表單處理與存儲 =====
 
-const form = document.getElementById("asset-form");
+form = document.getElementById("asset-form");
 
 function handleSubmit(e) {
   e.preventDefault();
