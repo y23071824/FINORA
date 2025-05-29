@@ -1,4 +1,4 @@
-// ✅ firebase-sync.js（整合 ensureLoggedIn 判斷邏輯）
+// ✅ firebase-sync.js（強化版：防呆 + 錯誤提示）
 const firebaseConfig = {
   apiKey: "AIzaSyBJE12oIoK4gr153jkNBokQ-d3ohnN4aWE",
   authDomain: "finora-d8cb3.firebaseapp.com",
@@ -17,13 +17,13 @@ const provider = new firebase.auth.GoogleAuthProvider();
 let currentUser = null;
 let selectedAccount = localStorage.getItem("selectedAccount") || null;
 
-// ✅ 檢查是否已登入，未登入時主動丟錯
+// ✅ 登入檢查（會更新 currentUser）
 function ensureLoggedIn() {
   currentUser = firebase.auth().currentUser;
   if (!currentUser) throw new Error("尚未登入");
 }
 
-// ✅ 取得資產儲存位置參考
+// ✅ 取得資產資料庫參考
 function getAccountAssetRef() {
   ensureLoggedIn();
   if (!selectedAccount) throw new Error("尚未選擇帳戶");
@@ -32,7 +32,7 @@ function getAccountAssetRef() {
            .collection("assets");
 }
 
-// ✅ 取得目前登入帳號的所有帳本清單
+// ✅ 取得目前使用者的帳本清單
 async function fetchAccountList() {
   ensureLoggedIn();
   const snapshot = await db.collection("accounts")
@@ -41,14 +41,16 @@ async function fetchAccountList() {
   return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }
 
-// ✅ 設定帳本顯示名稱
+// ✅ 設定帳本名稱
 async function setAccountDisplayName(accountId, displayName) {
   ensureLoggedIn();
+  if (!accountId) throw new Error("帳本 ID 無效");
+  if (!displayName || displayName.trim() === "") throw new Error("帳本名稱不能為空");
   const docRef = db.collection("accounts").doc(accountId);
   await docRef.set({ uid: currentUser.uid, displayName }, { merge: true });
 }
 
-// ✅ 將整合方法掛到全域物件中
+// ✅ 全域 FINORA_AUTH 方法
 window.FINORA_AUTH = {
   signInWithGoogle: async () => {
     try {
@@ -68,6 +70,7 @@ window.FINORA_AUTH = {
       return currentUser;
     } catch (e) {
       console.error("登入失敗", e);
+      alert("登入失敗，請稍後再試");
       return null;
     }
   },
@@ -112,12 +115,17 @@ window.FINORA_AUTH = {
   },
 
   saveUserAssets: async (assets) => {
-    const ref = getAccountAssetRef();
-    const batch = db.batch();
-    const docs = await ref.get();
-    docs.forEach(doc => batch.delete(doc.ref));
-    assets.forEach(asset => batch.set(ref.doc(), asset));
-    await batch.commit();
+    try {
+      const ref = getAccountAssetRef();
+      const batch = db.batch();
+      const docs = await ref.get();
+      docs.forEach(doc => batch.delete(doc.ref));
+      assets.forEach(asset => batch.set(ref.doc(), asset));
+      await batch.commit();
+    } catch (e) {
+      console.error("❌ 資產儲存失敗：", e);
+      alert("❌ 儲存失敗，請確認您已登入並選擇有效帳本");
+    }
   },
 
   getCurrentAccount: () => selectedAccount,
