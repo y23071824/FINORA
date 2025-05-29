@@ -2,7 +2,6 @@
 document.addEventListener("DOMContentLoaded", async () => {
   try {
     // === Part 1 ===
-    // 初始化元素與變數（不需再次包一層）
     const form = document.getElementById("asset-form");
     const typeSelect = document.getElementById("type");
     const stockFields = document.getElementById("stock-fields");
@@ -29,108 +28,109 @@ document.addEventListener("DOMContentLoaded", async () => {
     alert("系統初始化錯誤，請重新整理頁面");
   }
 });
-  // ✅ 帳本相關函式
-  function getSelectedAccount() {
-    return localStorage.getItem("selectedAccount") || "default";
+
+// ✅ 帳本相關函式
+function getSelectedAccount() {
+  return localStorage.getItem("selectedAccount") || "default";
+}
+
+function getLocalStorageKey() {
+  return `assets_${getSelectedAccount()}`;
+}
+
+// ✅ 初始化本地資料變數
+let assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
+let bankHistory = JSON.parse(localStorage.getItem("banks") || "[]");
+let exchangeRates = {};
+let editIndex = null;
+
+// ===== 匯率查詢函式 =====
+async function fetchExchangeRates() {
+  try {
+    const res = await fetch("https://open.er-api.com/v6/latest/USD");
+    const data = await res.json();
+
+    if (!data || !data.rates) throw new Error("API 回傳格式錯誤");
+
+    exchangeRates = {
+      USD: 1,
+      TWD: data.rates.TWD,
+      JPY: data.rates.JPY,
+      EUR: data.rates.EUR,
+    };
+
+    localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
+  } catch (e) {
+    console.warn("⚠️ 匯率 API 失敗，使用預設值", e);
+    exchangeRates = {
+      USD: 1,
+      TWD: 30.21,
+      JPY: 151.4,
+      EUR: 0.92,
+    };
+
+    localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
   }
+}
 
-  function getLocalStorageKey() {
-    return `assets_${getSelectedAccount()}`;
-  }
+// ===== 股票價格查詢 =====
+async function fetchStockPrice(symbol, category) {
+  try {
+    if (category === "台股") {
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, "0");
+      const dd = String(now.getDate()).padStart(2, "0");
+      const date = `${yyyy}${mm}${dd}`;
 
-  // ✅ 初始化本地資料變數（使用帳本 key）
-  let assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]"); // 所有資產項目
-  let bankHistory = JSON.parse(localStorage.getItem("banks") || "[]");         // 銀行記憶清單
-  let exchangeRates = {};                                                      // 即時匯率資料
-  let editIndex = null;                                                        // 是否處於「編輯模式」
-
-  // ===== 匯率查詢函式 =====
-  async function fetchExchangeRates() {
-    try {
-      const res = await fetch("https://open.er-api.com/v6/latest/USD");
+      const url = `https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=${date}&stockNo=${symbol}`;
+      const res = await fetch(url);
       const data = await res.json();
 
-      if (!data || !data.rates) throw new Error("API 回傳格式錯誤");
-
-      exchangeRates = {
-        USD: 1,
-        TWD: data.rates.TWD,
-        JPY: data.rates.JPY,
-        EUR: data.rates.EUR,
-      };
-
-      localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates)); // 儲存備用
-    } catch (e) {
-      console.warn("⚠️ 匯率 API 失敗，使用預設值", e);
-      exchangeRates = {
-        USD: 1,
-        TWD: 30.21,
-        JPY: 151.4,
-        EUR: 0.92,
-      };
-
-      localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
-    }
-  }
-
-  // ===== 股票價格查詢函式（支援台股與美股）=====
-  async function fetchStockPrice(symbol, category) {
-    try {
-      if (category === "台股") {
-        const now = new Date();
-        const yyyy = now.getFullYear();
-        const mm = String(now.getMonth() + 1).padStart(2, "0");
-        const dd = String(now.getDate()).padStart(2, "0");
-        const date = `${yyyy}${mm}${dd}`;
-
-        const url = `https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=${date}&stockNo=${symbol}`;
-        const res = await fetch(url);
-        const data = await res.json();
-
-        if (data.stat !== "OK" || !data.data?.length) {
-          alert("台股查價失敗，請稍後再試或手動輸入");
-          return null;
-        }
-
-        const lastRow = data.data[data.data.length - 1];
-        const close = parseFloat(lastRow[6].replace(/,/g, ""));
-        return close;
-      } else {
-        const apiKey = "de909496c6754a89bc33db0306c2def8";
-        const url = `https://api.twelvedata.com/price?symbol=${symbol}&apikey=${apiKey}`;
-        const res = await fetch(url);
-        const data = await res.json();
-
-        if (data.status === "error" || data.code || !data.price) return null;
-        return parseFloat(data.price);
+      if (data.stat !== "OK" || !data.data?.length) {
+        alert("台股查價失敗，請稍後再試或手動輸入");
+        return null;
       }
-    } catch (e) {
-      console.error("查詢股價錯誤", e);
-      alert("查詢失敗，請檢查代碼或稍後再試");
-      return null;
+
+      const lastRow = data.data[data.data.length - 1];
+      const close = parseFloat(lastRow[6].replace(/,/g, ""));
+      return close;
+    } else {
+      const apiKey = "de909496c6754a89bc33db0306c2def8";
+      const url = `https://api.twelvedata.com/price?symbol=${symbol}&apikey=${apiKey}`;
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (data.status === "error" || data.code || !data.price) return null;
+      return parseFloat(data.price);
     }
+  } catch (e) {
+    console.error("查詢股價錯誤", e);
+    alert("查詢失敗，請檢查代碼或稍後再試");
+    return null;
   }
+}
 
-  // ===== 批次更新所有股票現價 =====
-  async function updateAllStockPrices() {
-    const updatedAssets = await Promise.all(
-      assets.map(async (item) => {
-        if (item.type === "股票" && item.stockSymbol && item.stockCategory) {
-          const newPrice = await fetchStockPrice(item.stockSymbol, item.stockCategory);
-          if (newPrice !== null) {
-            item.price = newPrice;
-          }
+// ===== 更新所有股票現價 =====
+async function updateAllStockPrices() {
+  const updatedAssets = await Promise.all(
+    assets.map(async (item) => {
+      if (item.type === "股票" && item.stockSymbol && item.stockCategory) {
+        const newPrice = await fetchStockPrice(item.stockSymbol, item.stockCategory);
+        if (newPrice !== null) {
+          item.price = newPrice;
         }
-        return item;
-      })
-    );
+      }
+      return item;
+    })
+  );
 
-    assets = updatedAssets;
-    localStorage.setItem(getLocalStorageKey(), JSON.stringify(assets)); // ✅ 使用帳本 key 儲存
-  }
+  assets = updatedAssets;
+  localStorage.setItem(getLocalStorageKey(), JSON.stringify(assets));
+}
 
-}); 
-  // 🔁 初始化流程中的其他函式（如 render 等）應寫在後續 Part 2～4
+// 🔁 其餘功能（Part 2~4）可繼續補上：如 handleSubmit、render、刪除資產等
+
 
 // ===== Part 2：表單處理與存儲 =====
 
