@@ -164,6 +164,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 // ===== Part 2：表單處理與存儲 =====
+// ===== 切換欄位顯示 =====
+function toggleFields() {
+  const type = document.getElementById("type").value;
+  document.getElementById("stock-fields").style.display = type === "股票" ? "block" : "none";
+  document.getElementById("insurance-fields").style.display = type === "儲蓄保險" ? "block" : "none";
+  document.getElementById("fund-fields").style.display = type === "基金" ? "block" : "none";
+  document.getElementById("crypto-fields").style.display = type === "加密貨幣" ? "block" : "none";
+  document.getElementById("amount-field").style.display = ["定存", "現金", "房產", "其他"].includes(type) ? "block" : "none";
+}
 
 function handleSubmit(e) {
   e.preventDefault();
