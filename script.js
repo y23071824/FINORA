@@ -129,6 +129,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     localStorage.setItem(getLocalStorageKey(), JSON.stringify(assets)); // ✅ 使用帳本 key 儲存
   }
 
+}); 
   // 🔁 初始化流程中的其他函式（如 render 等）應寫在後續 Part 2～4
 });
 
