@@ -1,38 +1,52 @@
-// ===== Finora 資產登記 App =====
 // ===== Part 1：初始化與查詢 =====
+
+// 取得目前帳本的 key
+function getSelectedAccount() {
+  return localStorage.getItem("selectedAccount") || "default";
+}
+function getLocalStorageKey() {
+  return `assets_${getSelectedAccount()}`;
+}
+
+// 初始化資料變數
 let assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
 let bankHistory = JSON.parse(localStorage.getItem("banks") || "[]");
 let exchangeRates = {};
 let editIndex = null;
 
-function getSelectedAccount() {
-  return localStorage.getItem("selectedAccount") || "default";
-}
+// DOM 元素先用 let 宣告（之後 DOMContentLoaded 時再綁定）
+let form, typeSelect, stockFields, insuranceFields, amountField;
+let assetList, totalsList, profitList, bankDatalist;
 
-function getLocalStorageKey() {
-  return `assets_${getSelectedAccount()}`;
-}
-
-async function fetchExchangeRates() {
+// DOMContentLoaded 中再做初始化
+document.addEventListener("DOMContentLoaded", async () => {
   try {
-    const res = await fetch("https://open.er-api.com/v6/latest/USD");
-    const data = await res.json();
+    // 🔗 元素綁定
+    form = document.getElementById("asset-form");
+    typeSelect = document.getElementById("type");
+    stockFields = document.getElementById("stock-fields");
+    insuranceFields = document.getElementById("insurance-fields");
+    amountField = document.getElementById("amount-field");
+    assetList = document.getElementById("asset-list");
+    totalsList = document.getElementById("totals-list");
+    profitList = document.getElementById("stock-profit-list");
+    bankDatalist = document.getElementById("bank-list");
 
-    if (!data || !data.rates) throw new Error("API 回傳格式錯誤");
+    // 執行初始化功能
+    await fetchExchangeRates();
+    console.log("✅ 匯率查詢完成");
 
-    exchangeRates = {
-      USD: 1,
-      TWD: data.rates.TWD,
-      JPY: data.rates.JPY,
-      EUR: data.rates.EUR,
-    };
-    localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
+    await updateAllStockPrices();
+    console.log("✅ 股票現價更新完成");
+
+    toggleFields();
+    render();
+    console.log("✅ 初始化完成");
   } catch (e) {
-    console.warn("⚠️ 匯率 API 失敗，使用預設值", e);
-    exchangeRates = { USD: 1, TWD: 30.21, JPY: 151.4, EUR: 0.92 };
-    localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
+    console.error("❌ 初始化失敗", e);
+    alert("系統初始化錯誤，請重新整理頁面");
   }
-}
+});
 
 async function fetchStockPrice(symbol, category) {
   try {
