@@ -284,7 +284,36 @@ function render() {
 
   assets.forEach((item, i) => {
     const li = document.createElement("li");
-    li.textContent = `${item.type}：${item.note || "(無備註)"}`;
+    const details = [];
+
+    if (item.type === "股票") {
+      details.push(`代碼: ${item.stockSymbol}`);
+      details.push(`類型: ${item.stockCategory}`);
+      details.push(`股數: ${item.shares}`);
+      details.push(`成本: ${item.cost}`);
+      details.push(`現價: ${item.price}`);
+    } else if (item.type === "儲蓄保險") {
+      details.push(`名稱: ${item.insuranceName}`);
+      details.push(`保額: ${item.insuranceAmount}`);
+      details.push(`年期: ${item.insuranceYears}`);
+      details.push(`年繳: ${item.insurancePayment}`);
+    } else if (item.type === "基金") {
+      details.push(`名稱: ${item.fundName}`);
+      details.push(`單位: ${item.fundUnits}`);
+      details.push(`淨值: ${item.fundNav}`);
+    } else if (item.type === "加密貨幣") {
+      details.push(`幣種: ${item.cryptoSymbol}`);
+      details.push(`數量: ${item.cryptoAmount}`);
+      details.push(`現價: ${item.cryptoPrice}`);
+    } else {
+      details.push(`金額: ${item.amount}`);
+    }
+
+    details.push(`幣別: ${item.currency}`);
+    if (item.bank) details.push(`銀行: ${item.bank}`);
+    if (item.note) details.push(`備註: ${item.note}`);
+
+    li.innerHTML = `<strong>${item.type}</strong>｜${details.join("，")}`;
 
     const actionDiv = document.createElement("span");
     actionDiv.className = "asset-actions";
