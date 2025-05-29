@@ -19,11 +19,21 @@
     <button id="new-account-btn">➕ 新增帳本</button>
     <input type="text" id="new-account-name" placeholder="輸入新帳本名稱" style="display:none; margin-top: 0.5rem;" />
     <button id="save-new-account" style="display:none;">儲存新帳本</button>
-  </section>  <!-- ✅ 登入登出與 Email 顯示 -->  <div id="firebase-auth" style="margin-top: 1.5rem;">
-    <button id="login-btn">🔐 使用 Google 帳號登入</button>
-    <button id="logout-btn" style="display:none;">🚪 登出</button>
-    <p id="user-email" style="font-size: 0.9em; color: #666;"></p>
-  </div>  <!-- ✅ Firebase SDK -->  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>  <script src="firebase-sync.js"></script>  <!-- ✅ 帳本與登入邏輯 -->  <script>
+</section> <!-- ✅ 補上這行，結束帳本選擇區塊 -->
+<!-- ✅ 登入登出與 Email 顯示 -->
+<div id="firebase-auth" style="margin-top: 1.5rem;">
+  <button id="login-btn">🔐 使用 Google 帳號登入</button>
+  <button id="logout-btn" style="display:none;">🚪 登出</button>
+  <p id="user-email" style="font-size: 0.9em; color: #666;"></p>
+</div>
+  <!-- ✅ Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="firebase-sync.js"></script>
+
+  <!-- ✅ 帳本與登入邏輯 -->
+  <script>
     const loginBtn = document.getElementById("login-btn");
     const logoutBtn = document.getElementById("logout-btn");
     const userEmail = document.getElementById("user-email");
@@ -92,12 +102,17 @@
     });
 
     renameBtn.addEventListener("click", async () => {
-      const id = accountSelect.value;
-      const currentName = accountMap[id] || id;
-      const newName = prompt("輸入新的帳本名稱：", currentName);
-      if (newName && newName !== currentName) {
-        await FINORA_AUTH.setAccountDisplayName(id, newName);
-        await loadAccounts();
+      try {
+        const id = accountSelect.value;
+        const currentName = accountMap[id] || id;
+        const newName = prompt("輸入新的帳本名稱：", currentName);
+        if (newName && newName !== currentName) {
+          await FINORA_AUTH.setAccountDisplayName(id, newName);
+          await loadAccounts();
+        }
+      } catch (e) {
+        alert("⚠️ 請先登入後才能重新命名帳本！");
+        console.warn(e);
       }
     });
 
@@ -107,14 +122,23 @@
     });
 
     saveNewAccountBtn.addEventListener("click", async () => {
-      const name = newAccountInput.value.trim();
-      if (!name) return;
-      const id = `帳本${Date.now()}`;
-      localStorage.setItem("selectedAccount", id);
-      await FINORA_AUTH.setAccountDisplayName(id, name);
-      await loadAccounts();
-      location.reload();
+      try {
+        const name = newAccountInput.value.trim();
+        if (!name) return;
+        const id = `帳本${Date.now()}`;
+        localStorage.setItem("selectedAccount", id);
+        await FINORA_AUTH.setAccountDisplayName(id, name);
+        await loadAccounts();
+        location.reload();
+      } catch (e) {
+        alert("⚠️ 請先登入後才能新增帳本！");
+        console.warn(e);
+      }
     });
-  </script>  <p style="text-align:center; font-size:0.8rem; color:#aaa; margin-top:3rem;">v0.9 beta - 2025-05-29</p>
+  </script>
+
+  <p style="text-align:center; font-size:0.8rem; color:#aaa; margin-top:3rem;">
+    v0.9 beta - 2025-05-29
+  </p>
 </body>
 </html>
