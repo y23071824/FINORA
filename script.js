@@ -31,7 +31,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     totalsList = document.getElementById("totals-list");
     profitList = document.getElementById("stock-profit-list");
     bankDatalist = document.getElementById("bank-list");
-
+    
+async function fetchExchangeRates() {
+  try {
+    const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
+    const data = await res.json();
+    exchangeRates = data.rates;
+    exchangeRates["TWD"] = exchangeRates["TWD"] || 30;
+    exchangeRates["JPY"] = exchangeRates["JPY"] || 150;
+    exchangeRates["EUR"] = exchangeRates["EUR"] || 0.9;
+    localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
+  } catch (e) {
+    console.warn("⚠️ 匯率查詢失敗，改用本地資料");
+    exchangeRates = JSON.parse(localStorage.getItem("exchangeRates") || "{}");
+  }
+}
     // 執行初始化功能
     await fetchExchangeRates();
     console.log("✅ 匯率查詢完成");
