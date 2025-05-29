@@ -191,105 +191,80 @@ function handleDelete(index) {
   render();
 }
 
+// ===== Part 3 + Part 4：畫面渲染與啟動事件 =====
 
-// ===== Part 3：畫面渲染與計算 =====
+function toggleFields() {
+  const type = document.getElementById("type").value;
+  document.getElementById("stock-fields").style.display = type === "股票" ? "block" : "none";
+  document.getElementById("insurance-fields").style.display = type === "儲蓄保險" ? "block" : "none";
+  document.getElementById("fund-fields").style.display = type === "基金" ? "block" : "none";
+  document.getElementById("crypto-fields").style.display = type === "加密貨幣" ? "block" : "none";
+  document.getElementById("amount-field").style.display = ["定存", "現金", "房產", "其他"].includes(type) ? "block" : "none";
+}
 
 function render() {
   assetList.innerHTML = "";
   totalsList.innerHTML = "";
   profitList.innerHTML = "";
-
   const totals = {};
   const profits = {};
+  let totalTWD = 0;
 
-  assets.forEach((item, index) => {
+  assets.forEach((item, i) => {
     const li = document.createElement("li");
-    let text = "";
-
-    if (item.type === "股票") {
-      const costTotal = item.shares * item.cost;
-      const valueTotal = item.shares * item.price;
-      const profit = valueTotal - costTotal;
-
-      text = `[股票] ${item.stockCategory} ${item.stockSymbol}：${item.shares} 股｜成本 ${item.cost} → 現價 ${item.price}｜市值 ${valueTotal.toFixed(2)}`;
-      profits[item.currency] = (profits[item.currency] || 0) + profit;
-      totals[item.currency] = (totals[item.currency] || 0) + valueTotal;
-    } else if (item.type === "儲蓄保險") {
-      text = `[保單] ${item.insuranceName}：保額 ${item.insuranceAmount}，${item.insuranceYears} 年，年繳 ${item.insurancePayment}`;
-      totals[item.currency] = (totals[item.currency] || 0) + item.insuranceAmount;
-    } else if (item.type === "基金") {
-      const value = item.fundUnits * item.fundNav;
-      text = `[基金] ${item.fundName}：${item.fundUnits} 單位，淨值 ${item.fundNav}｜市值 ${value.toFixed(2)}`;
-      totals[item.currency] = (totals[item.currency] || 0) + value;
-    } else if (item.type === "加密貨幣") {
-      const value = item.cryptoAmount * item.cryptoPrice;
-      text = `[幣] ${item.cryptoSymbol}：${item.cryptoAmount} × ${item.cryptoPrice}｜市值 ${value.toFixed(2)}`;
-      totals[item.currency] = (totals[item.currency] || 0) + value;
-    } else {
-      const amount = item.amount || 0;
-      text = `[${item.type}] ${amount} ${item.currency}`;
-      totals[item.currency] = (totals[item.currency] || 0) + amount;
-    }
-
+    li.textContent = `${item.type}：${item.note || "(無備註)"}`;
     const editBtn = document.createElement("button");
     editBtn.textContent = "✏️";
-    editBtn.onclick = () => handleEdit(index);
-
-    const delBtn = document.createElement("button");
-    delBtn.textContent = "🗑️";
-    delBtn.onclick = () => handleDelete(index);
-
-    li.textContent = text;
+    editBtn.onclick = () => handleEdit(i);
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "🗑️";
+    deleteBtn.onclick = () => handleDelete(i);
     li.appendChild(editBtn);
-    li.appendChild(delBtn);
+    li.appendChild(deleteBtn);
     assetList.appendChild(li);
+
+    let value = 0;
+    if (item.type === "股票") value = item.shares * item.price;
+    else if (item.type === "儲蓄保險") value = item.insuranceAmount;
+    else if (item.type === "基金") value = item.fundUnits * item.fundNav;
+    else if (item.type === "加密貨幣") value = item.cryptoAmount * item.cryptoPrice;
+    else value = item.amount || 0;
+
+    const currency = item.currency || "TWD";
+    if (!totals[currency]) totals[currency] = 0;
+    totals[currency] += value;
+    if (item.type === "股票") {
+      const cost = item.shares * item.cost;
+      const profit = value - cost;
+      if (!profits[currency]) profits[currency] = 0;
+      profits[currency] += profit;
+    }
   });
 
-  // 幣別加總與台幣換算
-  let totalTWD = 0;
-  for (const [currency, amount] of Object.entries(totals)) {
-    const rate = exchangeRates[currency] || 1;
-    const twdAmount = amount * rate;
-    totalTWD += twdAmount;
-
+  Object.entries(totals).forEach(([cur, amt]) => {
+    const rate = exchangeRates[cur] || 1;
+    const converted = amt * rate;
+    totalTWD += converted;
     const li = document.createElement("li");
-    li.textContent = `${currency} 總資產：${amount.toFixed(2)}（約新台幣 ${twdAmount.toLocaleString()} 元）`;
+    li.textContent = `${cur}：${amt.toFixed(2)}（約 ${converted.toFixed(0)} TWD）`;
     totalsList.appendChild(li);
-  }
+  });
+
+  Object.entries(profits).forEach(([cur, amt]) => {
+    const li = document.createElement("li");
+    li.textContent = `股票盈餘 ${cur}：${amt.toFixed(2)}`;
+    profitList.appendChild(li);
+  });
 
   const totalLi = document.createElement("li");
-  totalLi.innerHTML = `<strong>💰 全體資產折合新台幣：${totalTWD.toLocaleString()} 元</strong>`;
+  totalLi.textContent = `總資產（折合台幣）：${totalTWD.toFixed(0)} TWD`;
   totalsList.appendChild(totalLi);
-
-  // 股票盈餘
-  for (const [currency, profit] of Object.entries(profits)) {
-    const li = document.createElement("li");
-    li.textContent = `${currency} 股票盈餘：${profit.toFixed(2)}`;
-    profitList.appendChild(li);
-  }
 }
 
-// ===== Part 4：啟動函式與其他 =====
-
-// 根據資產類型切換欄位顯示
-function toggleFields() {
-  const type = typeSelect.value;
-
-  stockFields.style.display = type === "股票" ? "block" : "none";
-  insuranceFields.style.display = type === "儲蓄保險" ? "block" : "none";
-  document.getElementById("fund-fields").style.display = type === "基金" ? "block" : "none";
-  document.getElementById("crypto-fields").style.display = type === "加密貨幣" ? "block" : "none";
-  amountField.style.display = ["定存", "現金", "房產", "其他"].includes(type) ? "block" : "none";
-}
-
-// 綁定表單與選單事件
 form.addEventListener("submit", handleSubmit);
 typeSelect.addEventListener("change", toggleFields);
-
-// 載入歷史銀行選項
-bankHistory.forEach((bank) => {
+bankHistory.forEach((b) => {
   const option = document.createElement("option");
-  option.value = bank;
+  option.value = b;
   bankDatalist.appendChild(option);
 });
-
