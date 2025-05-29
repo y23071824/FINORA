@@ -282,31 +282,30 @@ function render() {
   const totals = {};
   const profits = {};
   let totalTWD = 0;
-  
+
   assets.forEach((item, i) => {
-  const li = document.createElement("li");
-  li.textContent = `${item.type}：${item.note || "(無備註)"}`;
+    // 顯示每一筆資產
+    const li = document.createElement("li");
+    li.textContent = `${item.type}：${item.note || "(無備註)"}`;
 
-  // 建立按鈕區塊
-  const actionDiv = document.createElement("span");
-  actionDiv.className = "asset-actions";
-  actionDiv.style.marginLeft = "8px"; // 小間距
+    const actionDiv = document.createElement("span");
+    actionDiv.className = "asset-actions";
+    actionDiv.style.marginLeft = "8px";
 
-  const editBtn = document.createElement("button");
-  editBtn.textContent = "✏️";
-  editBtn.onclick = () => handleEdit(i);
+    const editBtn = document.createElement("button");
+    editBtn.textContent = "✏️";
+    editBtn.onclick = () => handleEdit(i);
 
-  const deleteBtn = document.createElement("button");
-  deleteBtn.textContent = "🗑️";
-  deleteBtn.onclick = () => handleDelete(i);
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "🗑️";
+    deleteBtn.onclick = () => handleDelete(i);
 
-  actionDiv.appendChild(editBtn);
-  actionDiv.appendChild(deleteBtn);
-  li.appendChild(actionDiv);
-  assetList.appendChild(li);
-});
+    actionDiv.appendChild(editBtn);
+    actionDiv.appendChild(deleteBtn);
+    li.appendChild(actionDiv);
+    assetList.appendChild(li);
 
-
+    // 金額計算
     let value = 0;
     if (item.type === "股票") value = item.shares * item.price;
     else if (item.type === "儲蓄保險") value = item.insuranceAmount;
@@ -318,6 +317,7 @@ function render() {
     if (!totals[currency]) totals[currency] = 0;
     totals[currency] += value;
 
+    // 股票盈餘計算
     if (item.type === "股票") {
       const cost = item.shares * item.cost;
       const profit = value - cost;
@@ -326,6 +326,7 @@ function render() {
     }
   });
 
+  // 顯示各幣別加總與折合台幣
   Object.entries(totals).forEach(([cur, amt]) => {
     const rate = exchangeRates[cur] || 1;
     const converted = amt * rate;
@@ -335,14 +336,18 @@ function render() {
     totalsList.appendChild(li);
   });
 
+  // 顯示股票盈餘
   Object.entries(profits).forEach(([cur, amt]) => {
     const li = document.createElement("li");
     li.textContent = `股票盈餘 ${cur}：${amt.toFixed(2)}`;
     profitList.appendChild(li);
   });
 
+  // 顯示總資產（台幣）
   const totalLi = document.createElement("li");
   const formatter = new Intl.NumberFormat('zh-Hant', { style: 'currency', currency: 'TWD' });
   totalLi.textContent = `總資產（折合台幣）：${formatter.format(totalTWD)}`;
   totalsList.appendChild(totalLi);
 }
+
+// ===== 啟動事件（DOM Ready）已在 Part 1 實作 =====
