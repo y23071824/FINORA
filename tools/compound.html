@@ -141,6 +141,29 @@
       document.getElementById("fx-result").innerText =
         `${amt} ${from} ≈ ${result.toFixed(2)} ${to}`;
     }
+  <script>
+    function calculateCompound() {
+      const p = parseFloat(document.getElementById("principal").value) || 0;
+      const r = (parseFloat(document.getElementById("rate").value) || 0) / 100;
+      const y = parseInt(document.getElementById("years").value) || 0;
+      const annual = parseFloat(document.getElementById("annual").value) || 0;
+      const monthly = parseFloat(document.getElementById("monthly").value) || 0;
+
+      let total = p;
+      const months = y * 12;
+      const monthlyRate = r / 12;
+
+      for (let m = 1; m <= months; m++) {
+        total *= (1 + monthlyRate);
+        total += monthly;
+        if (m % 12 === 0) total += annual;
+      }
+
+      document.getElementById("result").textContent =
+        `投入 ${y} 年後，期末總資產：約 ${total.toFixed(2)} 元`;
+
+      localStorage.setItem("compoundResult", total.toFixed(2));
+    }
 
     async function initializeCompoundPage() {
       try {
@@ -149,6 +172,28 @@
           document.getElementById("result").textContent =
             `🔁 最近一次試算結果：約 ${Number(saved).toLocaleString()} 元`;
         }
+
+        await fetchExchangeRates(); // ✅ 確保有抓匯率
+
+        if (window.FINORA_AUTH) {
+          FINORA_AUTH.onUserChanged(async (user) => {
+            if (user) {
+              assets = await FINORA_AUTH.loadUserAssets();
+            } else {
+              const account = getSelectedAccount();
+              assets = JSON.parse(localStorage.getItem(`assets_${account}`) || "[]");
+            }
+            render(); // ✅ 顯示資產總覽與分類
+          });
+        } else {
+          const account = getSelectedAccount();
+          assets = JSON.parse(localStorage.getItem(`assets_${account}`) || "[]");
+          render();
+        }
+      } catch (e) {
+        console.error("❌ 初始化失敗", e);
+        alert("初始化錯誤，請重新整理或檢查網路連線");
+      }
     }
 
     document.addEventListener("DOMContentLoaded", initializeCompoundPage);
