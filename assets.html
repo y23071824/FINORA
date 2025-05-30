@@ -80,7 +80,6 @@
         <option value="EUR">EUR</option>
       </select>
     </label>
-
     <label>銀行：<input type="text" id="bank" list="bank-list" /></label>
     <label>備註：<input type="text" id="note" /></label>
     <button type="submit">儲存資產</button>
@@ -118,4 +117,26 @@
       const accountId = localStorage.getItem("selectedAccount");
       if (!accountId) {
         alert("⚠️ 尚未選擇帳本，請返回首頁登入並選擇帳本！");
-        window.location.href =
+        window.location.href = "index.html";
+        return;
+      }
+
+      // 顯示帳本 ID（初始狀態），若 firebase-sync 有更漂亮名稱會在 Part 4 中覆蓋
+      accountEl.textContent = accountId;
+
+      // 監聽登入狀態變化
+      if (typeof FINORA_AUTH !== "undefined") {
+        FINORA_AUTH.onUserChanged(user => {
+          if (user) {
+            emailEl.textContent = user.email;
+          } else {
+            emailEl.textContent = "（尚未登入）";
+          }
+        });
+      }
+    });
+  </script>
+
+  <a href="index.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374">← 返回首頁</a>
+</body>
+</html>
