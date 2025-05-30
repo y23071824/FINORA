@@ -179,10 +179,10 @@ async function fetchRates() {
   } catch {
     try {
       const stored = localStorage.getItem("exchangeRates");
-      if (typeof stored === "string") {
+      if (stored && typeof stored === "string") {
         exchangeRates = JSON.parse(stored);
       } else {
-        throw new Error("No valid local exchange rate");
+        throw new Error("No valid stored exchange rate");
       }
     } catch {
       exchangeRates = { USD: 1, TWD: 32, JPY: 0.22, EUR: 1.08 };
