@@ -434,9 +434,10 @@ document.addEventListener("DOMContentLoaded", () => {
       // 顯示使用者與帳本名稱
       const accountId = getSelectedAccount();
       const list = await FINORA_AUTH.fetchAccountList();
-      const displayName = list.find(acc => acc.id === accountId)?.displayName || accountId;
-      if (emailEl) emailEl.textContent = user.email;
-      if (accountEl) accountEl.textContent = displayName;
+      const MAX_ACCOUNT_COUNT = 3;
+const displayName = list.find(acc => acc.id === accountId)?.displayName || accountId;
+if (emailEl) emailEl.textContent = user.email;
+if (accountEl) accountEl.textContent = `${displayName}（${list.length} / ${MAX_ACCOUNT_COUNT}）`;accountEl) accountEl.textContent = displayName;
 
       // 表單綁定
       form.addEventListener("submit", handleSubmit);
