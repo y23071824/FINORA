@@ -19,23 +19,23 @@
   </div>
 
   <!-- ✅ 帳本選擇區 -->
-  <!-- ✅ 帳本選擇區 + 操作按鈕 -->
-<div id="account-control-wrapper" style="margin-top: 2rem;">
-  <label for="account-select">帳本選擇：</label>
-  <select id="account-select" style="width: 100%; margin-bottom: 0.5rem;"></select>
+  <div id="account-control-wrapper" style="margin-top: 2rem;">
+    <label for="account-select">帳本選擇：</label>
+    <select id="account-select" style="width: 100%; margin-bottom: 0.5rem;"></select>
 
-  <div style="display: flex; justify-content: center; gap: 1rem;">
-    <button id="rename-account-btn" title="重新命名帳本">✏️</button>
-    <button id="new-account-btn" title="新增帳本">➕</button>
-    <button id="delete-account-btn" title="刪除帳本">🗑️</button>
+    <div style="display: flex; justify-content: center; gap: 1rem;">
+      <button id="rename-account-btn" title="重新命名帳本">✏️</button>
+      <button id="new-account-btn" title="新增帳本">➕</button>
+      <button id="delete-account-btn" title="刪除帳本">🗑️</button>
+    </div>
+
+    <div id="new-account-input-group" style="display: none; margin-top: 0.5rem;">
+      <input type="text" id="new-account-name" placeholder="輸入新帳本名稱" />
+      <button id="save-new-account">儲存</button>
+    </div>
   </div>
 
-  <div id="new-account-input-group" style="display: none; margin-top: 0.5rem;">
-    <input type="text" id="new-account-name" placeholder="輸入新帳本名稱" />
-    <button id="save-new-account">儲存</button>
-  </div>
-</div>
-   <!-- ✅ 登入區 -->
+  <!-- ✅ 登入區 -->
   <div id="firebase-auth" style="margin-top: 1.5rem;">
     <button id="login-btn">🔐 使用 Google 帳號登入</button>
     <button id="logout-btn" style="display:none;">🚪 登出</button>
@@ -58,6 +58,8 @@
     const newAccountBtn = document.getElementById("new-account-btn");
     const newAccountInput = document.getElementById("new-account-name");
     const saveNewAccountBtn = document.getElementById("save-new-account");
+    const deleteBtn = document.getElementById("delete-account-btn");
+
     let accountMap = {};
 
     loginBtn.addEventListener("click", async () => {
@@ -133,8 +135,7 @@
     });
 
     newAccountBtn.addEventListener("click", () => {
-      newAccountInput.style.display = "inline-block";
-      saveNewAccountBtn.style.display = "inline-block";
+      document.getElementById("new-account-input-group").style.display = "block";
     });
 
     saveNewAccountBtn.addEventListener("click", async () => {
@@ -147,27 +148,7 @@
           alert("⚠️ 帳本數已達上限（最多 3 本）");
           return;
         }
-const deleteBtn = document.getElementById("delete-account-btn");
 
-deleteBtn.addEventListener("click", async () => {
-  const id = accountSelect.value;
-  const name = accountMap[id] || id;
-  if (!confirm(`確定要刪除帳本「${name}」？此操作無法復原。`)) return;
-
-  try {
-    await FINORA_AUTH.deleteAccount(id);
-    if (id === localStorage.getItem("selectedAccount")) {
-      localStorage.removeItem("selectedAccount");
-      alert("帳本已刪除，請重新選擇！");
-      location.reload();
-    } else {
-      await loadAccounts();
-    }
-  } catch (e) {
-    alert("⚠️ 無法刪除帳本，請確認已登入！");
-    console.error(e);
-  }
-});
         const id = `帳本${Date.now()}`;
         localStorage.setItem("selectedAccount", id);
         await FINORA_AUTH.setAccountDisplayName(id, name);
@@ -176,6 +157,26 @@ deleteBtn.addEventListener("click", async () => {
       } catch (e) {
         alert("⚠️ 請先登入後才能新增帳本！");
         console.warn(e);
+      }
+    });
+
+    deleteBtn.addEventListener("click", async () => {
+      const id = accountSelect.value;
+      const name = accountMap[id] || id;
+      if (!confirm(`確定要刪除帳本「${name}」？此操作無法復原。`)) return;
+
+      try {
+        await FINORA_AUTH.deleteAccount(id);
+        if (id === localStorage.getItem("selectedAccount")) {
+          localStorage.removeItem("selectedAccount");
+          alert("帳本已刪除，請重新選擇！");
+          location.reload();
+        } else {
+          await loadAccounts();
+        }
+      } catch (e) {
+        alert("⚠️ 無法刪除帳本，請確認已登入！");
+        console.error(e);
       }
     });
   </script>
