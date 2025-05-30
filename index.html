@@ -19,16 +19,21 @@
   </div>
 
   <!-- ✅ 帳本選擇區 -->
-  <section id="account-controls" style="margin-top: 2rem; display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
-  <select id="account-select" style="flex: 1;"></select>
-  <button id="rename-account-btn" title="重新命名帳本">✏️</button>
-  <button id="new-account-btn" title="新增帳本">➕</button>
-  <button id="delete-account-btn" title="刪除帳本">🗑️</button>
-</section>
+  <!-- ✅ 帳本選擇區 + 操作按鈕 -->
+<div id="account-control-wrapper" style="margin-top: 2rem;">
+  <label for="account-select">帳本選擇：</label>
+  <select id="account-select" style="width: 100%; margin-bottom: 0.5rem;"></select>
 
-<div id="new-account-input-group" style="display: none; margin-top: 0.5rem;">
-  <input type="text" id="new-account-name" placeholder="輸入新帳本名稱" />
-  <button id="save-new-account">儲存</button>
+  <div style="display: flex; justify-content: center; gap: 1rem;">
+    <button id="rename-account-btn" title="重新命名帳本">✏️</button>
+    <button id="new-account-btn" title="新增帳本">➕</button>
+    <button id="delete-account-btn" title="刪除帳本">🗑️</button>
+  </div>
+
+  <div id="new-account-input-group" style="display: none; margin-top: 0.5rem;">
+    <input type="text" id="new-account-name" placeholder="輸入新帳本名稱" />
+    <button id="save-new-account">儲存</button>
+  </div>
 </div>
 
   <!-- ✅ 帳本列表含刪除 -->
