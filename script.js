@@ -339,7 +339,42 @@ function render() {
     if (item.note) details.push(`備註: ${item.note}`);
 
     li.innerHTML = `<strong>${item.type}</strong>｜${details.join("，")}`;
+// 🔽 計算市值
+let marketValue = 0;
+if (item.type === "股票") {
+  marketValue = item.shares * item.price;
+} else if (item.type === "儲蓄保險") {
+  marketValue = item.insuranceAmount;
+} else if (item.type === "基金") {
+  marketValue = item.fundUnits * item.fundNav;
+} else if (item.type === "加密貨幣") {
+  marketValue = item.cryptoAmount * item.cryptoPrice;
+} else {
+  marketValue = item.amount || 0;
+}
 
+// 🔽 計算盈餘（僅適用股票/加密貨幣）
+let profit = 0;
+if ((item.type === "股票" || item.type === "加密貨幣") && item.cost) {
+  const costBasis = item.shares
+    ? item.shares * item.cost
+    : item.cryptoAmount * item.cost;
+  profit = marketValue - costBasis;
+}
+
+// 🔽 顯示市值與盈餘
+const valueEl = document.createElement("div");
+valueEl.style.fontSize = "0.9rem";
+valueEl.style.color = "#555";
+
+if (profit !== 0) {
+  const sign = profit > 0 ? "+" : "";
+  valueEl.textContent = `👉 市值：約 ${item.currency} ${marketValue.toLocaleString()}（盈餘 ${sign}${Math.round(profit).toLocaleString()}）`;
+} else {
+  valueEl.textContent = `👉 市值：約 ${item.currency} ${marketValue.toLocaleString()}`;
+}
+
+li.appendChild(valueEl);
     const actionDiv = document.createElement("span");
     actionDiv.className = "asset-actions";
 
