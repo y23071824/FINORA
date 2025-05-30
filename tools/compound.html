@@ -9,59 +9,7 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script src="../firebase-sync.js"></script>
-  <style>
-    body {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 2rem;
-      background: #fffaf8;
-      font-family: sans-serif;
-    }
-    h1, h2 {
-      text-align: center;
-      color: #c96374;
-    }
-    label {
-      display: block;
-      margin-top: 1rem;
-    }
-    input, select {
-      width: 100%;
-      padding: 0.5rem;
-      font-size: 1rem;
-    }
-    button {
-      margin-top: 1rem;
-      width: 100%;
-      padding: 0.7rem;
-      font-size: 1.1rem;
-      background-color: #c96374;
-      color: white;
-      border: none;
-      cursor: pointer;
-      border-radius: 8px;
-    }
-    #result, #exchange-rates, #totals, #category-totals {
-      margin-top: 1.5rem;
-      background: #fdf0f2;
-      padding: 1rem;
-      border-left: 5px solid #c96374;
-      border-radius: 6px;
-      font-size: 1.1rem;
-    }
-    .home-btn {
-      background-color: #c96374;
-      color: white;
-      font-size: 1.1rem;
-      padding: 0.7rem 1.4rem;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      display: block;
-      margin: 2rem auto 0;
-      text-align: center;
-    }
-  </style>
+  <script src="../script.js"></script>
 </head>
 <body>
   <h1>複利成長試算</h1>
@@ -78,6 +26,10 @@
   <input type="number" id="monthly" placeholder="例如：1000" />
   <button onclick="calculateCompound()">開始試算</button>
   <div id="result"></div>
+
+  <h2>目前資產總覽</h2>
+  <div id="category-totals"></div>
+  <div id="totals"></div>
 
   <h2>即時匯率</h2>
   <div id="exchange-rates"></div>
@@ -105,7 +57,34 @@
   <a href="../index.html" class="home-btn">← 返回首頁</a>
 
   <script>
-    let exchangeRates = {};
+    async function initializeCompoundPage() {
+      console.log("🔄 初始化複利試算頁...");
+      try {
+        await fetchExchangeRates();             // 載入即時匯率
+        await updateAllStockPrices();           // 載入股票與幣價
+
+        const account = getSelectedAccount();
+        const localKey = `assets_${account}`;
+        let assets = JSON.parse(localStorage.getItem(localKey) || "[]");
+
+        if (FINORA_AUTH.user && !assets.length) {
+          // 雲端有資料但 localStorage 無 → 從雲端下載
+          assets = await FINORA_AUTH.fetchUserAssets();
+          localStorage.setItem(localKey, JSON.stringify(assets));
+        }
+
+        renderAssets(assets);                   // 顯示資產總覽與市值
+
+        const saved = localStorage.getItem("compoundResult");
+        if (saved) {
+          document.getElementById("result").textContent =
+            `🔁 最近一次試算結果：約 ${Number(saved).toLocaleString()} 元`;
+        }
+      } catch (err) {
+        console.error("❌ 初始化失敗", err);
+        alert("初始化錯誤，請重新整理或確認登入狀態。");
+      }
+    }
 
     function calculateCompound() {
       const p = parseFloat(document.getElementById("principal").value) || 0;
@@ -126,7 +105,6 @@
 
       document.getElementById("result").textContent =
         `投入 ${y} 年後，期末總資產：約 ${total.toFixed(2)} 元`;
-
       localStorage.setItem("compoundResult", total.toFixed(2));
     }
 
@@ -140,43 +118,7 @@
         `${amt} ${from} ≈ ${result.toFixed(2)} ${to}`;
     }
 
-    async function fetchExchangeRates() {
-      try {
-        const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
-        const data = await res.json();
-        exchangeRates = data.rates;
-        exchangeRates["USD"] = 1;
-        renderExchangeRates();
-      } catch (e) {
-        console.warn("匯率查詢失敗，改用本地資料");
-        exchangeRates = { USD: 1, TWD: 30, JPY: 150, EUR: 0.9 };
-        renderExchangeRates();
-      }
-    }
-
-    function renderExchangeRates() {
-      const container = document.getElementById("exchange-rates");
-      container.innerHTML = Object.entries(exchangeRates)
-        .map(([currency, rate]) => `<div>1 USD = ${rate} ${currency}</div>`)
-        .join("");
-    }
-
-    function initializeCompoundPage() {
-      try {
-        const saved = localStorage.getItem("compoundResult");
-        if (saved) {
-          document.getElementById("result").textContent =
-            `🔁 最近一次試算結果：約 ${Number(saved).toLocaleString()} 元`;
-        }
-      } catch (e) {
-        console.error("初始化失敗", e);
-      }
-    }
-
-    document.addEventListener("DOMContentLoaded", async () => {
-      await fetchExchangeRates();
-      initializeCompoundPage();
-    });
+    document.addEventListener("DOMContentLoaded", initializeCompoundPage);
   </script>
 </body>
 </html>
