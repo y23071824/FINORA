@@ -162,4 +162,15 @@ a {
   background-color: #ddd;
 }
 
+<style>
+  #new-account-input-group input {
+    padding: 0.3rem;
+    font-size: 1rem;
+    width: 70%;
+  }
+  #new-account-input-group button {
+    padding: 0.3rem 1rem;
+    font-size: 1rem;
+  }
+</style>
 
