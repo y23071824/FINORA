@@ -37,7 +37,7 @@
       cursor: pointer;
       border-radius: 8px;
     }
-    #result, #exchange-rates {
+    #result, #exchange-rates, #totals, #category-totals {
       margin-top: 1.5rem;
       background: #fdf0f2;
       padding: 1rem;
@@ -61,7 +61,7 @@
 </head>
 <body>
   <h1>複利成長試算</h1>
-  <label>初始投入金額（自動載入目前資產總額）</label>
+  <label>初始投入金額</label>
   <input type="number" id="principal" placeholder="例如：100000" />
   <label>預估年報酬率（%）</label>
   <input type="number" id="rate" placeholder="例如：5" />
@@ -73,6 +73,10 @@
   <input type="number" id="monthly" placeholder="例如：1000" />
   <button onclick="calculate()">開始試算</button>
   <div id="result"></div>
+
+  <h2>目前資產總覽</h2>
+  <div id="category-totals"></div>
+  <div id="totals"></div>
 
   <h2>即時匯率</h2>
   <div id="exchange-rates"></div>
@@ -101,6 +105,11 @@
 
   <script>
     let exchangeRates = {};
+    let assets = [];
+
+    function getSelectedAccount() {
+      return localStorage.getItem("selectedAccount") || "default";
+    }
 
     function calculate() {
       const p = parseFloat(document.getElementById("principal").value) || 0;
@@ -120,6 +129,47 @@
       localStorage.setItem("compoundResult", total.toFixed(2));
     }
 
+    function renderAssets() {
+      const totals = {}, categories = {};
+      const categoryDiv = document.getElementById("category-totals");
+      const totalsDiv = document.getElementById("totals");
+      categoryDiv.innerHTML = ""; totalsDiv.innerHTML = "";
+
+      assets.forEach(asset => {
+        const type = asset.type || "未分類";
+        const currency = asset.currency || "未指定";
+        let amount = parseFloat(asset.amount) || 0;
+
+        if (type === "股票" && asset.shares && asset.price) {
+          amount = parseFloat(asset.shares) * parseFloat(asset.price);
+        }
+        if (type === "加密貨幣" && asset.cryptoAmount && asset.cryptoPrice) {
+          amount = parseFloat(asset.cryptoAmount) * parseFloat(asset.cryptoPrice);
+        }
+        if (type === "基金" && asset.fundUnits && asset.fundNav) {
+          amount = parseFloat(asset.fundUnits) * parseFloat(asset.fundNav);
+        }
+
+        if (!isNaN(amount) && amount > 0) {
+          totals[currency] = (totals[currency] || 0) + amount;
+          const key = `${type}｜${currency}`;
+          categories[key] = (categories[key] || 0) + amount;
+        }
+      });
+
+      categoryDiv.innerHTML = "<b>📊 資產分類加總：</b><br>";
+      for (const [key, val] of Object.entries(categories)) {
+        categoryDiv.innerHTML += `${key}：${val.toLocaleString()}<br>`;
+      }
+
+      totalsDiv.innerHTML = "<b>幣別總額與折合台幣：</b><br>";
+      for (const [cur, amt] of Object.entries(totals)) {
+        const rate = exchangeRates[cur];
+        const twd = rate ? (amt / rate) * exchangeRates["TWD"] : "?";
+        totalsDiv.innerHTML += `${cur}：${amt.toFixed(2)}（約 TWD ${twd !== "?" ? twd.toFixed(0) : "?"}）<br>`;
+      }
+    }
+
     async function fetchRates() {
       try {
         const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR,USD");
@@ -127,8 +177,12 @@
         exchangeRates = data.rates;
         localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
       } catch {
-        const stored = localStorage.getItem("exchangeRates");
-        exchangeRates = stored ? JSON.parse(stored) : { USD: 1, TWD: 32, JPY: 0.22, EUR: 1.08 };
+        try {
+          const stored = localStorage.getItem("exchangeRates");
+          exchangeRates = stored ? JSON.parse(stored) : { USD: 1, TWD: 32, JPY: 0.22, EUR: 1.08 };
+        } catch {
+          exchangeRates = { USD: 1, TWD: 32, JPY: 0.22, EUR: 1.08 };
+        }
       }
 
       document.getElementById("exchange-rates").innerHTML =
@@ -148,60 +202,33 @@
     }
 
     async function loadAssetsAndSetPrincipal() {
-      let assets = [];
-      if (window.FINORA_AUTH) {
-        const user = firebase.auth().currentUser;
-        if (user) {
-          assets = await FINORA_AUTH.loadUserAssets();
-        } else {
-          const key = localStorage.getItem("selectedAccount") || "default";
-          assets = JSON.parse(localStorage.getItem(`assets_${key}`) || "[]");
-        }
+      const account = getSelectedAccount();
+      if (window.FINORA_AUTH && FINORA_AUTH.currentUser) {
+        assets = await FINORA_AUTH.loadUserAssets();
+      } else {
+        assets = JSON.parse(localStorage.getItem(`assets_${account}`) || "[]");
       }
-
-      let totalTWD = 0;
-      const rates = JSON.parse(localStorage.getItem("exchangeRates") || "{}");
-
-      assets.forEach(asset => {
-        let amount = 0;
-        const type = asset.type;
-        const currency = asset.currency || "TWD";
-
-        if (type === "股票" && asset.shares && asset.price) {
-          amount = parseFloat(asset.shares) * parseFloat(asset.price);
-        } else if (type === "加密貨幣" && asset.cryptoAmount && asset.cryptoPrice) {
-          amount = parseFloat(asset.cryptoAmount) * parseFloat(asset.cryptoPrice);
-        } else if (type === "基金" && asset.fundUnits && asset.fundNav) {
-          amount = parseFloat(asset.fundUnits) * parseFloat(asset.fundNav);
-        } else if (asset.amount) {
-          amount = parseFloat(asset.amount);
-        }
-
-        if (!isNaN(amount)) {
-          const rate = rates[currency];
-          if (rate) {
-            const usdBase = amount / rate;
-            const twd = usdBase * rates["TWD"];
-            totalTWD += twd;
-          }
-        }
-      });
-
-      document.getElementById("principal").value = totalTWD.toFixed(0);
+      renderAssets();
     }
 
     document.addEventListener("DOMContentLoaded", async () => {
-      const saved = localStorage.getItem("compoundResult");
-      if (saved) {
-        document.getElementById("result").textContent = `🔁 最近一次試算結果：約 ${Number(saved).toLocaleString()} 元`;
-      }
+      try {
+        const saved = localStorage.getItem("compoundResult");
+        if (saved) {
+          document.getElementById("result").textContent =
+            `🔁 最近一次試算結果：約 ${Number(saved).toLocaleString()} 元`;
+        }
 
-      await fetchRates();
+        await fetchRates();
 
-      if (window.FINORA_AUTH) {
-        FINORA_AUTH.onUserChanged(() => loadAssetsAndSetPrincipal());
-      } else {
-        await loadAssetsAndSetPrincipal();
+        if (window.FINORA_AUTH) {
+          FINORA_AUTH.onUserChanged(loadAssetsAndSetPrincipal);
+        } else {
+          await loadAssetsAndSetPrincipal();
+        }
+      } catch (e) {
+        console.error("❌ 初始化失敗", e);
+        alert("初始化錯誤，請重新整理或檢查網路連線");
       }
     });
   </script>
