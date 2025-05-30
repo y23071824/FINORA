@@ -1,4 +1,5 @@
-// ✅ firebase-sync.js（強化版：防呆 + 錯誤提示）
+// ✅ firebase-sync.js（強化版：防呆 + 錯誤提示 + 限制帳本數量 + 刪除帳本功能）
+
 const firebaseConfig = {
   apiKey: "AIzaSyBJE12oIoK4gr153jkNBokQ-d3ohnN4aWE",
   authDomain: "finora-d8cb3.firebaseapp.com",
@@ -13,6 +14,8 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 const provider = new firebase.auth.GoogleAuthProvider();
+
+const MAX_ACCOUNT_COUNT = 3;
 
 let currentUser = null;
 let selectedAccount = localStorage.getItem("selectedAccount") || null;
@@ -48,6 +51,35 @@ async function setAccountDisplayName(accountId, displayName) {
   if (!displayName || displayName.trim() === "") throw new Error("帳本名稱不能為空");
   const docRef = db.collection("accounts").doc(accountId);
   await docRef.set({ uid: currentUser.uid, displayName }, { merge: true });
+}
+
+// ✅ 建立帳本（限制最多 3 本）
+async function createNewAccount(displayName) {
+  ensureLoggedIn();
+  const list = await fetchAccountList();
+  if (list.length >= MAX_ACCOUNT_COUNT) throw new Error(`最多只能建立 ${MAX_ACCOUNT_COUNT} 本帳本`);
+  const newId = Date.now().toString();
+  await setAccountDisplayName(newId, displayName);
+  return newId;
+}
+
+// ✅ 刪除帳本
+async function deleteAccount(accountId) {
+  ensureLoggedIn();
+  if (!accountId) throw new Error("帳本 ID 無效");
+  const ref = db.collection("accounts").doc(accountId);
+  const assetRef = ref.collection("assets");
+  const assets = await assetRef.get();
+  const batch = db.batch();
+  assets.forEach(doc => batch.delete(doc.ref));
+  batch.delete(ref);
+  await batch.commit();
+
+  if (selectedAccount === accountId) {
+    selectedAccount = null;
+    localStorage.removeItem("selectedAccount");
+    localStorage.removeItem("assets");
+  }
 }
 
 // ✅ 全域 FINORA_AUTH 方法
@@ -136,5 +168,7 @@ window.FINORA_AUTH = {
   },
 
   fetchAccountList,
-  setAccountDisplayName
+  setAccountDisplayName,
+  createNewAccount,
+  deleteAccount
 };
