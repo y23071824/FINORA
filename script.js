@@ -23,17 +23,29 @@ async function fetchExchangeRates() {
   try {
     const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
     const data = await res.json();
+
+    if (!data || !data.rates) throw new Error("無效匯率資料");
+
     exchangeRates = data.rates;
-    exchangeRates["USD"] = 1; // ✅ 補上 USD 匯率
+    exchangeRates["USD"] = 1; // 加上 USD 自己
     exchangeRates["TWD"] = exchangeRates["TWD"] || 30;
     exchangeRates["JPY"] = exchangeRates["JPY"] || 150;
     exchangeRates["EUR"] = exchangeRates["EUR"] || 0.9;
+
     localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
   } catch (e) {
     console.warn("⚠️ 匯率查詢失敗，改用本地資料");
-    exchangeRates = JSON.parse(localStorage.getItem("exchangeRates") || "{}");
+    try {
+      const stored = localStorage.getItem("exchangeRates");
+      exchangeRates = stored && stored !== "undefined"
+        ? JSON.parse(stored)
+        : { USD: 1, TWD: 30, JPY: 150, EUR: 0.9 };
+    } catch {
+      exchangeRates = { USD: 1, TWD: 30, JPY: 150, EUR: 0.9 };
+    }
   }
 }
+
 
 // ===== 股票現價查詢 =====
 async function fetchStockPrice(symbol, category) {
