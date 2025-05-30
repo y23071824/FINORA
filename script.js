@@ -392,70 +392,80 @@ function render() {
 }
 
 // ===== Part 4：啟動函式與其他 =====
-document.addEventListener("DOMContentLoaded", async () => {
-  try {
-    // 🔗 元素綁定
-    form = document.getElementById("asset-form");
-    typeSelect = document.getElementById("type");
-    stockFields = document.getElementById("stock-fields");
-    insuranceFields = document.getElementById("insurance-fields");
-    amountField = document.getElementById("amount-field");
-    assetList = document.getElementById("asset-list");
-    totalsList = document.getElementById("totals-list");
-    profitList = document.getElementById("stock-profit-list");
-    bankDatalist = document.getElementById("bank-list");
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("🔄 系統初始化中...");
 
-    // 表單功能綁定
-    form.addEventListener("submit", handleSubmit);
-    typeSelect.addEventListener("change", toggleFields);
-
-    // 銀行選單初始化
-    bankHistory.forEach((b) => {
-      const option = document.createElement("option");
-      option.value = b;
-      bankDatalist.appendChild(option);
-    });
-
-    // 股票代碼輸入後自動查價
-    const stockSymbolInput = document.getElementById("stock-symbol");
-    const stockCategorySelect = document.getElementById("stock-category");
-    const stockPriceInput = document.getElementById("stock-price");
-    if (stockSymbolInput && stockCategorySelect && stockPriceInput) {
-      stockSymbolInput.addEventListener("blur", async () => {
-        const symbol = stockSymbolInput.value.trim();
-        const category = stockCategorySelect.value;
-        if (!symbol || !category) return;
-        const price = await fetchStockPrice(symbol, category);
-        if (price !== null) stockPriceInput.value = price;
-      });
+  FINORA_AUTH.onUserChanged(async (user) => {
+    if (!user) {
+      alert("⚠️ 尚未登入，請先登入 Google 帳號");
+      return;
     }
 
-    // 加密貨幣代碼輸入後自動查價
-    const cryptoSymbolInput = document.getElementById("crypto-symbol");
-    const cryptoPriceInput = document.getElementById("crypto-price");
-    if (cryptoSymbolInput && cryptoPriceInput) {
-      cryptoSymbolInput.addEventListener("blur", async () => {
-        const symbol = cryptoSymbolInput.value.trim().toLowerCase();
-        if (!symbol) return;
-        try {
-          const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${symbol}&vs_currencies=usd`);
-          const data = await res.json();
-          const price = data[symbol]?.usd;
-          if (price) cryptoPriceInput.value = price;
-        } catch (e) {
-          console.error("❌ 查詢加密貨幣價格錯誤", e);
-        }
-      });
-    }
+    try {
+      // 🔗 元素綁定
+      form = document.getElementById("asset-form");
+      typeSelect = document.getElementById("type");
+      stockFields = document.getElementById("stock-fields");
+      insuranceFields = document.getElementById("insurance-fields");
+      amountField = document.getElementById("amount-field");
+      assetList = document.getElementById("asset-list");
+      totalsList = document.getElementById("totals-list");
+      profitList = document.getElementById("stock-profit-list");
+      bankDatalist = document.getElementById("bank-list");
 
-    // ✅ 執行初始化程序
-    await fetchExchangeRates();
-    await updateAllStockPrices();
-    toggleFields();
-    render();
-    console.log("✅ 初始化完成");
-  } catch (e) {
-    console.error("❌ 初始化失敗", e);
-    alert("系統初始化錯誤，請重新整理頁面");
-  }
+      // 表單功能綁定
+      form.addEventListener("submit", handleSubmit);
+      typeSelect.addEventListener("change", toggleFields);
+
+      // 銀行記憶選單
+      bankHistory.forEach((b) => {
+        const option = document.createElement("option");
+        option.value = b;
+        bankDatalist.appendChild(option);
+      });
+
+      // 股票查價
+      const stockSymbolInput = document.getElementById("stock-symbol");
+      const stockCategorySelect = document.getElementById("stock-category");
+      const stockPriceInput = document.getElementById("stock-price");
+      if (stockSymbolInput && stockCategorySelect && stockPriceInput) {
+        stockSymbolInput.addEventListener("blur", async () => {
+          const symbol = stockSymbolInput.value.trim();
+          const category = stockCategorySelect.value;
+          if (!symbol || !category) return;
+          const price = await fetchStockPrice(symbol, category);
+          if (price !== null) stockPriceInput.value = price;
+        });
+      }
+
+      // 加密貨幣查價
+      const cryptoSymbolInput = document.getElementById("crypto-symbol");
+      const cryptoPriceInput = document.getElementById("crypto-price");
+      if (cryptoSymbolInput && cryptoPriceInput) {
+        cryptoSymbolInput.addEventListener("blur", async () => {
+          const symbol = cryptoSymbolInput.value.trim().toLowerCase();
+          if (!symbol) return;
+          try {
+            const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${symbol}&vs_currencies=usd`);
+            const data = await res.json();
+            const price = data[symbol]?.usd;
+            if (price) cryptoPriceInput.value = price;
+          } catch (e) {
+            console.error("❌ 查詢加密貨幣價格錯誤", e);
+          }
+        });
+      }
+
+      // ✅ 執行初始化邏輯
+      await fetchExchangeRates();
+      await updateAllStockPrices();
+      toggleFields();
+      render();
+      console.log("✅ 初始化完成");
+
+    } catch (e) {
+      console.error("❌ 初始化失敗", e);
+      alert("系統初始化錯誤，請重新整理頁面");
+    }
+  });
 });
