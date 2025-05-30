@@ -495,7 +495,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // 執行初始化流程
       await fetchExchangeRates();
       await updateAllStockPrices();
-      assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");  // 重新抓最新的資料
+      assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
       toggleFields();
       render();
       console.log("✅ 初始化完成");
@@ -503,6 +503,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (e) {
       console.error("❌ 初始化失敗", e);
       alert("系統初始化錯誤，請重新整理頁面");
-     }
+    }
   });
 });
+
