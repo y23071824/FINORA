@@ -37,9 +37,7 @@
 </div>
 
   <!-- ✅ 帳本列表含刪除 -->
-  <div id="account-list" style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;"></div>
-
-  <!-- ✅ 登入區 -->
+   <!-- ✅ 登入區 -->
   <div id="firebase-auth" style="margin-top: 1.5rem;">
     <button id="login-btn">🔐 使用 Google 帳號登入</button>
     <button id="logout-btn" style="display:none;">🚪 登出</button>
@@ -114,78 +112,7 @@
         accountSelect.value = selected;
         localStorage.setItem("selectedAccount", selected);
       }
-
-      renderAccountList(list);
     }
-
- function renderAccountList(list) {
-  const container = document.getElementById("account-list");
-  container.innerHTML = "";
-
-  // 容器設定為橫向排列、最多顯示三個帳本
-  container.style.display = "flex";
-  container.style.flexDirection = "row";
-  container.style.flexWrap = "nowrap";
-  container.style.justifyContent = "space-between";
-  container.style.gap = "0.5em";
-  container.style.padding = "0";
-  container.style.margin = "0";
-  container.style.listStyle = "none";
-
-  list.forEach(account => {
-    const wrapper = document.createElement("div");
-    wrapper.style.flex = "1 1 30%";
-    wrapper.style.display = "flex";
-    wrapper.style.alignItems = "center";
-    wrapper.style.justifyContent = "space-between";
-    wrapper.style.border = "1px solid #ccc";
-    wrapper.style.borderRadius = "10px";
-    wrapper.style.padding = "0.4em 0.6em";
-    wrapper.style.background = "#f9f9f9";
-    wrapper.style.fontSize = "0.9em";
-    wrapper.style.minWidth = "0";
-
-    const nameSpan = document.createElement("span");
-    nameSpan.textContent = account.displayName || account.id;
-    nameSpan.style.whiteSpace = "nowrap";
-    nameSpan.style.overflow = "hidden";
-    nameSpan.style.textOverflow = "ellipsis";
-    nameSpan.style.flex = "1";
-
-    const delBtn = document.createElement("button");
-    delBtn.textContent = "🗑️";
-    delBtn.title = "刪除帳本";
-    delBtn.style.fontSize = "0.8em";
-    delBtn.style.padding = "0.2em";
-    delBtn.style.border = "none";
-    delBtn.style.background = "#fee";
-    delBtn.style.borderRadius = "50%";
-    delBtn.style.color = "#b00";
-    delBtn.style.cursor = "pointer";
-    delBtn.style.marginLeft = "0.5em";
-
-    delBtn.onclick = async () => {
-      if (!confirm(`確定要刪除帳本「${account.displayName || account.id}」？此操作無法復原。`)) return;
-      try {
-        await FINORA_AUTH.deleteAccount(account.id);
-        if (account.id === localStorage.getItem("selectedAccount")) {
-          localStorage.removeItem("selectedAccount");
-          alert("帳本已刪除，請重新選擇！");
-          location.reload();
-        } else {
-          await loadAccounts();
-        }
-      } catch (e) {
-        alert("⚠️ 無法刪除帳本，請確認已登入！");
-        console.error(e);
-      }
-    };
-
-    wrapper.appendChild(nameSpan);
-    wrapper.appendChild(delBtn);
-    container.appendChild(wrapper);
-  });
-}
 
     accountSelect.addEventListener("change", () => {
       const selected = accountSelect.value;
