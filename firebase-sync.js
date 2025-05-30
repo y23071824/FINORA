@@ -1,4 +1,4 @@
-// ✅ firebase-sync.js（強化版：防呆 + 錯誤提示 + 限制帳本數量 + 刪除帳本功能）
+// ✅ firebase-sync.js（強化版：防呆 + 帳本切換 + 雲端同步 + 修正登入遺失）
 
 const firebaseConfig = {
   apiKey: "AIzaSyBJE12oIoK4gr153jkNBokQ-d3ohnN4aWE",
@@ -20,13 +20,18 @@ const MAX_ACCOUNT_COUNT = 3;
 let currentUser = null;
 let selectedAccount = localStorage.getItem("selectedAccount") || null;
 
-// ✅ 登入檢查（會更新 currentUser）
+// ✅ 共用 localStorage key 函式
+function getLocalStorageKey() {
+  return `assets_${selectedAccount || "default"}`;
+}
+
+// ✅ 登入檢查
 function ensureLoggedIn() {
   currentUser = firebase.auth().currentUser;
   if (!currentUser) throw new Error("尚未登入");
 }
 
-// ✅ 取得資產資料庫參考
+// ✅ 雲端資產參考
 function getAccountAssetRef() {
   ensureLoggedIn();
   if (!selectedAccount) throw new Error("尚未選擇帳戶");
@@ -35,7 +40,7 @@ function getAccountAssetRef() {
            .collection("assets");
 }
 
-// ✅ 取得目前使用者的帳本清單
+// ✅ 取得帳本清單
 async function fetchAccountList() {
   ensureLoggedIn();
   const snapshot = await db.collection("accounts")
@@ -44,7 +49,7 @@ async function fetchAccountList() {
   return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }
 
-// ✅ 設定帳本名稱
+// ✅ 設定帳本顯示名稱
 async function setAccountDisplayName(accountId, displayName) {
   ensureLoggedIn();
   if (!accountId) throw new Error("帳本 ID 無效");
@@ -53,7 +58,7 @@ async function setAccountDisplayName(accountId, displayName) {
   await docRef.set({ uid: currentUser.uid, displayName }, { merge: true });
 }
 
-// ✅ 建立帳本（限制最多 3 本）
+// ✅ 建立帳本（最多 3 本）
 async function createNewAccount(displayName) {
   ensureLoggedIn();
   const list = await fetchAccountList();
@@ -63,7 +68,7 @@ async function createNewAccount(displayName) {
   return newId;
 }
 
-// ✅ 刪除帳本
+// ✅ 刪除帳本（含所有資產）
 async function deleteAccount(accountId) {
   ensureLoggedIn();
   if (!accountId) throw new Error("帳本 ID 無效");
@@ -78,7 +83,7 @@ async function deleteAccount(accountId) {
   if (selectedAccount === accountId) {
     selectedAccount = null;
     localStorage.removeItem("selectedAccount");
-    localStorage.removeItem("assets");
+    localStorage.removeItem(getLocalStorageKey());
   }
 }
 
@@ -96,7 +101,7 @@ window.FINORA_AUTH = {
 
       const cloudAssets = await FINORA_AUTH.loadUserAssets();
       if (cloudAssets.length > 0) {
-        localStorage.setItem("assets", JSON.stringify(cloudAssets));
+        localStorage.setItem(getLocalStorageKey(), JSON.stringify(cloudAssets));
       }
 
       return currentUser;
@@ -112,7 +117,7 @@ window.FINORA_AUTH = {
     currentUser = null;
     selectedAccount = null;
     localStorage.removeItem("selectedAccount");
-    localStorage.removeItem("assets");
+    localStorage.removeItem(getLocalStorageKey());
   },
 
   onUserChanged: (callback) => {
@@ -126,7 +131,7 @@ window.FINORA_AUTH = {
           const ref = getAccountAssetRef();
           const snap = await ref.get();
           const assets = snap.docs.map(d => d.data());
-          localStorage.setItem("assets", JSON.stringify(assets));
+          localStorage.setItem(getLocalStorageKey(), JSON.stringify(assets));
         } catch (e) {
           console.warn("❗雲端讀取失敗：", e);
         }
