@@ -172,7 +172,8 @@
           document.getElementById("result").textContent =
             `🔁 最近一次試算結果：約 ${Number(saved).toLocaleString()} 元`;
         }
-
+        }
+      
         await fetchExchangeRates(); // ✅ 確保有抓匯率
 
         if (window.FINORA_AUTH) {
