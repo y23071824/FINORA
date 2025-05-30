@@ -170,27 +170,31 @@
       }
     }
 
-    async function fetchRates() {
-      try {
-        const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR,USD");
-        const data = await res.json();
-        exchangeRates = data.rates;
-        localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
-      } catch {
-        try {
-          const stored = localStorage.getItem("exchangeRates");
-          exchangeRates = stored ? JSON.parse(stored) : { USD: 1, TWD: 32, JPY: 0.22, EUR: 1.08 };
-        } catch {
-          exchangeRates = { USD: 1, TWD: 32, JPY: 0.22, EUR: 1.08 };
-        }
+async function fetchRates() {
+  try {
+    const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR,USD");
+    const data = await res.json();
+    exchangeRates = data.rates;
+    localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
+  } catch {
+    try {
+      const stored = localStorage.getItem("exchangeRates");
+      if (typeof stored === "string") {
+        exchangeRates = JSON.parse(stored);
+      } else {
+        throw new Error("No valid local exchange rate");
       }
-
-      document.getElementById("exchange-rates").innerHTML =
-        Object.entries(exchangeRates)
-          .filter(([k]) => k !== "USD")
-          .map(([k, v]) => `1 USD = ${v.toFixed(2)} ${k}`)
-          .join("<br>");
+    } catch {
+      exchangeRates = { USD: 1, TWD: 32, JPY: 0.22, EUR: 1.08 };
     }
+  }
+
+  document.getElementById("exchange-rates").innerHTML =
+    Object.entries(exchangeRates)
+      .filter(([k]) => k !== "USD")
+      .map(([k, v]) => `1 USD = ${v.toFixed(2)} ${k}`)
+      .join("<br>");
+}
 
     function convert() {
       const amt = parseFloat(document.getElementById("fx-amount").value) || 0;
