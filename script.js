@@ -81,6 +81,7 @@ async function updateAllStockPrices() {
   if (typeof FINORA_AUTH !== "undefined" && FINORA_AUTH.saveUserAssets) {
   await FINORA_AUTH.saveUserAssets(assets);
 }
+  }
 
 // ===== DOMContentLoaded 初始化程序 =====
 document.addEventListener("DOMContentLoaded", async () => {
