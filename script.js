@@ -1,6 +1,6 @@
 // ===== Part 1：初始化與查詢 =====
 
-// 取得目前帳本的 key
+// ✅ 帳本選擇與 LocalStorage Key 取得
 function getSelectedAccount() {
   return localStorage.getItem("selectedAccount") || "default";
 }
@@ -8,17 +8,17 @@ function getLocalStorageKey() {
   return `assets_${getSelectedAccount()}`;
 }
 
-// 初始化資料變數
+// ✅ 初始化變數
 let assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
 let bankHistory = JSON.parse(localStorage.getItem("banks") || "[]");
 let exchangeRates = {};
 let editIndex = null;
 
-// DOM 元素先用 let 宣告（之後 DOMContentLoaded 時再綁定）
+// ✅ DOM 元素定義
 let form, typeSelect, stockFields, insuranceFields, amountField;
 let assetList, totalsList, profitList, bankDatalist;
 
-// ===== 匯率查詢函式 =====
+// ===== 匯率查詢 =====
 async function fetchExchangeRates() {
   try {
     const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
@@ -48,7 +48,7 @@ async function fetchExchangeRates() {
   }
 }
 
-// ===== 股票現價查詢 =====
+// ===== 股票查價（TwelveData / 台股）=====
 async function fetchStockPrice(symbol, category) {
   try {
     if (category === "台股") {
@@ -65,7 +65,7 @@ async function fetchStockPrice(symbol, category) {
       const close = parseFloat(lastRow[6].replace(/,/g, ""));
       return close;
     } else {
-      const apiKey = "de909496c6754a89bc33db0306c2def8"; // 你的 TwelveData API 金鑰
+      const apiKey = "de909496c6754a89bc33db0306c2def8"; // Your TwelveData API key
       const url = `https://api.twelvedata.com/price?symbol=${symbol}&apikey=${apiKey}`;
       const res = await fetch(url);
       const data = await res.json();
@@ -73,7 +73,7 @@ async function fetchStockPrice(symbol, category) {
       return parseFloat(data.price);
     }
   } catch (e) {
-    console.error("查詢股價錯誤", e);
+    console.error("❌ 股票查價錯誤", e);
     return null;
   }
 }
@@ -92,14 +92,14 @@ async function updateAllStockPrices() {
   assets = updatedAssets;
   localStorage.setItem(getLocalStorageKey(), JSON.stringify(assets));
   if (typeof FINORA_AUTH !== "undefined" && FINORA_AUTH.saveUserAssets) {
-  await FINORA_AUTH.saveUserAssets(assets);
-}
+    await FINORA_AUTH.saveUserAssets(assets);
   }
+}
 
 // ===== DOMContentLoaded 初始化程序 =====
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    // 🔗 元素綁定
+    // 綁定表單與畫面元素
     form = document.getElementById("asset-form");
     typeSelect = document.getElementById("type");
     stockFields = document.getElementById("stock-fields");
@@ -110,18 +110,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     profitList = document.getElementById("stock-profit-list");
     bankDatalist = document.getElementById("bank-list");
 
-    // 表單功能綁定
+    // 表單事件綁定
     form.addEventListener("submit", handleSubmit);
     typeSelect.addEventListener("change", toggleFields);
 
-    // 銀行選單初始化
+    // 銀行歷史填入 datalist
     bankHistory.forEach((b) => {
       const option = document.createElement("option");
       option.value = b;
       bankDatalist.appendChild(option);
     });
 
-    // ===== 股票代碼輸入後自動查價 =====
+    // 股票查價
     const stockSymbolInput = document.getElementById("stock-symbol");
     const stockCategorySelect = document.getElementById("stock-category");
     const stockPriceInput = document.getElementById("stock-price");
@@ -141,7 +141,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
     }
 
-    // ===== 加密貨幣輸入後自動查價 =====
+    // 加密貨幣查價
     const cryptoSymbolInput = document.getElementById("crypto-symbol");
     const cryptoPriceInput = document.getElementById("crypto-price");
 
@@ -160,15 +160,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.warn(`⚠️ 查無 ${symbol} 價格`);
           }
         } catch (e) {
-          console.error("❌ 查詢加密貨幣價格錯誤", e);
+          console.error("❌ 加密貨幣查價錯誤", e);
         }
       });
     }
 
-    // ===== 執行初始化流程 =====
+    // 初始化流程執行
     await fetchExchangeRates();
     await updateAllStockPrices();
-assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");  // ⭐ 重新抓最新的資料
     toggleFields();
     render();
     console.log("✅ 初始化完成");
@@ -177,6 +176,7 @@ assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");  // ⭐
     alert("系統初始化錯誤，請重新整理頁面");
   }
 });
+
 
 
 // ===== Part 2：表單處理與存儲 =====
