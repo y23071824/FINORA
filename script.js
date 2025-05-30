@@ -411,6 +411,7 @@ document.addEventListener("DOMContentLoaded", () => {
   FINORA_AUTH.onUserChanged(async (user) => {
     const emailEl = document.getElementById("auth-email");
     const accountEl = document.getElementById("account-name");
+    const MAX_ACCOUNT_COUNT = 3;
 
     if (!user) {
       if (emailEl) emailEl.textContent = "（尚未登入）";
@@ -431,13 +432,12 @@ document.addEventListener("DOMContentLoaded", () => {
       profitList = document.getElementById("stock-profit-list");
       bankDatalist = document.getElementById("bank-list");
 
-      // 顯示使用者與帳本名稱
+      // 顯示使用者與帳本名稱＋帳本數提示
       const accountId = getSelectedAccount();
       const list = await FINORA_AUTH.fetchAccountList();
-      const MAX_ACCOUNT_COUNT = 3;
-const displayName = list.find(acc => acc.id === accountId)?.displayName || accountId;
-if (emailEl) emailEl.textContent = user.email;
-if (accountEl) accountEl.textContent = `${displayName}（${list.length} / ${MAX_ACCOUNT_COUNT}）`;accountEl) accountEl.textContent = displayName;
+      const displayName = list.find(acc => acc.id === accountId)?.displayName || accountId;
+      if (emailEl) emailEl.textContent = user.email;
+      if (accountEl) accountEl.textContent = `${displayName}（${list.length} / ${MAX_ACCOUNT_COUNT}）`;
 
       // 表單綁定
       form.addEventListener("submit", handleSubmit);
