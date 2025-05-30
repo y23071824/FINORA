@@ -229,6 +229,7 @@ async function handleSubmit(e) {
   if (typeof FINORA_AUTH !== "undefined" && FINORA_AUTH.saveUserAssets) {
     await FINORA_AUTH.saveUserAssets(assets);
   }
+}
 
   form.reset();
   toggleFields();
