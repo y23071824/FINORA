@@ -1,3 +1,4 @@
+<!-- compound.html -->
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -5,66 +6,6 @@
   <title>複利成長試算｜FINORA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="../style.css" />
-  <style>
-    body {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 2rem;
-      background: #fffaf8;
-      font-family: sans-serif;
-    }
-    h1, h2 {
-      text-align: center;
-      color: #c96374;
-    }
-    label {
-      display: block;
-      margin-top: 1rem;
-    }
-    input, select {
-      width: 100%;
-      padding: 0.5rem;
-      font-size: 1rem;
-    }
-    button {
-      margin-top: 1rem;
-      width: 100%;
-      padding: 0.7rem;
-      font-size: 1.1rem;
-      background-color: #c96374;
-      color: white;
-      border: none;
-      cursor: pointer;
-      border-radius: 8px;
-    }
-    #result, #exchange-rates, #totals, #category-totals {
-      margin-top: 1.5rem;
-      background: #fdf0f2;
-      padding: 1rem;
-      border-left: 5px solid #c96374;
-      border-radius: 6px;
-      font-size: 1.1rem;
-    }
-    .back-btn {
-      text-align: center;
-      margin-top: 2rem;
-    }
-    .home-btn {
-      background-color: #c96374;
-      color: white;
-      font-size: 1.1rem;
-      padding: 0.7rem 1.4rem;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-      margin-top: 2rem;
-      display: inline-block;
-    }
-    .home-btn:hover {
-      background-color: #a6485c;
-    }
-  </style>
 </head>
 <body>
   <h1>複利成長試算</h1>
@@ -115,8 +56,15 @@
     </a>
   </div>
 
+  <!-- Firebase SDK & 同步邏輯 -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="../firebase-sync.js"></script>
+
   <script>
     let exchangeRates = {};
+    let cloudAssets = [];
 
     function calculate() {
       const p = parseFloat(document.getElementById("principal").value) || 0;
@@ -136,14 +84,30 @@
       localStorage.setItem("compoundResult", total.toFixed(2));
     }
 
+    async function fetchRates() {
+      try {
+        const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR,USD");
+        const data = await res.json();
+        exchangeRates = data.rates;
+        localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
+      } catch {
+        exchangeRates = JSON.parse(localStorage.getItem("exchangeRates") || "{}");
+      }
+
+      document.getElementById("exchange-rates").innerHTML =
+        Object.entries(exchangeRates)
+          .filter(([k]) => k !== "USD")
+          .map(([k, v]) => `1 USD = ${v.toFixed(2)} ${k}`)
+          .join("<br>");
+    }
+
     function renderAssets() {
-      const list = JSON.parse(localStorage.getItem("assets") || "[]");
       const totals = {}, categories = {};
       const categoryDiv = document.getElementById("category-totals");
       const totalsDiv = document.getElementById("totals");
       categoryDiv.innerHTML = ""; totalsDiv.innerHTML = "";
 
-      list.forEach(asset => {
+      cloudAssets.forEach(asset => {
         const type = asset.type || "未分類";
         const currency = asset.currency || "未指定";
         let amount = parseFloat(asset.amount) || 0;
@@ -176,31 +140,6 @@
       }
     }
 
-    async function fetchRates() {
-      try {
-        const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR,USD");
-        const data = await res.json();
-        if (data && data.rates && typeof data.rates === "object") {
-          exchangeRates = data.rates;
-          localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
-        } else throw new Error("格式錯誤");
-      } catch {
-        try {
-          const stored = localStorage.getItem("exchangeRates");
-          exchangeRates = stored && stored !== "undefined" ? JSON.parse(stored) : {};
-        } catch {
-          exchangeRates = { USD: 1, TWD: 32, JPY: 0.22, EUR: 1.08 };
-        }
-      }
-
-      document.getElementById("exchange-rates").innerHTML =
-        Object.entries(exchangeRates)
-          .filter(([k]) => k !== "USD")
-          .map(([k, v]) => `1 USD = ${v.toFixed(2)} ${k}`)
-          .join("<br>");
-      renderAssets();
-    }
-
     function convert() {
       const amt = parseFloat(document.getElementById("fx-amount").value) || 0;
       const from = document.getElementById("fx-from").value;
@@ -210,13 +149,21 @@
       document.getElementById("fx-result").innerText = `${amt} ${from} ≈ ${result.toFixed(2)} ${to}`;
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", async () => {
+      await fetchRates();
+
+      try {
+        cloudAssets = await FINORA_AUTH.getUserAssets();
+        renderAssets();
+      } catch (e) {
+        console.warn("⚠️ 雲端資料載入失敗，請確認登入狀態", e);
+        document.getElementById("category-totals").innerHTML = "<span style='color:red'>⚠️ 無法取得雲端資產資料</span>";
+      }
+
       const saved = localStorage.getItem("compoundResult");
       if (saved) {
-        document.getElementById("result").textContent =
-          `🔁 最近一次試算結果：約 ${Number(saved).toLocaleString()} 元`;
+        document.getElementById("result").textContent = `🔁 最近一次試算結果：約 ${Number(saved).toLocaleString()} 元`;
       }
-      fetchRates();
     });
   </script>
 </body>
