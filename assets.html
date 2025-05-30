@@ -31,6 +31,7 @@
       </select>
     </label>
 
+    <!-- 股票欄位 -->
     <div id="stock-fields" style="display: none;">
       <label>股票類型：
         <select id="stock-category">
@@ -49,6 +50,7 @@
       <label>現價（每股）：<input type="number" id="stock-price" step="0.0001" /></label>
     </div>
 
+    <!-- 儲蓄保險欄位 -->
     <div id="insurance-fields" style="display: none;">
       <label>保單名稱：<input type="text" id="insurance-name" /></label>
       <label>保額：<input type="number" id="insurance-amount" /></label>
@@ -56,12 +58,14 @@
       <label>年繳保費：<input type="number" id="insurance-payment" /></label>
     </div>
 
+    <!-- 基金欄位 -->
     <div id="fund-fields" style="display: none;">
       <label>基金名稱：<input type="text" id="fund-name" /></label>
       <label>單位數：<input type="number" id="fund-units" /></label>
       <label>淨值：<input type="number" id="fund-nav" step="0.0001" /></label>
     </div>
 
+    <!-- 加密貨幣欄位 -->
     <div id="crypto-fields" style="display: none;">
       <label>幣種（如 BTC/ETH）：<input type="text" id="crypto-symbol" /></label>
       <label>數量：<input type="number" id="crypto-amount" /></label>
@@ -80,14 +84,16 @@
         <option value="EUR">EUR</option>
       </select>
     </label>
+
     <label>銀行：<input type="text" id="bank" list="bank-list" /></label>
     <label>備註：<input type="text" id="note" /></label>
+
     <button type="submit">儲存資產</button>
   </form>
 
   <datalist id="bank-list"></datalist>
 
-  <!-- ✅ 資產清單與加總 -->
+  <!-- ✅ 資產顯示區塊 -->
   <h2>資產列表</h2>
   <ul id="asset-list"></ul>
 
@@ -108,7 +114,7 @@
   <!-- ✅ 主程式邏輯 -->
   <script src="script.js"></script>
 
-  <!-- ✅ 驗證登入與帳本狀態 -->
+  <!-- ✅ 驗證登入與帳本顯示名稱 -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const emailEl = document.getElementById("auth-email");
@@ -121,14 +127,19 @@
         return;
       }
 
-      // 顯示帳本 ID（初始狀態），若 firebase-sync 有更漂亮名稱會在 Part 4 中覆蓋
       accountEl.textContent = accountId;
 
-      // 監聽登入狀態變化
       if (typeof FINORA_AUTH !== "undefined") {
         FINORA_AUTH.onUserChanged(user => {
           if (user) {
             emailEl.textContent = user.email;
+
+            FINORA_AUTH.fetchAccountList().then(list => {
+              const MAX_ACCOUNT_COUNT = 3;
+              const displayName = list.find(acc => acc.id === accountId)?.displayName || accountId;
+              accountEl.textContent = `${displayName}（${list.length} / ${MAX_ACCOUNT_COUNT}）`;
+            });
+
           } else {
             emailEl.textContent = "（尚未登入）";
           }
@@ -137,6 +148,7 @@
     });
   </script>
 
+  <!-- ✅ 返回首頁連結 -->
   <a href="index.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374">← 返回首頁</a>
 </body>
 </html>
