@@ -153,6 +153,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // ===== 執行初始化流程 =====
     await fetchExchangeRates();
     await updateAllStockPrices();
+assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");  // ⭐ 重新抓最新的資料
     toggleFields();
     render();
     console.log("✅ 初始化完成");
@@ -459,6 +460,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // ✅ 執行初始化邏輯
       await fetchExchangeRates();
       await updateAllStockPrices();
+      assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]"); // ⭐️ 加回這行
       toggleFields();
       render();
       console.log("✅ 初始化完成");
