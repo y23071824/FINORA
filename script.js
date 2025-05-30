@@ -378,13 +378,25 @@ function render() {
   totalsList.appendChild(groupTitle2);
 
   for (const [cur, amt] of Object.entries(totalsByCurrency)) {
-    const rate = exchangeRates[cur] || 1;
-    const converted = amt * rate;
-    totalTWD += converted;
-    const line = document.createElement("li");
-    line.textContent = `${cur}：${amt.toFixed(2)}（約 TWD ${converted.toFixed(0)}）`;
-    totalsList.appendChild(line);
+  let rate = 1;
+  const usdToTwd = exchangeRates["TWD"] || 30;
+
+  if (cur === "TWD") {
+    rate = 1;
+  } else if (cur === "USD") {
+    rate = usdToTwd;
+  } else {
+    const toUsd = 1 / exchangeRates[cur]; // 例如 1 JPY ≈ 1/144 = 0.0069 USD
+    rate = toUsd * usdToTwd;             // 換成 TWD
   }
+
+  const converted = amt * rate;
+  totalTWD += converted;
+
+  const line = document.createElement("li");
+  line.textContent = `${cur}：${amt.toFixed(2)}（約 TWD ${converted.toFixed(0)}）`;
+  totalsList.appendChild(line);
+}
 
   // ✅ 台幣總額加總顯示
   const totalLi = document.createElement("li");
