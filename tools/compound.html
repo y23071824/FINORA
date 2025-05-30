@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>複利成長試算｜FINORA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../style.css" />
   <style>
     body {
       max-width: 720px;
@@ -67,6 +68,7 @@
 </head>
 <body>
   <h1>複利成長試算</h1>
+
   <label>初始投入金額</label>
   <input type="number" id="principal" placeholder="例如：100000" />
   <label>預估年報酬率（%）</label>
@@ -147,15 +149,11 @@
         let amount = parseFloat(asset.amount) || 0;
 
         if (type === "股票" && asset.shares && asset.price) {
-          const shares = parseFloat(asset.shares);
-          const price = parseFloat(asset.price);
-          amount = shares * price;
+          amount = parseFloat(asset.shares) * parseFloat(asset.price);
         }
 
         if (type === "加密貨幣" && asset.cryptoAmount && asset.cryptoPrice) {
-          const qty = parseFloat(asset.cryptoAmount);
-          const price = parseFloat(asset.cryptoPrice);
-          amount = qty * price;
+          amount = parseFloat(asset.cryptoAmount) * parseFloat(asset.cryptoPrice);
         }
 
         if (!isNaN(amount) && amount > 0) {
