@@ -29,7 +29,7 @@
   </section>
 
   <!-- ✅ 帳本列表含刪除 -->
-  <ul id="account-list" style="margin-top: 1rem; padding-left: 1rem;"></ul>
+  <div id="account-list" style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;"></div>
 
   <!-- ✅ 登入區 -->
   <div id="firebase-auth" style="margin-top: 1.5rem;">
@@ -110,39 +110,60 @@
       renderAccountList(list);
     }
 
-    function renderAccountList(list) {
-      const ul = document.getElementById("account-list");
-      ul.innerHTML = "";
-      list.forEach(account => {
-        const li = document.createElement("li");
-        li.textContent = account.displayName || account.id;
+  function renderAccountList(list) {
+  const container = document.getElementById("account-list");
+  container.innerHTML = "";
 
-        const delBtn = document.createElement("button");
-        delBtn.textContent = "🗑️";
-        delBtn.style.marginLeft = "1em";
-        delBtn.style.color = "red";
-        delBtn.onclick = async () => {
-          if (!confirm(`確定要刪除帳本「${account.displayName || account.id}」？此操作無法復原。`)) return;
+  list.forEach(account => {
+    const wrapper = document.createElement("div");
+    wrapper.style.display = "flex";
+    wrapper.style.alignItems = "center";
+    wrapper.style.border = "1px solid #ccc";
+    wrapper.style.borderRadius = "8px";
+    wrapper.style.padding = "0.3em 0.6em";
+    wrapper.style.fontSize = "0.9em";
+    wrapper.style.background = "#f9f9f9";
+    wrapper.style.maxWidth = "calc(33% - 1rem)";
+    wrapper.style.flex = "1 1 30%";
+    wrapper.style.justifyContent = "space-between";
 
-          try {
-            await FINORA_AUTH.deleteAccount(account.id);
-            if (account.id === localStorage.getItem("selectedAccount")) {
-              localStorage.removeItem("selectedAccount");
-              alert("帳本已刪除，請重新選擇！");
-              location.reload();
-            } else {
-              await loadAccounts();
-            }
-          } catch (e) {
-            alert("⚠️ 無法刪除帳本，請確認已登入！");
-            console.error(e);
-          }
-        };
+    const nameSpan = document.createElement("span");
+    nameSpan.textContent = account.displayName || account.id;
 
-        li.appendChild(delBtn);
-        ul.appendChild(li);
-      });
-    }
+    const delBtn = document.createElement("button");
+    delBtn.textContent = "🗑️";
+    delBtn.style.marginLeft = "0.5em";
+    delBtn.style.fontSize = "0.8em";
+    delBtn.style.padding = "0.2em 0.4em";
+    delBtn.style.border = "none";
+    delBtn.style.background = "transparent";
+    delBtn.style.color = "#d33";
+    delBtn.style.cursor = "pointer";
+    delBtn.title = "刪除帳本";
+
+    delBtn.onclick = async () => {
+      if (!confirm(`確定要刪除帳本「${account.displayName || account.id}」？此操作無法復原。`)) return;
+
+      try {
+        await FINORA_AUTH.deleteAccount(account.id);
+        if (account.id === localStorage.getItem("selectedAccount")) {
+          localStorage.removeItem("selectedAccount");
+          alert("帳本已刪除，請重新選擇！");
+          location.reload();
+        } else {
+          await loadAccounts();
+        }
+      } catch (e) {
+        alert("⚠️ 無法刪除帳本，請確認已登入！");
+        console.error(e);
+      }
+    };
+
+    wrapper.appendChild(nameSpan);
+    wrapper.appendChild(delBtn);
+    container.appendChild(wrapper);
+  });
+}
 
     accountSelect.addEventListener("change", () => {
       const selected = accountSelect.value;
