@@ -78,7 +78,8 @@ async function updateAllStockPrices() {
   );
   assets = updatedAssets;
   localStorage.setItem(getLocalStorageKey(), JSON.stringify(assets));
-  if (typeof FINORA_AUTH !== "undefined") FINORA_AUTH.saveUserAssets(assets);
+  if (typeof FINORA_AUTH !== "undefined" && FINORA_AUTH.saveUserAssets) {
+  await FINORA_AUTH.saveUserAssets(assets);
 }
 
 // ===== DOMContentLoaded 初始化程序 =====
@@ -165,7 +166,8 @@ assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");  // ⭐
 
 
 // ===== Part 2：表單處理與存儲 =====
-// ===== 切換欄位顯示 =====
+
+// 切換欄位顯示
 function toggleFields() {
   const type = document.getElementById("type").value;
   document.getElementById("stock-fields").style.display = type === "股票" ? "block" : "none";
@@ -175,7 +177,8 @@ function toggleFields() {
   document.getElementById("amount-field").style.display = ["定存", "現金", "房產", "其他"].includes(type) ? "block" : "none";
 }
 
-function handleSubmit(e) {
+// 儲存資產表單
+async function handleSubmit(e) {
   e.preventDefault();
 
   const type = document.getElementById("type").value;
@@ -221,20 +224,24 @@ function handleSubmit(e) {
   }
 
   localStorage.setItem(getLocalStorageKey(), JSON.stringify(assets));
-  if (typeof FINORA_AUTH !== "undefined") FINORA_AUTH.saveUserAssets(assets);
+
+  // ✅ 雲端同步（等待儲存完成再 render）
+  if (typeof FINORA_AUTH !== "undefined" && FINORA_AUTH.saveUserAssets) {
+    await FINORA_AUTH.saveUserAssets(assets);
+  }
 
   form.reset();
   toggleFields();
   render();
 }
 
+// 編輯資產
 function handleEdit(index) {
   const item = assets[index];
   editIndex = index;
 
   document.getElementById("type").value = item.type;
   toggleFields();
-
   document.getElementById("currency").value = item.currency || "";
   document.getElementById("bank").value = item.bank || "";
   document.getElementById("note").value = item.note || "";
@@ -263,11 +270,14 @@ function handleEdit(index) {
   }
 }
 
+// 刪除資產
 function handleDelete(index) {
   if (!confirm("確定要刪除這筆資產嗎？")) return;
   assets.splice(index, 1);
   localStorage.setItem(getLocalStorageKey(), JSON.stringify(assets));
-  if (typeof FINORA_AUTH !== "undefined") FINORA_AUTH.saveUserAssets(assets);
+  if (typeof FINORA_AUTH !== "undefined" && FINORA_AUTH.saveUserAssets) {
+    FINORA_AUTH.saveUserAssets(assets);
+  }
   render();
 }
 
