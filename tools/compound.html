@@ -79,10 +79,6 @@
   <button onclick="calculateCompound()">開始試算</button>
   <div id="result"></div>
 
-  <h2>目前資產總覽</h2>
-  <div id="category-totals"></div>
-  <div id="totals"></div>
-
   <h2>即時匯率</h2>
   <div id="exchange-rates"></div>
 
@@ -109,6 +105,8 @@
   <a href="../index.html" class="home-btn">← 返回首頁</a>
 
   <script>
+    let exchangeRates = {};
+
     function calculateCompound() {
       const p = parseFloat(document.getElementById("principal").value) || 0;
       const r = (parseFloat(document.getElementById("rate").value) || 0) / 100;
@@ -141,64 +139,44 @@
       document.getElementById("fx-result").innerText =
         `${amt} ${from} ≈ ${result.toFixed(2)} ${to}`;
     }
-  <script>
-    function calculateCompound() {
-      const p = parseFloat(document.getElementById("principal").value) || 0;
-      const r = (parseFloat(document.getElementById("rate").value) || 0) / 100;
-      const y = parseInt(document.getElementById("years").value) || 0;
-      const annual = parseFloat(document.getElementById("annual").value) || 0;
-      const monthly = parseFloat(document.getElementById("monthly").value) || 0;
 
-      let total = p;
-      const months = y * 12;
-      const monthlyRate = r / 12;
-
-      for (let m = 1; m <= months; m++) {
-        total *= (1 + monthlyRate);
-        total += monthly;
-        if (m % 12 === 0) total += annual;
+    async function fetchExchangeRates() {
+      try {
+        const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
+        const data = await res.json();
+        exchangeRates = data.rates;
+        exchangeRates["USD"] = 1;
+        renderExchangeRates();
+      } catch (e) {
+        console.warn("匯率查詢失敗，改用本地資料");
+        exchangeRates = { USD: 1, TWD: 30, JPY: 150, EUR: 0.9 };
+        renderExchangeRates();
       }
-
-      document.getElementById("result").textContent =
-        `投入 ${y} 年後，期末總資產：約 ${total.toFixed(2)} 元`;
-
-      localStorage.setItem("compoundResult", total.toFixed(2));
     }
 
-    async function initializeCompoundPage() {
+    function renderExchangeRates() {
+      const container = document.getElementById("exchange-rates");
+      container.innerHTML = Object.entries(exchangeRates)
+        .map(([currency, rate]) => `<div>1 USD = ${rate} ${currency}</div>`)
+        .join("");
+    }
+
+    function initializeCompoundPage() {
       try {
         const saved = localStorage.getItem("compoundResult");
         if (saved) {
           document.getElementById("result").textContent =
             `🔁 最近一次試算結果：約 ${Number(saved).toLocaleString()} 元`;
         }
-        }
-      
-        await fetchExchangeRates(); // ✅ 確保有抓匯率
-
-        if (window.FINORA_AUTH) {
-          FINORA_AUTH.onUserChanged(async (user) => {
-            if (user) {
-              assets = await FINORA_AUTH.loadUserAssets();
-            } else {
-              const account = getSelectedAccount();
-              assets = JSON.parse(localStorage.getItem(`assets_${account}`) || "[]");
-            }
-            render(); // ✅ 顯示資產總覽與分類
-          });
-        } else {
-          const account = getSelectedAccount();
-          assets = JSON.parse(localStorage.getItem(`assets_${account}`) || "[]");
-          render();
-        }
       } catch (e) {
-        console.error("❌ 初始化失敗", e);
-        alert("初始化錯誤，請重新整理或檢查網路連線");
+        console.error("初始化失敗", e);
       }
     }
 
-    document.addEventListener("DOMContentLoaded", initializeCompoundPage);
+    document.addEventListener("DOMContentLoaded", async () => {
+      await fetchExchangeRates();
+      initializeCompoundPage();
+    });
   </script>
-  <script src="../script.js"></script>
 </body>
 </html>
