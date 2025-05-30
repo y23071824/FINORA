@@ -197,14 +197,19 @@
     }
 
     document.addEventListener("DOMContentLoaded", async () => {
+      if (window.FINORA_AUTH) {
+        FINORA_AUTH.isLoggedIn = () => firebase.auth().currentUser != null;
+      }
+
       const saved = localStorage.getItem("compoundResult");
       if (saved) {
         document.getElementById("result").textContent =
           `🔁 最近一次試算結果：約 ${Number(saved).toLocaleString()} 元`;
       }
       await fetchRates();
+
       const account = getSelectedAccount();
-      if (window.FINORA_AUTH && FINORA_AUTH.isLoggedIn()) {
+      if (firebase.auth().currentUser) {
         assets = await FINORA_AUTH.fetchUserAssets(account);
         renderAssets();
       } else {
