@@ -212,25 +212,33 @@
     }
 
     document.addEventListener("DOMContentLoaded", async () => {
-      try {
-        const saved = localStorage.getItem("compoundResult");
-        if (saved) {
-          document.getElementById("result").textContent =
-            `🔁 最近一次試算結果：約 ${Number(saved).toLocaleString()} 元`;
-        }
+  try {
+    const saved = localStorage.getItem("compoundResult");
+    if (saved) {
+      document.getElementById("result").textContent =
+        `🔁 最近一次試算結果：約 ${Number(saved).toLocaleString()} 元`;
+    }
 
-        await fetchRates();
+    await fetchRates();
 
-        if (window.FINORA_AUTH) {
-          FINORA_AUTH.onUserChanged(loadAssetsAndSetPrincipal);
+    if (window.FINORA_AUTH) {
+      FINORA_AUTH.onUserChanged(async (user) => {
+        if (user) {
+          assets = await FINORA_AUTH.loadUserAssets();
         } else {
-          await loadAssetsAndSetPrincipal();
+          const account = getSelectedAccount();
+          assets = JSON.parse(localStorage.getItem(`assets_${account}`) || "[]");
         }
-      } catch (e) {
-        console.error("❌ 初始化失敗", e);
-        alert("初始化錯誤，請重新整理或檢查網路連線");
-      }
-    });
+        renderAssets();
+      });
+    } else {
+      await loadAssetsAndSetPrincipal(); // 備援
+    }
+  } catch (e) {
+    console.error("❌ 初始化失敗", e);
+    alert("初始化錯誤，請重新整理或檢查網路連線");
+  }
+});
   </script>
 </body>
 </html>
