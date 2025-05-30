@@ -197,27 +197,32 @@
     }
 
     document.addEventListener("DOMContentLoaded", async () => {
-      const saved = localStorage.getItem("compoundResult");
-      if (saved) {
-        document.getElementById("result").textContent =
-          `🔁 最近一次試算結果：約 ${Number(saved).toLocaleString()} 元`;
-      }
+  const saved = localStorage.getItem("compoundResult");
+  if (saved) {
+    document.getElementById("result").textContent =
+      `🔁 最近一次試算結果：約 ${Number(saved).toLocaleString()} 元`;
+  }
 
-      await fetchRates();
+  await fetchRates();
 
-      if (window.FINORA_AUTH) {
-        FINORA_AUTH.onUserChanged(async (user) => {
-          const account = FINORA_AUTH.getCurrentAccount();
-          if (user) {
-            assets = await FINORA_AUTH.loadUserAssets();
-          } else {
-            const key = `assets_${account}`;
-            assets = JSON.parse(localStorage.getItem(key) || "[]");
-          }
-          renderAssets();
-        });
-      }
-    });
+  // ✅ 等待 FINORA_AUTH 初始化完成後再執行
+  const waitForAuth = setInterval(() => {
+    if (window.FINORA_AUTH && typeof FINORA_AUTH.onUserChanged === "function") {
+      clearInterval(waitForAuth);
+
+      FINORA_AUTH.onUserChanged(async (user) => {
+        const account = FINORA_AUTH.getCurrentAccount();
+        if (user) {
+          assets = await FINORA_AUTH.loadUserAssets();
+        } else {
+          const key = `assets_${account}`;
+          assets = JSON.parse(localStorage.getItem(key) || "[]");
+        }
+        renderAssets();
+      });
+    }
+  }, 200);
+});
   </script>
 </body>
 </html>
