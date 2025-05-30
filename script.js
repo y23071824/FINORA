@@ -409,7 +409,7 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log("🔄 系統初始化中...");
 
   FINORA_AUTH.onUserChanged(async (user) => {
-    const userInfo = document.getElementById("user-info"); // 顯示使用者與帳本名稱用
+    const userInfo = document.getElementById("user-info");
 
     if (!user) {
       userInfo.innerHTML = `使用者：（尚未登入）<br>帳本：（尚未選擇）`;
@@ -418,7 +418,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      // 🔗 元素綁定
+      // 元素綁定
       form = document.getElementById("asset-form");
       typeSelect = document.getElementById("type");
       stockFields = document.getElementById("stock-fields");
@@ -429,24 +429,24 @@ document.addEventListener("DOMContentLoaded", () => {
       profitList = document.getElementById("stock-profit-list");
       bankDatalist = document.getElementById("bank-list");
 
-      // ✅ 顯示目前使用者與帳本名稱
+      // 顯示使用者與帳本名稱
       const accountId = getSelectedAccount();
       const list = await FINORA_AUTH.fetchAccountList();
       const displayName = list.find(acc => acc.id === accountId)?.displayName || accountId;
       userInfo.innerHTML = `使用者：${user.email}<br>帳本：${displayName}`;
 
-      // 表單綁定
+      // 綁定表單事件
       form.addEventListener("submit", handleSubmit);
       typeSelect.addEventListener("change", toggleFields);
 
-      // 銀行記憶選單
+      // 記憶銀行列表
       bankHistory.forEach((b) => {
         const option = document.createElement("option");
         option.value = b;
         bankDatalist.appendChild(option);
       });
 
-      // 股票查價
+      // 股票現價查詢綁定
       const stockSymbolInput = document.getElementById("stock-symbol");
       const stockCategorySelect = document.getElementById("stock-category");
       const stockPriceInput = document.getElementById("stock-price");
@@ -460,7 +460,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
 
-      // 加密貨幣查價
+      // 加密貨幣查價綁定
       const cryptoSymbolInput = document.getElementById("crypto-symbol");
       const cryptoPriceInput = document.getElementById("crypto-price");
       if (cryptoSymbolInput && cryptoPriceInput) {
@@ -478,42 +478,14 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
 
-      // ✅ 執行初始化邏輯
+      // 執行初始化流程
       await fetchExchangeRates();
       await updateAllStockPrices();
-      assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]"); // ⭐ 重新載入本地最新資料
+      assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");  // 重新抓最新的資料
       toggleFields();
       render();
+
       console.log("✅ 初始化完成");
-
-    } catch (e) {
-      console.error("❌ 初始化失敗", e);
-      alert("系統初始化錯誤，請重新整理頁面");
-    }
-  });
-});
-        cryptoSymbolInput.addEventListener("blur", async () => {
-          const symbol = cryptoSymbolInput.value.trim().toLowerCase();
-          if (!symbol) return;
-          try {
-            const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${symbol}&vs_currencies=usd`);
-            const data = await res.json();
-            const price = data[symbol]?.usd;
-            if (price) cryptoPriceInput.value = price;
-          } catch (e) {
-            console.error("❌ 查詢加密貨幣價格錯誤", e);
-          }
-        });
-      }
-
-      // ✅ 執行初始化邏輯
-      await fetchExchangeRates();
-      await updateAllStockPrices();
-      assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]"); // ⭐️ 加回這行
-      toggleFields();
-      render();
-      console.log("✅ 初始化完成");
-
     } catch (e) {
       console.error("❌ 初始化失敗", e);
       alert("系統初始化錯誤，請重新整理頁面");
