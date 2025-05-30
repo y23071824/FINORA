@@ -19,14 +19,17 @@
   </div>
 
   <!-- ✅ 帳本選擇區 -->
-  <section id="account-section" style="margin-top: 2rem;">
-    <label for="account-select">帳本選擇：</label>
-    <select id="account-select"></select>
-    <button id="rename-account-btn">✏️ 重新命名</button>
-    <button id="new-account-btn">➕ 新增帳本</button>
-    <input type="text" id="new-account-name" placeholder="輸入新帳本名稱" style="display:none; margin-top: 0.5rem;" />
-    <button id="save-new-account" style="display:none;">儲存新帳本</button>
-  </section>
+  <section id="account-controls" style="margin-top: 2rem; display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+  <select id="account-select" style="flex: 1;"></select>
+  <button id="rename-account-btn" title="重新命名帳本">✏️</button>
+  <button id="new-account-btn" title="新增帳本">➕</button>
+  <button id="delete-account-btn" title="刪除帳本">🗑️</button>
+</section>
+
+<div id="new-account-input-group" style="display: none; margin-top: 0.5rem;">
+  <input type="text" id="new-account-name" placeholder="輸入新帳本名稱" />
+  <button id="save-new-account">儲存</button>
+</div>
 
   <!-- ✅ 帳本列表含刪除 -->
   <div id="account-list" style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;"></div>
@@ -215,7 +218,27 @@
           alert("⚠️ 帳本數已達上限（最多 3 本）");
           return;
         }
+const deleteBtn = document.getElementById("delete-account-btn");
 
+deleteBtn.addEventListener("click", async () => {
+  const id = accountSelect.value;
+  const name = accountMap[id] || id;
+  if (!confirm(`確定要刪除帳本「${name}」？此操作無法復原。`)) return;
+
+  try {
+    await FINORA_AUTH.deleteAccount(id);
+    if (id === localStorage.getItem("selectedAccount")) {
+      localStorage.removeItem("selectedAccount");
+      alert("帳本已刪除，請重新選擇！");
+      location.reload();
+    } else {
+      await loadAccounts();
+    }
+  } catch (e) {
+    alert("⚠️ 無法刪除帳本，請確認已登入！");
+    console.error(e);
+  }
+});
         const id = `帳本${Date.now()}`;
         localStorage.setItem("selectedAccount", id);
         await FINORA_AUTH.setAccountDisplayName(id, name);
