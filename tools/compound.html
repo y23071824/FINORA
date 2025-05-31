@@ -196,7 +196,13 @@ function renderAssetSummary(summary) {
     }
   }
 
-  summaryContainer.textContent = `📊 資產分類加總：${parts.join(" ｜ ")}`;
+  summaryContainer.innerHTML = "<strong>📊 資產分類加總：</strong><br>" + 
+  Object.entries(summary).map(([type, byCurrency]) => {
+    const line = Object.entries(byCurrency)
+      .map(([currency, amount]) => `${amount.toLocaleString()} ${currency}`)
+      .join(" ｜ ");
+    return `【${type}】${line}`;
+  }).join("<br>");
 }
 
   document.addEventListener("DOMContentLoaded", async () => {
