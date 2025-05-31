@@ -133,18 +133,13 @@
       }
     }
 
-    async function showWelcome(user) {
-      const welcome = document.getElementById("welcome-section");
-      const message = document.getElementById("welcome-message");
-      const selectedAccount = localStorage.getItem("selectedAccount") || "default";
-      const key = `assets_${selectedAccount}`;
-      const assets = JSON.parse(localStorage.getItem(key) || "[]");
-      const total = assets.reduce((sum, a) => sum + (a.marketValue || a.amount || 0), 0);
-      const formattedTotal = total.toLocaleString();
-      const greeting = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
-      message.textContent = `${greeting}（目前帳本總資產：約 ${formattedTotal} 元）`;
-      welcome.style.display = "block";
-    }
+function showWelcome(user) {
+  const welcome = document.getElementById("welcome-section");
+  const message = document.getElementById("welcome-message");
+  const greeting = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
+  message.textContent = `Hi，${user.displayName || "用戶"}！${greeting}`;
+  welcome.style.display = "block";
+}
 
     accountSelect.addEventListener("change", () => {
       const selected = accountSelect.value;
