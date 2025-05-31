@@ -168,7 +168,8 @@ async function loadAssets() {
     const cost = parseFloat(item.cost) || 0;
 
     let marketValue = 0;
-    if (["股票", "加密貨幣", "基金"].includes(type)) {
+
+    if (["股票", "基金", "加密貨幣"].includes(type)) {
       marketValue = units * price;
     } else if (type === "儲蓄保險") {
       marketValue = cost;
@@ -176,7 +177,9 @@ async function loadAssets() {
       marketValue = amount;
     }
 
-    const rate = currency === "TWD" ? 1 : (exchangeRates["TWD"] / exchangeRates[currency]) || 30;
+    const rate = currency === "TWD"
+      ? 1
+      : (exchangeRates["TWD"] / exchangeRates[currency]) || 30;
     const marketTWD = marketValue * rate;
     total += marketTWD;
 
