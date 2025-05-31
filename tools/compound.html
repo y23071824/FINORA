@@ -15,19 +15,6 @@
   <script src="../firebase-sync.js"></script>
 
   <!-- ✅ 等待登入並載入資產 -->
-  <script>
-    document.addEventListener("DOMContentLoaded", async () => {
-      try {
-        const user = await FINORA_AUTH.waitForLogin();
-        const assets = await FINORA_AUTH.fetchUserAssets();
-        console.log("✔️ 資產資料", assets);
-        // TODO：你可以在這裡執行渲染邏輯，例如更新畫面或試算複利
-      } catch (e) {
-        console.warn("⚠️ 使用者尚未登入", e);
-        alert("請先登入後再使用此功能");
-      }
-    });
-  </script>
 </head>
 <body>
   <h1>複利成長試算</h1>
@@ -186,22 +173,28 @@ async function loadAssets() {
   }
 
   listHtml += "</ul>";
-
   document.getElementById("total-assets").textContent =
     `💰 目前資產總市值（折合台幣）：${Math.round(total).toLocaleString()} 元`;
   document.getElementById("asset-list").innerHTML = listHtml;
 }
 
-  document.addEventListener("DOMContentLoaded", async () => {
-    await fetchExchangeRates();
-    await loadAssets();
+
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    await FINORA_AUTH.waitForLogin();              // 等待使用者登入
+    await fetchExchangeRates();                    // 查詢匯率
+    await loadAssets();                            // 載入資產並顯示（條列式）
 
     const saved = localStorage.getItem("compoundResult");
     if (saved) {
       document.getElementById("result").textContent =
         `🔁 最近一次試算結果：約 ${Number(saved).toLocaleString()} 元`;
     }
-  });
+  } catch (e) {
+    console.warn("⚠️ 使用者尚未登入", e);
+    alert("請先登入後再使用此功能");
+  }
+});
 </script>
 </body>
 </html>
