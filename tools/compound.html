@@ -6,11 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="../style.css" />
 
-  <!-- Firebase & Sync -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-  
   <script src="../firebase-sync.js"></script>
 </head>
 <body>
@@ -62,8 +61,27 @@
   <div id="fx-result" style="margin-top: 0.5rem;"></div>
   <div id="exchange-rates" style="margin-top: 1rem;"></div>
 
-  <script>
+  <script type="module">
+    import { FINORA_AUTH } from "../firebase-sync.js";
+
     let exchangeRates = {};
+
+    async function fetchExchangeRates() {
+      try {
+        const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
+        const data = await res.json();
+        exchangeRates = data.rates;
+        exchangeRates["USD"] = 1;
+      } catch (e) {
+        console.warn("匯率查詢失敗，改用本地資料");
+        exchangeRates = { USD: 1, TWD: 30, JPY: 150, EUR: 0.9 };
+      }
+
+      const container = document.getElementById("exchange-rates");
+      container.innerHTML = Object.entries(exchangeRates)
+        .map(([currency, rate]) => `<div>1 USD = ${rate} ${currency}</div>`)
+        .join("");
+    }
 
     function calculateCompound() {
       const p = parseFloat(document.getElementById("principal").value) || 0;
@@ -98,48 +116,17 @@
         `${amt} ${from} ≈ ${result.toFixed(2)} ${to}`;
     }
 
-    async function fetchExchangeRates() {
-      try {
-        const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
-        const data = await res.json();
-        exchangeRates = data.rates;
-        exchangeRates["USD"] = 1;
-        renderExchangeRates();
-      } catch (e) {
-        console.warn("匯率查詢失敗，改用本地資料");
-        exchangeRates = { USD: 1, TWD: 30, JPY: 150, EUR: 0.9 };
-        renderExchangeRates();
-      }
-    }
-
-    function renderExchangeRates() {
-      const container = document.getElementById("exchange-rates");
-      container.innerHTML = Object.entries(exchangeRates)
-        .map(([currency, rate]) => `<div>1 USD = ${rate} ${currency}</div>`)
-        .join("");
-    }
-
-    function initializeCompoundPage() {
-      const saved = localStorage.getItem("compoundResult");
-      if (saved) {
-        document.getElementById("result").textContent =
-          `🔁 最近一次試算結果：約 ${Number(saved).toLocaleString()} 元`;
-      }
-    }
-
     async function loadAssets() {
-      const accountId = localStorage.getItem("selectedAccount") || "default";
-      const key = `assets_${accountId}`;
+      const selectedAccount = localStorage.getItem("selectedAccount") || "default";
       let assets = [];
 
       try {
-        if (typeof FINORA_AUTH !== "undefined" && FINORA_AUTH.fetchUserAssets) {
-          assets = await FINORA_AUTH.fetchUserAssets();
-        } else {
-          assets = JSON.parse(localStorage.getItem(key) || "[]");
-        }
+        await FINORA_AUTH.waitForLogin();
+        assets = await FINORA_AUTH.fetchUserAssets();
       } catch (e) {
-        console.warn("⚠️ 載入資產失敗", e);
+        console.warn("無法取得雲端資產，改用本地資料");
+        const key = `assets_${selectedAccount}`;
+        assets = JSON.parse(localStorage.getItem(key) || "[]");
       }
 
       let total = 0;
@@ -151,9 +138,7 @@
         const category = item.type;
         let marketValue = 0;
 
-        if (category === "股票" || category === "加密貨幣") {
-          marketValue = units * price;
-        } else if (category === "基金") {
+        if (category === "股票" || category === "加密貨幣" || category === "基金") {
           marketValue = units * price;
         } else if (category === "儲蓄保險") {
           marketValue = cost;
@@ -162,15 +147,7 @@
         }
 
         const currency = item.currency || "TWD";
-        let rate = 1;
-
-        if (currency === "TWD") rate = 1;
-        else if (currency === "USD") rate = exchangeRates["TWD"] || 30;
-        else if (exchangeRates[currency]) {
-          const toUsd = 1 / exchangeRates[currency];
-          rate = toUsd * (exchangeRates["TWD"] || 30);
-        }
-
+        let rate = currency === "TWD" ? 1 : (exchangeRates["TWD"] / exchangeRates[currency]) || 30;
         total += marketValue * rate;
       }
 
@@ -181,44 +158,14 @@
 
     document.addEventListener("DOMContentLoaded", async () => {
       await fetchExchangeRates();
-      initializeCompoundPage();
       await loadAssets();
+
+      const saved = localStorage.getItem("compoundResult");
+      if (saved) {
+        document.getElementById("result").textContent =
+          `🔁 最近一次試算結果：約 ${Number(saved).toLocaleString()} 元`;
+      }
     });
-    <script type="module">
-  import { FINORA_AUTH } from "../firebase-sync.js";
-
-  document.addEventListener("DOMContentLoaded", async () => {
-    try {
-      const user = await FINORA_AUTH.waitForLogin(); // 等待登入
-      const assets = await FINORA_AUTH.fetchUserAssets(); // 取得雲端資產
-      console.log("✅ 成功載入資產", assets);
-
-      // ⬇️ 加入你要顯示的邏輯（例如加總、顯示）
-      renderAssetSummary(assets);
-    } catch (e) {
-      console.warn("⚠️ 無法載入資產：", e.message);
-    }
-  });
-
-  function renderAssetSummary(assets) {
-    // 這裡可以依據你的需求計算與顯示
-    const list = document.getElementById("asset-summary");
-    if (!list) return;
-
-    let total = 0;
-    for (const item of assets) {
-      const li = document.createElement("li");
-      li.textContent = `${item.type} - ${item.currency} ${item.amount || item.cost || 0}`;
-      list.appendChild(li);
-
-      if (item.currency === "TWD") total += parseFloat(item.amount || item.cost || 0);
-    }
-
-    const final = document.createElement("li");
-    final.innerHTML = `<b>目前 TWD 總額：約 ${total.toLocaleString()} 元</b>`;
-    list.appendChild(final);
-  }
-</script>
-</script>
+  </script>
 </body>
 </html>
