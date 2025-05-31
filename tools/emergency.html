@@ -27,9 +27,7 @@
       <li>📝 輸入每月固定收入與支出，定期檢視，為生活建立防火牆</li>
       <li>📆 選擇想準備幾個月的預備金（建議 3～6 個月），系統會即時計算建議金額</li>
     </ol>
-    <p class="guide-note">
-      ✨ 緊急預備金是給自己與家人最基本的保障，也是理財第一步。
-    </p>
+    <p class="guide-note">✨ 緊急預備金是給自己與家人最基本的保障，也是理財第一步。</p>
   </div>
 
   <h2>📝 每月收入登記</h2>
@@ -62,7 +60,7 @@
   <script src="../firebase-sync.js"></script>
 
   <script>
-    let selectedAccount = localStorage.getItem("selectedAccount");
+    selectedAccount = localStorage.getItem("selectedAccount"); // ✅ 改為不重複宣告
 
     if (!selectedAccount) {
       alert("⚠️ 尚未選擇帳本，請先回首頁登入並選擇帳本！");
