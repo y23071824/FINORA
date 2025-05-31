@@ -10,6 +10,11 @@
   <h1>FINORA</h1>
   <p class="subtitle">讓資產更有力，退休不焦慮。</p>
 
+  <!-- ✅ 歡迎區塊 -->
+  <div id="welcome-section" style="display:none; margin-bottom: 1.5rem; text-align:center;">
+    <h2 id="welcome-message" style="font-size: 1.2rem; color: #444;"></h2>
+  </div>
+
   <!-- ✅ 功能選單 -->
   <div class="grid-button-group">
     <a href="assets.html">資產管理</a>
@@ -22,13 +27,11 @@
   <div id="account-control-wrapper" style="margin-top: 2rem;">
     <label for="account-select">帳本選擇：</label>
     <select id="account-select" style="width: 100%; margin-bottom: 0.5rem;"></select>
-
     <div style="display: flex; justify-content: center; gap: 1rem;">
       <button id="rename-account-btn" title="重新命名帳本">✏️</button>
       <button id="new-account-btn" title="新增帳本">➕</button>
       <button id="delete-account-btn" title="刪除帳本">🗑️</button>
     </div>
-
     <div id="new-account-input-group" style="display: none; margin-top: 0.5rem;">
       <input type="text" id="new-account-name" placeholder="輸入新帳本名稱" />
       <button id="save-new-account">儲存</button>
@@ -62,6 +65,19 @@
 
     let accountMap = {};
 
+    const welcomeMessages = [
+      "🎯 管理金錢的你，正一步步為生活打造更穩定的底氣。",
+      "💼 理財不是比誰賺得多，而是誰更清楚自己要什麼。",
+      "📊 資產是選擇的自由，而你，正一點一滴掌握這份自由。",
+      "📚 真正成熟的理財，是知道自己可以掌控什麼，然後穩穩去做。",
+      "🧩 沒有一夜致富，只有像你這樣願意規劃的人，能走得長遠。",
+      "🛠️ 理財不一定要複雜，但一定要像你一樣，有系統、有意識。",
+      "💡 你不是在記帳，而是在練習過上自己想要的生活。",
+      "🌿 把資產看清楚，就是給自己更多底氣與選擇。",
+      "📈 你的每次整理，都是對未來生活說『我準備好了』。",
+      "🏆 掌控資產的人，才有餘裕選擇生活的方向，你正做得很好。"
+    ];
+
     loginBtn.addEventListener("click", async () => {
       const user = await FINORA_AUTH.signInWithGoogle();
       if (user) {
@@ -69,6 +85,7 @@
         loginBtn.style.display = "none";
         logoutBtn.style.display = "inline-block";
         await loadAccounts();
+        showWelcome(user);
       }
     });
 
@@ -79,6 +96,7 @@
       userEmail.textContent = "";
       loginBtn.style.display = "inline-block";
       logoutBtn.style.display = "none";
+      document.getElementById("welcome-section").style.display = "none";
     });
 
     FINORA_AUTH.onUserChanged(async (user) => {
@@ -87,11 +105,13 @@
         loginBtn.style.display = "none";
         logoutBtn.style.display = "inline-block";
         await loadAccounts();
+        showWelcome(user);
       } else {
         userEmail.textContent = "";
         loginBtn.style.display = "inline-block";
         logoutBtn.style.display = "none";
         accountSelect.innerHTML = "";
+        document.getElementById("welcome-section").style.display = "none";
       }
     });
 
@@ -111,6 +131,19 @@
         accountSelect.value = selected;
         localStorage.setItem("selectedAccount", selected);
       }
+    }
+
+    async function showWelcome(user) {
+      const welcome = document.getElementById("welcome-section");
+      const message = document.getElementById("welcome-message");
+      const selectedAccount = localStorage.getItem("selectedAccount") || "default";
+      const key = `assets_${selectedAccount}`;
+      const assets = JSON.parse(localStorage.getItem(key) || "[]");
+      const total = assets.reduce((sum, a) => sum + (a.marketValue || a.amount || 0), 0);
+      const formattedTotal = total.toLocaleString();
+      const greeting = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
+      message.textContent = `${greeting}（目前帳本總資產：約 ${formattedTotal} 元）`;
+      welcome.style.display = "block";
     }
 
     accountSelect.addEventListener("change", () => {
@@ -142,13 +175,11 @@
       try {
         const name = newAccountInput.value.trim();
         if (!name) return;
-
         const existing = await FINORA_AUTH.fetchAccountList();
         if (existing.length >= 3) {
           alert("⚠️ 帳本數已達上限（最多 3 本）");
           return;
         }
-
         const id = `帳本${Date.now()}`;
         localStorage.setItem("selectedAccount", id);
         await FINORA_AUTH.setAccountDisplayName(id, name);
@@ -164,7 +195,6 @@
       const id = accountSelect.value;
       const name = accountMap[id] || id;
       if (!confirm(`確定要刪除帳本「${name}」？此操作無法復原。`)) return;
-
       try {
         await FINORA_AUTH.deleteAccount(id);
         if (id === localStorage.getItem("selectedAccount")) {
