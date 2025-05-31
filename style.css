@@ -234,11 +234,11 @@ a {
   color: #666;
 }
 body {
-  transform: scale(0.75);
+  transform: scale(0.8);
   transform-origin: top left;
 }
 html, body {
-  width: 125%;
+  width: 120%;
   overflow-x: hidden;
 }
 
