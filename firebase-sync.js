@@ -91,7 +91,7 @@ window.FINORA_AUTH = {
         localStorage.setItem("selectedAccount", selectedAccount);
       }
 
-      const cloudAssets = await FINORA_AUTH.loadUserAssets();
+    const cloudAssets = await FINORA_AUTH.fetchUserAssets();
       if (cloudAssets.length > 0) {
         localStorage.setItem(getLocalStorageKey(), JSON.stringify(cloudAssets));
       }
