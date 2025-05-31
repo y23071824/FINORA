@@ -22,17 +22,17 @@
 
   <h2>📝 每月收入登記</h2>
   <div id="income-list"></div>
-  <button onclick="addIncome()">+ 新增收入項目</button>
+  <button id="add-income">+ 新增收入項目</button>
   <div class="summary" id="income-total"></div>
 
   <h2>💰 每月支出登記</h2>
   <div id="expense-list"></div>
-  <button onclick="addExpense()">+ 新增支出項目</button>
+  <button id="add-expense">+ 新增支出項目</button>
   <div class="summary" id="expense-total"></div>
 
   <h2>💸 預備金建議試算</h2>
   <label>選擇涵蓋月數：
-    <select id="reserve-months" onchange="updateSummary()">
+    <select id="reserve-months">
       <option value="3">3 個月</option>
       <option value="6">6 個月</option>
       <option value="9">9 個月</option>
@@ -45,58 +45,87 @@
     let income = JSON.parse(localStorage.getItem('emergencyIncome') || '[]');
     let expenses = JSON.parse(localStorage.getItem('emergencyExpenses') || '[]');
 
-    function saveIncome() {
+    function saveAndRender() {
       localStorage.setItem('emergencyIncome', JSON.stringify(income));
-      render();
-    }
-    function saveExpenses() {
       localStorage.setItem('emergencyExpenses', JSON.stringify(expenses));
       render();
     }
 
-    function addIncome() {
-      income.push({ name: '', amount: '' });
-      saveIncome();
-    }
-    function addExpense() {
-      expenses.push({ name: '', amount: '' });
-      saveExpenses();
-    }
-
-    function updateIncomeField(index, key, value) {
-      income[index][key] = value;
-      saveIncome();
-    }
-    function updateExpenseField(index, key, value) {
-      expenses[index][key] = value;
-      saveExpenses();
-    }
-
-    function deleteIncome(index) {
-      income.splice(index, 1);
-      saveIncome();
-    }
-    function deleteExpense(index) {
-      expenses.splice(index, 1);
-      saveExpenses();
-    }
-
     function render() {
       const incomeList = document.getElementById('income-list');
-      incomeList.innerHTML = income.map((item, i) => `
-        <div class="item-row">
-          <input placeholder="收入項目" value="${item.name}" oninput="updateIncomeField(${i}, 'name', this.value)">
-          <input type="number" placeholder="金額" value="${item.amount}" oninput="updateIncomeField(${i}, 'amount', this.value)">
-          <button onclick="deleteIncome(${i})">🗑️</button>
-        </div>`).join('');
-
       const expenseList = document.getElementById('expense-list');
-      expenseList.innerHTML = expenses.map((item, i) => `
-        <div class="item-row">
-          <input placeholder="支出項目" value="${item.name}" oninput="updateExpenseField(${i}, 'name', this.value)">
-          <input type="number" placeholder="金額" value="${item.amount}" oninput="updateExpenseField(${i}, 'amount', this.value)">
-          <button onclick="deleteExpense(${i})">🗑️</button>
-        </div>`).join('');
+      incomeList.innerHTML = '';
+      expenseList.innerHTML = '';
+
+      // 渲染收入
+      income.forEach((item, i) => {
+        const row = document.createElement('div');
+        row.className = 'item-row';
+
+        const nameInput = document.createElement('input');
+        nameInput.placeholder = '收入項目';
+        nameInput.value = item.name || '';
+        nameInput.addEventListener('input', () => {
+          income[i].name = nameInput.value;
+          saveAndRender();
+        });
+
+        const amountInput = document.createElement('input');
+        amountInput.type = 'number';
+        amountInput.placeholder = '金額';
+        amountInput.value = item.amount || 0;
+        amountInput.addEventListener('input', () => {
+          income[i].amount = parseFloat(amountInput.value) || 0;
+          saveAndRender();
+        });
+
+        const delBtn = document.createElement('button');
+        delBtn.textContent = '🗑️';
+        delBtn.addEventListener('click', () => {
+          income.splice(i, 1);
+          saveAndRender();
+        });
+
+        row.appendChild(nameInput);
+        row.appendChild(amountInput);
+        row.appendChild(delBtn);
+        incomeList.appendChild(row);
+      });
+
+      // 渲染支出
+      expenses.forEach((item, i) => {
+        const row = document.createElement('div');
+        row.className = 'item-row';
+
+        const nameInput = document.createElement('input');
+        nameInput.placeholder = '支出項目';
+        nameInput.value = item.name || '';
+        nameInput.addEventListener('input', () => {
+          expenses[i].name = nameInput.value;
+          saveAndRender();
+        });
+
+        const amountInput = document.createElement('input');
+        amountInput.type = 'number';
+        amountInput.placeholder = '金額';
+        amountInput.value = item.amount || 0;
+        amountInput.addEventListener('input', () => {
+          expenses[i].amount = parseFloat(amountInput.value) || 0;
+          saveAndRender();
+        });
+
+        const delBtn = document.createElement('button');
+        delBtn.textContent = '🗑️';
+        delBtn.addEventListener('click', () => {
+          expenses.splice(i, 1);
+          saveAndRender();
+        });
+
+        row.appendChild(nameInput);
+        row.appendChild(amountInput);
+        row.appendChild(delBtn);
+        expenseList.appendChild(row);
+      });
 
       const totalIncome = income.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
       const totalExpense = expenses.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
@@ -105,14 +134,24 @@
 
       const months = parseInt(document.getElementById('reserve-months').value) || 3;
       const suggestion = totalExpense * months;
-      document.getElementById('reserve-suggestion').textContent = `✔️ 建議預備金（${months} 個月）：${suggestion.toLocaleString()} 元`;
+      document.getElementById('reserve-suggestion').textContent =
+        `✔️ 建議預備金（${months} 個月）：${suggestion.toLocaleString()} 元`;
     }
 
-    function updateSummary() {
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('add-income').addEventListener('click', () => {
+        income.push({ name: '', amount: 0 });
+        saveAndRender();
+      });
+
+      document.getElementById('add-expense').addEventListener('click', () => {
+        expenses.push({ name: '', amount: 0 });
+        saveAndRender();
+      });
+
+      document.getElementById('reserve-months').addEventListener('change', render);
       render();
-    }
-
-    document.addEventListener('DOMContentLoaded', render);
+    });
   </script>
 </body>
 </html>
