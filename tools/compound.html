@@ -33,7 +33,8 @@
   <h1>複利成長試算</h1>
 
   <div id="total-assets">💰 資產加總讀取中...</div>
-
+  <div id="asset-list" style="margin-top: 1rem;"></div>
+  
   <label>初始投入金額（元）：
     <input type="number" id="principal" />
   </label>
@@ -133,44 +134,66 @@
   }
 
   async function loadAssets() {
-    const selectedAccount = localStorage.getItem("selectedAccount") || "default";
-    let assets = [];
+  const selectedAccount = localStorage.getItem("selectedAccount") || "default";
+  let assets = [];
 
-    try {
-      await FINORA_AUTH.waitForLogin();
-      assets = await FINORA_AUTH.fetchUserAssets();
-    } catch (e) {
-      console.warn("無法取得雲端資產，改用本地資料");
-      const key = `assets_${selectedAccount}`;
-      assets = JSON.parse(localStorage.getItem(key) || "[]");
-    }
-
-    let total = 0;
-    for (const item of assets) {
-      const amount = parseFloat(item.amount) || 0;
-      const price = parseFloat(item.price) || 0;
-      const units = parseFloat(item.units) || 0;
-      const cost = parseFloat(item.cost) || 0;
-      const category = item.type;
-      let marketValue = 0;
-
-      if (category === "股票" || category === "加密貨幣" || category === "基金") {
-        marketValue = units * price;
-      } else if (category === "儲蓄保險") {
-        marketValue = cost;
-      } else {
-        marketValue = amount;
-      }
-
-      const currency = item.currency || "TWD";
-      let rate = currency === "TWD" ? 1 : (exchangeRates["TWD"] / exchangeRates[currency]) || 30;
-      total += marketValue * rate;
-    }
-
-    document.getElementById("total-assets").textContent =
-      `💰 目前資產總市值（折合台幣）：${Math.round(total).toLocaleString()} 元`;
-    document.getElementById("principal").value = Math.round(total);
+  try {
+    await FINORA_AUTH.waitForLogin();
+    assets = await FINORA_AUTH.fetchUserAssets();
+  } catch (e) {
+    console.warn("無法取得雲端資產，改用本地資料");
+    const key = `assets_${selectedAccount}`;
+    assets = JSON.parse(localStorage.getItem(key) || "[]");
   }
+
+  let total = 0;
+  let listHtml = `<table border="1" cellpadding="6" style="border-collapse: collapse; margin-top: 1rem; width: 100%;">
+    <thead>
+      <tr>
+        <th>類型</th>
+        <th>名稱</th>
+        <th>數量 / 金額</th>
+        <th>幣別</th>
+        <th>市值</th>
+      </tr>
+    </thead><tbody>`;
+
+  for (const item of assets) {
+    const amount = parseFloat(item.amount) || 0;
+    const price = parseFloat(item.price) || 0;
+    const units = parseFloat(item.units) || 0;
+    const cost = parseFloat(item.cost) || 0;
+    const type = item.type || "";
+    const name = item.name || item.stock || item.fund || item.crypto || item.insurance || "-";
+    const currency = item.currency || "TWD";
+
+    let marketValue = 0;
+    if (type === "股票" || type === "加密貨幣" || type === "基金") {
+      marketValue = units * price;
+    } else if (type === "儲蓄保險") {
+      marketValue = cost;
+    } else {
+      marketValue = amount;
+    }
+
+    const rate = currency === "TWD" ? 1 : (exchangeRates["TWD"] / exchangeRates[currency]) || 30;
+    total += marketValue * rate;
+
+    listHtml += `<tr>
+      <td>${type}</td>
+      <td>${name}</td>
+      <td>${units || amount || cost || "-"}</td>
+      <td>${currency}</td>
+      <td>${(marketValue * (rate || 1)).toLocaleString()} TWD</td>
+    </tr>`;
+  }
+
+  listHtml += `</tbody></table>`;
+
+  document.getElementById("total-assets").textContent =
+    `💰 目前資產總市值（折合台幣）：${Math.round(total).toLocaleString()} 元`;
+  document.getElementById("asset-list").innerHTML = listHtml;
+}
 
   document.addEventListener("DOMContentLoaded", async () => {
     await fetchExchangeRates();
