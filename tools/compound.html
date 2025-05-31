@@ -14,6 +14,9 @@
   <script src="../firebase-sync.js"></script>
 </head>
 <body>
+  <div style="text-align: right; margin-bottom: 1rem;">
+  <button onclick="logout()" style="padding: 0.5rem 1rem;">🔓 登出</button>
+  </div>
   <h1>複利成長試算</h1>
 
   <div id="asset-summary" style="margin: 1rem 0; font-weight: bold;"></div>
@@ -220,6 +223,16 @@ function renderAssetSummary(summary) {
       alert("請先登入後再使用此功能");
     }
   });
+  function logout() {
+  firebase.auth().signOut().then(() => {
+    localStorage.removeItem("selectedAccount");
+    alert("已登出，請重新登入");
+    location.reload(); // 重新整理頁面重新觸發登入流程
+  }).catch((error) => {
+    console.error("登出失敗", error);
+    alert("登出失敗，請稍後再試");
+  });
+  }
 </script>
 </body>
 </html>
