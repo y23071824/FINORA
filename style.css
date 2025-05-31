@@ -233,5 +233,12 @@ a {
   font-size: 0.88rem;
   color: #666;
 }
-
+body {
+  transform: scale(0.8);
+  transform-origin: top left;
+}
+html, body {
+  width: 125%;
+  overflow-x: hidden;
+}
 
