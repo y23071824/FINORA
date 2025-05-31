@@ -90,11 +90,6 @@
       exchangeRates = { USD: 1, TWD: 30, JPY: 150, EUR: 0.9 };
     }
 
-    const container = document.getElementById("exchange-rates");
-    container.innerHTML = Object.entries(exchangeRates)
-      .map(([currency, rate]) => `<div>1 USD = ${rate} ${currency}</div>`)
-      .join("");
-  }
 
   function calculateCompound() {
     const p = parseFloat(document.getElementById("principal").value) || 0;
