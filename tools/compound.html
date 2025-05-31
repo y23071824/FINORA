@@ -6,11 +6,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="../style.css" />
 
-  <!-- Firebase SDK -->
+  <!-- ✅ Firebase SDK v8（順序不能顛倒） -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+  <!-- ✅ 載入 FINORA Firebase 功能模組 -->
   <script src="../firebase-sync.js"></script>
+
+  <!-- ✅ 等待登入並載入資產 -->
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      try {
+        const user = await FINORA_AUTH.waitForLogin();
+        const assets = await FINORA_AUTH.fetchUserAssets();
+        console.log("✔️ 資產資料", assets);
+        // TODO：你可以在這裡執行渲染邏輯，例如更新畫面或試算複利
+      } catch (e) {
+        console.warn("⚠️ 使用者尚未登入", e);
+        alert("請先登入後再使用此功能");
+      }
+    });
+  </script>
 </head>
 <body>
   <h1>複利成長試算</h1>
