@@ -302,9 +302,9 @@ function render() {
   totalsList.innerHTML = "";
   profitList.innerHTML = "";
 
-  const totalsByType = {};
-  const profitsByType = {};
-  const totalsByCurrency = {};
+  const totalsByType = {};     // 各類型-幣別加總，例如：股票-USD
+  const profitsByType = {};    // 各類盈餘（股票、加密貨幣）
+  const totalsByCurrency = {}; // 幣別加總
   let totalTWD = 0;
 
   assets.forEach((item, i) => {
@@ -339,7 +339,7 @@ function render() {
     if (item.note) details.push(`備註: ${item.note}`);
     li.innerHTML = `<strong>${item.type}</strong>｜${details.join("，")}`;
 
-    // 👉 市值與盈餘計算
+    // 👉 計算市值
     let marketValue = 0;
     if (item.type === "股票") {
       marketValue = item.shares * item.price;
@@ -353,6 +353,7 @@ function render() {
       marketValue = item.amount || 0;
     }
 
+    // 👉 計算盈餘
     let profit = 0;
     if ((item.type === "股票" || item.type === "加密貨幣") && item.cost) {
       const costBasis = item.shares
@@ -361,30 +362,25 @@ function render() {
       profit = marketValue - costBasis;
     }
 
-    // 👉 顯示市值
+    // 👉 顯示市值與盈餘
     const valueEl = document.createElement("div");
     valueEl.style.fontSize = "0.9rem";
     valueEl.style.color = "#555";
-    if (profit !== 0) {
-      const sign = profit > 0 ? "+" : "";
-      valueEl.textContent = `👉 市值：約 ${item.currency} ${marketValue.toLocaleString()}（盈餘 ${sign}${Math.round(profit).toLocaleString()}）`;
-    } else {
-      valueEl.textContent = `👉 市值：約 ${item.currency} ${marketValue.toLocaleString()}`;
-    }
+    const sign = profit > 0 ? "+" : "";
+    valueEl.textContent = profit !== 0
+      ? `👉 市值：約 ${item.currency} ${marketValue.toLocaleString()}（盈餘 ${sign}${Math.round(profit).toLocaleString()}）`
+      : `👉 市值：約 ${item.currency} ${marketValue.toLocaleString()}`;
     li.appendChild(valueEl);
 
     // 👉 編輯與刪除按鈕
     const actionDiv = document.createElement("span");
     actionDiv.className = "asset-actions";
-
     const editBtn = document.createElement("button");
     editBtn.textContent = "✏️";
     editBtn.onclick = () => handleEdit(i);
-
     const deleteBtn = document.createElement("button");
     deleteBtn.textContent = "🗑️";
     deleteBtn.onclick = () => handleDelete(i);
-
     actionDiv.appendChild(editBtn);
     actionDiv.appendChild(deleteBtn);
     li.appendChild(actionDiv);
@@ -393,64 +389,64 @@ function render() {
     // 👉 資料加總
     const currency = item.currency || "TWD";
     const type = item.type;
+    const typeKey = `${type}-${currency}`;
 
-    if (!totalsByType[type]) totalsByType[type] = { value: 0, currency };
-    totalsByType[type].value += marketValue;
+    if (!totalsByType[typeKey]) totalsByType[typeKey] = 0;
+    totalsByType[typeKey] += marketValue;
 
     if ((type === "股票" || type === "加密貨幣") && item.cost) {
-      if (!profitsByType[type]) profitsByType[type] = 0;
-      profitsByType[type] += profit;
+      if (!profitsByType[typeKey]) profitsByType[typeKey] = 0;
+      profitsByType[typeKey] += profit;
     }
 
     if (!totalsByCurrency[currency]) totalsByCurrency[currency] = 0;
     totalsByCurrency[currency] += marketValue;
   });
 
-  // 👉 顯示分類加總
+  // 👉 顯示資產分類加總（依幣別）
   const groupTitle = document.createElement("li");
-  groupTitle.innerHTML = "<b>📊 資產分類加總（含股票盈餘）：</b>";
+  groupTitle.innerHTML = "<b>📊 資產分類加總（依幣別，含盈餘）：</b>";
   totalsList.appendChild(groupTitle);
 
-  for (const [type, obj] of Object.entries(totalsByType)) {
-    const profit = profitsByType[type] ? `（盈餘 ${Math.round(profitsByType[type]).toLocaleString()}）` : "";
+  for (const [typeKey, value] of Object.entries(totalsByType)) {
+    const [type, currency] = typeKey.split("-");
+    const profit = profitsByType[typeKey] ? `（盈餘 ${Math.round(profitsByType[typeKey]).toLocaleString()}）` : "";
     const line = document.createElement("li");
-    line.textContent = `${type}：${obj.currency} ${obj.value.toLocaleString()} ${profit}`;
+    line.textContent = `${type}（${currency}）：${value.toLocaleString()} ${profit}`;
     totalsList.appendChild(line);
   }
 
-  // ✅ 幣別總額與折合台幣顯示（重構後）
-const groupTitle2 = document.createElement("li");
-groupTitle2.innerHTML = "<br><b>幣別總額與折合台幣（含浮動市值）：</b>";
-totalsList.appendChild(groupTitle2);
+  // 👉 幣別總額與台幣折算
+  const groupTitle2 = document.createElement("li");
+  groupTitle2.innerHTML = "<br><b>幣別總額與折合台幣（含浮動市值）：</b>";
+  totalsList.appendChild(groupTitle2);
 
-totalTWD = 0; // 確保每次 render 重算
+  totalTWD = 0;
+  for (const [cur, amt] of Object.entries(totalsByCurrency)) {
+    let rate = 1;
+    const usdToTwd = exchangeRates["TWD"] || 30;
+    if (cur === "TWD") {
+      rate = 1;
+    } else if (cur === "USD") {
+      rate = usdToTwd;
+    } else {
+      const toUsd = 1 / exchangeRates[cur];
+      rate = toUsd * usdToTwd;
+    }
+    const converted = amt * rate;
+    totalTWD += converted;
 
-for (const [cur, amt] of Object.entries(totalsByCurrency)) {
-  let rate = 1;
-  const usdToTwd = exchangeRates["TWD"] || 30;
-
-  if (cur === "TWD") {
-    rate = 1;
-  } else if (cur === "USD") {
-    rate = usdToTwd;
-  } else {
-    const toUsd = 1 / exchangeRates[cur]; // 其他幣別 → USD
-    rate = toUsd * usdToTwd;              // USD → TWD
+    const line = document.createElement("li");
+    line.textContent = `${cur}：${amt.toFixed(2)}（約 TWD ${converted.toFixed(0)}）`;
+    totalsList.appendChild(line);
   }
 
-  const converted = amt * rate;
-  totalTWD += converted;
-
-  const line = document.createElement("li");
-  line.textContent = `${cur}：${amt.toFixed(2)}（約 TWD ${converted.toFixed(0)}）`;
-  totalsList.appendChild(line);
-}
-const totalLi = document.createElement("li");
-totalLi.innerHTML = `<br><b>總資產（折合台幣）：</b> ${new Intl.NumberFormat('zh-Hant', {
-  style: 'currency',
-  currency: 'TWD'
-}).format(totalTWD)}`;
-totalsList.appendChild(totalLi);
+  const totalLi = document.createElement("li");
+  totalLi.innerHTML = `<br><b>總資產（折合台幣）：</b> ${new Intl.NumberFormat('zh-Hant', {
+    style: 'currency',
+    currency: 'TWD'
+  }).format(totalTWD)}`;
+  totalsList.appendChild(totalLi);
 }
 
 // ===== Part 4：啟動函式與其他 =====
