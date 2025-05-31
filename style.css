@@ -174,3 +174,32 @@ a {
   }
 </style>
 
+.login-info-box {
+  background: #f7f2f1;
+  border-left: 5px solid #c96374;
+  padding: 1.2rem;
+  margin-top: 2rem;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  color: #333;
+}
+.login-info-box h3 {
+  margin-top: 0;
+  color: #b7435e;
+}
+.login-info-box ul {
+  padding-left: 1.2rem;
+  margin: 0.5rem 0;
+}
+.login-info-box li {
+  margin-bottom: 0.4rem;
+}
+.privacy-note {
+  margin-top: 1rem;
+  font-style: italic;
+  font-size: 0.88rem;
+  color: #666;
+}
+
+
