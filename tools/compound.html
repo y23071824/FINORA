@@ -79,78 +79,149 @@
     }
 
     const container = document.getElementById("exchange-rates");
-    if (container) {
-      container.innerHTML = Object.entries(exchangeRates)
-        .map(([currency, rate]) => `<div>1 USD = ${rate} ${currency}</div>`)
-        .join("");
-    }
+    container.innerHTML = Object.entries(exchangeRates)
+      .map(([currency, rate]) => `<div>1 USD = ${rate} ${currency}</div>`)
+      .join("");
   }
 
-  async function loadAssetSummary() {
+  function calculateCompound() {
+    const p = parseFloat(document.getElementById("principal").value) || 0;
+    const r = (parseFloat(document.getElementById("rate").value) || 0) / 100;
+    const y = parseInt(document.getElementById("years").value) || 0;
+    const annual = parseFloat(document.getElementById("annual").value) || 0;
+    const monthly = parseFloat(document.getElementById("monthly").value) || 0;
+
+    let total = p;
+    const months = y * 12;
+    const monthlyRate = r / 12;
+
+    for (let m = 1; m <= months; m++) {
+      total *= (1 + monthlyRate);
+      total += monthly;
+      if (m % 12 === 0) total += annual;
+    }
+
+    document.getElementById("result").textContent =
+      `投入 ${y} 年後，期末總資產：約 ${total.toFixed(2)} 元`;
+
+    localStorage.setItem("compoundResult", total.toFixed(2));
+  }
+
+  function convertFx() {
+    const amt = parseFloat(document.getElementById("fx-amount").value) || 0;
+    const from = document.getElementById("fx-from").value;
+    const to = document.getElementById("fx-to").value;
+    if (!exchangeRates[from] || !exchangeRates[to]) return;
+    const result = (amt / exchangeRates[from]) * exchangeRates[to];
+    document.getElementById("fx-result").innerText =
+      `${amt} ${from} ≈ ${result.toFixed(2)} ${to}`;
+  }
+
+  async function loadAssets() {
     if (!exchangeRates["TWD"]) {
-      document.getElementById("total-assets").textContent = "⚠️ 匯率尚未就緒，無法顯示資產";
+      console.warn("⚠️ 匯率尚未載入完成，無法顯示市值");
+      document.getElementById("total-assets").textContent = "⚠️ 匯率尚未就緒，無法顯示市值";
       return;
     }
 
     const selectedAccount = localStorage.getItem("selectedAccount") || "default";
     let assets = [];
+
     try {
       assets = await FINORA_AUTH.fetchUserAssets();
     } catch (e) {
+      console.warn("無法取得雲端資產，改用本地資料");
       const key = `assets_${selectedAccount}`;
       assets = JSON.parse(localStorage.getItem(key) || "[]");
     }
 
-    const summary = {};
-    for (const item of assets) {
-      const type = item.type || "未分類";
-      const currency = item.currency || "TWD";
-      const units = parseFloat(item.units) || 0;
-      const price = parseFloat(item.price) || 0;
-      const cost = parseFloat(item.cost) || 0;
-      const amount = parseFloat(item.amount) || 0;
+    let total = 0;
+    let listHtml = "<ul>";
+    if (assets.length === 0) {
+      listHtml += "<li>目前尚無資產紀錄</li>";
+    }
 
-      let market = 0;
+    const summary = {};
+
+    for (const item of assets) {
+      const type = item.type || "";
+      const currency = item.currency || "TWD";
+      const name = item.name || item.symbol || item.stock || item.fund || item.crypto || item.insurance || "-";
+      const amount = parseFloat(item.amount) || 0;
+      const price = parseFloat(item.price) || 0;
+      const units = parseFloat(item.units) || 0;
+      const cost = parseFloat(item.cost) || 0;
+
+      let marketValue = 0;
+      let quantityDisplay = "-";
+
       if (["股票", "基金", "加密貨幣"].includes(type)) {
-        market = units * price;
+        marketValue = units * price;
+        quantityDisplay = `數量：${units.toLocaleString()}，現價：${price.toFixed(2)}`;
       } else if (type === "儲蓄保險") {
-        market = cost;
+        marketValue = cost;
+        quantityDisplay = `保額：${cost.toLocaleString()}`;
       } else {
-        market = amount;
+        marketValue = amount;
+        quantityDisplay = `金額：${amount.toLocaleString()}`;
       }
 
       const usdToTwd = exchangeRates["TWD"] || 30;
       const usdToCurrency = exchangeRates[currency] || 1;
       const rate = usdToTwd / usdToCurrency;
-      const twdValue = market * rate;
+      const marketTWD = marketValue * rate;
+      total += marketTWD;
 
-      const key = `${type}_${currency}`;
-      if (!summary[key]) {
-        summary[key] = { type, currency, market: 0 };
+      // 資產分類加總
+      if (!summary[type]) summary[type] = {};
+      if (!summary[type][currency]) summary[type][currency] = 0;
+      summary[type][currency] += marketValue;
+
+      listHtml += `<li>
+        <strong>【${type}】</strong> ${name}<br />
+        📦 ${quantityDisplay}<br />
+        💱 幣別：${currency}｜市值：約 ${marketTWD.toLocaleString()} TWD
+      </li>`;
+    }
+
+    listHtml += "</ul>";
+    document.getElementById("total-assets").textContent =
+      `💰 目前資產總市值（折合台幣）：${Math.round(total).toLocaleString()} 元`;
+    document.getElementById("asset-list").innerHTML = listHtml;
+
+    renderAssetSummary(summary);
+  }
+
+  function renderAssetSummary(summary) {
+    const summaryContainer = document.getElementById("asset-summary");
+    if (!summaryContainer) return;
+
+    const parts = [];
+    for (const [type, currencies] of Object.entries(summary)) {
+      for (const [currency, amount] of Object.entries(currencies)) {
+        parts.push(`${type}：${amount.toLocaleString()} ${currency}`);
       }
-      summary[key].market += twdValue;
     }
 
-    const container = document.getElementById("asset-list");
-    let html = "<div>📊 資產分類加總：</div><ul style='margin-top: 0.5rem'>";
-    for (const key in summary) {
-      const item = summary[key];
-      html += `<li>【${item.type}】幣別：${item.currency}｜市值：約 ${Math.round(item.market).toLocaleString()} TWD</li>`;
-    }
-    html += "</ul>";
-    container.innerHTML = html;
+    summaryContainer.textContent = `📊 資產分類加總：${parts.join("｜")}`;
   }
 
   document.addEventListener("DOMContentLoaded", async () => {
     try {
       await FINORA_AUTH.waitForLogin();
       await fetchExchangeRates();
-      await loadAssetSummary();
+      await loadAssets();
+
+      const saved = localStorage.getItem("compoundResult");
+      if (saved) {
+        document.getElementById("result").textContent =
+          `🔁 最近一次試算結果：約 ${Number(saved).toLocaleString()} 元`;
+      }
     } catch (e) {
-      console.warn("初始化錯誤", e);
-      alert("⚠️ 請先登入後再使用此功能");
+      console.warn("⚠️ 使用者尚未登入", e);
+      alert("請先登入後再使用此功能");
     }
   });
-</script>
+ </script>
 </body>
 </html>
