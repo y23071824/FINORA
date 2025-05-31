@@ -133,7 +133,7 @@
       `${amt} ${from} ≈ ${result.toFixed(2)} ${to}`;
   }
 
-  async function loadAssets() {
+async function loadAssets() {
   const selectedAccount = localStorage.getItem("selectedAccount") || "default";
   let assets = [];
 
@@ -159,16 +159,16 @@
     </thead><tbody>`;
 
   for (const item of assets) {
+    const type = item.type || "";
+    const currency = item.currency || "TWD";
+    const name = item.name || item.stock || item.fund || item.crypto || item.insurance || "-";
     const amount = parseFloat(item.amount) || 0;
     const price = parseFloat(item.price) || 0;
     const units = parseFloat(item.units) || 0;
     const cost = parseFloat(item.cost) || 0;
-    const type = item.type || "";
-    const name = item.name || item.stock || item.fund || item.crypto || item.insurance || "-";
-    const currency = item.currency || "TWD";
 
     let marketValue = 0;
-    if (type === "股票" || type === "加密貨幣" || type === "基金") {
+    if (["股票", "加密貨幣", "基金"].includes(type)) {
       marketValue = units * price;
     } else if (type === "儲蓄保險") {
       marketValue = cost;
@@ -177,19 +177,19 @@
     }
 
     const rate = currency === "TWD" ? 1 : (exchangeRates["TWD"] / exchangeRates[currency]) || 30;
-    total += marketValue * rate;
+    const marketTWD = marketValue * rate;
+    total += marketTWD;
 
     listHtml += `<tr>
       <td>${type}</td>
       <td>${name}</td>
       <td>${units || amount || cost || "-"}</td>
       <td>${currency}</td>
-      <td>${(marketValue * (rate || 1)).toLocaleString()} TWD</td>
+      <td>${marketTWD.toLocaleString()} TWD</td>
     </tr>`;
   }
 
   listHtml += `</tbody></table>`;
-
   document.getElementById("total-assets").textContent =
     `💰 目前資產總市值（折合台幣）：${Math.round(total).toLocaleString()} 元`;
   document.getElementById("asset-list").innerHTML = listHtml;
