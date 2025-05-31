@@ -238,7 +238,7 @@ body {
   transform-origin: top left;
 }
 html, body {
-  width: 125%;
+  width: 100%;
   overflow-x: hidden;
 }
 
