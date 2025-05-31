@@ -60,7 +60,7 @@
   <script src="../firebase-sync.js"></script>
 
   <script>
-    selectedAccount = localStorage.getItem("selectedAccount"); // ✅ 改為不重複宣告
+    selectedAccount = localStorage.getItem("selectedAccount");
 
     if (!selectedAccount) {
       alert("⚠️ 尚未選擇帳本，請先回首頁登入並選擇帳本！");
@@ -70,29 +70,78 @@
     const incomeKey = `emergencyIncome_${selectedAccount}`;
     const expenseKey = `emergencyExpenses_${selectedAccount}`;
 
-    let income = JSON.parse(localStorage.getItem(incomeKey) || '[]');
-    let expenses = JSON.parse(localStorage.getItem(expenseKey) || '[]');
+    let income = [];
+    let expenses = [];
 
     async function loadDisplayName() {
       try {
-        if (typeof FINORA_AUTH !== "undefined") {
-          await FINORA_AUTH.waitForLogin();
-          const list = await FINORA_AUTH.fetchAccountList();
-          const match = list.find(acc => acc.id === selectedAccount);
-          const name = match?.displayName || selectedAccount;
-          document.getElementById("account-id").textContent = name;
-        } else {
-          document.getElementById("account-id").textContent = selectedAccount;
-        }
+        await FINORA_AUTH.waitForLogin();
+        const list = await FINORA_AUTH.fetchAccountList();
+        const match = list.find(acc => acc.id === selectedAccount);
+        const name = match?.displayName || selectedAccount;
+        document.getElementById("account-id").textContent = name;
       } catch (e) {
         console.warn("❗ 帳本名稱讀取失敗", e);
         document.getElementById("account-id").textContent = selectedAccount;
       }
     }
 
-    function saveAndRender() {
+    async function loadEmergencyData() {
+      try {
+        await FINORA_AUTH.waitForLogin();
+        const user = firebase.auth().currentUser;
+        const ref = firebase.firestore()
+          .collection("users")
+          .doc(user.uid)
+          .collection("accounts")
+          .doc(selectedAccount)
+          .collection("emergency");
+
+        const incomeSnap = await ref.doc("income").get();
+        const expenseSnap = await ref.doc("expenses").get();
+
+        income = incomeSnap.exists ? incomeSnap.data().items || [] : [];
+        expenses = expenseSnap.exists ? expenseSnap.data().items || [] : [];
+
+        // 儲存一份在 localStorage
+        localStorage.setItem(incomeKey, JSON.stringify(income));
+        localStorage.setItem(expenseKey, JSON.stringify(expenses));
+      } catch (e) {
+        console.warn("❗ 雲端 emergency 資料讀取失敗", e);
+        // fallback: 讀 localStorage
+        income = JSON.parse(localStorage.getItem(incomeKey) || '[]');
+        expenses = JSON.parse(localStorage.getItem(expenseKey) || '[]');
+      }
+    }
+
+    async function saveEmergencyData() {
       localStorage.setItem(incomeKey, JSON.stringify(income));
       localStorage.setItem(expenseKey, JSON.stringify(expenses));
+
+      try {
+        const user = firebase.auth().currentUser;
+        const ref = firebase.firestore()
+          .collection("users")
+          .doc(user.uid)
+          .collection("accounts")
+          .doc(selectedAccount)
+          .collection("emergency");
+
+        const batch = firebase.firestore().batch();
+        const docs = await ref.get();
+        docs.forEach(doc => batch.delete(doc.ref)); // 清空原資料
+
+        batch.set(ref.doc("income"), { items: income });
+        batch.set(ref.doc("expenses"), { items: expenses });
+
+        await batch.commit();
+      } catch (e) {
+        console.warn("❌ 雲端儲存失敗", e);
+      }
+    }
+
+    function saveAndRender() {
+      saveEmergencyData();
       render();
     }
 
@@ -111,7 +160,7 @@
         nameInput.value = item.name || '';
         nameInput.addEventListener('input', () => {
           income[i].name = nameInput.value;
-          localStorage.setItem(incomeKey, JSON.stringify(income));
+          saveEmergencyData();
           updateSummary();
         });
 
@@ -121,7 +170,7 @@
         amountInput.value = item.amount || 0;
         amountInput.addEventListener('input', () => {
           income[i].amount = parseFloat(amountInput.value) || 0;
-          localStorage.setItem(incomeKey, JSON.stringify(income));
+          saveEmergencyData();
           updateSummary();
         });
 
@@ -147,7 +196,7 @@
         nameInput.value = item.name || '';
         nameInput.addEventListener('input', () => {
           expenses[i].name = nameInput.value;
-          localStorage.setItem(expenseKey, JSON.stringify(expenses));
+          saveEmergencyData();
           updateSummary();
         });
 
@@ -157,7 +206,7 @@
         amountInput.value = item.amount || 0;
         amountInput.addEventListener('input', () => {
           expenses[i].amount = parseFloat(amountInput.value) || 0;
-          localStorage.setItem(expenseKey, JSON.stringify(expenses));
+          saveEmergencyData();
           updateSummary();
         });
 
@@ -192,9 +241,9 @@
         `✔️ 建議預備金（${months} 個月）：${suggestion.toLocaleString()} 元`;
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      loadDisplayName(); // ✅ 顯示帳本名稱
-
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadDisplayName();
+      await loadEmergencyData(); // ✅ 雲端讀取
       document.getElementById('add-income').addEventListener('click', () => {
         income.push({ name: '', amount: 0 });
         saveAndRender();
