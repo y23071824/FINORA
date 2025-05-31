@@ -83,17 +83,38 @@
 
   <a href="../index.html">← 返回首頁</a>
 
+  <!-- ✅ Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <!-- ✅ FINORA 認證模組 -->
+  <script src="../firebase-sync.js"></script>
+
   <script>
     const selectedAccount = localStorage.getItem("selectedAccount");
-    const accountNames = JSON.parse(localStorage.getItem("accountNames") || "{}");
-    const displayName = accountNames[selectedAccount] || selectedAccount || "(未命名帳本)";
 
     if (!selectedAccount) {
       alert("⚠️ 尚未選擇帳本，請先回首頁登入並選擇帳本！");
       window.location.href = "../index.html";
     }
 
-    document.getElementById("account-id").textContent = displayName;
+    async function loadDisplayName() {
+      try {
+        if (typeof FINORA_AUTH !== "undefined") {
+          await FINORA_AUTH.waitForLogin();
+          const list = await FINORA_AUTH.fetchAccountList();
+          const match = list.find(acc => acc.id === selectedAccount);
+          const name = match?.displayName || selectedAccount;
+          document.getElementById("account-id").textContent = name;
+        } else {
+          document.getElementById("account-id").textContent = selectedAccount;
+        }
+      } catch (e) {
+        console.warn("❗ 帳本名稱讀取失敗", e);
+        document.getElementById("account-id").textContent = selectedAccount;
+      }
+    }
 
     function calculateWithdraw() {
       const total = parseFloat(document.getElementById("total").value);
@@ -122,34 +143,3 @@
         const months = totalMonths % 12;
         output += `【一般月領試算】<br>每月提領 NT$ ${monthly.toLocaleString()} 可支撐約 ${years} 年 ${months} 個月。<br><br>`;
       }
-
-      if (hasRate) {
-        const annualWithdrawal = total * (rate / 100);
-        const monthlyWithdrawal = annualWithdrawal / 12;
-        const durationYears = total / annualWithdrawal;
-
-        output += `【${rate}% 提領法則】<br>`;
-        output += `每年可提領：約 NT$ ${annualWithdrawal.toLocaleString(undefined, { maximumFractionDigits: 0 })}<br>`;
-        output += `每月可提領：約 NT$ ${monthlyWithdrawal.toLocaleString(undefined, { maximumFractionDigits: 0 })}<br>`;
-        output += `此比率下，可支撐約 ${durationYears.toFixed(1)} 年`;
-      }
-
-      result.innerHTML = output;
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const saved = localStorage.getItem("compoundResult");
-      const infoBox = document.getElementById("compound-info");
-      const inputTotal = document.getElementById("total");
-
-      if (saved && !isNaN(saved)) {
-        const value = Number(saved);
-        infoBox.innerHTML = `💰 最近一次複利試算結果已載入：<strong>NT$ ${value.toLocaleString()}</strong>`;
-        inputTotal.value = value;
-      } else {
-        infoBox.innerHTML = `尚未儲存複利試算結果，請先至「複利計算」頁執行試算。`;
-      }
-    });
-  </script>
-</body>
-</html>
