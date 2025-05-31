@@ -1,22 +1,23 @@
-// ✅ firebase-sync.js（強化版 + fetchUserAssets 整合版）
+// ✅ firebase-sync.js（強化版 + 初始化防呆）
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBJE12oIoK4gr153jkNBokQ-d3ohnN4aWE",
-  authDomain: "finora-d8cb3.firebaseapp.com",
-  projectId: "finora-d8cb3",
-  storageBucket: "finora-d8cb3.appspot.com",
-  messagingSenderId: "716455528328",
-  appId: "1:716455528328:web:16f6e68311e4deb2c31c3d",
-  measurementId: "G-KGS1T8F00Y"
-};
+if (!firebase.apps.length) {
+  const firebaseConfig = {
+    apiKey: "AIzaSyBJE12oIoK4gr153jkNBokQ-d3ohnN4aWE",
+    authDomain: "finora-d8cb3.firebaseapp.com",
+    projectId: "finora-d8cb3",
+    storageBucket: "finora-d8cb3.appspot.com",
+    messagingSenderId: "716455528328",
+    appId: "1:716455528328:web:16f6e68311e4deb2c31c3d",
+    measurementId: "G-KGS1T8F00Y"
+  };
+  firebase.initializeApp(firebaseConfig);
+}
 
-firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 const provider = new firebase.auth.GoogleAuthProvider();
 
 const MAX_ACCOUNT_COUNT = 3;
-
 let currentUser = null;
 let selectedAccount = localStorage.getItem("selectedAccount") || null;
 
@@ -91,7 +92,7 @@ window.FINORA_AUTH = {
         localStorage.setItem("selectedAccount", selectedAccount);
       }
 
-    const cloudAssets = await FINORA_AUTH.fetchUserAssets();
+      const cloudAssets = await FINORA_AUTH.fetchUserAssets();
       if (cloudAssets.length > 0) {
         localStorage.setItem(getLocalStorageKey(), JSON.stringify(cloudAssets));
       }
@@ -134,7 +135,7 @@ window.FINORA_AUTH = {
     });
   },
 
-  // ✅ 雲端載入資產（for compound.html）
+  // ✅ 雲端載入資產
   fetchUserAssets: async () => {
     await FINORA_AUTH.waitForLogin();
     const ref = getAccountAssetRef();
