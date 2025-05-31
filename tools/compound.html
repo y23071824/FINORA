@@ -118,6 +118,11 @@
     }
 
     async function loadAssets() {
+      if (!exchangeRates["TWD"]) {
+  console.warn("⚠️ 匯率尚未載入完成，無法顯示市值");
+  document.getElementById("total-assets").textContent = "⚠️ 匯率尚未就緒，無法顯示市值";
+  return;
+}
       const selectedAccount = localStorage.getItem("selectedAccount") || "default";
       let assets = [];
 
