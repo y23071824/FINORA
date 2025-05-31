@@ -431,12 +431,14 @@ li.appendChild(valueEl);
     totalsList.appendChild(line);
   }
 
-  // ✅ 幣別總額與台幣折算顯示
-  const groupTitle2 = document.createElement("li");
-  groupTitle2.innerHTML = "<br><b>幣別總額與折合台幣（含浮動市值）：</b>";
-  totalsList.appendChild(groupTitle2);
+  // ✅ 幣別總額與折合台幣顯示（重構後）
+const groupTitle2 = document.createElement("li");
+groupTitle2.innerHTML = "<br><b>幣別總額與折合台幣（含浮動市值）：</b>";
+totalsList.appendChild(groupTitle2);
 
-  for (const [cur, amt] of Object.entries(totalsByCurrency)) {
+totalTWD = 0; // 確保每次 render 重算
+
+for (const [cur, amt] of Object.entries(totalsByCurrency)) {
   let rate = 1;
   const usdToTwd = exchangeRates["TWD"] || 30;
 
@@ -445,8 +447,8 @@ li.appendChild(valueEl);
   } else if (cur === "USD") {
     rate = usdToTwd;
   } else {
-    const toUsd = 1 / exchangeRates[cur]; // 例如 1 JPY ≈ 1/144 = 0.0069 USD
-    rate = toUsd * usdToTwd;             // 換成 TWD
+    const toUsd = 1 / exchangeRates[cur]; // 其他幣別 → USD
+    rate = toUsd * usdToTwd;              // USD → TWD
   }
 
   const converted = amt * rate;
@@ -457,11 +459,12 @@ li.appendChild(valueEl);
   totalsList.appendChild(line);
 }
 
-  // ✅ 台幣總額加總顯示
   const totalLi = document.createElement("li");
-  totalLi.innerHTML = `<br><b>總資產（折合台幣）：</b> ${new Intl.NumberFormat('zh-Hant', { style: 'currency', currency: 'TWD' }).format(totalTWD)}`;
-  totalsList.appendChild(totalLi);
-}
+totalLi.innerHTML = `<br><b>總資產（折合台幣）：</b> ${new Intl.NumberFormat('zh-Hant', {
+  style: 'currency',
+  currency: 'TWD'
+}).format(totalTWD)}`;
+totalsList.appendChild(totalLi);
 
 // ===== Part 4：啟動函式與其他 =====
 document.addEventListener("DOMContentLoaded", () => {
