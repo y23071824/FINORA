@@ -137,17 +137,12 @@
     const summary = {};
     let listHtml = "<ul>";
 
-    if (assets.length === 0) {
-      listHtml += "<li>目前尚無資產紀錄</li>";
-    }
-
     for (const item of assets) {
       const type = item.type || "";
       const currency = item.currency || "TWD";
-      const name = item.name || item.symbol || item.stock || item.fund || item.crypto || item.insurance || "-";
-      const amount = parseFloat(item.amount) || 0;
       const price = parseFloat(item.price) || 0;
       const units = parseFloat(item.units) || 0;
+      const amount = parseFloat(item.amount) || 0;
       const cost = parseFloat(item.cost) || 0;
 
       let marketValue = 0;
@@ -159,7 +154,6 @@
         marketValue = amount;
       }
 
-      // 加總邏輯
       if (!summary[type]) summary[type] = {};
       if (!summary[type][currency]) summary[type][currency] = 0;
       summary[type][currency] += marketValue;
@@ -167,17 +161,11 @@
       const usdToTwd = exchangeRates["TWD"] || 30;
       const usdToCurrency = exchangeRates[currency] || 1;
       const rate = usdToTwd / usdToCurrency;
-      const marketTWD = marketValue * rate;
-      total += marketTWD;
-
-      listHtml += `<li><strong>【${type}】</strong> ${name} ｜ 💱 ${currency} 約 ${marketTWD.toLocaleString()} TWD</li>`;
+      total += marketValue * rate;
     }
 
-    listHtml += "</ul>";
     document.getElementById("total-assets").textContent =
       `💰 目前資產總市值（折合台幣）：${Math.round(total).toLocaleString()} 元`;
-    document.getElementById("asset-list").innerHTML = listHtml;
-
     renderAssetSummary(summary);
   }
 
@@ -187,11 +175,11 @@
 
     for (const [type, byCurrency] of Object.entries(summary)) {
       for (const [currency, amount] of Object.entries(byCurrency)) {
-        parts.push(`${type}：${amount.toLocaleString()} ${currency}`);
+        parts.push(`【${type}】${amount.toLocaleString()} ${currency}`);
       }
     }
 
-    summaryContainer.textContent = `📊 資產分類加總：${parts.join("｜")}`;
+    summaryContainer.textContent = `📊 資產分類加總：${parts.join(" ｜ ")}`;
   }
 
   document.addEventListener("DOMContentLoaded", async () => {
