@@ -144,8 +144,7 @@
     const units = parseFloat(item.units) || 0;
     const amount = parseFloat(item.amount) || 0;
     const cost = parseFloat(item.cost) || 0;
-    const name = item.stock || item.fund || item.crypto || item.insurance || item.name || "-";
-
+    const name = item.name || item.symbol || item.stock || item.fund || item.crypto || item.insurance || "-";
     let marketValue = 0;
     let originalCost = 0;
     let profit = 0;
