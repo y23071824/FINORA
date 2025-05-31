@@ -213,7 +213,7 @@
       const list = await FINORA_AUTH.fetchAccountList();
       const index = list.findIndex(acc => acc.id === selectedId);
       const displayName = list[index]?.displayName || selectedId;
-      const label = `使用者：${email}<br>帳本：${displayName}（${index + 1}/${list.length}）`;
+      const label = `使用者：${email}<br>帳本：${displayName}`;
       document.getElementById("user-info").innerHTML = label;
 
       await fetchExchangeRates();
