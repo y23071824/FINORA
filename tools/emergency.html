@@ -162,3 +162,19 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('add-income').addEventListener('click', () => {
+        income.push({ name: '', amount: 0 });
+        saveAndRender();
+      });
+
+      document.getElementById('add-expense').addEventListener('click', () => {
+        expenses.push({ name: '', amount: 0 });
+        saveAndRender();
+      });
+
+      document.getElementById('reserve-months').addEventListener('change', updateSummary);
+      render();
+    });
+  </script>
+</body>
+</html>
