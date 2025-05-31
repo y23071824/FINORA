@@ -10,6 +10,7 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  
   <script src="../firebase-sync.js"></script>
 </head>
 <body>
@@ -183,6 +184,41 @@
       initializeCompoundPage();
       await loadAssets();
     });
-  </script>
+    <script type="module">
+  import { FINORA_AUTH } from "../firebase-sync.js";
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    try {
+      const user = await FINORA_AUTH.waitForLogin(); // 等待登入
+      const assets = await FINORA_AUTH.fetchUserAssets(); // 取得雲端資產
+      console.log("✅ 成功載入資產", assets);
+
+      // ⬇️ 加入你要顯示的邏輯（例如加總、顯示）
+      renderAssetSummary(assets);
+    } catch (e) {
+      console.warn("⚠️ 無法載入資產：", e.message);
+    }
+  });
+
+  function renderAssetSummary(assets) {
+    // 這裡可以依據你的需求計算與顯示
+    const list = document.getElementById("asset-summary");
+    if (!list) return;
+
+    let total = 0;
+    for (const item of assets) {
+      const li = document.createElement("li");
+      li.textContent = `${item.type} - ${item.currency} ${item.amount || item.cost || 0}`;
+      list.appendChild(li);
+
+      if (item.currency === "TWD") total += parseFloat(item.amount || item.cost || 0);
+    }
+
+    const final = document.createElement("li");
+    final.innerHTML = `<b>目前 TWD 總額：約 ${total.toLocaleString()} 元</b>`;
+    list.appendChild(final);
+  }
+</script>
+</script>
 </body>
 </html>
