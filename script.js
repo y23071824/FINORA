@@ -418,40 +418,40 @@ function render() {
     totalsList.appendChild(line);
   }
 
-  // 👉 幣別總額與折合台幣
-  const groupTitle2 = document.createElement("li");
-  groupTitle2.innerHTML = "<br><b>幣別總額與折合台幣（含浮動市值）：</b>";
-  totalsList.appendChild(groupTitle2);
+  // ✅ 幣別總額與折合台幣顯示（重構後）
+const groupTitle2 = document.createElement("li");
+groupTitle2.innerHTML = "<br><b>幣別總額與折合台幣（含浮動市值）：</b>";
+totalsList.appendChild(groupTitle2);
 
-  totalTWD = 0;
-  for (const [cur, amt] of Object.entries(totalsByCurrency)) {
-    let rate = 1;
-    const usdToTwd = exchangeRates["TWD"] || 30;
+totalTWD = 0; // 確保每次 render 重算
 
-    if (cur === "TWD") {
-      rate = 1;
-    } else if (cur === "USD") {
-      rate = usdToTwd;
-    } else {
-      const toUsd = 1 / exchangeRates[cur];
-      rate = toUsd * usdToTwd;
-    }
+for (const [cur, amt] of Object.entries(totalsByCurrency)) {
+  let rate = 1;
+  const usdToTwd = exchangeRates["TWD"] || 30;
 
-    const converted = amt * rate;
-    totalTWD += converted;
-
-    const line = document.createElement("li");
-    line.textContent = `${cur}：${amt.toFixed(2)}（約 TWD ${converted.toFixed(0)}）`;
-    totalsList.appendChild(line);
+  if (cur === "TWD") {
+    rate = 1;
+  } else if (cur === "USD") {
+    rate = usdToTwd;
+  } else {
+    const toUsd = 1 / exchangeRates[cur]; // 其他幣別 → USD
+    rate = toUsd * usdToTwd;              // USD → TWD
   }
 
-  const totalLi = document.createElement("li");
-  totalLi.innerHTML = `<br><b>總資產（折合台幣）：</b> ${new Intl.NumberFormat('zh-Hant', {
-    style: 'currency',
-    currency: 'TWD'
-  }).format(totalTWD)}`;
-  totalsList.appendChild(totalLi);
+  const converted = amt * rate;
+  totalTWD += converted;
+
+  const line = document.createElement("li");
+  line.textContent = `${cur}：${amt.toFixed(2)}（約 TWD ${converted.toFixed(0)}）`;
+  totalsList.appendChild(line);
 }
+const totalLi = document.createElement("li");
+totalLi.innerHTML = `<br><b>總資產（折合台幣）：</b> ${new Intl.NumberFormat('zh-Hant', {
+  style: 'currency',
+  currency: 'TWD'
+}).format(totalTWD)}`;
+totalsList.appendChild(totalLi);
+
 
 // ===== Part 4：啟動函式與其他 =====
 document.addEventListener("DOMContentLoaded", () => {
