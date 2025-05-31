@@ -181,7 +181,10 @@ async function loadAssets() {
       quantityDisplay = amount.toLocaleString();
     }
 
-    const rate = currency === "TWD" ? 1 : (exchangeRates["TWD"] / exchangeRates[currency]) || 30;
+    const usdToTwd = exchangeRates["TWD"] || 30;
+const usdToCurrency = exchangeRates[currency] || 1;
+const rate = usdToTwd / usdToCurrency;
+
     const marketTWD = marketValue * rate;
     total += marketTWD;
 
