@@ -141,7 +141,7 @@
     const type = item.type || "";
     const currency = item.currency || "TWD";
     const price = parseFloat(item.price) || 0;
-    const units = parseFloat(item.units) || 0;
+const units = parseFloat(item.shares) || parseFloat(item.units) || 0;
     const amount = parseFloat(item.amount) || 0;
     const cost = parseFloat(item.cost) || 0;
     const name = item.name || item.symbol || item.stock || item.fund || item.crypto || item.insurance || "-";
