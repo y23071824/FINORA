@@ -451,7 +451,7 @@ totalLi.innerHTML = `<br><b>總資產（折合台幣）：</b> ${new Intl.Number
   currency: 'TWD'
 }).format(totalTWD)}`;
 totalsList.appendChild(totalLi);
-
+}
 
 // ===== Part 4：啟動函式與其他 =====
 document.addEventListener("DOMContentLoaded", () => {
