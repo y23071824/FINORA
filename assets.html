@@ -145,11 +145,10 @@
           if (user) {
             emailEl.textContent = user.email;
 
-            FINORA_AUTH.fetchAccountList().then(list => {
-              const MAX_ACCOUNT_COUNT = 3;
-              const displayName = list.find(acc => acc.id === accountId)?.displayName || accountId;
-              accountEl.textContent = `${displayName}（${list.length} / ${MAX_ACCOUNT_COUNT}）`;
-            });
+        FINORA_AUTH.fetchAccountList().then(list => {
+          const displayName = list.find(acc => acc.id === accountId)?.displayName || accountId;
+          accountEl.textContent = displayName;  // ✅ 這裡是你要的最終寫法
+        });
 
           } else {
             emailEl.textContent = "（尚未登入）";
