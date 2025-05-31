@@ -91,8 +91,101 @@
   <!-- ✅ FINORA 認證模組 -->
   <script src="../firebase-sync.js"></script>
 
+ <!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>退休提領試算｜FINORA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../style.css" />
+  <style>
+    body {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 2rem;
+      background: #fffaf8;
+      font-family: sans-serif;
+    }
+    h1 {
+      text-align: center;
+      color: #c96374;
+    }
+    label {
+      display: block;
+      margin: 1rem 0 0.3rem;
+    }
+    input {
+      width: 100%;
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+    button {
+      margin-top: 1.5rem;
+      width: 100%;
+      padding: 0.8rem;
+      background-color: #c96374;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    #result {
+      margin-top: 2rem;
+      font-size: 1.1rem;
+      color: #444;
+      line-height: 1.6;
+    }
+    #compound-info {
+      margin-top: 2rem;
+      font-size: 1.1rem;
+      color: #444;
+      background: #fdf0f2;
+      padding: 1rem;
+      border-left: 5px solid #c96374;
+      border-radius: 6px;
+    }
+    a {
+      display: block;
+      text-align: center;
+      margin-top: 2rem;
+      color: #c96374;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>退休提領試算</h1>
+  <div style="color: #555; font-size: 0.9rem;">目前帳本：<strong id="account-id">(讀取中...)</strong></div>
+
+  <div class="getting-started">
+    <h2>🧓 越早規劃退休，越能安心提領好好花</h2>
+    <ol>
+      <li>💼 系統已自動帶入你最後一次複利試算結果，可自行編輯</li>
+      <li>📉 輸入預估的月提領金額或提領比例，規劃退休財務未來</li>
+    </ol>
+    <p class="guide-note">🕰️ 現在開始準備，不是為了退休，是為了未來的從容與自由。</p>
+  </div>
+
+  <label>預估資產總額（元）：<input type="number" id="total" /></label>
+  <label>每月提領金額（元）：<input type="number" id="monthly" /></label>
+  <label>提領比率（％）：<input type="number" id="withdraw-rate" value="4" step="0.1" /></label>
+  <button onclick="calculateWithdraw()">開始試算</button>
+
+  <div id="result"></div>
+  <div id="compound-info"></div>
+
+  <a href="../index.html">← 返回首頁</a>
+
+  <!-- ✅ Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <!-- ✅ FINORA 認證模組 -->
+  <script src="../firebase-sync.js"></script>
+
   <script>
-    const selectedAccount = localStorage.getItem("selectedAccount");
+    selectedAccount = localStorage.getItem("selectedAccount"); // ✅ 不重複宣告
 
     if (!selectedAccount) {
       alert("⚠️ 尚未選擇帳本，請先回首頁登入並選擇帳本！");
@@ -143,3 +236,36 @@
         const months = totalMonths % 12;
         output += `【一般月領試算】<br>每月提領 NT$ ${monthly.toLocaleString()} 可支撐約 ${years} 年 ${months} 個月。<br><br>`;
       }
+
+      if (hasRate) {
+        const annualWithdrawal = total * (rate / 100);
+        const monthlyWithdrawal = annualWithdrawal / 12;
+        const durationYears = total / annualWithdrawal;
+
+        output += `【${rate}% 提領法則】<br>`;
+        output += `每年可提領：約 NT$ ${annualWithdrawal.toLocaleString(undefined, { maximumFractionDigits: 0 })}<br>`;
+        output += `每月可提領：約 NT$ ${monthlyWithdrawal.toLocaleString(undefined, { maximumFractionDigits: 0 })}<br>`;
+        output += `此比率下，可支撐約 ${durationYears.toFixed(1)} 年`;
+      }
+
+      result.innerHTML = output;
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadDisplayName(); // ✅ 顯示帳本名稱
+
+      const saved = localStorage.getItem("compoundResult");
+      const infoBox = document.getElementById("compound-info");
+      const inputTotal = document.getElementById("total");
+
+      if (saved && !isNaN(saved)) {
+        const value = Number(saved);
+        infoBox.innerHTML = `💰 最近一次複利試算結果已載入：<strong>NT$ ${value.toLocaleString()}</strong>`;
+        inputTotal.value = value;
+      } else {
+        infoBox.innerHTML = `尚未儲存複利試算結果，請先至「複利計算」頁執行試算。`;
+      }
+    });
+  </script>
+</body>
+</html>
