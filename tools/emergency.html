@@ -20,19 +20,17 @@
 <body>
   <h1>緊急預備金試算</h1>
   <div style="color: #555; font-size: 0.9rem;">目前帳本：<strong id="account-id">(讀取中...)</strong></div>
-  <!-- ✅ 使用者與帳本資訊 -->
-<div id="user-info" style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;"></div>
-<!-- ✅ 使用引導區塊 -->
-<div class="getting-started">
-  <h2>🧯 緊急預備金是你好好生活的安全網</h2>
-  <ol>
-    <li>📝 輸入每月固定收入來源及支出項目與金額，定期檢視，為生活建立防火牆</li>
-    <li>📆 選擇想準備幾個月的預備金（常見建議為 3～6 個月），系統會即時計算建議金額</li>
-  </ol>
-  <p class="guide-note">
-    ✨ 緊急預備金是給自己與家人最基本的保障，也是理財第一步。
-  </p>
-</div>
+
+  <div class="getting-started">
+    <h2>🧯 緊急預備金是你好好生活的安全網</h2>
+    <ol>
+      <li>📝 輸入每月固定收入與支出，定期檢視，為生活建立防火牆</li>
+      <li>📆 選擇想準備幾個月的預備金（建議 3～6 個月），系統會即時計算建議金額</li>
+    </ol>
+    <p class="guide-note">
+      ✨ 緊急預備金是給自己與家人最基本的保障，也是理財第一步。
+    </p>
+  </div>
 
   <h2>📝 每月收入登記</h2>
   <div id="income-list"></div>
@@ -56,17 +54,17 @@
   <div class="summary" id="reserve-suggestion"></div>
 
   <script>
-    let selectedAccount = localStorage.getItem("selectedAccount");
-    if (!selectedAccount) {
+    const selectedAccount = localStorage.getItem("selectedAccount");
+    const accountNames = JSON.parse(localStorage.getItem("accountNames") || "{}");
+    if (!selectedAccount || !accountNames[selectedAccount]) {
       alert("⚠️ 尚未選擇帳本，請先回首頁登入並選擇帳本！");
       window.location.href = "../index.html";
     }
 
-    document.getElementById("account-id").textContent = selectedAccount;
+    document.getElementById("account-id").textContent = accountNames[selectedAccount];
 
     const incomeKey = `emergencyIncome_${selectedAccount}`;
     const expenseKey = `emergencyExpenses_${selectedAccount}`;
-
     let income = JSON.parse(localStorage.getItem(incomeKey) || '[]');
     let expenses = JSON.parse(localStorage.getItem(expenseKey) || '[]');
 
@@ -82,7 +80,6 @@
       incomeList.innerHTML = '';
       expenseList.innerHTML = '';
 
-      // 收入項目渲染
       income.forEach((item, i) => {
         const row = document.createElement('div');
         row.className = 'item-row';
@@ -119,7 +116,6 @@
         incomeList.appendChild(row);
       });
 
-      // 支出項目渲染
       expenses.forEach((item, i) => {
         const row = document.createElement('div');
         row.className = 'item-row';
@@ -163,15 +159,12 @@
       const totalIncome = income.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
       const totalExpense = expenses.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
 
-      document.getElementById('income-total').textContent =
-        `✔️ 每月收入總額：${totalIncome.toLocaleString()} 元`;
-      document.getElementById('expense-total').textContent =
-        `✔️ 每月支出總額：${totalExpense.toLocaleString()} 元`;
+      document.getElementById('income-total').textContent = `✔️ 每月收入總額：${totalIncome.toLocaleString()} 元`;
+      document.getElementById('expense-total').textContent = `✔️ 每月支出總額：${totalExpense.toLocaleString()} 元`;
 
       const months = parseInt(document.getElementById('reserve-months').value) || 3;
       const suggestion = totalExpense * months;
-      document.getElementById('reserve-suggestion').textContent =
-        `✔️ 建議預備金（${months} 個月）：${suggestion.toLocaleString()} 元`;
+      document.getElementById('reserve-suggestion').textContent = `✔️ 建議預備金（${months} 個月）：${suggestion.toLocaleString()} 元`;
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -189,6 +182,7 @@
       render();
     });
   </script>
-<a href="../index.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374">← 返回首頁</a>
+
+  <a href="../index.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374">← 返回首頁</a>
 </body>
 </html>
