@@ -177,9 +177,12 @@ const welcomeMessages = [
 
 function showWelcome(user) {
   const welcome = document.getElementById("welcome-section");
-  const message = document.getElementById("welcome-message");
-  const greeting = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
-  message.textContent = `Hi，${user.displayName || "用戶"}！${greeting}`;
+  const greetingElem = document.getElementById("welcome-greeting");
+  const quoteElem = document.getElementById("welcome-quote");
+  const quote = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
+
+  greetingElem.textContent = `Hi，${user.displayName || "用戶"}！`;
+  quoteElem.textContent = quote;
   welcome.style.display = "block";
 }
 
