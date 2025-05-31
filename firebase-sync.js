@@ -164,6 +164,51 @@ window.FINORA_AUTH = {
       alert("❌ 儲存失敗，請確認您已登入並選擇有效帳本");
     }
   },
+const FINORA_AUTH = {
+  async fetchUserAssets() {
+    return new Promise((resolve, reject) => {
+      const user = firebase.auth().currentUser;
+      if (!user) return reject(new Error("尚未登入"));
+
+      const db = firebase.firestore();
+      const selectedAccount = localStorage.getItem("selectedAccount") || "default";
+
+      db.collection("finora_users")
+        .doc(user.uid)
+        .collection("accounts")
+        .doc(selectedAccount)
+        .get()
+        .then((doc) => {
+          if (doc.exists && doc.data()) {
+            resolve(doc.data().assets || []);
+          } else {
+            resolve([]);
+          }
+        })
+        .catch((err) => reject(err));
+    });
+  },
+
+  async initFirebase() {
+    if (!firebase.apps.length) {
+      firebase.initializeApp({
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+      });
+    }
+  },
+
+  async waitForLogin() {
+    return new Promise((resolve, reject) => {
+      const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+        unsubscribe();
+        if (user) resolve(user);
+        else reject(new Error("尚未登入"));
+      });
+    });
+  }
+};
 
   getCurrentAccount: () => selectedAccount,
 
