@@ -118,69 +118,87 @@
   }
 
   async function loadAssets() {
-    if (!exchangeRates["TWD"]) {
-      document.getElementById("total-assets").textContent = "⚠️ 匯率尚未就緒，無法顯示市值";
-      return;
-    }
-
-    const selectedAccount = localStorage.getItem("selectedAccount") || "default";
-    let assets = [];
-
-    try {
-      assets = await FINORA_AUTH.fetchUserAssets();
-    } catch (e) {
-      const key = `assets_${selectedAccount}`;
-      assets = JSON.parse(localStorage.getItem(key) || "[]");
-    }
-
-    let total = 0;
-    const summary = {};
-    let listHtml = "<ul>";
-
-    for (const item of assets) {
-      const type = item.type || "";
-      const currency = item.currency || "TWD";
-      const price = parseFloat(item.price) || 0;
-      const units = parseFloat(item.units) || 0;
-      const amount = parseFloat(item.amount) || 0;
-      const cost = parseFloat(item.cost) || 0;
-
-      let marketValue = 0;
-      if (["股票", "基金", "加密貨幣"].includes(type)) {
-        marketValue = units * price;
-      } else if (type === "儲蓄保險") {
-        marketValue = cost;
-      } else {
-        marketValue = amount;
-      }
-
-      if (!summary[type]) summary[type] = {};
-      if (!summary[type][currency]) summary[type][currency] = 0;
-      summary[type][currency] += marketValue;
-
-      const usdToTwd = exchangeRates["TWD"] || 30;
-      const usdToCurrency = exchangeRates[currency] || 1;
-      const rate = usdToTwd / usdToCurrency;
-      total += marketValue * rate;
-    }
-
-    document.getElementById("total-assets").textContent =
-      `💰 目前資產總市值（折合台幣）：${Math.round(total).toLocaleString()} 元`;
-    renderAssetSummary(summary);
+  if (!exchangeRates["TWD"]) {
+    document.getElementById("total-assets").textContent = "⚠️ 匯率尚未就緒，無法顯示市值";
+    return;
   }
 
-  function renderAssetSummary(summary) {
-    const summaryContainer = document.getElementById("asset-summary");
-    const parts = [];
+  const selectedAccount = localStorage.getItem("selectedAccount") || "default";
+  let assets = [];
 
-    for (const [type, byCurrency] of Object.entries(summary)) {
-      for (const [currency, amount] of Object.entries(byCurrency)) {
-        parts.push(`【${type}】${amount.toLocaleString()} ${currency}`);
-      }
+  try {
+    assets = await FINORA_AUTH.fetchUserAssets();
+  } catch (e) {
+    const key = `assets_${selectedAccount}`;
+    assets = JSON.parse(localStorage.getItem(key) || "[]");
+  }
+
+  let total = 0;
+  const summary = {};
+  let listHtml = "<ul>";
+
+  for (const item of assets) {
+    const type = item.type || "";
+    const currency = item.currency || "TWD";
+    const price = parseFloat(item.price) || 0;
+    const units = parseFloat(item.units) || 0;
+    const amount = parseFloat(item.amount) || 0;
+    const cost = parseFloat(item.cost) || 0;
+    const name = item.stock || item.fund || item.crypto || item.insurance || item.name || "-";
+
+    let marketValue = 0;
+    let originalCost = 0;
+    let profit = 0;
+
+    if (["股票", "基金", "加密貨幣"].includes(type)) {
+      marketValue = units * price;
+      originalCost = cost;
+      profit = marketValue - originalCost;
+    } else if (type === "儲蓄保險") {
+      marketValue = cost;
+      profit = 0;
+    } else {
+      marketValue = amount;
+      profit = 0;
     }
 
-    summaryContainer.textContent = `📊 資產分類加總：${parts.join(" ｜ ")}`;
+    // 加總邏輯
+    if (!summary[type]) summary[type] = {};
+    if (!summary[type][currency]) summary[type][currency] = 0;
+    summary[type][currency] += marketValue;
+
+    const usdToTwd = exchangeRates["TWD"] || 30;
+    const usdToCurrency = exchangeRates[currency] || 1;
+    const rate = usdToTwd / usdToCurrency;
+    const marketTWD = marketValue * rate;
+    const profitTWD = profit * rate;
+
+    total += marketTWD;
+
+    listHtml += `<li><strong>【${type}】</strong> ${name} ｜ 💱 ${currency} ${marketValue.toLocaleString()}（盈餘 ${profitTWD.toFixed(0)} TWD）</li>`;
   }
+
+  listHtml += "</ul>";
+
+  document.getElementById("total-assets").textContent =
+    `💰 目前資產總市值（折合台幣）：${Math.round(total).toLocaleString()} 元`;
+  document.getElementById("asset-list").innerHTML = listHtml;
+
+  renderAssetSummary(summary);
+}
+
+function renderAssetSummary(summary) {
+  const summaryContainer = document.getElementById("asset-summary");
+  const parts = [];
+
+  for (const [type, byCurrency] of Object.entries(summary)) {
+    for (const [currency, amount] of Object.entries(byCurrency)) {
+      parts.push(`【${type}】${amount.toLocaleString()} ${currency}`);
+    }
+  }
+
+  summaryContainer.textContent = `📊 資產分類加總：${parts.join(" ｜ ")}`;
+}
 
   document.addEventListener("DOMContentLoaded", async () => {
     try {
