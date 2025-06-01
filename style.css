@@ -1,46 +1,52 @@
-/* === 整體版面設定 === */ body { font-family: sans-serif; background: #fffaf8; color: #333; padding: 2rem; font-size: 1rem; max-width: 700px; margin: 0 auto; }
+/* === 整體版面設定 === */ body { font-family: sans-serif; background: #fffaf8; color: #333; padding: 2rem; font-size: 1rem; max-width: 700px; margin: 0 auto; transform: scale(0.8); transform-origin: top center; }
 
-/* === 標題樣式 === / h1, h2 { text-align: center; color: #b4695d; / 與 logo 相襯的棕紅色 */ }
+html, body { width: 100%; overflow-x: hidden; }
+
+/* === 主色定義（來自 logo 色調） === / :root { --main-color: #b4695d; / Logo 主色（柔棕紅） / --hover-color: #944647; / 深棕紅 hover */ --light-bg: #fdf7f5; --box-shadow: 0 0 4px rgba(0,0,0,0.08); }
+
+/* === 標題樣式 === */ h1, h2 { text-align: center; color: var(--main-color); }
 
 /* === 表單標籤文字樣式 === */ label { display: block; margin-top: 1.2rem; }
 
 /* === 表單輸入框與下拉選單樣式 === */ input, select { width: 100%; padding: 0.6rem; font-size: 1rem; margin-top: 0.2rem; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
 
-/* === 主要操作按鈕樣式 === */ button { margin-top: 1.8rem; width: 100%; padding: 0.9rem; background-color: #b4695d; color: white; border: none; border-radius: 8px; font-size: 1rem; }
+/* === 主要操作按鈕樣式（正方形圓角風格） === */ button { margin-top: 1.8rem; width: 100%; aspect-ratio: 1 / 1; background-color: var(--main-color); color: white; border: none; border-radius: 20px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: background-color 0.3s; display: flex; align-items: center; justify-content: center; }
+
+button:hover { background-color: var(--hover-color); }
 
 /* === 編輯／刪除按鈕群組樣式 === */ .button-group { margin-top: 0.8rem; display: flex; justify-content: center; gap: 1rem; }
 
-.button-group button { flex: 1; padding: 0.6rem; font-size: 0.8rem; border-radius: 6px; background-color: #b4695d; color: white; border: none; }
+.button-group button { flex: 1; padding: 0.6rem; font-size: 0.8rem; border-radius: 12px; background-color: var(--main-color); color: white; border: none; }
 
-/* === 所有按鈕 hover 效果 === */ button:hover, .button-group button:hover { background-color: #9e4f4f; }
+.button-group button:hover { background-color: var(--hover-color); }
 
 /* === 資產列表區塊樣式 === */ ul { list-style-type: none; padding: 0; }
 
-ul li { background: white; padding: 1rem; margin: 0.5rem 0; border-radius: 8px; box-shadow: 0 0 4px rgba(0,0,0,0.08); }
+ul li { background: white; padding: 1rem; margin: 0.5rem 0; border-radius: 8px; box-shadow: var(--box-shadow); }
 
-/* === 返回連結樣式 === */ a { color: #b4695d; text-decoration: none; display: block; margin-top: 2rem; text-align: center; font-size: 0.8rem; }
+/* === 返回連結樣式 === */ a { color: var(--main-color); text-decoration: none; display: block; margin-top: 2rem; text-align: center; font-size: 0.8rem; }
 
-.home-btn { background-color: #b4695d; color: white; font-size: 1.1rem; padding: 0.7rem 1.4rem; border: none; border-radius: 10px; cursor: pointer; transition: background-color 0.3s; margin-top: 2rem; display: inline-block; }
+.home-btn { background-color: var(--main-color); color: white; font-size: 1.1rem; padding: 0.7rem 1.4rem; border: none; border-radius: 10px; cursor: pointer; transition: background-color 0.3s; display: inline-block; }
 
-.home-btn:hover { background-color: #944647; }
+.home-btn:hover { background-color: var(--hover-color); }
 
 .grid-button-group { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; max-width: 600px; margin: 2rem auto; }
 
-.grid-button-group a { display: flex; align-items: center; justify-content: center; aspect-ratio: 1 / 1; background-color: #b4695d; color: white; text-decoration: none; border-radius: 20px; font-size: 1.2rem; font-weight: bold; transition: background-color 0.2s; }
+.grid-button-group a { display: flex; align-items: center; justify-content: center; aspect-ratio: 1 / 1; background-color: var(--main-color); color: white; text-decoration: none; border-radius: 20px; font-size: 1.2rem; font-weight: bold; transition: background-color 0.2s; }
 
-.grid-button-group a:hover { background-color: #944647; }
+.grid-button-group a:hover { background-color: var(--hover-color); }
 
 .subtitle { font-size: 1.2rem; text-align: center; margin-top: 1rem; color: #555; }
 
 .asset-actions { display: inline-flex; gap: 4px; margin-left: 10px; vertical-align: middle; }
 
-.asset-actions button { font-size: 0.8rem; padding: 2px 6px; border: none; border-radius: 4px; background-color: #eee; cursor: pointer; }
+.asset-actions button { font-size: 0.8rem; padding: 2px 6px; border: none; border-radius: 4px; background-color: #eee; cursor: pointer; color: var(--main-color); }
 
 .asset-actions button:hover { background-color: #ddd; }
 
-#getting-started { background: #fdf7f5; border-left: 6px solid #b4695d; padding: 1rem 1.5rem; margin-top: 2rem; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+#getting-started { background: var(--light-bg); border-left: 6px solid var(--main-color); padding: 1rem 1.5rem; margin-top: 2rem; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
-.getting-started h2 { color: #b4695d; font-size: 1.2rem; margin-bottom: 0.8rem; }
+.getting-started h2 { color: var(--main-color); font-size: 1.2rem; margin-bottom: 0.8rem; }
 
 .getting-started ol { padding-left: 1.2rem; font-size: 1rem; color: #444; }
 
@@ -48,17 +54,13 @@ ul li { background: white; padding: 1rem; margin: 0.5rem 0; border-radius: 8px; 
 
 .guide-note { font-style: italic; font-size: 0.9rem; color: #888; margin-top: 0.8rem; }
 
-.login-info-box { background: #f7f2f1; border-left: 5px solid #b4695d; padding: 1.2rem; margin-top: 2rem; border-radius: 12px; font-size: 0.95rem; box-shadow: 0 1px 4px rgba(0,0,0,0.05); color: #333; }
+.login-info-box { background: #f7f2f1; border-left: 5px solid var(--main-color); padding: 1.2rem; margin-top: 2rem; border-radius: 12px; font-size: 0.95rem; box-shadow: 0 1px 4px rgba(0,0,0,0.05); color: #333; }
 
-.login-info-box h3 { margin-top: 0; color: #a14e4e; }
+.login-info-box h3 { margin-top: 0; color: var(--hover-color); }
 
 .login-info-box ul { padding-left: 1.2rem; margin: 0.5rem 0; }
 
 .login-info-box li { margin-bottom: 0.4rem; }
 
 .privacy-note { margin-top: 1rem; font-style: italic; font-size: 0.88rem; color: #666; }
-
-body { transform: scale(0.8); transform-origin: top center; }
-
-html, body { width: 100%; overflow-x: hidden; }
 
