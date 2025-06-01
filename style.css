@@ -1,244 +1,64 @@
-/* === 整體版面設定 === */
-body {
-  font-family: sans-serif;             /* 字型設定為無襯線體 */
-  background: #fffaf8;                 /* 背景色為柔和的粉膚白 */
-  color: #333;                         /* 主要文字顏色為深灰 */
-  padding: 2rem;                       /* 內邊距設為2rem */
-  font-size: 1rem;                     /* 基本文字大小 */
-  max-width: 700px;                    /* 最大寬度限制為 700px */
-  margin: 0 auto;                      /* 置中顯示 */
-}
+/* === 整體版面設定 === */ body { font-family: sans-serif; background: #fffaf8; color: #333; padding: 2rem; font-size: 1rem; max-width: 700px; margin: 0 auto; }
 
-/* === 標題樣式 === */
-h1, h2 {
-  text-align: center;                  /* 標題置中 */
-  color: #c96374;                      /* 粉膚紅色標題 */
-}
+/* === 標題樣式 === / h1, h2 { text-align: center; color: #b4695d; / 與 logo 相襯的棕紅色 */ }
 
-/* === 表單標籤文字樣式 === */
-label {
-  display: block;                      /* 單獨一行顯示 */
-  margin-top: 1.2rem;                  /* 與上一個元素的距離 */
-}
+/* === 表單標籤文字樣式 === */ label { display: block; margin-top: 1.2rem; }
 
-/* === 表單輸入框與下拉選單樣式 === */
-input, select {
-  width: 100%;                         /* 滿版寬度 */
-  padding: 0.6rem;                     /* 內邊距 */
-  font-size: 1rem;                     /* 字體大小 */
-  margin-top: 0.2rem;                  /* 與 label 的間距 */
-  border: 1px solid #ccc;             /* 淺灰邊框 */
-  border-radius: 6px;                  /* 圓角邊框 */
-  box-sizing: border-box;             /* 避免 padding 影響寬度 */
-}
+/* === 表單輸入框與下拉選單樣式 === */ input, select { width: 100%; padding: 0.6rem; font-size: 1rem; margin-top: 0.2rem; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
 
-/* === 主要操作按鈕樣式（提交、匯率換算、試算等）=== */
-button {
-  margin-top: 1.8rem;                  /* 與前元素間距 */
-  width: 100%;                         /* 滿版按鈕 */
-  padding: 0.9rem;                     /* 內邊距 */
-  background-color: #c96374;          /* 主色：粉膚紅 */
-  color: white;                        /* 白字 */
-  border: none;                        /* 移除邊框 */
-  border-radius: 8px;                  /* 圓角 */
-  font-size: 1rem;                     /* 字體大小 */
-}
+/* === 主要操作按鈕樣式 === */ button { margin-top: 1.8rem; width: 100%; padding: 0.9rem; background-color: #b4695d; color: white; border: none; border-radius: 8px; font-size: 1rem; }
 
-/* === 編輯／刪除按鈕群組樣式 === */
-.button-group {
-  margin-top: 0.8rem;                  /* 與資產說明間距 */
-  display: flex;                       /* 彈性盒模型排列 */
-  justify-content: center;            /* 水平置中 */
-  gap: 1rem;                           /* 按鈕間距 */
-}
+/* === 編輯／刪除按鈕群組樣式 === */ .button-group { margin-top: 0.8rem; display: flex; justify-content: center; gap: 1rem; }
 
-.button-group button {
-  flex: 1;                             /* 平均寬度分配 */
-  padding: 0.6rem;                     /* 內邊距 */
-  font-size: 0.8rem;                  /* 稍小字體 */
-  border-radius: 6px;                  /* 圓角 */
-  background-color: #c96374;          /* 主色與儲存一致 */
-  color: white;                        /* 白字 */
-  border: none;                        /* 無邊框 */
-}
+.button-group button { flex: 1; padding: 0.6rem; font-size: 0.8rem; border-radius: 6px; background-color: #b4695d; color: white; border: none; }
 
-/* === 所有按鈕 hover 效果 === */
-button:hover,
-.button-group button:hover {
-  background-color: #b85163;          /* 深一階紅，滑鼠懸停時使用 */
-}
+/* === 所有按鈕 hover 效果 === */ button:hover, .button-group button:hover { background-color: #9e4f4f; }
 
-/* === 資產列表區塊樣式 === */
-ul {
-  list-style-type: none;              /* 移除原本的圓點樣式 */
-  padding: 0;                         /* 無縮排 */
-}
+/* === 資產列表區塊樣式 === */ ul { list-style-type: none; padding: 0; }
 
-ul li {
-  background: white;                  /* 每個資產項背景白色 */
-  padding: 1rem;                      /* 內邊距 */
-  margin: 0.5rem 0;                   /* 每個項目上下間距 */
-  border-radius: 8px;                 /* 圓角 */
-  box-shadow: 0 0 4px rgba(0,0,0,0.08); /* 淺陰影 */
-}
+ul li { background: white; padding: 1rem; margin: 0.5rem 0; border-radius: 8px; box-shadow: 0 0 4px rgba(0,0,0,0.08); }
 
-/* === 返回連結樣式 === */
-a {
-  color: #c96374;                     /* 粉膚紅字 */
-  text-decoration: none;              /* 移除底線 */
-  display: block;                     /* 單獨一行 */
-  margin-top: 2rem;                   /* 與上方內容的距離 */
-  text-align: center;                 /* 置中顯示 */
-  font-size: 0.8rem;                 /* 字體略小 */
-}
-/* === 返回首頁按鈕統一樣式 === */
-/* 定義一種按鈕樣式，給 class="home-btn" 用的 */
-.home-btn {
-  background-color: #c96374;        /* 按鈕底色（粉紅系） */
-  color: white;                     /* 文字顏色白色 */
-  font-size: 1.1rem;                /* 字體大小 */
-  padding: 0.7rem 1.4rem;           /* 上下＆左右內距 */
-  border: none;                     /* 去掉邊框 */
-  border-radius: 10px;              /* 圓角邊框 */
-  cursor: pointer;                  /* 滑鼠變成小手 */
-  transition: background-color 0.3s;/* 漸變動畫 */
-  margin-top: 2rem;                 /* 上方空白 */
-  display: inline-block;            /* 可以置中對齊 */
-}
+/* === 返回連結樣式 === */ a { color: #b4695d; text-decoration: none; display: block; margin-top: 2rem; text-align: center; font-size: 0.8rem; }
 
-.home-btn:hover {
-  background-color: #a6485c;        /* 滑鼠移上去變深色 */
-}
+.home-btn { background-color: #b4695d; color: white; font-size: 1.1rem; padding: 0.7rem 1.4rem; border: none; border-radius: 10px; cursor: pointer; transition: background-color 0.3s; margin-top: 2rem; display: inline-block; }
 
-.grid-button-group {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 每列2個 */
-  gap: 1.5rem;
-  max-width: 600px;
-  margin: 2rem auto;
-}
+.home-btn:hover { background-color: #944647; }
 
-.grid-button-group a {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  aspect-ratio: 1 / 1; /* 正方形按鈕 */
-  background-color: #c96374;
-  color: white;
-  text-decoration: none;
-  border-radius: 20px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  transition: background-color 0.2s;
-}
+.grid-button-group { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; max-width: 600px; margin: 2rem auto; }
 
-.grid-button-group a:hover {
-  background-color: #a04d5d;
-}
+.grid-button-group a { display: flex; align-items: center; justify-content: center; aspect-ratio: 1 / 1; background-color: #b4695d; color: white; text-decoration: none; border-radius: 20px; font-size: 1.2rem; font-weight: bold; transition: background-color 0.2s; }
 
-.subtitle {
-  font-size: 1.2rem;     /* ✅ 字體變大 */
-  text-align: center;    /* ✅ 置中 */
-  margin-top: 1rem;
-  color: #555;
-}
-.asset-actions {
-  display: inline-flex;
-  gap: 4px;
-  margin-left: 10px;
-  vertical-align: middle;
-}
+.grid-button-group a:hover { background-color: #944647; }
 
-.asset-actions button {
-  font-size: 0.8rem;
-  padding: 2px 6px;
-  border: none;
-  border-radius: 4px;
-  background-color: #eee;
-  cursor: pointer;
-}
+.subtitle { font-size: 1.2rem; text-align: center; margin-top: 1rem; color: #555; }
 
-.asset-actions button:hover {
-  background-color: #ddd;
-}
+.asset-actions { display: inline-flex; gap: 4px; margin-left: 10px; vertical-align: middle; }
 
-<style>
-  #new-account-input-group input {
-    padding: 0.3rem;
-    font-size: 1rem;
-    width: 70%;
-  }
-  #new-account-input-group button {
-    padding: 0.3rem 1rem;
-    font-size: 1rem;
-  }
-</style>
+.asset-actions button { font-size: 0.8rem; padding: 2px 6px; border: none; border-radius: 4px; background-color: #eee; cursor: pointer; }
 
-.getting-started {
-  background: #fdf7f5;
-  border-left: 6px solid #c96374;
-  padding: 1rem 1.5rem;
-  margin-top: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
+.asset-actions button:hover { background-color: #ddd; }
 
-.getting-started h2 {
-  color: #c96374;
-  font-size: 1.2rem;
-  margin-bottom: 0.8rem;
-}
+#getting-started { background: #fdf7f5; border-left: 6px solid #b4695d; padding: 1rem 1.5rem; margin-top: 2rem; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
-.getting-started ol {
-  padding-left: 1.2rem;
-  font-size: 1rem;
-  color: #444;
-}
+.getting-started h2 { color: #b4695d; font-size: 1.2rem; margin-bottom: 0.8rem; }
 
-.getting-started ol li {
-  margin-bottom: 0.5rem;
-}
+.getting-started ol { padding-left: 1.2rem; font-size: 1rem; color: #444; }
 
-.guide-note {
-  font-style: italic;
-  font-size: 0.9rem;
-  color: #888;
-  margin-top: 0.8rem;
-}
+.getting-started ol li { margin-bottom: 0.5rem; }
 
-.login-info-box {
-  background: #f7f2f1;
-  border-left: 5px solid #c96374;
-  padding: 1.2rem;
-  margin-top: 2rem;
-  border-radius: 12px;
-  font-size: 0.95rem;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-  color: #333;
-}
-.login-info-box h3 {
-  margin-top: 0;
-  color: #b7435e;
-}
-.login-info-box ul {
-  padding-left: 1.2rem;
-  margin: 0.5rem 0;
-}
-.login-info-box li {
-  margin-bottom: 0.4rem;
-}
-.privacy-note {
-  margin-top: 1rem;
-  font-style: italic;
-  font-size: 0.88rem;
-  color: #666;
-}
-body {
-  transform: scale(0.8);
-  transform-origin: top left;
-}
-html, body {
-  width: 100%;
-  overflow-x: hidden;
-}
+.guide-note { font-style: italic; font-size: 0.9rem; color: #888; margin-top: 0.8rem; }
+
+.login-info-box { background: #f7f2f1; border-left: 5px solid #b4695d; padding: 1.2rem; margin-top: 2rem; border-radius: 12px; font-size: 0.95rem; box-shadow: 0 1px 4px rgba(0,0,0,0.05); color: #333; }
+
+.login-info-box h3 { margin-top: 0; color: #a14e4e; }
+
+.login-info-box ul { padding-left: 1.2rem; margin: 0.5rem 0; }
+
+.login-info-box li { margin-bottom: 0.4rem; }
+
+.privacy-note { margin-top: 1rem; font-style: italic; font-size: 0.88rem; color: #666; }
+
+body { transform: scale(0.8); transform-origin: top left; }
+
+html, body { width: 100%; overflow-x: hidden; }
 
