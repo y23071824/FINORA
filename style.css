@@ -1,10 +1,10 @@
 /* === 主色系設定（與 logo 色彩搭配） === */
 :root {
   --main-color: #b4695d;
-  --main-color-hover: #944647;
-  --button-radius: 20px;
-  --button-size: 4rem;
-  --button-font: 1.2rem;
+  --main-color-hover: #f5e8e6;
+  --button-radius: 18px;
+  --button-font: 1.1rem;
+  --button-border: 2px solid var(--main-color);
 }
 
 /* === 整體版面設定 === */
@@ -47,37 +47,30 @@ input, select {
   box-sizing: border-box;
 }
 
-/* === 所有按鈕統一樣式（右側風格按鈕）=== */
-button,
-.button-group button,
-.home-btn,
-.grid-button-group a,
-.asset-actions button {
-  width: var(--button-size);
-  height: var(--button-size);
-  background-color: var(--main-color);
-  color: white;
-  border: none;
+/* === 所有按鈕統一樣式 === */
+button, .button-group button, .home-btn, .grid-button-group a, .asset-actions button {
+  background-color: transparent;
+  color: var(--main-color);
+  border: var(--button-border);
   border-radius: var(--button-radius);
   font-size: var(--button-font);
-  font-weight: bold;
+  padding: 0.6rem 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+  text-align: center;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  transition: background-color 0.2s, transform 0.2s;
-  text-align: center;
-  aspect-ratio: 1 / 1;
   text-decoration: none;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+
+/* === Hover 效果 === */
 button:hover,
 .button-group button:hover,
 .home-btn:hover,
 .grid-button-group a:hover,
 .asset-actions button:hover {
   background-color: var(--main-color-hover);
-  transform: scale(1.05);
 }
 
 /* === 編輯／刪除按鈕群組樣式 === */
@@ -119,8 +112,11 @@ a {
   max-width: 600px;
   margin: 2rem auto;
 }
+.grid-button-group a {
+  aspect-ratio: 1 / 1;
+}
 
-/* === 區塊副標題 === */
+/* === 標語與小標題 === */
 .subtitle {
   font-size: 1.2rem;
   text-align: center;
@@ -128,15 +124,19 @@ a {
   color: #555;
 }
 
-/* === 資產列內部操作按鈕 === */
+/* === 資產操作按鈕（小） === */
 .asset-actions {
   display: inline-flex;
   gap: 4px;
   margin-left: 10px;
   vertical-align: middle;
 }
+.asset-actions button {
+  font-size: 0.8rem;
+  padding: 4px 8px;
+}
 
-/* === 開始使用區塊樣式 === */
+/* === 開始使用說明區塊 === */
 #getting-started {
   background: #fdf7f5;
   border-left: 6px solid var(--main-color);
@@ -165,7 +165,7 @@ a {
   margin-top: 0.8rem;
 }
 
-/* === 登入資訊區塊樣式 === */
+/* === 登入提示區塊 === */
 .login-info-box {
   background: #f7f2f1;
   border-left: 5px solid var(--main-color);
