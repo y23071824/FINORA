@@ -286,3 +286,20 @@ body.logo-full-bg::before {
 .finora-footer a:hover {
   text-decoration: underline;
 }
+.site-footer {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #888;
+  margin-top: 3rem;
+  padding: 1rem 0;
+}
+
+.site-footer a {
+  color: #b4695d;
+  text-decoration: none;
+  margin: 0 0.5rem;
+}
+
+.site-footer a:hover {
+  text-decoration: underline;
+}
