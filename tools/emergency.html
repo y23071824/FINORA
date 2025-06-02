@@ -12,7 +12,22 @@
     .item-row { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
     .item-row input:nth-child(1) { flex: 0 0 40%; }
     .item-row input:nth-child(2) { flex: 0 0 40%; }
-    .item-row button { flex: 0 0 20%; background: #ffcccc; border: none; padding: 0 0.5rem; cursor: pointer; }
+.item-row button {
+  flex: 0 0 20%;
+  background: #fffaf8;
+  border: 2px solid #c96374;
+  color: #c96374;
+  padding: 0.3rem;
+  font-size: 1.2rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.item-row button:hover {
+  background: #fcecec;
+  color: #a94456;
+}
     label, select { margin-top: 1rem; display: block; }
     .summary { margin-top: 1rem; font-weight: bold; }
   </style>
