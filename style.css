@@ -242,8 +242,8 @@ button:hover,
   color: white;
 }
 
-body.with-logo-bg {
-  background: #fffaf8 url('logo.png') no-repeat bottom right;
-  background-size: 200px auto;
-  background-attachment: fixed;
+/* ✅ 整頁鋪滿背景圖（只限特定頁面） */
+body.logo-full-bg {
+  background: url('logo.png') no-repeat center center fixed;
+  background-size: cover;
 }
