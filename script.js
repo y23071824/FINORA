@@ -373,18 +373,24 @@ function render() {
     li.appendChild(valueEl);
 
     // 👉 編輯與刪除按鈕
-    const actionDiv = document.createElement("span");
-    actionDiv.className = "asset-actions";
-    const editBtn = document.createElement("button");
-    editBtn.textContent = "✏️";
-    editBtn.onclick = () => handleEdit(i);
-    const deleteBtn = document.createElement("button");
-    deleteBtn.textContent = "🗑️";
-    deleteBtn.onclick = () => handleDelete(i);
-    actionDiv.appendChild(editBtn);
-    actionDiv.appendChild(deleteBtn);
-    li.appendChild(actionDiv);
-    assetList.appendChild(li);
+    const actionDiv = document.createElement("div"); // ✅ 原本是 span，改為 div 才能套用 flex
+actionDiv.className = "asset-actions";
+
+// 按鈕：修改
+const editBtn = document.createElement("button");
+editBtn.textContent = "✏️ 修改";
+editBtn.onclick = () => handleEdit(i);
+
+// 按鈕：刪除
+const deleteBtn = document.createElement("button");
+deleteBtn.textContent = "🗑️ 刪除";
+deleteBtn.onclick = () => handleDelete(i);
+
+// 按鈕加入區塊
+actionDiv.appendChild(editBtn);
+actionDiv.appendChild(deleteBtn);
+li.appendChild(actionDiv);
+assetList.appendChild(li);
 
     // 👉 資料加總
     const currency = item.currency || "TWD";
