@@ -258,3 +258,39 @@ a {
 .asset-actions button:hover {
   background-color: var(--main-hover, #944647);
 }
+
+
+/* 儲存資產按鈕置中 */
+.button-center {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+/* 紅框白底按鈕樣式 */
+button,
+.asset-actions button {
+  background-color: white;
+  color: var(--main-color, #b4695d);
+  border: 2px solid var(--main-color, #b4695d);
+  border-radius: var(--button-radius, 20px);
+  font-size: var(--button-font, 1.1rem);
+  padding: 0.5rem 1.2rem;
+  cursor: pointer;
+  min-width: 100px;
+}
+
+/* 滑過按鈕效果 */
+button:hover,
+.asset-actions button:hover {
+  background-color: var(--main-color, #b4695d);
+  color: white;
+}
+
+/* 修改與刪除置中排版 */
+.asset-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.8rem;
+}
