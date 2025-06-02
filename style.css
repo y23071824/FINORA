@@ -33,7 +33,7 @@ h1, h2, h3 {
 /* === 表單 === */
 label {
   display: block;
-  margin-top: 1.2rem;
+  margin-top: 0.8rem;
 }
 input, select {
   width: 100%;
@@ -111,7 +111,7 @@ ul li {
 .grid-button-group {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
+  gap: 1rem;
   max-width: 600px;
   margin: 2rem auto;
 }
@@ -123,7 +123,7 @@ ul li {
 .subtitle {
   font-size: 1.2rem;
   text-align: center;
-  margin-top: 1rem;
+  margin-top: 0.8rem;
   color: #555;
 }
 .guide-note {
@@ -138,7 +138,7 @@ ul li {
   background: #f7f2f1;
   border-left: 5px solid var(--main-color);
   padding: 1.2rem;
-  margin-top: 2rem;
+  margin-top: 1.5rem;
   border-radius: 12px;
   font-size: 0.95rem;
   box-shadow: 0 1px 4px rgba(0,0,0,0.05);
@@ -177,12 +177,12 @@ a {
   color: var(--main-color);
   font-size: 0.85rem;
   text-align: center;
-  margin-top: 2rem;
+  margin-top: 1rem;
   text-decoration: none;
 }
 #save-asset-btn {
   display: block;
-  margin: 2rem auto 1.5rem; /* 上下留白：2rem 往上，1.5rem 往下 */
+  margin: 1rem auto 0.8rem; /* 上下留白：2rem 往上，1.5rem 往下 */
   padding: 0.8rem 1.4rem;
   font-size: 1.05rem;
   font-weight: bold;
@@ -211,7 +211,7 @@ a {
   font-weight: bold;
   text-decoration: none;
   transition: background-color 0.2s, color 0.2s;
-  margin: 1.5rem auto;
+  margin: 1rem auto;
   max-width: 400px;
   background: transparent;
   box-sizing: border-box;
@@ -223,7 +223,7 @@ a {
 button,
 .cta-full {
   display: block;
-  margin: 2.5rem auto 0;  /* ✅ 上方距離 2.5rem，置中 */
+  margin: 1rem auto 0;  /* ✅ 上方距離 2.5rem，置中 */
   padding: 0.8rem 1.5rem;
   font-size: 1.1rem;
   font-weight: bold;
