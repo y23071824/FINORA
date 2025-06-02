@@ -21,7 +21,9 @@ let assetList, totalsList, profitList, bankDatalist;
 // ===== 匯率查詢 =====
 async function fetchExchangeRates() {
   try {
-    const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
+    const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR", {
+  cache: "no-store"
+});
     const data = await res.json();
 
     if (!data || !data.rates) throw new Error("無效匯率資料");
