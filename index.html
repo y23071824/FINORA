@@ -2,52 +2,46 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>FINORA 開場動畫</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FINORA 好好存</title>
+  <link rel="icon" href="favicon.png" type="image/png" />
   <style>
+    :root {
+      --main-color: #b4695d;
+    }
+
     body {
       margin: 0;
+      padding: 0;
       background: white;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      overflow: hidden;
     }
 
-    .logo-container {
-      animation: fadeInZoom 2s ease-in-out forwards;
-      padding-top: 2rem; /* 調整上方距離 */
-    }
-
-    @keyframes fadeInZoom {
-      0% {
-        opacity: 0;
-        transform: scale(0.8);
-      }
-      100% {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    img {
-      max-width: 280px;
-      width: 60vw;
+    .logo-animate {
+      width: 80vw;
+      max-width: 500px;
       height: auto;
-      display: block;
-      margin: 0 auto;
+      opacity: 0;
+      animation: fadeIn 2s ease-in-out forwards;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
     }
   </style>
   <script>
+    // 5 秒後導向主頁
     setTimeout(() => {
       window.location.href = "app.html";
-    }, 5000); // 5秒後自動跳轉
+    }, 5000);
   </script>
 </head>
 <body>
-  <div class="logo-container">
-    <img src="logo.png" alt="FINORA logo" />
-  </div>
+  <img src="logo.png" alt="FINORA logo" class="logo-animate" />
 </body>
 </html>
