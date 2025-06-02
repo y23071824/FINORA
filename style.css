@@ -1,38 +1,40 @@
-/* === 主色系設定（與 logo 色彩搭配） === */
 :root {
   --main-color: #b4695d;
-  --main-color-hover: #f5e8e6;
-  --button-radius: 18px;
+  --main-color-hover: #944647;
+  --main-color-bg: #f5e8e6;
+  --button-radius: 20px;
   --button-font: 1.1rem;
   --button-border: 2px solid var(--main-color);
+  --container-width: 700px;
 }
 
-/* === 整體版面設定 === */
-body {
+/* === 全站容器設定 === */
 body {
   font-family: sans-serif;
   background: #fffaf8;
   color: #333;
   padding: 2rem;
   font-size: 1rem;
-  max-width: 700px;
+  max-width: var(--container-width);
   margin: 0 auto;
   box-sizing: border-box;
 }
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+}
 
-/* === 標題樣式 === */
-h1, h2 {
+/* === 標題 === */
+h1, h2, h3 {
   text-align: center;
   color: var(--main-color);
 }
 
-/* === 表單標籤文字樣式 === */
+/* === 表單 === */
 label {
   display: block;
   margin-top: 1.2rem;
 }
-
-/* === 表單輸入框與下拉選單樣式 === */
 input, select {
   width: 100%;
   padding: 0.6rem;
@@ -43,43 +45,60 @@ input, select {
   box-sizing: border-box;
 }
 
-/* === 所有按鈕統一樣式 === */
-button, .button-group button, .home-btn, .grid-button-group a, .asset-actions button {
-  background-color: transparent;
+/* === 紅框白底按鈕（主用樣式）=== */
+button,
+.button-group button,
+.asset-actions button,
+.home-btn,
+.grid-button-group a {
+  background-color: white;
   color: var(--main-color);
   border: var(--button-border);
   border-radius: var(--button-radius);
   font-size: var(--button-font);
   padding: 0.6rem 1.2rem;
-  cursor: pointer;
-  transition: background-color 0.2s, color 0.2s;
   text-align: center;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  cursor: pointer;
   text-decoration: none;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.2s, color 0.2s;
 }
 
-/* === Hover 效果 === */
 button:hover,
 .button-group button:hover,
+.asset-actions button:hover,
 .home-btn:hover,
-.grid-button-group a:hover,
-.asset-actions button:hover {
-  background-color: var(--main-color-hover);
+.grid-button-group a:hover {
+  background-color: var(--main-color);
+  color: white;
 }
 
-/* === 編輯／刪除按鈕群組樣式 === */
-.button-group {
-  margin-top: 0.8rem;
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
+/* === CTA 大按鈕（立即開始使用）=== */
+.cta-full {
+  display: block;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  padding: 1rem;
+  margin: 2rem auto;
+  border: var(--button-border);
+  border-radius: var(--button-radius);
+  font-size: 1.2rem;
+  font-weight: bold;
+  background-color: white;
+  color: var(--main-color);
+  text-decoration: none;
+}
+.cta-full:hover {
+  background-color: var(--main-color);
+  color: white;
 }
 
-/* === 資產列表區塊樣式 === */
+/* === 功能區塊 === */
 ul {
-  list-style-type: none;
+  list-style: none;
   padding: 0;
 }
 ul li {
@@ -89,18 +108,6 @@ ul li {
   border-radius: 8px;
   box-shadow: 0 0 4px rgba(0,0,0,0.08);
 }
-
-/* === 返回連結樣式 === */
-a {
-  color: var(--main-color);
-  text-decoration: none;
-  display: block;
-  margin-top: 2rem;
-  text-align: center;
-  font-size: 0.8rem;
-}
-
-/* === 特殊按鈕區塊樣式 === */
 .grid-button-group {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -112,47 +119,12 @@ a {
   aspect-ratio: 1 / 1;
 }
 
-/* === 標語與小標題 === */
+/* === 小標題與提示 === */
 .subtitle {
   font-size: 1.2rem;
   text-align: center;
   margin-top: 1rem;
   color: #555;
-}
-
-/* === 資產操作按鈕（小） === */
-.asset-actions {
-  display: inline-flex;
-  gap: 4px;
-  margin-left: 10px;
-  vertical-align: middle;
-}
-.asset-actions button {
-  font-size: 0.8rem;
-  padding: 4px 8px;
-}
-
-/* === 開始使用說明區塊 === */
-#getting-started {
-  background: #fdf7f5;
-  border-left: 6px solid var(--main-color);
-  padding: 1rem 1.5rem;
-  margin-top: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
-.getting-started h2 {
-  color: var(--main-color);
-  font-size: 1.2rem;
-  margin-bottom: 0.8rem;
-}
-.getting-started ol {
-  padding-left: 1.2rem;
-  font-size: 1rem;
-  color: #444;
-}
-.getting-started ol li {
-  margin-bottom: 0.5rem;
 }
 .guide-note {
   font-style: italic;
@@ -190,107 +162,21 @@ a {
   color: #666;
 }
 
-.cta-full {
-  display: block;
-  width: 100%;
-  text-align: center;
-  padding: 1rem;
-  border: 2px solid var(--main-color);
-  color: var(--main-color);
-  border-radius: var(--button-radius);
-  font-size: var(--button-font);
-  font-weight: bold;
-  text-decoration: none;
-  transition: background-color 0.2s, color 0.2s;
-  margin: 1.5rem auto;
-  max-width: 400px;
-}
-.cta-full:hover {
-  background-color: var(--main-color);
-  color: white;
-}
-.cta:hover {
-  background-color: var(--main-color);
-  color: #fff;
-}
-
-  .button-group {
+/* === 修改／刪除按鈕群組置中排列 === */
+.button-group,
+.asset-actions {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
   gap: 1rem;
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 
-.button-group button {
-  background-color: var(--main-color, #b4695d);
-  color: white;
-  padding: 1rem 1.2rem;
-  border: none;
-  border-radius: var(--button-radius, 20px);
-  font-size: var(--button-font, 1.1rem);
-  cursor: pointer;
-  min-width: 120px;
+/* === 返回連結 === */
+a {
+  color: var(--main-color);
+  font-size: 0.85rem;
   text-align: center;
-}
-
-.button-group button:hover {
-  background-color: var(--main-hover, #944647);
-}
-
-  .asset-actions {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 0.5rem;
-}
-
-.asset-actions button {
-  background-color: var(--main-color, #b4695d);
-  color: white;
-  border: none;
-  padding: 0.5rem 1.2rem;
-  border-radius: var(--button-radius, 20px);
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-.asset-actions button:hover {
-  background-color: var(--main-hover, #944647);
-}
-
-
-/* 儲存資產按鈕置中 */
-.button-center {
-  display: flex;
-  justify-content: center;
-  margin-top: 1.5rem;
-}
-
-/* 紅框白底按鈕樣式 */
-button,
-.asset-actions button {
-  background-color: white;
-  color: var(--main-color, #b4695d);
-  border: 2px solid var(--main-color, #b4695d);
-  border-radius: var(--button-radius, 20px);
-  font-size: var(--button-font, 1.1rem);
-  padding: 0.5rem 1.2rem;
-  cursor: pointer;
-  min-width: 100px;
-}
-
-/* 滑過按鈕效果 */
-button:hover,
-.asset-actions button:hover {
-  background-color: var(--main-color, #b4695d);
-  color: white;
-}
-
-/* 修改與刪除置中排版 */
-.asset-actions {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 0.8rem;
+  margin-top: 2rem;
+  text-decoration: none;
 }
