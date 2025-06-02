@@ -237,3 +237,24 @@ a {
 .button-group button:hover {
   background-color: var(--main-hover, #944647);
 }
+
+  .asset-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.asset-actions button {
+  background-color: var(--main-color, #b4695d);
+  color: white;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: var(--button-radius, 20px);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.asset-actions button:hover {
+  background-color: var(--main-hover, #944647);
+}
