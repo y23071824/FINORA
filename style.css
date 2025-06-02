@@ -252,7 +252,7 @@ body.logo-full-bg::before {
   height: 100vh;
   background-image: url('favicon.png'); /* 建議使用透明 PNG */
   background-repeat: no-repeat;
-  background-position: center 30%;
+  background-position: center 15%;
   background-size: 60%;
   opacity: 0.08;
   pointer-events: none;
