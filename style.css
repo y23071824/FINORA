@@ -208,3 +208,24 @@ a {
 .cta-full:hover {
   background: #944647;
 }
+
+  .cta {
+  display: inline-block;
+  width: 100%;
+  padding: 0.9rem;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--main-color);
+  border: 2px solid var(--main-color);
+  border-radius: var(--button-radius);
+  background-color: transparent;
+  text-decoration: none;
+  transition: background-color 0.2s, color 0.2s;
+  box-sizing: border-box;
+}
+
+.cta:hover {
+  background-color: var(--main-color);
+  color: #fff;
+}
