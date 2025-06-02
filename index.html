@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>FINORA｜好好存</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="favicon.png" />
+  <style>
+    body {
+      background: #fffaf8;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .logo-container {
+      text-align: center;
+      animation: fadeInZoom 2s ease-out forwards;
+    }
+    .logo-container img {
+      width: 200px;
+      opacity: 0;
+      animation: fadeIn 2s ease-in forwards;
+    }
+    .logo-container h1 {
+      font-family: sans-serif;
+      color: #b4695d;
+      font-size: 1.8rem;
+      margin-top: 1rem;
+      opacity: 0;
+      animation: fadeInText 3s ease-in forwards;
+    }
+
+    @keyframes fadeInZoom {
+      0% {
+        transform: scale(0.9);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeInText {
+      to {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="logo-container">
+    <img src="logo.png" alt="FINORA Logo" />
+    <h1>FINORA 好好存</h1>
+  </div>
+
+  <script>
+    setTimeout(() => {
+      window.location.href = "app.html";
+    }, 5000); // 5秒後跳轉
+  </script>
+</body>
+</html>
