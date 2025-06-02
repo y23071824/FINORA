@@ -1,41 +1,53 @@
-<!DOCTYPE html><html lang="zh-Hant">
+<!DOCTYPE html>
+<html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
+  <title>FINORA 開場動畫</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FINORA</title>
-  <link rel="icon" href="favicon.png" type="image/png" />
-  <link rel="stylesheet" href="style.css" />
   <style>
     body {
-      background-color: white;
+      margin: 0;
+      background: white;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      margin: 0;
+      overflow: hidden;
     }
-    .logo-intro {
-      width: 300px;
-      max-width: 90%;
-      opacity: 0;
-      animation: zoomFadeIn 2s ease-out forwards;
+
+    .logo-container {
+      animation: fadeInZoom 2s ease-in-out forwards;
+      padding-top: 2rem; /* 調整上方距離 */
     }
-    @keyframes zoomFadeIn {
+
+    @keyframes fadeInZoom {
       0% {
-        transform: scale(0.5);
         opacity: 0;
+        transform: scale(0.8);
       }
       100% {
-        transform: scale(1);
         opacity: 1;
+        transform: scale(1);
       }
     }
+
+    img {
+      max-width: 280px;
+      width: 60vw;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
   </style>
-</head>
-<body>
-  <img src="logo.png" class="logo-intro" alt="FINORA logo" />  <script>
+  <script>
     setTimeout(() => {
       window.location.href = "app.html";
-    }, 5000); // 停留 5 秒
-  </script></body>
+    }, 5000); // 5秒後自動跳轉
+  </script>
+</head>
+<body>
+  <div class="logo-container">
+    <img src="logo.png" alt="FINORA logo" />
+  </div>
+</body>
 </html>
