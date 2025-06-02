@@ -97,7 +97,6 @@
   <div style="color: #555; font-size: 0.9rem;">目前帳本：<strong id="account-id">(讀取中...)</strong></div>
 
   <div class="getting-started">
-      <p>💼 系統已自動帶入你最後一次複利試算結果，可自行編輯</p>
       <p>💶 輸入預估的月提領金額或提領比例，規劃退休財務未來</p>
   </div>
 
@@ -149,7 +148,7 @@
         infoBox.innerHTML = `💰 最近一次複利試算結果已載入：<strong>NT$ ${value.toLocaleString()}</strong>`;
         inputTotal.value = value;
       } else {
-        infoBox.innerHTML = `尚未儲存複利試算結果，請先至「複利計算」頁執行試算。`;
+        infoBox.innerHTML = `可以使用複利計算機算算未來預估多少錢喔。`;
       }
 
     } catch (e) {
