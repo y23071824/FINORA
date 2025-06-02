@@ -242,19 +242,19 @@ button:hover,
   color: white;
 }
 
-/* ✅ 整頁鋪滿背景圖（只限特定頁面） */
-  .logo-full-bg::before {
+/* ✅ 浮水印 Logo 背景樣式 */
+body.logo-full-bg::before {
   content: "";
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-image: url('favicon.png');
+  background-image: url('favicon.png'); /* 建議使用透明 PNG */
   background-repeat: no-repeat;
   background-position: center;
-  background-size: 60%;
-  opacity: 0.1;
+  background-size: 40%;
+  opacity: 0.06;
   pointer-events: none;
   z-index: 0;
-  }
+}
