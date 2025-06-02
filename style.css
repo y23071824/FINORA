@@ -265,3 +265,24 @@ body.logo-full-bg::before {
   margin-bottom: 0.8rem;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
+
+.finora-footer {
+  margin-top: 4rem;
+  padding: 2rem 1rem;
+  background-color: #fffaf8;
+  border-top: 1px solid #ddd;
+  text-align: center;
+  font-size: 0.95rem;
+  color: #666;
+}
+.finora-footer .footer-links {
+  margin-top: 0.5rem;
+}
+.finora-footer a {
+  color: #b4695d;
+  text-decoration: none;
+  font-weight: bold;
+}
+.finora-footer a:hover {
+  text-decoration: underline;
+}
