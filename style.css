@@ -258,3 +258,10 @@ body.logo-full-bg::before {
   pointer-events: none;
   z-index: 0;
 }
+.asset-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 0.8rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
