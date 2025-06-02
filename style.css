@@ -254,8 +254,8 @@ button:hover,
   background-image: url('favicon.png');
   background-repeat: no-repeat;
   background-position: center;
-  background-size: 60vw auto; /* 或 80% 看你要多大 */
-  opacity: 0.05; /* ✅ 只讓背景淡，不影響內容 */
+  background-size: 80vw auto; /* 或 80% 看你要多大 */
+  opacity: 0.07; /* ✅ 只讓背景淡，不影響內容 */
   z-index: -1;
   pointer-events: none;
   }
