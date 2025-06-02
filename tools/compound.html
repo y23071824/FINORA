@@ -176,7 +176,7 @@
 
       total += marketTWD;
 
-      listHtml += `<li><strong>【${type}】</strong> ${name} ｜ 💱 ${currency} ${marketValue.toLocaleString()}（盈餘 ${profitTWD.toFixed(0)} TWD）</li>`;
+      listHtml += `<li><strong>【${type}】</strong> ${name} ｜ 🪩 ${currency} ${marketValue.toLocaleString()}（盈餘 ${profitTWD.toFixed(0)} TWD）</li>`;
     }
 
     listHtml += "</ul>";
@@ -190,7 +190,7 @@
 
   function renderAssetSummary(summary) {
     const summaryContainer = document.getElementById("asset-summary");
-    summaryContainer.innerHTML = "<strong>📊 資產分類加總：</strong><br>" + 
+    summaryContainer.innerHTML = "<strong>💵 資產分類加總：</strong><br>" + 
       Object.entries(summary).map(([type, byCurrency]) => {
         const line = Object.entries(byCurrency)
           .map(([currency, amount]) => `${amount.toLocaleString()} ${currency}`)
@@ -216,7 +216,7 @@
       const saved = localStorage.getItem("compoundResult");
       if (saved) {
         document.getElementById("result").textContent =
-          `🔁 最近一次試算結果：約 ${Number(saved).toLocaleString()} 元`;
+          `🛎 最近一次試算結果：約 ${Number(saved).toLocaleString()} 元`;
       }
     } catch (e) {
       alert("請先登入後再使用此功能");
