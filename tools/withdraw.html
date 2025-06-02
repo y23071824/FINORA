@@ -6,59 +6,88 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="../style.css" />
   <style>
-    body {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 2rem;
-      background: #fffaf8;
-      font-family: sans-serif;
-    }
-    h1 {
-      text-align: center;
-      color: #c96374;
-    }
-    label {
-      display: block;
-      margin: 1rem 0 0.3rem;
-    }
-    input {
-      width: 100%;
-      padding: 0.5rem;
-      font-size: 1rem;
-    }
-    button {
-      margin-top: 1.5rem;
-      width: 100%;
-      padding: 0.8rem;
-      background-color: #c96374;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-    }
-    #result {
-      margin-top: 2rem;
-      font-size: 1.1rem;
-      color: #444;
-      line-height: 1.6;
-    }
-    #compound-info {
-      margin-top: 2rem;
-      font-size: 1.1rem;
-      color: #444;
-      background: #fdf0f2;
-      padding: 1rem;
-      border-left: 5px solid #c96374;
-      border-radius: 6px;
-    }
-    a {
-      display: block;
-      text-align: center;
-      margin-top: 2rem;
-      color: #c96374;
-      text-decoration: none;
-    }
-  </style>
+  :root {
+    --main-color: #b4695d;
+    --main-hover: #944647;
+    --button-radius: 20px;
+    --button-font: 1.1rem;
+  }
+
+  body {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: #fffaf8;
+    font-family: sans-serif;
+    color: #333;
+    box-sizing: border-box;
+  }
+
+  h1 {
+    text-align: center;
+    color: var(--main-color);
+  }
+
+  label {
+    display: block;
+    margin: 1rem 0 0.3rem;
+  }
+
+  input {
+    width: 100%;
+    padding: 0.6rem;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+  }
+
+  button {
+    display: block;
+    margin: 1.5rem auto 0;
+    padding: 0.8rem;
+    width: 4rem;
+    height: 4rem;
+    font-size: var(--button-font);
+    font-weight: bold;
+    background-color: var(--main-color);
+    color: white;
+    border: none;
+    border-radius: var(--button-radius);
+    aspect-ratio: 1 / 1;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  button:hover {
+    background-color: var(--main-hover);
+  }
+
+  #result {
+    margin-top: 2rem;
+    font-size: 1.1rem;
+    color: #444;
+    line-height: 1.6;
+  }
+
+  #compound-info {
+    margin-top: 2rem;
+    font-size: 1.1rem;
+    color: #444;
+    background: #fdf0f2;
+    padding: 1rem;
+    border-left: 5px solid var(--main-color);
+    border-radius: 6px;
+  }
+
+  a {
+    display: block;
+    text-align: center;
+    margin-top: 2rem;
+    color: var(--main-color);
+    text-decoration: none;
+    font-size: 0.95rem
+      <style>
 </head>
 <body>
   <h1>退休提領試算</h1>
