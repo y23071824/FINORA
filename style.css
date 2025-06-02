@@ -241,3 +241,9 @@ button:hover,
   background-color: var(--main-color);
   color: white;
 }
+
+body.with-logo-bg {
+  background: #fffaf8 url('logo.png') no-repeat bottom right;
+  background-size: 200px auto;
+  background-attachment: fixed;
+}
