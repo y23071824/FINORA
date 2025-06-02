@@ -9,6 +9,7 @@
 
 /* === 整體版面設定 === */
 body {
+body {
   font-family: sans-serif;
   background: #fffaf8;
   color: #333;
@@ -16,12 +17,7 @@ body {
   font-size: 1rem;
   max-width: 700px;
   margin: 0 auto;
-  transform: scale(0.8);
-  transform-origin: top center;
-}
-html, body {
-  width: 100%;
-  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 /* === 標題樣式 === */
