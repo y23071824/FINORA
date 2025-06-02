@@ -38,7 +38,7 @@
   <button id="add-expense">+ 新增支出項目</button>
   <div class="summary" id="expense-total"></div>
 
-  <h2>💸 預備金建議試算</h2>
+  <h2>🧯 預備金建議試算</h2>
   <label>選擇涵蓋月數：
     <select id="reserve-months">
       <option value="3">3 個月</option>
@@ -229,14 +229,14 @@
       const totalExpense = expenses.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
 
       document.getElementById('income-total').textContent =
-        `✔️ 每月收入總額：${totalIncome.toLocaleString()} 元`;
+        `♟️ 每月收入總額：${totalIncome.toLocaleString()} 元`;
       document.getElementById('expense-total').textContent =
-        `✔️ 每月支出總額：${totalExpense.toLocaleString()} 元`;
+        `♟️ 每月支出總額：${totalExpense.toLocaleString()} 元`;
 
       const months = parseInt(document.getElementById('reserve-months').value) || 3;
       const suggestion = totalExpense * months;
       document.getElementById('reserve-suggestion').textContent =
-        `✔️ 建議預備金（${months} 個月）：${suggestion.toLocaleString()} 元`;
+        `♟️ 建議預備金（${months} 個月）：${suggestion.toLocaleString()} 元`;
     }
 
     document.addEventListener('DOMContentLoaded', async () => {
