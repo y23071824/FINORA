@@ -47,6 +47,26 @@
   html, body {
     width: 100%;
     overflow-x: hidden;
+
+    .cta-full {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 1rem;
+  border: 2px solid var(--main-color);
+  color: var(--main-color);
+  border-radius: var(--button-radius);
+  font-size: var(--button-font);
+  font-weight: bold;
+  text-decoration: none;
+  transition: background-color 0.2s, color 0.2s;
+  margin: 1.5rem auto;
+  max-width: 400px;
+}
+.cta-full:hover {
+  background-color: var(--main-color);
+  color: white;
+}
   }
 </style>
 </head>
