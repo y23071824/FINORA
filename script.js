@@ -251,6 +251,7 @@ async function handleSubmit(e) {
 
 // 編輯資產
 function handleEdit(index) {
+  document.getElementById("asset-form").scrollIntoView({ behavior: "smooth" });
   const item = assets[index];
   editIndex = index;
 
