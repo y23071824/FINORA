@@ -21,24 +21,30 @@
     }
 
     .logo-animate {
-      width: 80vw;
+      width: 60vw;
       max-width: 500px;
       height: auto;
       opacity: 0;
-      animation: fadeIn 2s ease-in-out forwards;
+      transform: scale(0.8);
+      animation: zoomFadeIn 2s ease-in-out forwards;
     }
 
-    @keyframes fadeIn {
-      to {
+    @keyframes zoomFadeIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      100% {
         opacity: 1;
+        transform: scale(1);
       }
     }
   </style>
   <script>
-    // 5 秒後導向主頁
+    // 6 秒後導向主頁
     setTimeout(() => {
       window.location.href = "app.html";
-    }, 5000);
+    }, 6000);
   </script>
 </head>
 <body>
