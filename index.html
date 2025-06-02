@@ -6,50 +6,71 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FINORA 好好存｜家庭理財工具</title>
   <link rel="stylesheet" href="../style.css" />
-  <style>
-    body {
-      font-family: sans-serif;
-      background: #fffaf8;
-      color: #333;
-      padding: 3rem;
-      max-width: 700px;
-      margin: 0 auto;
-    }
-    h1, h2, h3 {
-      color: #c96374;
-    }
-    .section {
-      margin-bottom: 2rem;
-    }
-    .feature {
-      margin-bottom: 1.5rem;
-    }
-    .cta {
-      display: block;
-      background: #c96374;
-      color: white;
-      padding: 0.8rem 1.2rem;
-      text-align: center;
-      text-decoration: none;
-      border-radius: 8px;
-      margin: 1.5rem 0;
-      font-size: 1.1rem;
-    }
-    footer {
-      margin-top: 3rem;
-      font-size: 0.9rem;
-      color: #999;
-      text-align: center;
-    }
-    body {
-  transform: scale(0.8);
-  transform-origin: top left;
-}
-html, body {
-  width: 100%;
-  overflow-x: hidden;
-}
-  </style>
+<style>
+  :root {
+    --main-color: #b4695d;
+    --main-hover: #944647;
+    --button-radius: 20px;
+    --button-size: 4rem;
+    --button-font: 1.2rem;
+  }
+
+  body {
+    font-family: sans-serif;
+    background: #fffaf8;
+    color: #333;
+    padding: 3rem;
+    max-width: 700px;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+
+  h1, h2, h3 {
+    color: var(--main-color);
+  }
+
+  .section {
+    margin-bottom: 2rem;
+  }
+
+  .feature {
+    margin-bottom: 1.5rem;
+  }
+
+  .cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--button-size);
+    height: var(--button-size);
+    aspect-ratio: 1 / 1;
+    background: var(--main-color);
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: var(--button-radius);
+    margin: 1.5rem auto;
+    font-size: var(--button-font);
+    font-weight: bold;
+    transition: background-color 0.2s;
+  }
+
+  .cta:hover {
+    background-color: var(--main-hover);
+  }
+
+  footer {
+    margin-top: 3rem;
+    font-size: 0.9rem;
+    color: #999;
+    text-align: center;
+  }
+
+  html, body {
+    width: 100%;
+    overflow-x: hidden;
+  }
+</style>
 </head>
 <body>
   <div style="text-align: center;">
