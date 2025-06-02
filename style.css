@@ -254,7 +254,7 @@ body.logo-full-bg::before {
   background-repeat: no-repeat;
   background-position: center 20%;       /* ✅ 這裡關鍵！越小越靠近上方 */
   background-size: 60%;                  /* 可依需求微調大小 */
-  opacity: 0.06;                         /* 淡淡的效果 */
+  opacity: 0.08;                         /* 淡淡的效果 */
   pointer-events: none;
   z-index: 0;
 }
