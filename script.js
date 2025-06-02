@@ -20,32 +20,33 @@ let assetList, totalsList, profitList, bankDatalist;
 
 // ===== 匯率查詢 =====
 async function fetchExchangeRates() {
+  const status = document.getElementById("exchange-status");
   try {
-    const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR", {
-  cache: "no-store"
-});
+    if (status) status.textContent = "📡 查詢最新匯率中...";
+    
+    const res = await fetch("https://api.frankfurter.app/latest?from=USD&to=TWD,JPY,EUR");
     const data = await res.json();
 
     if (!data || !data.rates) throw new Error("無效匯率資料");
 
-    exchangeRates = data.rates;
-    exchangeRates["USD"] = 1;
-    exchangeRates["TWD"] = exchangeRates["TWD"] || 30;
-    exchangeRates["JPY"] = exchangeRates["JPY"] || 150;
-    exchangeRates["EUR"] = exchangeRates["EUR"] || 0.9;
+    exchangeRates = {
+      USD: 1,
+      TWD: data.rates.TWD || 30,
+      JPY: data.rates.JPY || 150,
+      EUR: data.rates.EUR || 0.9,
+    };
 
     localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
+    if (status) status.textContent = "✅ 匯率更新完成";
   } catch (e) {
-    console.warn("⚠️ 匯率查詢失敗，改用本地資料");
-    try {
-      const stored = localStorage.getItem("exchangeRates");
-      if (stored && stored !== "undefined") {
-        exchangeRates = JSON.parse(stored);
-      } else {
-        throw new Error("無效本地資料");
-      }
-    } catch {
+    console.warn("⚠️ 匯率查詢失敗，改用本地資料", e.message);
+    const stored = localStorage.getItem("exchangeRates");
+    if (stored && stored !== "undefined") {
+      exchangeRates = JSON.parse(stored);
+      if (status) status.textContent = "⚠️ 使用上次儲存的匯率資料";
+    } else {
       exchangeRates = { USD: 1, TWD: 30, JPY: 150, EUR: 0.9 };
+      if (status) status.textContent = "⚠️ 使用預設匯率資料";
     }
   }
 }
