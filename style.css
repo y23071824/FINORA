@@ -303,3 +303,19 @@ body.logo-full-bg::before {
 .site-footer a:hover {
   text-decoration: underline;
 }
+
+.inflation-toggle-btn {
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  font-size: 0.9rem;
+  color: var(--main-color);
+  border: 2px solid var(--main-color);
+  border-radius: var(--button-radius);
+  background-color: white;
+  cursor: pointer;
+  white-space: nowrap;
+  max-width: 100%;
+  text-align: center;
+  line-height: 1.2;
+  margin-top: 1rem;
+}
