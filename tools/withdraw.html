@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="zh-Hant">
+<!DOCTYPE html>
+<html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
   <title>退休提領試算｜FINORA</title>
@@ -6,9 +7,9 @@
   <link rel="stylesheet" href="../style.css" />
   <link rel="icon" href="favicon.png" type="image/png" />
   <!-- ✅ Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
   <style>
     :root {
@@ -86,11 +87,18 @@
 </head>
 <body>
   <h1>退休金怎麼花</h1>
-  <div style="color: #555; font-size: 0.9rem;">目前帳本：<strong id="account-id">(讀取中...)</strong></div>  <div class="getting-started">
+  <div style="color: #555; font-size: 0.9rem;">目前帳本：<strong id="account-id">(讀取中...)</strong></div>
+  <div class="getting-started">
     <p>💶 輸入預估資產、提領金額或比率，可加入年報酬率與通膨率</p>
-  </div><label>預估資產總額（元）：<input type="number" id="total" /></label> <label>每月提領金額（元）：<input type="number" id="monthly" /></label> <label>提領比率（％）：<input type="number" id="withdraw-rate" value="4" step="0.1" /></label> <label>年報酬率（％）：<input type="number" id="return-rate" value="5" step="0.1" /></label> <label>年通膨率（％）：<input type="number" id="inflation-rate" value="2" step="0.1" /></label>
+  </div>
+  <label>預估資產總額（元）：<input type="number" id="total" /></label>
+  <label>每月提領金額（元）：<input type="number" id="monthly" /></label>
+  <label>提領比率（％）：<input type="number" id="withdraw-rate" value="4" step="0.1" /></label>
+  <label>年報酬率（％）：<input type="number" id="return-rate" value="5" step="0.1" /></label>
+  <label>年通膨率（％）：<input type="number" id="inflation-rate" value="2" step="0.1" /></label>
+  <label><input type="checkbox" id="inflation-adjust" /> 每年提領金額根據通膨調整</label>
 
-<button class="cta-button" onclick="calculateWithdraw()">試算</button>
+  <button class="cta-button" onclick="calculateWithdraw()">試算</button>
 
   <div id="result"></div>
   <div id="compound-info"></div>
@@ -100,10 +108,13 @@
       <li><strong>一般月領：</strong>直接用總資產除以每月需求，估算能領幾年。</li>
       <li><strong>4%法則：</strong>每年提領總資產的 4%，以期資產長期抗通膨仍可支撐 30 年以上。</li>
       <li><strong>報酬－通膨：</strong>若輸入年報酬與通膨，會顯示「實質提領能力」。</li>
+      <li><strong>通膨調整提領：</strong>每年提領金額根據通膨成長，模擬實際購買力保值狀況。</li>
     </ul>
-  </div><a href="../app.html">← 返回首頁</a>
+  </div>
+  <a href="../app.html">← 返回首頁</a>
 
-  <script src="../firebase-sync.js"></script>  <script>
+  <script src="../firebase-sync.js"></script>
+  <script>
     document.addEventListener("DOMContentLoaded", async () => {
       try {
         await FINORA_AUTH.waitForLogin();
@@ -129,6 +140,7 @@
       const rate = parseFloat(document.getElementById("withdraw-rate").value);
       const r = parseFloat(document.getElementById("return-rate").value);
       const i = parseFloat(document.getElementById("inflation-rate").value);
+      const adjust = document.getElementById("inflation-adjust").checked;
       const result = document.getElementById("result");
       let output = "";
 
@@ -137,7 +149,7 @@
         return;
       }
 
-      if (!isNaN(monthly) && monthly > 0) {
+      if (!isNaN(monthly) && monthly > 0 && !adjust) {
         const months = Math.floor(total / monthly);
         output += `【一般月領試算】每月 NT$ ${monthly.toLocaleString()} 可支撐約 ${Math.floor(months / 12)} 年 ${months % 12} 個月。<br><br>`;
       }
@@ -151,13 +163,32 @@
 
       if (!isNaN(r) && !isNaN(i)) {
         const realRate = ((1 + r / 100) / (1 + i / 100)) - 1;
-        const sustain = realRate > 0 ? Math.log(1 / (1 - realRate)) / realRate : "不適用";
-        output += `【報酬與通膨調整】實質年報酬率 ${(realRate * 100).toFixed(2)}%。`;
+        output += `【報酬與通膨調整】實質年報酬率 ${(realRate * 100).toFixed(2)}%。<br><br>`;
+      }
+
+      if (adjust && !isNaN(monthly) && !isNaN(i) && !isNaN(r)) {
+        let year = 1;
+        let remaining = total;
+        let monthlyNow = monthly;
+        let log = "<strong>📈 通膨保值提領模擬：</strong><br>";
+        const growth = i / 100;
+        const returnRate = r / 100;
+
+        while (remaining > 0 && year <= 100) {
+          const yearlyOut = monthlyNow * 12;
+          remaining = (remaining - yearlyOut) * (1 + returnRate);
+          log += `第${year}年：每月 ${monthlyNow.toFixed(0)}，年支出 ${yearlyOut.toFixed(0)}，剩餘資產 NT$ ${remaining.toFixed(0)}<br>`;
+          monthlyNow *= (1 + growth);
+          year++;
+        }
+
+        output += log;
       }
 
       result.innerHTML = output;
     }
-  </script>  <footer>
+  </script>
+  <footer>
     <p>© 2025 FINORA 好好存｜家庭友善資產整合工具</p>
     <div class="footer-links">
       <a href="howto.html">使用說明</a>・
