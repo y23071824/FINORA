@@ -108,6 +108,11 @@
     document.getElementById("logout-btn").style.display = user ? "inline-block" : "none";
   });
 </script>
+  <script>
+  window.onerror = function (message, source, lineno, colno, error) {
+    document.body.innerHTML += `<pre style="color:red; background:#fee; padding:1rem;">錯誤：${message}\n(${source}:${lineno})</pre>`;
+  };
+  </script>
   <!-- 版本資訊與頁尾 -->
   <p style="text-align:center; font-size:0.8rem; color:#aaa; margin-top:3rem;" data-i18n="version">
     v0.9 beta - 2025-05-29
