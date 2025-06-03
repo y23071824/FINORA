@@ -194,7 +194,7 @@
         let remaining = total;
         let monthlyNow = (!isNaN(monthly) && monthly > 0) ? monthly : 30000;
         if (isNaN(monthly) || monthly <= 0) {
-  log += `(⚠️ 未輸入提領金額，預設從 NT$30,000 起算)<br>`;
+  log += `(⚠️ 未輸入預估月提領金額，預設從 NT$30,000 起算)<br>`;
         }
         let log = "<strong>📈 通膨保值提領模擬：</strong><br>";
         const growth = i / 100;
