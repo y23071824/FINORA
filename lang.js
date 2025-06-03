@@ -1,5 +1,5 @@
 const translations = {
-  zh: {
+  "zh-Hant": {
     title: "FINORA 好好存",
     subtitle: "讓資產更有力，退休不焦慮。",
     asset: "資產管理",
@@ -19,7 +19,7 @@ const translations = {
     contact: "聯絡我們",
     policy: "隱私權條款"
   },
-  cn: {
+  "zh-Hans": {
     title: "FINORA 好好存",
     subtitle: "让资产更有力，退休不焦虑。",
     asset: "资产管理",
@@ -39,7 +39,7 @@ const translations = {
     contact: "联系我们",
     policy: "隐私权条款"
   },
-  en: {
+  "en": {
     title: "FINORA Wealth",
     subtitle: "Make assets powerful. Retire without anxiety.",
     asset: "Asset Manager",
@@ -59,7 +59,7 @@ const translations = {
     contact: "Contact Us",
     policy: "Privacy Policy"
   },
-  jp: {
+  "ja": {
     title: "FINORA 資産管理",
     subtitle: "資産を強くし、安心して引退を。",
     asset: "資産管理",
@@ -82,10 +82,14 @@ const translations = {
 };
 
 function applyLang() {
-  const lang = localStorage.getItem("lang") || "zh";
-  const dict = translations[lang] || translations.zh;
+  const lang = localStorage.getItem("lang") || "zh-Hant";
+  const dict = translations[lang] || translations["zh-Hant"];
+  document.documentElement.lang = lang;
   document.querySelectorAll("[data-i18n]").forEach(el => {
     const key = el.getAttribute("data-i18n");
     if (dict[key]) el.textContent = dict[key];
   });
 }
+
+// ✅ 確保可從外部呼叫
+window.applyLang = applyLang;
