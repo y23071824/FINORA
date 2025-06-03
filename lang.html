@@ -1,0 +1,55 @@
+<!DOCTYPE html><html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>語言選擇 | FINORA 好好存</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      background: white;
+      font-family: sans-serif;
+      text-align: center;
+      padding: 2rem;
+    }
+    h1 {
+      color: #b4695d;
+      margin-bottom: 2rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    .lang-btn {
+      border: 2px solid #b4695d;
+      border-radius: 16px;
+      padding: 2rem;
+      font-size: 1.5rem;
+      color: #b4695d;
+      background: transparent;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .lang-btn:hover {
+      background-color: #f7eae6;
+    }
+  </style>
+  <script>
+    function selectLanguage(lang) {
+      localStorage.setItem('lang', lang);
+      window.location.href = 'app.html';
+    }
+  </script>
+</head>
+<body>
+  <h1>請選擇您的語言</h1>
+  <div class="grid">
+    <button class="lang-btn" onclick="selectLanguage('zh')">繁體中文</button>
+    <button class="lang-btn" onclick="selectLanguage('cn')">简体中文</button>
+    <button class="lang-btn" onclick="selectLanguage('en')">English</button>
+    <button class="lang-btn" onclick="selectLanguage('jp')">日本語</button>
+  </div>
+</body>
+</html>
