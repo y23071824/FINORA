@@ -35,13 +35,13 @@
     </div>
   </div>
 
-  <!-- 登入登出 -->
+  <!-- 登入區塊 -->
   <div id="firebase-auth" style="margin-top: 1.5rem; text-align: center;">
     <button id="login-btn" data-i18n="login">🔐 使用 Google 帳號登入</button>
     <button id="logout-btn" data-i18n="logout" style="display:none;">🚪 登出</button>
   </div>
 
-  <!-- 🌐 語言選擇：移到登入區下方 -->
+  <!-- 語言切換放登入下方 -->
   <div style="text-align:center; margin: 1rem 0;">
     <label for="lang-select">🌐 Language / 語言：</label>
     <select id="lang-select">
@@ -52,23 +52,28 @@
     </select>
   </div>
 
+  <!-- 隱私宣告 -->
   <p class="privacy-note" data-i18n="privacy">FINORA 重視隱私。你的資產，只屬於你自己。</p>
 
-  <!-- Firebase -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script src="firebase-sync.js"></script>
 
+  <!-- 初始化語言與語言選單邏輯 -->
   <script>
-    applyLang();
-    document.getElementById("lang-select").value = localStorage.getItem("lang") || "zh-Hant";
-    document.getElementById("lang-select").addEventListener("change", function () {
+    if (typeof applyLang === "function") applyLang();
+
+    const langSelect = document.getElementById("lang-select");
+    langSelect.value = localStorage.getItem("lang") || "zh-Hant";
+    langSelect.addEventListener("change", function () {
       localStorage.setItem("lang", this.value);
       location.reload();
     });
   </script>
 
+  <!-- 版本資訊與頁尾 -->
   <p style="text-align:center; font-size:0.8rem; color:#aaa; margin-top:3rem;" data-i18n="version">
     v0.9 beta - 2025-05-29
   </p>
