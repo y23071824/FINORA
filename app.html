@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" href="favicon.png" type="image/png" />
   <link rel="stylesheet" href="style.css" />
-  <script src="lang.js"></script>
 </head>
 <body class="logo-full-bg">
   <h1 data-i18n="title">FINORA 好好存</h1>
@@ -60,50 +59,53 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script src="firebase-sync.js"></script>
+  <script src="lang.js"></script>
 
-  <!-- 初始化語言與語言選單邏輯 -->
+  <!-- 初始化邏輯 -->
   <script>
-    if (typeof applyLang === "function") applyLang();
+    document.addEventListener("DOMContentLoaded", () => {
+      // ✅ 套用語言
+      if (typeof applyLang === "function") applyLang();
 
-    const langSelect = document.getElementById("lang-select");
-    langSelect.value = localStorage.getItem("lang") || "zh-Hant";
-    langSelect.addEventListener("change", function () {
-      localStorage.setItem("lang", this.value);
-      location.reload();
-    });
+      // ✅ 初始化語言選擇器
+      const langSelect = document.getElementById("lang-select");
+      langSelect.value = localStorage.getItem("lang") || "zh-Hant";
+      langSelect.addEventListener("change", function () {
+        localStorage.setItem("lang", this.value);
+        location.reload();
+      });
 
-    // ✅ 登入/登出綁定邏輯
-    document.getElementById("login-btn").addEventListener("click", async () => {
-      try {
-        const user = await FINORA_AUTH.signInWithGoogle();
-        if (user) {
-          alert("✅ 登入成功");
-          location.reload();
+      // ✅ 登入/登出邏輯
+      document.getElementById("login-btn").addEventListener("click", async () => {
+        try {
+          const user = await FINORA_AUTH.signInWithGoogle();
+          if (user) {
+            alert("✅ 登入成功");
+            location.reload();
+          }
+        } catch (e) {
+          console.error("登入失敗", e);
+          alert("❌ 登入失敗，請檢查授權或稍後再試");
         }
-      } catch (e) {
-        console.error("登入失敗", e);
-        alert("❌ 登入失敗，請檢查授權或稍後再試");
-      }
-    });
+      });
 
-    document.getElementById("logout-btn").addEventListener("click", async () => {
-      await FINORA_AUTH.signOutFromGoogle();
-      alert("🚪 已登出");
-      location.reload();
-    });
+      document.getElementById("logout-btn").addEventListener("click", async () => {
+        await FINORA_AUTH.signOutFromGoogle();
+        alert("🚪 已登出");
+        location.reload();
+      });
 
-    // ✅ 自動更新登入按鈕狀態
-    FINORA_AUTH.onUserChanged((user) => {
-      document.getElementById("login-btn").style.display = user ? "none" : "inline-block";
-      document.getElementById("logout-btn").style.display = user ? "inline-block" : "none";
+      FINORA_AUTH.onUserChanged((user) => {
+        document.getElementById("login-btn").style.display = user ? "none" : "inline-block";
+        document.getElementById("logout-btn").style.display = user ? "inline-block" : "none";
+      });
     });
   </script>
 
-  <!-- 版本資訊與頁尾 -->
+  <!-- 頁尾 -->
   <p style="text-align:center; font-size:0.8rem; color:#aaa; margin-top:3rem;" data-i18n="version">
-    v0.9 beta - 2025-05-29
+    v0.9 beta - 2025-06-03
   </p>
-
   <footer class="site-footer">
     <p data-i18n="footer">© 2025 FINORA 好好存｜家庭友善資產整合工具</p>
     <div class="footer-links">
