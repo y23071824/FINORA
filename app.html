@@ -1,69 +1,59 @@
-<!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-  <meta charset="UTF-8" />
-  <title>FINORA 好好存</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" href="favicon.png" type="image/png" />
-  <link rel="stylesheet" href="style.css" />
-  <script src="lang.js"></script>
-</head>
-<body class="logo-full-bg">
-  <h1 data-i18n="title">FINORA 好好存</h1>
-  <p class="subtitle" data-i18n="subtitle">讓資產更有力，退休不焦慮。</p>
 
-  <!-- ✅ 已刪除語言選單區塊 -->
+<!DOCTYPE html><html lang="zh-Hant">  <head>  
+  <meta charset="UTF-8" />  
+  <title>FINORA 好好存</title>  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />  
+  <link rel="icon" href="favicon.png" type="image/png" />  
+  <link rel="stylesheet" href="style.css" />  
+  <script src="lang.js"></script>  
+</head>  
+<body class="logo-full-bg">  
+  <h1 data-i18n="title">FINORA 好好存</h1>  
+  <p class="subtitle" data-i18n="subtitle">讓資產更有力，退休不焦慮。</p>  <!-- 語言切換下拉選單 -->  <div style="text-align:center; margin-bottom: 1rem;">  
+    <label for="lang-select">🌐 Language / 語言：</label>  
+    <select id="lang-select">  
+      <option value="zh">繁體中文</option>  
+      <option value="cn">简体中文</option>  
+      <option value="en">English</option>  
+      <option value="jp">日本語</option>  
+    </select>  
+  </div>  <div class="grid-button-group">  
+    <a href="assets.html" data-i18n="asset">資產管理</a>  
+    <a href="tools/compound.html" data-i18n="compound">複利試算</a>  
+    <a href="tools/withdraw.html" data-i18n="withdraw">退休提領</a>  
+    <a href="tools/emergency.html" data-i18n="emergency">預備金試算</a>  
+  </div>  <div id="account-control-wrapper" style="margin-top: 2rem;">  
+    <label for="account-select" data-i18n="accountLabel">帳本選擇：</label>  
+    <select id="account-select" style="width: 100%; margin-bottom: 0.5rem;"></select>  
+    <div style="display: flex; justify-content: center; gap: 1rem;">  
+      <button id="rename-account-btn" data-i18n="rename">✏️</button>  
+      <button id="new-account-btn" data-i18n="add">➕</button>  
+      <button id="delete-account-btn" data-i18n="delete">🗑️</button>  
+    </div>  
+    <div id="new-account-input-group" style="display: none; margin-top: 0.5rem;">  
+      <input type="text" id="new-account-name" placeholder="輸入新帳本名稱" />  
+      <button id="save-new-account">儲存</button>  
+    </div>  
+  </div>  <div id="firebase-auth" style="margin-top: 1.5rem; text-align: center;">  
+    <button id="login-btn" data-i18n="login">🔐 使用 Google 帳號登入</button>  
+    <button id="logout-btn" data-i18n="logout" style="display:none;">🚪 登出</button>  
+  </div>  <p class="privacy-note" data-i18n="privacy">FINORA 重視隱私。你的資產，只屬於你自己。</p>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>  <script src="firebase-sync.js"></script>  <script>  
+    applyLang();  document.getElementById("lang-select").value = localStorage.getItem("lang") || "zh";  
+document.getElementById("lang-select").addEventListener("change", function () {  
+  localStorage.setItem("lang", this.value);  
+  location.reload();  
+});
 
-  <div class="grid-button-group">
-    <a href="assets.html" data-i18n="asset">資產管理</a>
-    <a href="tools/compound.html" data-i18n="compound">複利試算</a>
-    <a href="tools/withdraw.html" data-i18n="withdraw">退休提領</a>
-    <a href="tools/emergency.html" data-i18n="emergency">預備金試算</a>
-  </div>
+</script>  <p style="text-align:center; font-size:0.8rem; color:#aaa; margin-top:3rem;" data-i18n="version">
+v0.9 beta - 2025-05-29
 
-  <div id="account-control-wrapper" style="margin-top: 2rem;">
-    <label for="account-select" data-i18n="accountLabel">帳本選擇：</label>
-    <select id="account-select" style="width: 100%; margin-bottom: 0.5rem;"></select>
-    <div style="display: flex; justify-content: center; gap: 1rem;">
-      <button id="rename-account-btn" data-i18n="rename">✏️</button>
-      <button id="new-account-btn" data-i18n="add">➕</button>
-      <button id="delete-account-btn" data-i18n="delete">🗑️</button>
-    </div>
-    <div id="new-account-input-group" style="display: none; margin-top: 0.5rem;">
-      <input type="text" id="new-account-name" placeholder="輸入新帳本名稱" />
-      <button id="save-new-account">儲存</button>
-    </div>
-  </div>
-
-  <div id="firebase-auth" style="margin-top: 1.5rem; text-align: center;">
-    <button id="login-btn" data-i18n="login">🔐 使用 Google 帳號登入</button>
-    <button id="logout-btn" data-i18n="logout" style="display:none;">🚪 登出</button>
-  </div>
-
-  <p class="privacy-note" data-i18n="privacy">FINORA 重視隱私。你的資產，只屬於你自己。</p>
-
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <script src="firebase-sync.js"></script>
-
-  <script>
-    // ✅ 僅執行語言套用，不再提供語言選擇功能
-    applyLang();
-  </script>
-
-  <p style="text-align:center; font-size:0.8rem; color:#aaa; margin-top:3rem;" data-i18n="version">
-    v0.9 beta - 2025-05-29
-  </p>
-
-  <footer class="site-footer">
-    <p data-i18n="footer">© 2025 FINORA 好好存｜家庭友善資產整合工具</p>
-    <div class="footer-links">
-      <a href="howto.html" data-i18n="guide">使用說明</a>・
-      <a href="mailto:service@finora.life?subject=聯絡詢問" data-i18n="contact">聯絡我們</a>・
-      <a href="privacy.html" data-i18n="policy">隱私權條款</a>
-    </div>
-  </footer>
-</body>
+  </p>  <footer class="site-footer">  
+    <p data-i18n="footer">© 2025 FINORA 好好存｜家庭友善資產整合工具</p>  
+    <div class="footer-links">  
+      <a href="howto.html" data-i18n="guide">使用說明</a>・  
+      <a href="mailto:service@finora.life?subject=聯絡詢問" data-i18n="contact">聯絡我們</a>・  
+      <a href="privacy.html" data-i18n="policy">隱私權條款</a>  
+    </div>  
+  </footer>  
+</body>  
 </html>
