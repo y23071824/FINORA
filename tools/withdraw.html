@@ -120,6 +120,21 @@
       <li><strong>報酬－通膨：</strong>年報酬與通膨比較後，提供實質購買力試算。</li>
       <li><strong>通膨調整提領：</strong>模擬購買力保值，每年提領金額隨通膨上升。</li>
     </ul>
+    <!-- 📈 通膨調整說明 -->
+<div id="inflation-explain-box" style="margin-top: 1rem;">
+  <button onclick="toggleExplain()" class="cta-button" style="margin-bottom: 0.5rem;">📖 什麼是通膨保值提領？</button>
+  <div id="inflation-explain" style="display: none; background: #fff5f4; padding: 1rem; border-left: 4px solid var(--main-color); border-radius: 6px; font-size: 0.95rem; line-height: 1.6;">
+    <p><strong>為什麼要通膨調整？</strong></p>
+    <p>每年的物價會慢慢上漲，如果每月都提一樣的金額，實際能買的東西會越來越少。</p>
+    <p><strong>怎麼做？</strong></p>
+    <ul style="padding-left: 1.2rem; margin-top: 0.5rem;">
+      <li>第一年每月提 30,000 元</li>
+      <li>通膨 2%，第二年提 30,600 元</li>
+      <li>第三年提 31,212 元… 以此類推</li>
+    </ul>
+    <p>這樣可以幫助你模擬在不同物價環境下，資產大約能夠支撐多久 🧮</p>
+  </div>
+</div>
   </div>
 
   <script src="../firebase-sync.js"></script>
@@ -204,6 +219,10 @@
     ? "⭐️ 已啟用通膨調整"
     : "💡 每年提領金額根據通膨調整";
 });
+    function toggleExplain() {
+  const explain = document.getElementById("inflation-explain");
+  explain.style.display = explain.style.display === "none" ? "block" : "none";
+    }
   </script>
 
   <footer>
