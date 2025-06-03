@@ -97,13 +97,13 @@
   <label>提領比率（％）：<input type="number" id="withdraw-rate" value="4" step="0.1" /></label>
   <label>年報酬率（％）：<input type="number" id="return-rate" value="5" step="0.1" /></label>
   <label>年通膨率（％）：<input type="number" id="inflation-rate" value="2" step="0.1" /></label>
-  <button class="cta-button" onclick="calculateWithdraw()">試算</button>
-  
+
 <!-- ✅ 通膨調整紅邊框按鈕（改為按鈕樣式） -->
 <div style="text-align: center;">
   <button id="toggle-inflation" class="inflation-toggle-btn">
     💡 每年提領金額根據通膨調整
   </button>
+    <button class="cta-button" onclick="calculateWithdraw()">試算</button>
 </div>
 <input type="checkbox" id="inflation-adjust" style="display: none;" />
 
@@ -201,7 +201,7 @@
   checkbox.checked = !checkbox.checked;
   const btn = document.getElementById("toggle-inflation");
   btn.textContent = checkbox.checked
-    ? "✅ 已啟用通膨調整"
+    ? "⭐️ 已啟用通膨調整"
     : "💡 每年提領金額根據通膨調整";
 });
   </script>
