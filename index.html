@@ -9,6 +9,7 @@
     :root {
       --main-color: #b4695d;
     }
+
     body {
       margin: 0;
       padding: 0;
@@ -19,7 +20,9 @@
       align-items: center;
       height: 100vh;
       text-align: center;
+      font-family: sans-serif;
     }
+
     .logo-animate {
       width: 60vw;
       max-width: 500px;
@@ -28,6 +31,7 @@
       transform: scale(0.8);
       animation: zoomFadeIn 2s ease-in-out forwards;
     }
+
     @keyframes zoomFadeIn {
       0% {
         opacity: 0;
@@ -38,6 +42,7 @@
         transform: scale(1);
       }
     }
+
     .start-link {
       margin-top: 2rem;
       font-size: 1.2rem;
@@ -46,13 +51,21 @@
       padding: 0.6rem 1.2rem;
       border-radius: 20px;
       text-decoration: none;
+      transition: background-color 0.3s;
     }
+
     .start-link:hover {
       background-color: #f7eae6;
     }
+
+    .note {
+      margin-top: 1rem;
+      color: gray;
+      font-size: 0.9rem;
+    }
   </style>
   <script>
-    // 自動 3 秒後跳轉到語言選擇頁
+    // 自動跳轉至語言選擇頁
     setTimeout(() => {
       window.location.href = "language.html";
     }, 3000);
@@ -60,6 +73,7 @@
 </head>
 <body>
   <img src="logo.png" alt="FINORA logo" class="logo-animate" />
-  <a class="start-link" href="language.html">👉 立即開始</a>
+  <a class="start-link" href="language.html" rel="noopener">👉 立即開始</a>
+  <p class="note">將自動導向語言選擇頁...</p>
 </body>
 </html>
