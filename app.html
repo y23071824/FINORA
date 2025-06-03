@@ -71,48 +71,34 @@
       localStorage.setItem("lang", this.value);
       location.reload();
     });
-  </script>
-<script>
-  if (typeof applyLang === "function") applyLang();
 
-  const langSelect = document.getElementById("lang-select");
-  langSelect.value = localStorage.getItem("lang") || "zh-Hant";
-  langSelect.addEventListener("change", function () {
-    localStorage.setItem("lang", this.value);
-    location.reload();
-  });
-
-  // ✅ 登入/登出綁定邏輯
-  document.getElementById("login-btn").addEventListener("click", async () => {
-    try {
-      const user = await FINORA_AUTH.signInWithGoogle();
-      if (user) {
-        alert("✅ 登入成功");
-        location.reload();
+    // ✅ 登入/登出綁定邏輯
+    document.getElementById("login-btn").addEventListener("click", async () => {
+      try {
+        const user = await FINORA_AUTH.signInWithGoogle();
+        if (user) {
+          alert("✅ 登入成功");
+          location.reload();
+        }
+      } catch (e) {
+        console.error("登入失敗", e);
+        alert("❌ 登入失敗，請檢查授權或稍後再試");
       }
-    } catch (e) {
-      console.error("登入失敗", e);
-      alert("❌ 登入失敗，請檢查授權或稍後再試");
-    }
-  });
+    });
 
-  document.getElementById("logout-btn").addEventListener("click", async () => {
-    await FINORA_AUTH.signOutFromGoogle();
-    alert("🚪 已登出");
-    location.reload();
-  });
+    document.getElementById("logout-btn").addEventListener("click", async () => {
+      await FINORA_AUTH.signOutFromGoogle();
+      alert("🚪 已登出");
+      location.reload();
+    });
 
-  // ✅ 自動更新登入按鈕狀態
-  FINORA_AUTH.onUserChanged((user) => {
-    document.getElementById("login-btn").style.display = user ? "none" : "inline-block";
-    document.getElementById("logout-btn").style.display = user ? "inline-block" : "none";
-  });
-</script>
-  <script>
-  window.onerror = function (message, source, lineno, colno, error) {
-    document.body.innerHTML += `<pre style="color:red; background:#fee; padding:1rem;">錯誤：${message}\n(${source}:${lineno})</pre>`;
-  };
+    // ✅ 自動更新登入按鈕狀態
+    FINORA_AUTH.onUserChanged((user) => {
+      document.getElementById("login-btn").style.display = user ? "none" : "inline-block";
+      document.getElementById("logout-btn").style.display = user ? "inline-block" : "none";
+    });
   </script>
+
   <!-- 版本資訊與頁尾 -->
   <p style="text-align:center; font-size:0.8rem; color:#aaa; margin-top:3rem;" data-i18n="version">
     v0.9 beta - 2025-05-29
