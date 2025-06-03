@@ -9,7 +9,6 @@
     :root {
       --main-color: #b4695d;
     }
-
     body {
       margin: 0;
       padding: 0;
@@ -19,17 +18,16 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
+      text-align: center;
     }
-
     .logo-animate {
       width: 60vw;
       max-width: 500px;
       height: auto;
       opacity: 0;
       transform: scale(0.8);
-      animation: zoomFadeIn 1.8s ease-in-out forwards;
+      animation: zoomFadeIn 2s ease-in-out forwards;
     }
-
     @keyframes zoomFadeIn {
       0% {
         opacity: 0;
@@ -40,22 +38,28 @@
         transform: scale(1);
       }
     }
+    .start-link {
+      margin-top: 2rem;
+      font-size: 1.2rem;
+      color: var(--main-color);
+      border: 2px solid var(--main-color);
+      padding: 0.6rem 1.2rem;
+      border-radius: 20px;
+      text-decoration: none;
+    }
+    .start-link:hover {
+      background-color: #f7eae6;
+    }
   </style>
   <script>
-    // 🔁 進入頁面後 2 秒自動導向
-    window.addEventListener("DOMContentLoaded", () => {
-      setTimeout(() => {
-        const lang = localStorage.getItem("lang");
-        if (lang) {
-          window.location.href = "app.html";
-        } else {
-          window.location.href = "language.html";
-        }
-      }, 2000);
-    });
+    // 自動 3 秒後跳轉到語言選擇頁
+    setTimeout(() => {
+      window.location.href = "language.html";
+    }, 3000);
   </script>
 </head>
 <body>
   <img src="logo.png" alt="FINORA logo" class="logo-animate" />
+  <a class="start-link" href="language.html">👉 立即開始</a>
 </body>
 </html>
