@@ -5,104 +5,111 @@
   <title>退休提領試算｜FINORA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="../style.css" />
-   <link rel="icon" href="favicon.png" type="image/png" />
-  
+  <link rel="icon" href="favicon.png" type="image/png" />
   <style>
-  :root {
-    --main-color: #b4695d;
-    --main-hover: #944647;
-    --button-radius: 20px;
-    --button-font: 1.1rem;
-  }
+    :root {
+      --main-color: #b4695d;
+      --main-hover: #944647;
+      --button-radius: 20px;
+      --button-font: 1.1rem;
+    }
 
-  body {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 2rem;
-    background: white;
-    font-family: sans-serif;
-    color: #333;
-    box-sizing: border-box;
-  }
+    body {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 2rem;
+      background: white;
+      font-family: sans-serif;
+      color: #333;
+      box-sizing: border-box;
+    }
 
-  h1 {
-    text-align: center;
-    color: var(--main-color);
-  }
+    h1 {
+      text-align: center;
+      color: var(--main-color);
+    }
 
-  label {
-    display: block;
-    margin: 1rem 0 0.3rem;
-  }
+    label {
+      display: block;
+      margin: 1rem 0 0.3rem;
+    }
 
-  input {
-    width: 100%;
-    padding: 0.6rem;
-    font-size: 1rem;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-  }
+    input {
+      width: 100%;
+      padding: 0.6rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
 
-  button {
-    display: block;
-    margin: 1.5rem auto 0;
-    padding: 0.8rem;
-    width: 4rem;
-    height: 4rem;
-    font-size: var(--button-font);
-    font-weight: bold;
-    background-color: var(--main-color);
-    color: white;
-    border: none;
-    border-radius: var(--button-radius);
-    aspect-ratio: 1 / 1;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
+    button, .cta-full {
+      display: block;
+      margin: 1.5rem auto 0;
+      padding: 0.8rem;
+      width: 4rem;
+      height: 4rem;
+      font-size: var(--button-font);
+      font-weight: bold;
+      background-color: var(--main-color);
+      color: white;
+      border: none;
+      border-radius: var(--button-radius);
+      aspect-ratio: 1 / 1;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      line-height: 3.4rem;
+    }
 
-  button:hover {
-    background-color: var(--main-hover);
-  }
+    button:hover, .cta-full:hover {
+      background-color: var(--main-hover);
+    }
 
-  #result {
-    margin-top: 2rem;
-    font-size: 1.1rem;
-    color: #444;
-    line-height: 1.6;
-  }
+    #result {
+      margin-top: 2rem;
+      font-size: 1.1rem;
+      color: #444;
+      line-height: 1.6;
+    }
 
-  #compound-info {
-    margin-top: 2rem;
-    font-size: 1.1rem;
-    color: #444;
-    background: #fdf0f2;
-    padding: 1rem;
-    border-left: 5px solid var(--main-color);
-    border-radius: 6px;
-  }
+    #compound-info {
+      margin-top: 2rem;
+      font-size: 1.1rem;
+      color: #444;
+      background: #fdf0f2;
+      padding: 1rem;
+      border-left: 5px solid var(--main-color);
+      border-radius: 6px;
+    }
 
-  a {
-    display: block;
-    text-align: center;
-    margin-top: 2rem;
-    color: var(--main-color);
-    text-decoration: none;
-    font-size: 0.95rem
-</style>
+    footer {
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      color: #999;
+      text-align: center;
+    }
+
+    .footer-links a {
+      color: var(--main-color);
+      text-decoration: none;
+      margin: 0 0.3rem;
+    }
+  </style>
 </head>
-<body class="logo-full-bg">
 <body>
   <h1>退休金怎麼花</h1>
   <div style="color: #555; font-size: 0.9rem;">目前帳本：<strong id="account-id">(讀取中...)</strong></div>
 
   <div class="getting-started">
-      <p>💶 輸入預估的月提領金額或提領比例，規劃退休財務未來</p>
+    <p>💶 輸入預估的月提領金額或提領比例，並考慮通膨率</p>
   </div>
 
   <label>預估資產總額（元）：<input type="number" id="total" /></label>
   <label>每月提領金額（元）：<input type="number" id="monthly" /></label>
   <label>提領比率（％）：<input type="number" id="withdraw-rate" value="4" step="0.1" /></label>
+  <label>年通膨率（％）：<input type="number" id="inflation-rate" value="2" step="0.1" /></label>
+
   <a href="javascript:void(0)" class="cta-full" onclick="calculateWithdraw()">開始試算</a>
 
   <div id="result"></div>
@@ -118,93 +125,88 @@
   <!-- ✅ FINORA 認證模組 -->
   <script src="../firebase-sync.js"></script>
 
- <script>
-  // ✅ 等待登入後再載入帳本顯示名稱
-  document.addEventListener("DOMContentLoaded", async () => {
-    const resultDiv = document.getElementById("result");
-    const infoBox = document.getElementById("compound-info");
-    const inputTotal = document.getElementById("total");
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const resultDiv = document.getElementById("result");
+      const infoBox = document.getElementById("compound-info");
+      const inputTotal = document.getElementById("total");
 
-    try {
-      // ✅ 等待登入
-      await FINORA_AUTH.waitForLogin();
+      try {
+        await FINORA_AUTH.waitForLogin();
+        const selectedAccount = localStorage.getItem("selectedAccount");
+        if (!selectedAccount) {
+          alert("⚠️ 尚未選擇帳本，請先回首頁登入並選擇帳本！");
+          window.location.href = "../app.html";
+          return;
+        }
+        const list = await FINORA_AUTH.fetchAccountList();
+        const match = list.find(acc => acc.id === selectedAccount);
+        const name = match?.displayName || selectedAccount;
+        document.getElementById("account-id").textContent = name;
 
-      const selectedAccount = localStorage.getItem("selectedAccount");
-      if (!selectedAccount) {
-        alert("⚠️ 尚未選擇帳本，請先回首頁登入並選擇帳本！");
-        window.location.href = "../app.html";
+        const saved = localStorage.getItem("compoundResult");
+        if (saved && !isNaN(saved)) {
+          const value = Number(saved);
+          infoBox.innerHTML = `💰 最近一次複利試算結果已載入：<strong>NT$ ${value.toLocaleString()}</strong>`;
+          inputTotal.value = value;
+        } else {
+          infoBox.innerHTML = `可以使用複利計算機算算未來預估多少錢喔。`;
+        }
+
+      } catch (e) {
+        console.error("❌ 初始化錯誤", e);
+        alert("請先登入後再使用此功能");
+      }
+    });
+
+    function calculateWithdraw() {
+      const total = parseFloat(document.getElementById("total").value);
+      const monthly = parseFloat(document.getElementById("monthly").value);
+      const rate = parseFloat(document.getElementById("withdraw-rate").value);
+      const inflation = parseFloat(document.getElementById("inflation-rate").value || 0);
+      const result = document.getElementById("result");
+
+      if (isNaN(total) || total <= 0) {
+        result.textContent = "請輸入正確的資產總額";
         return;
       }
 
-      const list = await FINORA_AUTH.fetchAccountList();
-      const match = list.find(acc => acc.id === selectedAccount);
-      const name = match?.displayName || selectedAccount;
-      document.getElementById("account-id").textContent = name;
+      let output = "";
 
-      // ✅ 顯示複利試算結果
-      const saved = localStorage.getItem("compoundResult");
-      if (saved && !isNaN(saved)) {
-        const value = Number(saved);
-        infoBox.innerHTML = `💰 最近一次複利試算結果已載入：<strong>NT$ ${value.toLocaleString()}</strong>`;
-        inputTotal.value = value;
-      } else {
-        infoBox.innerHTML = `可以使用複利計算機算算未來預估多少錢喔。`;
+      if (!isNaN(monthly) && monthly > 0) {
+        const totalMonths = Math.floor(total / monthly);
+        const years = Math.floor(totalMonths / 12);
+        const months = totalMonths % 12;
+        output += `【一般月領試算】<br>每月提領 NT$ ${monthly.toLocaleString()} 可支撐約 ${years} 年 ${months} 個月。<br><br>`;
       }
 
-    } catch (e) {
-      console.error("❌ 初始化錯誤", e);
-      alert("請先登入後再使用此功能");
+      if (!isNaN(rate) && rate > 0) {
+        const annualWithdrawal = total * (rate / 100);
+        const monthlyWithdrawal = annualWithdrawal / 12;
+        const durationYears = total / annualWithdrawal;
+
+        output += `【${rate}% 提領法則】<br>`;
+        output += `每年可提領：約 NT$ ${annualWithdrawal.toLocaleString(undefined, { maximumFractionDigits: 0 })}<br>`;
+        output += `每月可提領：約 NT$ ${monthlyWithdrawal.toLocaleString(undefined, { maximumFractionDigits: 0 })}<br>`;
+        output += `此比率下，可支撐約 ${durationYears.toFixed(1)} 年<br><br>`;
+
+        if (!isNaN(inflation) && inflation > 0) {
+          const realRate = ((1 + rate / 100) / (1 + inflation / 100)) - 1;
+          output += `🌡 考慮通膨率 ${inflation}%：<br>`;
+          output += `實質可支撐年限：約 ${(Math.log(1 + (rate / 100)) - Math.log(1 + (inflation / 100))) > 0 ? (total / (total * realRate)).toFixed(1) : "無限期或需縮減支出"} 年`;
+        }
+      }
+
+      result.innerHTML = output;
     }
-  });
+  </script>
 
-  function calculateWithdraw() {
-    const total = parseFloat(document.getElementById("total").value);
-    const monthly = parseFloat(document.getElementById("monthly").value);
-    const rate = parseFloat(document.getElementById("withdraw-rate").value);
-    const result = document.getElementById("result");
-
-    if (isNaN(total) || total <= 0) {
-      result.textContent = "請輸入正確的資產總額";
-      return;
-    }
-
-    const hasMonthly = !isNaN(monthly) && monthly > 0;
-    const hasRate = !isNaN(rate) && rate > 0;
-
-    if (!hasMonthly && !hasRate) {
-      result.textContent = "請輸入「每月提領金額」或「提領比率」其中之一";
-      return;
-    }
-
-    let output = "";
-
-    if (hasMonthly) {
-      const totalMonths = Math.floor(total / monthly);
-      const years = Math.floor(totalMonths / 12);
-      const months = totalMonths % 12;
-      output += `【一般月領試算】<br>每月提領 NT$ ${monthly.toLocaleString()} 可支撐約 ${years} 年 ${months} 個月。<br><br>`;
-    }
-
-    if (hasRate) {
-      const annualWithdrawal = total * (rate / 100);
-      const monthlyWithdrawal = annualWithdrawal / 12;
-      const durationYears = total / annualWithdrawal;
-
-      output += `【${rate}% 提領法則】<br>`;
-      output += `每年可提領：約 NT$ ${annualWithdrawal.toLocaleString(undefined, { maximumFractionDigits: 0 })}<br>`;
-      output += `每月可提領：約 NT$ ${monthlyWithdrawal.toLocaleString(undefined, { maximumFractionDigits: 0 })}<br>`;
-      output += `此比率下，可支撐約 ${durationYears.toFixed(1)} 年`;
-    }
-
-    result.innerHTML = output;
-  }
-</script>
   <footer class="site-footer">
-  <p>© 2025 FINORA 好好存｜家庭友善資產整合工具</p>
-  <div class="footer-links">
-    <a href="howto.html">使用說明</a>・
-    <a href="mailto:service@finora.life?subject=聯絡詢問">聯絡我們</a>
-  </div>
-</footer>
+    <p>© 2025 FINORA 好好存｜家庭友善資產整合工具</p>
+    <div class="footer-links">
+      <a href="howto.html">使用說明</a>・
+      <a href="mailto:service@finora.life?subject=聯絡詢問">聯絡我們</a>
+    </div>
+  </footer>
 </body>
 </html>
