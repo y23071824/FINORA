@@ -192,7 +192,7 @@
       if (adjust && !isNaN(monthly) && !isNaN(i) && !isNaN(r)) {
         let year = 1;
         let remaining = total;
-        let monthlyNow = monthly;
+        let monthlyNow = (!isNaN(monthly) && monthly > 0) ? monthly : 30000;
         let log = "<strong>📈 通膨保值提領模擬：</strong><br>";
         const growth = i / 100;
         const returnRate = r / 100;
