@@ -196,6 +196,14 @@
 
       result.innerHTML = output;
     }
+    document.getElementById("toggle-inflation").addEventListener("click", () => {
+  const checkbox = document.getElementById("inflation-adjust");
+  checkbox.checked = !checkbox.checked;
+  const btn = document.getElementById("toggle-inflation");
+  btn.textContent = checkbox.checked
+    ? "✅ 已啟用通膨調整"
+    : "💡 每年提領金額根據通膨調整";
+});
   </script>
 
   <footer>
