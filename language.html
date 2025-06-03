@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="zh-Hant">
+<!DOCTYPE html>
+<html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -25,12 +26,18 @@
     .lang-btn {
       border: 2px solid #b4695d;
       border-radius: 16px;
-      padding: 2rem;
+      height: 120px;
       font-size: 1.5rem;
       color: #b4695d;
       background: transparent;
       cursor: pointer;
       transition: 0.3s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      line-height: 1.4;
+      white-space: pre-line;
     }
     .lang-btn:hover {
       background-color: #f7eae6;
@@ -46,10 +53,10 @@
 <body>
   <h1>請選擇您的語言</h1>
   <div class="grid">
-    <button class="lang-btn" onclick="selectLanguage('zh')">繁體中文</button>
-    <button class="lang-btn" onclick="selectLanguage('cn')">简体中文</button>
+    <button class="lang-btn" onclick="selectLanguage('zh')">繁體<br>中文</button>
+    <button class="lang-btn" onclick="selectLanguage('cn')">简体<br>中文</button>
     <button class="lang-btn" onclick="selectLanguage('en')">English</button>
-    <button class="lang-btn" onclick="selectLanguage('jp')">日本語</button>
+    <button class="lang-btn" onclick="selectLanguage('jp')">日本<br>語</button>
   </div>
 </body>
 </html>
