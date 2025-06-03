@@ -319,3 +319,13 @@ body.logo-full-bg::before {
   line-height: 1.2;
   margin-top: 1rem;
 }
+
+.lang-btn {
+  height: 120px; /* ✅ 固定高度，統一格子大小 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  line-height: 1.4;
+  white-space: pre-line; /* ✅ 支援中文兩行排版 */
+}
