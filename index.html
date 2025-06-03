@@ -15,6 +15,7 @@
       padding: 0;
       background: white;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       height: 100vh;
@@ -26,7 +27,7 @@
       height: auto;
       opacity: 0;
       transform: scale(0.8);
-      animation: zoomFadeIn 2s ease-in-out forwards;
+      animation: zoomFadeIn 1.8s ease-in-out forwards;
     }
 
     @keyframes zoomFadeIn {
@@ -40,7 +41,18 @@
       }
     }
   </style>
-    <a href="language.html">開始使用</a>
+  <script>
+    // 🔁 進入頁面後 2 秒自動導向
+    window.addEventListener("DOMContentLoaded", () => {
+      setTimeout(() => {
+        const lang = localStorage.getItem("lang");
+        if (lang) {
+          window.location.href = "app.html";
+        } else {
+          window.location.href = "language.html";
+        }
+      }, 2000);
+    });
   </script>
 </head>
 <body>
