@@ -128,102 +128,106 @@
       </ul>
     </div>
   </div>
+<script src="../firebase-sync.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", async () => {
+    try {
+      await FINORA_AUTH.waitForLogin();
+      const selectedAccount = localStorage.getItem("selectedAccount");
+      const list = await FINORA_AUTH.fetchAccountList();
+      const match = list.find(acc => acc.id === selectedAccount);
+      const name = match?.displayName || selectedAccount;
+      document.getElementById("account-id").textContent = name;
 
-  <script src="../firebase-sync.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", async () => {
-      try {
-        await FINORA_AUTH.waitForLogin();
-        const selectedAccount = localStorage.getItem("selectedAccount");
-        const list = await FINORA_AUTH.fetchAccountList();
-        const match = list.find(acc => acc.id === selectedAccount);
-        const name = match?.displayName || selectedAccount;
-        document.getElementById("account-id").textContent = name;
-
-        const saved = localStorage.getItem("compoundResult");
-        if (saved && !isNaN(saved)) {
-          document.getElementById("total").value = Number(saved);
-          document.getElementById("compound-info").innerHTML =
-            `💰 最近一次複利結果：<strong>NT$ ${Number(saved).toLocaleString()}</strong>`;
-        }
-      } catch (e) {
-        alert("請先登入後再使用此功能");
+      const saved = localStorage.getItem("compoundResult");
+      if (saved && !isNaN(saved)) {
+        document.getElementById("total").value = Number(saved);
+        document.getElementById("compound-info").innerHTML =
+          `💰 最近一次複利結果：<strong>NT$ ${Number(saved).toLocaleString()}</strong>`;
       }
-    });
+    } catch (e) {
+      alert("請先登入後再使用此功能");
+    }
+  });
 
-    function calculateWithdraw() {
-      const total = parseFloat(document.getElementById("total").value);
-      const monthly = parseFloat(document.getElementById("monthly").value);
-      const rate = parseFloat(document.getElementById("withdraw-rate").value);
-      const r = parseFloat(document.getElementById("return-rate").value);
-      const i = parseFloat(document.getElementById("inflation-rate").value);
-      const adjust = document.getElementById("inflation-adjust").checked;
-      const result = document.getElementById("result");
-      let output = "";
+  function calculateWithdraw() {
+    const total = parseFloat(document.getElementById("total").value);
+    const monthly = parseFloat(document.getElementById("monthly").value);
+    const rate = parseFloat(document.getElementById("withdraw-rate").value);
+    const r = parseFloat(document.getElementById("return-rate").value);
+    const i = parseFloat(document.getElementById("inflation-rate").value);
+    const adjust = document.getElementById("inflation-adjust").checked;
+    const result = document.getElementById("result");
+    let output = "";
 
-      if (!total || total <= 0) {
-        result.textContent = "請輸入正確的資產總額";
-        return;
-      }
-
-      if (!isNaN(monthly) && monthly > 0 && !adjust) {
-        const months = Math.floor(total / monthly);
-        output += `【一般月領試算】每月 NT$ ${monthly.toLocaleString()} 可支撐約 ${Math.floor(months / 12)} 年 ${months % 12} 個月。<br><br>`;
-      }
-
-      if (!isNaN(rate) && rate > 0) {
-        const yearly = total * rate / 100;
-        const m = yearly / 12;
-        const duration = total / yearly;
-        output += `【${rate}% 提領法】每年約 NT$ ${yearly.toLocaleString()}，每月約 NT$ ${m.toLocaleString()}，預估可支撐 ${duration.toFixed(1)} 年。<br><br>`;
-      }
-
-      if (!isNaN(r) && !isNaN(i)) {
-        const realRate = ((1 + r / 100) / (1 + i / 100)) - 1;
-        output += `【報酬與通膨調整】實質年報酬率 ${(realRate * 100).toFixed(2)}%。<br><br>`;
-      }
-
-      if (adjust && !isNaN(i) && !isNaN(r)) {
-        let log = "<strong>📈 通膨保值提領模擬：</strong><br>";
-        let monthlyNow = (!isNaN(monthly) && monthly > 0) ? monthly : 30000;
-        if (isNaN(monthly) || monthly <= 0) {
-          log += `(⚠️ 未輸入預估月提領金額，預設從 NT$30,000 起算)<br>`;
-        }
-
-        let year = 1;
-        let remaining = total;
-        const growth = i / 100;
-        const returnRate = r / 100;
-
-        while (remaining > 0 && year <= 100) {
-          const yearlyOut = monthlyNow * 12;
-          remaining = (remaining - yearlyOut) * (1 + returnRate);
-          log += `第${year}年：每月 ${monthlyNow.toFixed(0)}，年支出 ${yearlyOut.toFixed(0)}，剩餘資產 NT$ ${remaining.toFixed(0)}<br>`;
-          monthlyNow *= (1 + growth);
-          year++;
-        }
-
-        output += log;
-      }
-
-      result.innerHTML = output;
+    if (!total || total <= 0) {
+      result.textContent = "請輸入正確的資產總額";
+      return;
     }
 
-    document.getElementById("toggle-inflation").addEventListener("click", () => {
-      const checkbox = document.getElementById("inflation-adjust");
-      checkbox.checked = !checkbox.checked;
-      const btn = document.getElementById("toggle-inflation");
-      btn.textContent = checkbox.checked
-        ? "⭐️ 已啟用通膨調整"
-        : "💡 每年提領金額根據通膨調整";
-    });
-
-    function toggleExplain() {
-      const box = document.getElementById("inflation-explain");
-      box.style.display = box.style.display === "none" ? "block" : "none";
+    // ✅ 一般月領試算（未勾選通膨調整時顯示）
+    if (!isNaN(monthly) && monthly > 0 && !adjust) {
+      const months = Math.floor(total / monthly);
+      output += `📌 <strong>一般月領試算</strong><br>每月 NT$ ${monthly.toLocaleString()} 可支撐約 <strong>${Math.floor(months / 12)} 年 ${months % 12} 個月</strong>。<br><br>`;
     }
-  </script>
 
+    // ✅ % 提領法
+    if (!isNaN(rate) && rate > 0) {
+      const yearly = total * rate / 100;
+      const m = yearly / 12;
+      const duration = total / yearly;
+      output += `📌 <strong>${rate}% 提領法</strong><br>每年約 NT$ ${yearly.toLocaleString()}，每月約 NT$ ${m.toLocaleString()}，預估可支撐 <strong>${duration.toFixed(1)} 年</strong>。<br><br>`;
+    }
+
+    // ✅ 實質報酬率（有填報酬與通膨時顯示）
+    if (!isNaN(r) && !isNaN(i)) {
+      const realRate = ((1 + r / 100) / (1 + i / 100)) - 1;
+      output += `📌 <strong>報酬與通膨調整</strong><br>實質年報酬率約為 <strong>${(realRate * 100).toFixed(2)}%</strong>。<br><br>`;
+    }
+
+    // ✅ 通膨調整提領模擬
+    if (adjust && !isNaN(i) && !isNaN(r)) {
+      let log = "<strong>📈 通膨保值提領模擬：</strong><br>";
+      let monthlyNow = (!isNaN(monthly) && monthly > 0) ? monthly : 30000;
+      if (isNaN(monthly) || monthly <= 0) {
+        log += `(⚠️ 未輸入預估月提領金額，預設從 NT$30,000 起算)<br>`;
+      }
+
+      let year = 1;
+      let remaining = total;
+      const growth = i / 100;
+      const returnRate = r / 100;
+
+      while (remaining > 0 && year <= 100) {
+        const yearlyOut = monthlyNow * 12;
+        remaining = (remaining - yearlyOut) * (1 + returnRate);
+        log += `第 ${year} 年：每月 ${monthlyNow.toFixed(0)}，年支出 ${yearlyOut.toFixed(0)}，剩餘資產 NT$ ${remaining.toFixed(0)}<br>`;
+        monthlyNow *= (1 + growth);
+        year++;
+      }
+
+      log += `<br>✅ 預估可提領至第 <strong>${year - 1} 年</strong> 結束。<br><br>`;
+      output += log;
+    }
+
+    result.innerHTML = output;
+  }
+
+  // ✅ 切換通膨模式按鈕
+  document.getElementById("toggle-inflation").addEventListener("click", () => {
+    const checkbox = document.getElementById("inflation-adjust");
+    checkbox.checked = !checkbox.checked;
+    const btn = document.getElementById("toggle-inflation");
+    btn.textContent = checkbox.checked
+      ? "⭐️ 已啟用通膨調整"
+      : "💡 每年提領金額根據通膨調整";
+  });
+
+  function toggleExplain() {
+    const box = document.getElementById("inflation-explain");
+    box.style.display = box.style.display === "none" ? "block" : "none";
+  }
+</script>
   <footer>
     <div style="margin-bottom: 0.8rem;">
       <a href="../app.html" style="text-align: center; display: block; font-size: 1rem; color: var(--main-color); text-decoration: none;">← 返回首頁</a>
