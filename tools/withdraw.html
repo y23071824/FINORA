@@ -91,32 +91,36 @@
   <div class="getting-started">
     <p>💶 輸入預估資產、提領金額或比率，可加入年報酬率與通膨率</p>
   </div>
+
   <label>預估資產總額（元）：<input type="number" id="total" /></label>
   <label>每月提領金額（元）：<input type="number" id="monthly" /></label>
   <label>提領比率（％）：<input type="number" id="withdraw-rate" value="4" step="0.1" /></label>
   <label>年報酬率（％）：<input type="number" id="return-rate" value="5" step="0.1" /></label>
   <label>年通膨率（％）：<input type="number" id="inflation-rate" value="2" step="0.1" /></label>
-<!-- ✅ 通膨調整紅邊框按鈕 -->
-<div style="text-align: center; margin-top: 1rem;">
-  <label class="cta-button" style="display: inline-block; cursor: pointer;">
-    <input type="checkbox" id="inflation-adjust" style="margin-right: 0.5rem;" />
-    每年提領金額根據通膨調整
-  </label>
-</div>
+
+  <!-- ✅ 通膨調整紅邊框按鈕 -->
+  <div style="text-align: center; margin-top: 1rem;">
+    <label class="cta-button" style="display: inline-block; cursor: pointer;">
+      <input type="checkbox" id="inflation-adjust" style="margin-right: 0.5rem;" />
+      每年提領金額根據通膨調整
+    </label>
+  </div>
 
   <button class="cta-button" onclick="calculateWithdraw()">試算</button>
 
   <div id="result"></div>
   <div id="compound-info"></div>
+
   <div id="explanation">
     <p>📌 <strong>提領方式說明：</strong></p>
     <ul>
-      <li><strong>一般月領：</strong>直接用總資產除以每月需求，估算能領幾年。</li>
-      <li><strong>4%法則：</strong>每年提領總資產的 4%，以期資產長期抗通膨仍可支撐 30 年以上。</li>
-      <li><strong>報酬－通膨：</strong>若輸入年報酬與通膨，會顯示「實質提領能力」。</li>
-      <li><strong>通膨調整提領：</strong>每年提領金額根據通膨成長，模擬實際購買力保值狀況。</li>
+      <li><strong>一般月領：</strong>總資產 ÷ 每月需求 = 可支撐年數。</li>
+      <li><strong>4%法則：</strong>每年提領 4%，資產理想可撐 30 年以上。</li>
+      <li><strong>報酬－通膨：</strong>年報酬與通膨比較後，提供實質購買力試算。</li>
+      <li><strong>通膨調整提領：</strong>模擬購買力保值，每年提領金額隨通膨上升。</li>
     </ul>
   </div>
+
   <script src="../firebase-sync.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", async () => {
@@ -192,10 +196,11 @@
       result.innerHTML = output;
     }
   </script>
+
   <footer>
-      <div style="margin-bottom: 0.8rem;">
-    <a href="../app.html" style="text-align: center; display: block; font-size: 1rem; color: var(--main-color); text-decoration: none;">← 返回首頁</a>
-  </div>
+    <div style="margin-bottom: 0.8rem;">
+      <a href="../app.html" style="text-align: center; display: block; font-size: 1rem; color: var(--main-color); text-decoration: none;">← 返回首頁</a>
+    </div>
     <p>© 2025 FINORA 好好存｜家庭友善資產整合工具</p>
     <div class="footer-links">
       <a href="howto.html">使用說明</a>・
