@@ -130,15 +130,16 @@ document.addEventListener("DOMContentLoaded", () => {
   applyLang();
   const emailEl = document.getElementById("auth-email");
   const accountEl = document.getElementById("account-name");
-  const accountId = localStorage.getItem("selectedAccount");
-  if (!accountId) {
-    alert("⚠️ 尚未選擇帳本，請返回首頁登入並選擇帳本！");
-    window.location.href = "app.html";
-    return;
-  }
-  accountEl.textContent = accountId;
+
   if (typeof FINORA_AUTH !== "undefined") {
     FINORA_AUTH.onUserChanged(user => {
+      const accountId = localStorage.getItem("selectedAccount");
+      if (!accountId) {
+        alert("⚠️ 尚未選擇帳本，請返回首頁登入並選擇帳本！");
+        window.location.href = "app.html";
+        return;
+      }
+      accountEl.textContent = accountId;
       if (user) {
         emailEl.textContent = user.email;
         FINORA_AUTH.fetchAccountList().then(list => {
@@ -146,25 +147,27 @@ document.addEventListener("DOMContentLoaded", () => {
           accountEl.textContent = displayName;
         });
       } else {
-        emailEl.textContent = "（尚未登入）";
+        emailEl.textContent = i18n("not_logged_in") || "（尚未登入）";
       }
     });
   }
 
-  // 第二段一起整合
   if (typeof render === "function") {
     render();
   }
 
-  const displayCurrency = document.getElementById("total-currency").value || "TWD";
-  const finalRate = window.exchangeRates?.[displayCurrency] || 1;
-  const totalTWD = window.totalTWD || 0;
-  const totalConverted = totalTWD / finalRate;
+  // 若 render 沒有處理 totals-list，才需要這段
   const totalsList = document.getElementById("totals-list");
-
-  const totalLi = document.createElement("li");
-  totalLi.textContent = `💰 ${i18n("total_asset")}：${displayCurrency} ${totalConverted.toLocaleString()}`;
-  totalsList.appendChild(totalLi);
+  if (totalsList) {
+    totalsList.innerHTML = "";
+    const displayCurrency = document.getElementById("total-currency").value || "TWD";
+    const finalRate = window.exchangeRates?.[displayCurrency] || 1;
+    const totalTWD = window.totalTWD || 0;
+    const totalConverted = totalTWD / finalRate;
+    const totalLi = document.createElement("li");
+    totalLi.textContent = `💰 ${i18n("total_asset")}：${displayCurrency} ${totalConverted.toLocaleString()}`;
+    totalsList.appendChild(totalLi);
+  }
 });
 </script>
 
