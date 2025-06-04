@@ -103,7 +103,6 @@
   <option value="CNH">CNH</option>
 </select>
 
-    </select>
     <label data-i18n="label_bank">銀行：</label>
     <input type="text" id="bank" list="bank-list" />
     <label data-i18n="label_note">備註：</label>
@@ -126,35 +125,33 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script src="firebase-sync.js"></script>
   <script src="script.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      applyLang();
-      const emailEl = document.getElementById("auth-email");
-      const accountEl = document.getElementById("account-name");
-      const accountId = localStorage.getItem("selectedAccount");
-      if (!accountId) {
-        alert("⚠️ 尚未選擇帳本，請返回首頁登入並選擇帳本！");
-        window.location.href = "app.html";
-        return;
-      }
-      accountEl.textContent = accountId;
-      if (typeof FINORA_AUTH !== "undefined") {
-        FINORA_AUTH.onUserChanged(user => {
-          if (user) {
-            emailEl.textContent = user.email;
-            FINORA_AUTH.fetchAccountList().then(list => {
-              const displayName = list.find(acc => acc.id === accountId)?.displayName || accountId;
-              accountEl.textContent = displayName;
-            });
-          } else {
-            emailEl.textContent = "（尚未登入）";
-          }
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  applyLang();
+  const emailEl = document.getElementById("auth-email");
+  const accountEl = document.getElementById("account-name");
+  const accountId = localStorage.getItem("selectedAccount");
+  if (!accountId) {
+    alert("⚠️ 尚未選擇帳本，請返回首頁登入並選擇帳本！");
+    window.location.href = "app.html";
+    return;
+  }
+  accountEl.textContent = accountId;
+  if (typeof FINORA_AUTH !== "undefined") {
+    FINORA_AUTH.onUserChanged(user => {
+      if (user) {
+        emailEl.textContent = user.email;
+        FINORA_AUTH.fetchAccountList().then(list => {
+          const displayName = list.find(acc => acc.id === accountId)?.displayName || accountId;
+          accountEl.textContent = displayName;
         });
+      } else {
+        emailEl.textContent = "（尚未登入）";
       }
     });
-  </script>
- <script>
-document.addEventListener("DOMContentLoaded", () => {
+  }
+
+  // 第二段一起整合
   if (typeof render === "function") {
     render();
   }
@@ -162,6 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const displayCurrency = document.getElementById("total-currency").value || "TWD";
   const finalRate = window.exchangeRates?.[displayCurrency] || 1;
   const totalTWD = window.totalTWD || 0;
+  const totalConverted = totalTWD / finalRate;
   const totalsList = document.getElementById("totals-list");
 
   const totalLi = document.createElement("li");
@@ -169,6 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
   totalsList.appendChild(totalLi);
 });
 </script>
+
 
   <div class="getting-started">
     <p class="guide-note" data-i18n="privacy_note">🔐 所有資料皆保存在你的 Google 帳號與雲端帳本中，不用擔心遺失或外洩。</p>
