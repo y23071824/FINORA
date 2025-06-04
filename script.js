@@ -192,6 +192,8 @@ async function handleSubmit(e) {
 
 // ===== Part 3：畫面渲染與計算 =====
 function render() {
+  if (!assetList || !totalsList || !profitList) return;
+
   assetList.innerHTML = "";
   totalsList.innerHTML = "";
   profitList.innerHTML = "";
