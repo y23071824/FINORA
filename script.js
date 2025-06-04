@@ -353,6 +353,13 @@ function deleteAsset(index) {
 // ===== Part 4：啟動函式與登入綁定 =====
 document.addEventListener("DOMContentLoaded", () => {
   console.log("🔄 系統初始化中...");
+  const currencySelect = document.getElementById("display-currency");
+if (currencySelect) {
+  currencySelect.addEventListener("change", () => {
+    localStorage.setItem("displayCurrency", currencySelect.value);
+    render();
+  });
+}
 document.getElementById("display-currency").addEventListener("change", (e) => {
   localStorage.setItem("displayCurrency", e.target.value);
   render();
