@@ -2,152 +2,133 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" href="favicon.png" type="image/png" />
-  <title data-i18n="asset_title">FINORA 資產登記</title>
+  <title data-i18n="title">FINORA 好好存</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="favicon.png" type="image/png" />
   <link rel="stylesheet" href="style.css" />
-  <script src="lang.js"></script>
 </head>
 <body class="logo-full-bg">
-  <h1 data-i18n="asset_title">登記你的好好資產</h1>
+  <h1 data-i18n="title">FINORA 好好存</h1>
+  <p class="subtitle" data-i18n="subtitle">讓資產更有力，退休不焦慮。</p>
 
-  <!-- ✅ 登入與帳本狀態顯示 -->
-  <div id="auth-status" style="margin-bottom: 1rem; font-size: 0.9rem; color: #555;">
-    <span data-i18n="user">使用者：</span><span id="auth-email">（尚未登入）</span><br />
-    <span data-i18n="account">帳本：</span><span id="account-name">（尚未選擇）</span>
+  <div class="grid-button-group">
+    <a href="assets.html" data-i18n="asset">資產管理</a>
+    <a href="tools/compound.html" data-i18n="compound">複利試算</a>
+    <a href="tools/withdraw.html" data-i18n="withdraw">退休提領</a>
+    <a href="tools/emergency.html" data-i18n="emergency">預備金試算</a>
   </div>
 
-  <!-- ✅ 資產表單 -->
-  <form id="asset-form">
-    <div class="getting-started">
-      <p data-i18n="guide_select_type">📢 從下方選單挑選資產種類（股票、保單、加密貨幣等）</p>
-      <p data-i18n="guide_stock_auto">🪙 台股與美股會自動查詢最新現價</p>
-      <p data-i18n="guide_currency_auto">🔗 輸入外幣資產時，系統會自動帶入最新匯率</p>
+  <div id="account-control-wrapper" style="margin-top: 2rem;">
+    <label for="account-select" data-i18n="accountLabel">帳本選擇：</label>
+    <select id="account-select" style="width: 100%; margin-bottom: 0.5rem;"></select>
+    <div style="display: flex; justify-content: center; gap: 1rem;">
+      <button id="rename-account-btn" data-i18n="rename">✏️ 重新命名</button>
+      <button id="new-account-btn" data-i18n="add">➕ 新增帳本</button>
+      <button id="delete-account-btn" data-i18n="delete">🗑️ 刪除帳本</button>
     </div>
+    <div id="new-account-input-group" style="display: none; margin-top: 0.5rem;">
+      <input type="text" id="new-account-name" placeholder="輸入新帳本名稱" data-i18n-placeholder="placeholderNewAccount" />
+      <button id="save-new-account" data-i18n="save">儲存</button>
+    </div>
+  </div>
 
-    <label data-i18n="label_type">種類：</label>
-    <select id="type">
-      <option value="" data-i18n-option="option_select">請選擇</option>
-      <option value="股票" data-i18n-option="option_stock">股票</option>
-      <option value="定存" data-i18n-option="option_deposit">定存</option>
-      <option value="現金" data-i18n-option="option_cash">現金</option>
-      <option value="房產" data-i18n-option="option_property">房產</option>
-      <option value="儲蓄保險" data-i18n-option="option_insurance">儲蓄保險</option>
-      <option value="基金" data-i18n-option="option_fund">基金</option>
-      <option value="加密貨幣" data-i18n-option="option_crypto">加密貨幣</option>
-      <option value="其他" data-i18n-option="option_other">其他</option>
+  <div id="firebase-auth" style="margin-top: 1.5rem; text-align: center;">
+    <button id="login-btn" data-i18n="login">🔐 使用 Google 帳號登入</button>
+    <button id="logout-btn" data-i18n="logout" style="display:none;">🚪 登出</button>
+  </div>
+
+  <div style="text-align:center; margin: 1rem 0;">
+    <label for="lang-select" data-i18n="langLabel">🌐 Language / 語言：</label>
+    <select id="lang-select">
+      <option value="zh-Hant">繁體中文</option>
+      <option value="zh-Hans">简体中文</option>
+      <option value="en">English</option>
+      <option value="ja">日本語</option>
     </select>
+  </div>
 
-    <!-- 股票欄位 -->
-    <div id="stock-fields" style="display: none;">
-      <label data-i18n="label_stock_category">股票類型：</label>
-      <select id="stock-category">
-        <option value="" data-i18n-option="option_select">請選擇</option>
-        <option value="美股" data-i18n-option="option_us">美股</option>
-        <option value="台股" data-i18n-option="option_tw">台股</option>
-        <option value="ETF">ETF</option>
-        <option value="港股" data-i18n-option="option_hk">港股</option>
-        <option value="REITs">REITs</option>
-        <option value="自訂" data-i18n-option="option_custom">自訂</option>
-      </select>
+  <p class="privacy-note" data-i18n="privacy">FINORA 重視隱私。你的資產，只屬於你自己。</p>
 
-      <label data-i18n="label_stock_symbol">股票代碼：</label>
-      <input type="text" id="stock-symbol" />
-
-      <label data-i18n="label_shares">股數：</label>
-      <input type="number" id="stock-shares" />
-
-      <label data-i18n="label_cost">成本（每股）：</label>
-      <input type="number" id="stock-cost" step="0.0001" />
-
-      <label data-i18n="label_price">現價（每股）：</label>
-      <input type="number" id="stock-price" step="0.0001" />
-    </div>
-
-    <!-- 其他通用欄位 -->
-    <div id="amount-field">
-      <label data-i18n="label_amount">金額：</label>
-      <input type="number" id="amount" />
-    </div>
-
-    <label data-i18n="label_currency">幣別：</label>
-    <select id="currency">
-      <option value="TWD">TWD</option>
-      <option value="USD">USD</option>
-      <option value="JPY">JPY</option>
-      <option value="EUR">EUR</option>
-    </select>
-
-    <label data-i18n="label_bank">銀行：</label>
-    <input type="text" id="bank" list="bank-list" />
-
-    <label data-i18n="label_note">備註：</label>
-    <input type="text" id="note" />
-
-    <div class="button-center">
-      <button id="save-asset-btn" data-i18n="save_btn">💾 儲存資產</button>
-    </div>
-  </form>
-
-  <datalist id="bank-list"></datalist>
-
-  <h2 data-i18n="asset_list">資產列表</h2>
-  <ul id="asset-list"></ul>
-
-  <h2 data-i18n="asset_total">資產加總</h2>
-  <ul id="totals-list"></ul>
-  <div id="stock-profit-list"></div>
-  <p id="rate-time" style="font-size: 0.9em; color: #666;"></p>
-
+  <!-- Firebase + App Script -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script src="firebase-sync.js"></script>
-  <script src="script.js"></script>
+  <script src="lang.js"></script>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      applyLang();
-      const emailEl = document.getElementById("auth-email");
-      const accountEl = document.getElementById("account-name");
+    document.addEventListener("DOMContentLoaded", async () => {
+      if (typeof applyLang === "function") applyLang();
 
-      const accountId = localStorage.getItem("selectedAccount");
-      if (!accountId) {
-        alert("\u26a0\ufe0f 尚未選擇帳本，請返回首頁登入並選擇帳本！");
-        window.location.href = "app.html";
-        return;
-      }
+      const langSelect = document.getElementById("lang-select");
+      langSelect.value = localStorage.getItem("lang") || "zh-Hant";
+      langSelect.addEventListener("change", function () {
+        localStorage.setItem("lang", this.value);
+        location.reload();
+      });
 
-      accountEl.textContent = accountId;
-
-      if (typeof FINORA_AUTH !== "undefined") {
-        FINORA_AUTH.onUserChanged(user => {
+      document.getElementById("login-btn").addEventListener("click", async () => {
+        try {
+          const user = await FINORA_AUTH.signInWithGoogle();
           if (user) {
-            emailEl.textContent = user.email;
-            FINORA_AUTH.fetchAccountList().then(list => {
-              const displayName = list.find(acc => acc.id === accountId)?.displayName || accountId;
-              accountEl.textContent = displayName;
-            });
-          } else {
-            emailEl.textContent = "（尚未登入）";
+            alert("✅ 登入成功");
+            location.reload();
           }
-        });
+        } catch (e) {
+          console.error("登入失敗", e);
+          alert("❌ 登入失敗，請檢查授權或稍後再試");
+        }
+      });
+
+      document.getElementById("logout-btn").addEventListener("click", async () => {
+        await FINORA_AUTH.signOutFromGoogle();
+        alert("🚪 已登出");
+        location.reload();
+      });
+
+      // ✅ 登入後更新帳本選單
+      FINORA_AUTH.onUserChanged(async (user) => {
+        const loginBtn = document.getElementById("login-btn");
+        const logoutBtn = document.getElementById("logout-btn");
+        loginBtn.style.display = user ? "none" : "inline-block";
+        logoutBtn.style.display = user ? "inline-block" : "none";
+
+        if (user) await updateAccountSelector();
+      });
+
+      async function updateAccountSelector() {
+        try {
+          const accountSelect = document.getElementById("account-select");
+          const list = await FINORA_AUTH.fetchAccountList();
+          accountSelect.innerHTML = "";
+          list.forEach(acc => {
+            const opt = document.createElement("option");
+            opt.value = acc.id;
+            opt.textContent = acc.displayName || acc.id;
+            accountSelect.appendChild(opt);
+          });
+
+          const selected = FINORA_AUTH.getCurrentAccount();
+          if (selected) accountSelect.value = selected;
+
+          accountSelect.addEventListener("change", (e) => {
+            FINORA_AUTH.setSelectedAccount(e.target.value);
+            location.reload();
+          });
+        } catch (e) {
+          console.warn("❗ 帳本選單載入失敗", e);
+        }
       }
     });
   </script>
 
-  <div class="getting-started">
-    <p class="guide-note" data-i18n="privacy_note">🔐 所有資料皆保存在你的 Google 帳號與雲端帳本中，不用擔心遺失或外洩。</p>
-  </div>
-
-  <a href="app.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374" data-i18n="back_to_home">← 返回首頁</a>
-
+  <p style="text-align:center; font-size:0.8rem; color:#aaa; margin-top:3rem;" data-i18n="version">v0.9 beta - 2025-06-04</p>
   <footer class="site-footer">
-    <p data-i18n="footer_copyright">© 2025 FINORA 好好存｜家庭友善資產整合工具</p>
+    <p data-i18n="footer">© 2025 FINORA 好好存｜家庭友善資產整合工具</p>
     <div class="footer-links">
-      <a href="howto.html" data-i18n="footer_help">使用說明</a>・
-      <a href="mailto:service@finora.life?subject=聯絡詢問" data-i18n="footer_contact">聯絡我們</a>・
-      <a href="privacy.html" data-i18n="footer_privacy">隱私權條款</a>
+      <a href="howto.html" data-i18n="guide">使用說明</a>・
+      <a href="mailto:service@finora.life?subject=聯絡詢問" data-i18n="contact">聯絡我們</a>・
+      <a href="privacy.html" data-i18n="policy">隱私權條款</a>
     </div>
   </footer>
 </body>
