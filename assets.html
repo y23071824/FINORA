@@ -54,7 +54,44 @@
   <label data-i18n="label_price">現價（每股）：</label>
   <input type="number" id="stock-price" step="0.0001" />
 </div>
+<!-- 儲蓄保險欄位 -->
+<div id="insurance-fields" style="display: none;">
+  <label data-i18n="label_insurance_name">保單名稱：</label>
+  <input type="text" id="insurance-name" />
+  
+  <label data-i18n="label_insurance_amount">保額：</label>
+  <input type="number" id="insurance-amount" />
 
+  <label data-i18n="label_insurance_years">年期：</label>
+  <input type="number" id="insurance-years" />
+
+  <label data-i18n="label_insurance_payment">年繳保費：</label>
+  <input type="number" id="insurance-payment" />
+</div>
+
+<!-- 基金欄位 -->
+<div id="fund-fields" style="display: none;">
+  <label data-i18n="label_fund_name">基金名稱：</label>
+  <input type="text" id="fund-name" />
+
+  <label data-i18n="label_fund_units">單位數：</label>
+  <input type="number" id="fund-units" />
+
+  <label data-i18n="label_fund_nav">淨值：</label>
+  <input type="number" id="fund-nav" step="0.0001" />
+</div>
+
+<!-- 加密貨幣欄位 -->
+<div id="crypto-fields" style="display: none;">
+  <label data-i18n="label_crypto_symbol">幣種（如 BTC/ETH）：</label>
+  <input type="text" id="crypto-symbol" />
+
+  <label data-i18n="label_crypto_amount">數量：</label>
+  <input type="number" id="crypto-amount" />
+
+  <label data-i18n="label_crypto_price">現價（每單位）：</label>
+  <input type="number" id="crypto-price" step="0.0001" />
+</div>
 <!-- 其他通用欄位 -->
 <div id="amount-field">
   <label data-i18n="label_amount">金額：</label>
