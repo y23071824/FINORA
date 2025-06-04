@@ -58,10 +58,11 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", async () => {
-      if (typeof applyLang === "function") applyLang();
+      const lang = localStorage.getItem("lang") || "zh-Hant";
+      applyLang(lang);
 
       const langSelect = document.getElementById("lang-select");
-      langSelect.value = localStorage.getItem("lang") || "zh-Hant";
+      langSelect.value = lang;
       langSelect.addEventListener("change", function () {
         localStorage.setItem("lang", this.value);
         location.reload();
