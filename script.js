@@ -6,6 +6,18 @@ function i18n(key) {
   return translations?.[lang]?.[key] || key;
 }
 
+// ✅ 幣別名稱翻譯
+function i18nCurrency(code) {
+  const currencyNames = {
+    TWD: i18n("currency_twd"),
+    USD: i18n("currency_usd"),
+    JPY: i18n("currency_jpy"),
+    EUR: i18n("currency_eur"),
+    CNH: i18n("currency_cnh"),
+  };
+  return currencyNames[code] || code;
+}
+
 // ✅ 帳本選擇與 LocalStorage Key
 function getSelectedAccount() {
   return localStorage.getItem("selectedAccount") || "default";
@@ -24,17 +36,19 @@ let editIndex = null;
 let form, typeSelect, stockFields, insuranceFields, amountField;
 let assetList, totalsList, profitList, bankDatalist;
 
-// ✅ 匯率查詢
+// ✅ 匯率查詢（新增 CNH）
 async function fetchExchangeRates() {
   try {
-    const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
+    const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR,CNH");
     const data = await res.json();
     if (!data || !data.rates) throw new Error("❌ " + i18n("invalid_exchange_data"));
+
     exchangeRates = {
       USD: 1,
       TWD: data.rates.TWD || 30,
       JPY: data.rates.JPY || 150,
       EUR: data.rates.EUR || 0.9,
+      CNH: data.rates.CNH || 7,
     };
     localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
   } catch (e) {
@@ -43,7 +57,7 @@ async function fetchExchangeRates() {
     if (saved) {
       exchangeRates = JSON.parse(saved);
     } else {
-      exchangeRates = { USD: 1, TWD: 30, JPY: 150, EUR: 0.9 };
+      exchangeRates = { USD: 1, TWD: 30, JPY: 150, EUR: 0.9, CNH: 7 };
     }
   }
 }
@@ -197,26 +211,35 @@ function render() {
   let totalsByCurrency = {};
   let totalTWD = 0;
 
+  const lang = localStorage.getItem("lang") || "zh-Hant";
+  const displayCurrency = (code) => {
+    const labels = {
+      "TWD": { "zh-Hant": "台幣", "zh-Hans": "新台币", "en": "TWD", "ja": "台湾元", "CN": "人民币" },
+      "USD": { "zh-Hant": "美金", "zh-Hans": "美元", "en": "USD", "ja": "米ドル", "CN": "美元" },
+      "JPY": { "zh-Hant": "日圓", "zh-Hans": "日元", "en": "JPY", "ja": "円", "CN": "日元" },
+      "CN":  { "zh-Hant": "人民幣", "zh-Hans": "人民币", "en": "CNY", "ja": "人民元", "CN": "人民币" },
+      "EUR": { "zh-Hant": "歐元", "zh-Hans": "欧元", "en": "EUR", "ja": "ユーロ", "CN": "欧元" },
+    };
+    return labels[code]?.[lang] || code;
+  };
+
   assets.forEach((asset, index) => {
     const li = document.createElement("li");
     li.className = "asset-item";
 
-    const typeText = i18n(asset.type) || asset.type;
-text = `📌 ${typeText}`;
-
-display = `${asset.symbol} × ${shares}｜${i18n("cost")} ${totalCost.toFixed(2)}｜${i18n("current_price")} ${price}｜${i18n("market_value")} ${market.toFixed(2)}｜${i18n("profit")} ${profit.toFixed(2)}`;
     let value = 0;
     let cost = 0;
     let display = "";
+    let text = `📌 ${i18n(asset.type) || asset.type}`;
 
     if (asset.type === "股票") {
-      const { stockSymbol = asset.symbol || "?", shares = 0, cost: c = 0, price = 0, currency } = asset;
+      const { stockSymbol = asset.symbol || "?", shares = 0, cost: c = 0, price = 0 } = asset;
       const market = shares * price;
       const totalCost = shares * c;
       const profit = market - totalCost;
       value = market;
       cost = totalCost;
-      display = `${stockSymbol} × ${shares}｜成本 ${totalCost.toFixed(2)}｜現價 ${price}｜市值 ${market.toFixed(2)}｜盈餘 ${profit.toFixed(2)}`;
+      display = `${stockSymbol} × ${shares}｜${i18n("cost")} ${totalCost.toFixed(2)}｜${i18n("current_price")} ${price}｜${i18n("market_value")} ${market.toFixed(2)}｜${i18n("profit")} ${profit.toFixed(2)}`;
     } else if (asset.type === "儲蓄保險") {
       const { insuranceName = "", insuranceAmount = 0, insuranceYears = 0, insuranceAnnual = 0 } = asset;
       value = insuranceAmount;
@@ -239,7 +262,6 @@ display = `${asset.symbol} × ${shares}｜${i18n("cost")} ${totalCost.toFixed(2)
     const converted = value * rate;
     totalTWD += converted;
 
-    // 累加分類與幣別
     totalsByType[asset.type] ??= {};
     totalsByType[asset.type][currency] ??= 0;
     totalsByType[asset.type][currency] += value;
@@ -247,7 +269,6 @@ display = `${asset.symbol} × ${shares}｜${i18n("cost")} ${totalCost.toFixed(2)
     totalsByCurrency[currency] ??= 0;
     totalsByCurrency[currency] += value;
 
-    // 渲染每筆資產
     li.innerHTML = `
       <div>${text}</div>
       <div class="note">${display}</div>
@@ -264,7 +285,7 @@ display = `${asset.symbol} × ${shares}｜${i18n("cost")} ${totalCost.toFixed(2)
     for (const currency in totalsByType[type]) {
       const total = totalsByType[type][currency].toFixed(2);
       const li = document.createElement("li");
-      li.textContent = `📌 ${type}：${total} ${currency}`;
+      li.textContent = `📌 ${i18n(type)}：${total} ${displayCurrency(currency)}`;
       totalsList.appendChild(li);
     }
   }
@@ -275,73 +296,26 @@ display = `${asset.symbol} × ${shares}｜${i18n("cost")} ${totalCost.toFixed(2)
     const rate = exchangeRates[currency] || 1;
     const converted = (total * rate).toFixed(0);
     const li = document.createElement("li");
-    li.textContent = `💱 ${currency}：${total.toFixed(2)} ≈ NT$ ${converted}`;
+    li.textContent = `💱 ${displayCurrency(currency)}：${total.toFixed(2)} ≈ NT$ ${converted}`;
     totalsList.appendChild(li);
   }
 
-  // 折合台幣總資產
+  // 自選幣別總資產
+  const selectedCurrency = document.getElementById("summary-currency")?.value || "TWD";
+  const selectedRate = exchangeRates[selectedCurrency] || 1;
+  const totalConverted = (totalTWD / selectedRate).toFixed(2);
+  const totalDisplay = displayCurrency(selectedCurrency);
   const totalLi = document.createElement("li");
-  totalLi.textContent = `💰 ${i18n("total_asset")}：NT$ ${totalTWD.toLocaleString()}`;
+  totalLi.textContent = `💰 ${i18n("total_asset")}：${totalDisplay} ${totalConverted}`;
   totalsList.appendChild(totalLi);
 
-  // 匯率時間
+  // 匯率更新時間顯示
   const now = new Date();
   const rateTime = document.getElementById("rate-time");
   if (rateTime) {
     rateTime.textContent = `${i18n("exchange_rate_updated")}：${now.toLocaleTimeString()}`;
   }
 }
-
-// ===== 編輯與刪除 =====
-function editAsset(index) {
-  const asset = assets[index];
-  editIndex = index;
-  typeSelect.value = asset.type;
-  toggleFields();
-
-  setTimeout(() => {
-    if (asset.type === "股票") {
-      document.getElementById("stock-symbol").value = asset.stockSymbol || asset.symbol || "";
-      document.getElementById("stock-category").value = asset.stockCategory || asset.category || "";
-      document.getElementById("stock-shares").value = asset.shares || 0;
-      document.getElementById("stock-cost").value = asset.cost || 0;
-      document.getElementById("stock-price").value = asset.price || 0;
-    } else if (asset.type === "儲蓄保險") {
-      document.getElementById("insurance-name").value = asset.insuranceName || "";
-      document.getElementById("insurance-amount").value = asset.insuranceAmount || 0;
-      document.getElementById("insurance-years").value = asset.insuranceYears || 0;
-      document.getElementById("insurance-annual").value = asset.insuranceAnnual || 0;
-    } else if (asset.type === "基金") {
-      document.getElementById("fund-name").value = asset.fundName || "";
-      document.getElementById("fund-units").value = asset.fundUnits || 0;
-      document.getElementById("fund-nav").value = asset.fundNav || 0;
-    } else if (asset.type === "加密貨幣") {
-      document.getElementById("crypto-symbol").value = asset.cryptoSymbol || "";
-      document.getElementById("crypto-amount").value = asset.cryptoAmount || 0;
-      document.getElementById("crypto-price").value = asset.cryptoPrice || 0;
-    } else {
-      document.getElementById("amount").value = asset.amount || 0;
-    }
-
-    document.getElementById("currency").value = asset.currency || "TWD";
-    document.getElementById("bank").value = asset.bank || "";
-    document.getElementById("note").value = asset.note || "";
-  }, 100);
-}
-
-function deleteAsset(index) {
-  const lang = localStorage.getItem("lang") || "zh-Hant";
-  const msg = translations?.[lang]?.delete_confirm || "確定刪除這筆資產嗎？";
-  if (!confirm(msg)) return;
-
-  assets.splice(index, 1);
-  localStorage.setItem(getLocalStorageKey(), JSON.stringify(assets));
-  if (typeof FINORA_AUTH !== "undefined" && FINORA_AUTH.saveUserAssets) {
-    FINORA_AUTH.saveUserAssets(assets);
-  }
-  render();
-}
-
 
 // ===== Part 4：啟動函式與登入綁定 =====
 document.addEventListener("DOMContentLoaded", () => {
