@@ -106,29 +106,30 @@
         if (user) await updateAccountSelector();
       });
 
-      async function updateAccountSelector() {
-        try {
-          const accountSelect = document.getElementById("account-select");
-          const list = await FINORA_AUTH.fetchAccountList();
-          accountSelect.innerHTML = "";
-          list.forEach(acc => {
-            const opt = document.createElement("option");
-            opt.value = acc.id;
-            opt.textContent = acc.displayName || acc.id;
-            accountSelect.appendChild(opt);
-          });
+async function updateAccountSelector() {
+  try {
+    const accountSelect = document.getElementById("account-select");
+    const list = await FINORA_AUTH.fetchAccountList();
+    accountSelect.innerHTML = "";
+    list.forEach(acc => {
+      const opt = document.createElement("option");
+      opt.value = acc.id;
+      opt.textContent = acc.displayName || acc.id;
+      accountSelect.appendChild(opt);
+    });
 
-          const selected = FINORA_AUTH.getCurrentAccount();
-          if (selected) accountSelect.value = selected;
+    const selected = FINORA_AUTH.getCurrentAccount();
+    if (selected && list.some(acc => acc.id === selected)) accountSelect.value = selected;
 
-          accountSelect.addEventListener("change", (e) => {
-            FINORA_AUTH.setSelectedAccount(e.target.value);
-            location.reload();
-          });
-        } catch (e) {
-          console.warn("❗ 帳本選單載入失敗", e);
-        }
-      }
+    // 先移除舊的事件再綁定
+    accountSelect.onchange = (e) => {
+      FINORA_AUTH.setSelectedAccount(e.target.value);
+      location.reload();
+    };
+  } catch (e) {
+    console.warn("❗ 帳本選單載入失敗", e);
+  }
+}
     });
   </script>
 
