@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>FINORA 好好存</title>
+  <title data-i18n="title">FINORA 好好存</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" href="favicon.png" type="image/png" />
   <link rel="stylesheet" href="style.css" />
@@ -24,13 +24,13 @@
     <label for="account-select" data-i18n="accountLabel">帳本選擇：</label>
     <select id="account-select" style="width: 100%; margin-bottom: 0.5rem;"></select>
     <div style="display: flex; justify-content: center; gap: 1rem;">
-      <button id="rename-account-btn" data-i18n="rename">✏️</button>
-      <button id="new-account-btn" data-i18n="add">➕</button>
-      <button id="delete-account-btn" data-i18n="delete">🗑️</button>
+      <button id="rename-account-btn" data-i18n="rename">✏️ 重新命名</button>
+      <button id="new-account-btn" data-i18n="add">➕ 新增帳本</button>
+      <button id="delete-account-btn" data-i18n="delete">🗑️ 刪除帳本</button>
     </div>
     <div id="new-account-input-group" style="display: none; margin-top: 0.5rem;">
-      <input type="text" id="new-account-name" placeholder="輸入新帳本名稱" />
-      <button id="save-new-account">儲存</button>
+      <input type="text" id="new-account-name" placeholder="輸入新帳本名稱" data-i18n-placeholder="placeholderNewAccount" />
+      <button id="save-new-account" data-i18n="save">儲存</button>
     </div>
   </div>
 
@@ -42,7 +42,7 @@
 
   <!-- 語言切換放登入下方 -->
   <div style="text-align:center; margin: 1rem 0;">
-    <label for="lang-select">🌐 Language / 語言：</label>
+    <label for="lang-select" data-i18n="langLabel">🌐 Language / 語言：</label>
     <select id="lang-select">
       <option value="zh-Hant">繁體中文</option>
       <option value="zh-Hans">简体中文</option>
@@ -104,7 +104,7 @@
 
   <!-- 頁尾 -->
   <p style="text-align:center; font-size:0.8rem; color:#aaa; margin-top:3rem;" data-i18n="version">
-    v0.9 beta - 2025-06-03
+    v0.9 beta - 2025-06-04
   </p>
   <footer class="site-footer">
     <p data-i18n="footer">© 2025 FINORA 好好存｜家庭友善資產整合工具</p>
