@@ -105,3 +105,69 @@ function applyLang() {
     if (dict[key]) el.setAttribute("placeholder", dict[key]);
   });
 }
+const translations = {
+  "zh-Hant": {
+    asset_title: "登記你的好好資產",
+    guide_select_type: "📢 從下方選單挑選資產種類（股票、保單、加密貨幣等）",
+    guide_stock_auto: "🪙 台股與美股會自動查詢最新現價",
+    guide_currency_auto: "🔗 輸入外幣資產時，系統會自動帶入最新匯率",
+    save_btn: "💾 儲存資產",
+    asset_list: "資產列表",
+    asset_total: "資產加總",
+    back_to_home: "← 返回首頁",
+    privacy_note: "🔐 所有資料皆保存在你的 Google 帳號與雲端帳本中，不用擔心遺失或外洩。",
+    footer_help: "使用說明",
+    footer_contact: "聯絡我們",
+    footer_privacy: "隱私權條款",
+    user: "使用者：",
+    account: "帳本："
+  },
+  "zh-Hans": {
+    asset_title: "登记你的好好资产",
+    guide_select_type: "📢 从下方选单挑选资产种类（股票、保单、加密货币等）",
+    guide_stock_auto: "🪙 台股与美股会自动查询最新现价",
+    guide_currency_auto: "🔗 输入外币资产时，系统会自动带入最新汇率",
+    save_btn: "💾 保存资产",
+    asset_list: "资产列表",
+    asset_total: "资产总计",
+    back_to_home: "← 返回首页",
+    privacy_note: "🔐 所有资料皆保存在你的 Google 帐号与云端帐本中，无需担心遗失或外泄。",
+    footer_help: "使用说明",
+    footer_contact: "联系我们",
+    footer_privacy: "隐私条款",
+    user: "使用者：",
+    account: "帐本："
+  },
+  "en": {
+    asset_title: "Register Your Wealth Assets",
+    guide_select_type: "📢 Select asset type below (e.g., Stocks, Insurance, Crypto)",
+    guide_stock_auto: "🪙 US and TW stocks will fetch real-time price automatically",
+    guide_currency_auto: "🔗 Exchange rate will be auto-filled for foreign currencies",
+    save_btn: "💾 Save Asset",
+    asset_list: "Asset List",
+    asset_total: "Total Assets",
+    back_to_home: "← Back to Home",
+    privacy_note: "🔐 All data is saved to your Google account and cloud ledger securely.",
+    footer_help: "Help Guide",
+    footer_contact: "Contact Us",
+    footer_privacy: "Privacy Policy",
+    user: "User:",
+    account: "Account:"
+  },
+  "ja": {
+    asset_title: "資産を登録する",
+    guide_select_type: "📢 下のメニューから資産の種類を選んでください（株、保険、暗号通貨など）",
+    guide_stock_auto: "🪙 日本株・米国株の現在価格は自動取得されます",
+    guide_currency_auto: "🔗 外貨資産は最新の為替レートが自動入力されます",
+    save_btn: "💾 資産を保存する",
+    asset_list: "資産リスト",
+    asset_total: "資産合計",
+    back_to_home: "← ホームへ戻る",
+    privacy_note: "🔐 データはすべてあなたのGoogleアカウントとクラウドに安全に保存されます。",
+    footer_help: "使い方ガイド",
+    footer_contact: "お問い合わせ",
+    footer_privacy: "プライバシーポリシー",
+    user: "ユーザー：",
+    account: "帳簿："
+  }
+};
