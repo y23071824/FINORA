@@ -351,9 +351,8 @@ document.addEventListener("DOMContentLoaded", () => {
   currencySelect.addEventListener("change", () => {
     const selected = currencySelect.value;
     localStorage.setItem("baseCurrency", selected);
-    render(); // 假設你有 render() 會重新計算總資產顯示的
+    render();
   });
-});
 
   // Firebase 登入狀態監聽
   FINORA_AUTH.onUserChanged(async (user) => {
@@ -386,7 +385,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const displayName = list.find(acc => acc.id === accountId)?.displayName || accountId;
       if (emailEl) emailEl.textContent = user.email;
       if (accountEl) accountEl.textContent = `${displayName}（${list.length} / ${MAX_ACCOUNT_COUNT}）`;
-      
 
       // 表單與欄位監聽
       if (form) form.addEventListener("submit", handleSubmit);
@@ -449,5 +447,5 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("❌ 初始化失敗", e);
       alert(i18n("init_error") || "系統初始化錯誤，請重新整理頁面");
     }
-    });
-;
+  });
+});
