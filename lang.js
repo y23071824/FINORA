@@ -13,7 +13,7 @@ const translations = {
     save: "儲存",
     login: "🔐 使用 Google 帳號登入",
     logout: "🚪 登出",
-    langLabel: "🌐 Language / 語言：",
+    langLabel: "🌐 語言：",
     privacy: "FINORA 重視隱私。你的資產，只屬於你自己。",
     version: "v0.9 beta - 2025-06-04",
     footer: "© 2025 FINORA 好好存｜家庭友善資產整合工具",
@@ -30,11 +30,23 @@ const translations = {
     asset_total: "資產加總",
     back_to_home: "← 返回首頁",
     privacy_note: "🔐 所有資料皆保存在你的 Google 帳號與雲端帳本中，不用擔心遺失或外洩。",
-    footer_help: "使用說明",
-    footer_contact: "聯絡我們",
-    footer_privacy: "隱私權條款",
     user: "使用者：",
-    account: "帳本："
+    account: "帳本：",
+    label_type: "種類：",
+    label_name: "名稱：",
+    label_amount: "金額：",
+    label_currency: "幣別：",
+    label_bank: "銀行名稱：",
+    label_note: "備註：",
+    option_please_select: "請選擇",
+    option_stock: "股票",
+    option_deposit: "定存",
+    option_cash: "現金",
+    option_property: "房產",
+    option_insurance: "儲蓄保險",
+    option_fund: "基金",
+    option_crypto: "加密貨幣",
+    option_other: "其他"
   },
   "zh-Hans": {
     title: "FINORA 好好存",
@@ -50,13 +62,13 @@ const translations = {
     save: "保存",
     login: "🔐 使用 Google 账号登入",
     logout: "🚪 登出",
-    langLabel: "🌐 Language / 语言：",
+    langLabel: "🌐 语言：",
     privacy: "FINORA 重视隐私。你的资产，只属于你自己。",
     version: "v0.9 beta - 2025-06-04",
     footer: "© 2025 FINORA 好好存｜家庭友善资产整合工具",
     guide: "使用说明",
     contact: "联系我们",
-    policy: "隐私权条款",
+    policy: "隐私条款",
     placeholderNewAccount: "输入新账本名称",
     asset_title: "登记你的好好资产",
     guide_select_type: "📢 从下方选单挑选资产种类（股票、保单、加密货币等）",
@@ -66,12 +78,24 @@ const translations = {
     asset_list: "资产列表",
     asset_total: "资产总计",
     back_to_home: "← 返回首页",
-    privacy_note: "🔐 所有资料皆保存在你的 Google 帐号与云端帐本中，无需担心遗失或外泄。",
-    footer_help: "使用说明",
-    footer_contact: "联系我们",
-    footer_privacy: "隐私条款",
+    privacy_note: "🔐 所有资料皆保存在你的 Google 帐号与云端账本中，无需担心遗失或外泄。",
     user: "使用者：",
-    account: "帐本："
+    account: "账本：",
+    label_type: "种类：",
+    label_name: "名称：",
+    label_amount: "金额：",
+    label_currency: "币别：",
+    label_bank: "银行名称：",
+    label_note: "备注：",
+    option_please_select: "请选择",
+    option_stock: "股票",
+    option_deposit: "定存",
+    option_cash: "现金",
+    option_property: "房产",
+    option_insurance: "储蓄保险",
+    option_fund: "基金",
+    option_crypto: "加密货币",
+    option_other: "其他"
   },
   "en": {
     title: "FINORA Wealth Planner",
@@ -104,11 +128,23 @@ const translations = {
     asset_total: "Total Assets",
     back_to_home: "← Back to Home",
     privacy_note: "🔐 All data is saved to your Google account and cloud ledger securely.",
-    footer_help: "Help Guide",
-    footer_contact: "Contact Us",
-    footer_privacy: "Privacy Policy",
     user: "User:",
-    account: "Account:"
+    account: "Account:",
+    label_type: "Type:",
+    label_name: "Name:",
+    label_amount: "Amount:",
+    label_currency: "Currency:",
+    label_bank: "Bank:",
+    label_note: "Note:",
+    option_please_select: "Please select",
+    option_stock: "Stock",
+    option_deposit: "Deposit",
+    option_cash: "Cash",
+    option_property: "Property",
+    option_insurance: "Insurance",
+    option_fund: "Fund",
+    option_crypto: "Cryptocurrency",
+    option_other: "Other"
   },
   "ja": {
     title: "FINORA 資産管理",
@@ -141,11 +177,23 @@ const translations = {
     asset_total: "資産合計",
     back_to_home: "← ホームへ戻る",
     privacy_note: "🔐 データはすべてあなたのGoogleアカウントとクラウドに安全に保存されます。",
-    footer_help: "使い方ガイド",
-    footer_contact: "お問い合わせ",
-    footer_privacy: "プライバシーポリシー",
     user: "ユーザー：",
-    account: "帳簿："
+    account: "帳簿：",
+    label_type: "種類：",
+    label_name: "名称：",
+    label_amount: "金額：",
+    label_currency: "通貨：",
+    label_bank: "銀行名：",
+    label_note: "備考：",
+    option_please_select: "選択してください",
+    option_stock: "株式",
+    option_deposit: "定期預金",
+    option_cash: "現金",
+    option_property: "不動産",
+    option_insurance: "保険",
+    option_fund: "投資信託",
+    option_crypto: "暗号通貨",
+    option_other: "その他"
   }
 };
 
@@ -159,5 +207,9 @@ function applyLang() {
   document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
     const key = el.getAttribute("data-i18n-placeholder");
     if (dict[key]) el.setAttribute("placeholder", dict[key]);
+  });
+  document.querySelectorAll("[data-i18n-option]").forEach(el => {
+    const key = el.getAttribute("data-i18n-option");
+    if (dict[key]) el.innerText = dict[key];
   });
 }
