@@ -50,7 +50,13 @@ const translations = {
     not_logged_in: "（尚未登入）",
     no_account_selected: "（尚未選擇）",
     please_login_first: "⚠️ 尚未登入，請先登入 Google 帳號",
-    init_error: "系統初始化錯誤，請重新整理頁面"
+    init_error: "系統初始化錯誤，請重新整理頁面",
+    total_asset: "總資產",
+    exchange_rate_updated: "匯率更新時間",
+    cost: "成本",
+    current_price: "現價",
+    market_value: "市值",
+    profit: "盈餘"
   },
   "zh-Hans": {
     title: "FINORA 好好存",
@@ -103,7 +109,13 @@ const translations = {
     not_logged_in: "（尚未登录）",
     no_account_selected: "（尚未选择）",
     please_login_first: "⚠️ 尚未登录，请先登录 Google 账号",
-    init_error: "系统初始化错误，请重新刷新页面"
+    init_error: "系统初始化错误，请重新刷新页面",
+    total_asset: "总资产",
+    exchange_rate_updated: "汇率更新时间",
+    cost: "成本",
+    current_price: "现价",
+    market_value: "市值",
+    profit: "盈余"
   },
   "en": {
     title: "FINORA Wealth Planner",
@@ -156,7 +168,13 @@ const translations = {
     not_logged_in: "(Not logged in)",
     no_account_selected: "(No account selected)",
     please_login_first: "⚠️ Not logged in. Please sign in with your Google account first.",
-    init_error: "System initialization error. Please refresh the page."
+    init_error: "System initialization error. Please refresh the page.",
+    total_asset: "Total Assets",
+    exchange_rate_updated: "Exchange Rate Updated",
+    cost: "Cost",
+    current_price: "Current Price",
+    market_value: "Market Value",
+    profit: "Profit"
   },
   "ja": {
     title: "FINORA 資産管理",
@@ -209,56 +227,12 @@ const translations = {
     not_logged_in: "（未ログイン）",
     no_account_selected: "（アカウント未選択）",
     please_login_first: "⚠️ 未ログインです。まず Google アカウントにログインしてください。",
-    init_error: "システム初期化エラー。ページを再読み込みしてください。"
-  },
- "zh-Hans": {
-  total_asset: "總資產",
-  exchange_rate_updated: "匯率更新時間",
-  股票: "股票",
-  定存: "定存",
-  儲蓄保險: "儲蓄保險",
-  現金: "現金",
-  房產: "房產",
-  其他: "其他",
-  基金: "基金",
-  加密貨幣: "加密貨幣",
-  cost: "成本",
-  current_price: "現價",
-  market_value: "市值",
-  profit: "盈餘",
-},
-"ja": {
-  total_asset: "資産合計",
-  exchange_rate_updated: "為替レート更新時間",
-  股票: "株式",
-  定存: "定期預金",
-  儲蓄保險: "保険",
-  現金: "現金",
-  房產: "不動産",
-  其他: "その他",
-  基金: "ファンド",
-  加密貨幣: "暗号通貨",
-  cost: "取得価格",
-  current_price: "現在価格",
-  market_value: "評価額",
-  profit: "利益",
+    init_error: "システム初期化エラー。ページを再読み込みしてください。",
+    total_asset: "資産合計",
+    exchange_rate_updated: "為替レート更新時間",
+    cost: "取得価格",
+    current_price: "現在価格",
+    market_value: "評価額",
+    profit: "利益"
   }
 };
-
-
-function applyLang() {
-  const lang = localStorage.getItem("lang") || "zh-Hant";
-  const dict = translations[lang] || translations["zh-Hant"];
-  document.querySelectorAll("[data-i18n]").forEach(el => {
-    const key = el.getAttribute("data-i18n");
-    if (dict[key]) el.textContent = dict[key];
-  });
-  document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
-    const key = el.getAttribute("data-i18n-placeholder");
-    if (dict[key]) el.setAttribute("placeholder", dict[key]);
-  });
-  document.querySelectorAll("[data-i18n-option]").forEach(el => {
-    const key = el.getAttribute("data-i18n-option");
-    if (dict[key]) el.innerText = dict[key];
-  });
-}
