@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
   <title data-i18n="title">FINORA 好好存</title>
@@ -11,7 +11,6 @@
   <h1 data-i18n="title">FINORA 好好存</h1>
   <p class="subtitle" data-i18n="subtitle">讓資產更有力，退休不焦慮。</p>
 
-  <!-- 四大功能按鈕 -->
   <div class="grid-button-group">
     <a href="assets.html" data-i18n="asset">資產管理</a>
     <a href="tools/compound.html" data-i18n="compound">複利試算</a>
@@ -19,7 +18,6 @@
     <a href="tools/emergency.html" data-i18n="emergency">預備金試算</a>
   </div>
 
-  <!-- 帳本管理 -->
   <div id="account-control-wrapper" style="margin-top: 2rem;">
     <label for="account-select" data-i18n="accountLabel">帳本選擇：</label>
     <select id="account-select" style="width: 100%; margin-bottom: 0.5rem;"></select>
@@ -34,13 +32,11 @@
     </div>
   </div>
 
-  <!-- 登入區塊 -->
   <div id="firebase-auth" style="margin-top: 1.5rem; text-align: center;">
     <button id="login-btn" data-i18n="login">🔐 使用 Google 帳號登入</button>
     <button id="logout-btn" data-i18n="logout" style="display:none;">🚪 登出</button>
   </div>
 
-  <!-- 語言切換 -->
   <div style="text-align:center; margin: 1rem 0;">
     <label for="lang-select" data-i18n="langLabel">🌐 Language / 語言：</label>
     <select id="lang-select">
@@ -53,7 +49,7 @@
 
   <p class="privacy-note" data-i18n="privacy">FINORA 重視隱私。你的資產，只屬於你自己。</p>
 
-  <!-- Firebase SDK -->
+  <!-- Firebase + App Script -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
@@ -61,22 +57,16 @@
   <script src="lang.js"></script>
 
   <script>
-    document.documentElement.lang = localStorage.getItem("lang") || "zh-Hant";
-
-    document.addEventListener("DOMContentLoaded", () => {
-      // ✅ 套用語言翻譯
+    document.addEventListener("DOMContentLoaded", async () => {
       if (typeof applyLang === "function") applyLang();
 
-      // ✅ 初始化語言選擇器
       const langSelect = document.getElementById("lang-select");
       langSelect.value = localStorage.getItem("lang") || "zh-Hant";
       langSelect.addEventListener("change", function () {
         localStorage.setItem("lang", this.value);
-        document.documentElement.lang = this.value;
-        applyLang(); // 不 reload，直接重套語言
+        location.reload();
       });
 
-      // ✅ 登入邏輯
       document.getElementById("login-btn").addEventListener("click", async () => {
         try {
           const user = await FINORA_AUTH.signInWithGoogle();
@@ -96,17 +86,43 @@
         location.reload();
       });
 
-      // ✅ 狀態變化監聽
-      FINORA_AUTH.onUserChanged((user) => {
-        document.getElementById("login-btn").style.display = user ? "none" : "inline-block";
-        document.getElementById("logout-btn").style.display = user ? "inline-block" : "none";
+      // ✅ 登入後更新帳本選單
+      FINORA_AUTH.onUserChanged(async (user) => {
+        const loginBtn = document.getElementById("login-btn");
+        const logoutBtn = document.getElementById("logout-btn");
+        loginBtn.style.display = user ? "none" : "inline-block";
+        logoutBtn.style.display = user ? "inline-block" : "none";
+
+        if (user) await updateAccountSelector();
       });
+
+      async function updateAccountSelector() {
+        try {
+          const accountSelect = document.getElementById("account-select");
+          const list = await FINORA_AUTH.fetchAccountList();
+          accountSelect.innerHTML = "";
+          list.forEach(acc => {
+            const opt = document.createElement("option");
+            opt.value = acc.id;
+            opt.textContent = acc.displayName || acc.id;
+            accountSelect.appendChild(opt);
+          });
+
+          const selected = FINORA_AUTH.getCurrentAccount();
+          if (selected) accountSelect.value = selected;
+
+          accountSelect.addEventListener("change", (e) => {
+            FINORA_AUTH.setSelectedAccount(e.target.value);
+            location.reload();
+          });
+        } catch (e) {
+          console.warn("❗ 帳本選單載入失敗", e);
+        }
+      }
     });
   </script>
 
-  <p style="text-align:center; font-size:0.8rem; color:#aaa; margin-top:3rem;" data-i18n="version">
-    v0.9 beta - 2025-06-04
-  </p>
+  <p style="text-align:center; font-size:0.8rem; color:#aaa; margin-top:3rem;" data-i18n="version">v0.9 beta - 2025-06-04</p>
   <footer class="site-footer">
     <p data-i18n="footer">© 2025 FINORA 好好存｜家庭友善資產整合工具</p>
     <div class="footer-links">
