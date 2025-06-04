@@ -43,7 +43,94 @@ async function fetchExchangeRates() {
     const stored = localStorage.getItem("exchangeRates");
     if (stored && stored !== "undefined") {
       exchangeRates = JSON.parse(stored);
-      if (status) status.textContent = "⚠️ 使用上次儲存的匯率資料";
+      if (status) status.textContent = "⚠️ 使// ===== Part 1：初始化與查詢 =====
+
+// ✅ 語系用函式 function i18n(key) { const lang = localStorage.getItem("lang") || "zh-Hant"; return translations?.[lang]?.[key] || key; }
+
+// ✅ 帳本選擇與 LocalStorage Key 取得 function getSelectedAccount() { return localStorage.getItem("selectedAccount") || "default"; } function getLocalStorageKey() { return assets_${getSelectedAccount()}; }
+
+// ✅ 初始化變數 let assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]"); let bankHistory = JSON.parse(localStorage.getItem("banks") || "[]"); let exchangeRates = {}; let editIndex = null;
+
+// ✅ DOM 元素定義 let form, typeSelect, stockFields, insuranceFields, amountField; let assetList, totalsList, profitList, bankDatalist;
+
+// ===== 匯率查詢 ===== async function fetchExchangeRates() { const status = document.getElementById("exchange-status"); try { if (status) status.textContent = "📡 " + i18n("fetching_exchange"); const res = await fetch("https://api.frankfurter.app/latest?from=USD&to=TWD,JPY,EUR"); const data = await res.json(); if (!data || !data.rates) throw new Error(i18n("invalid_exchange_data"));
+
+exchangeRates = {
+  USD: 1,
+  TWD: data.rates.TWD || 30,
+  JPY: data.rates.JPY || 150,
+  EUR: data.rates.EUR || 0.9,
+};
+
+localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
+if (status) status.textContent = "✅ " + i18n("exchange_updated");
+
+} catch (e) { console.warn("⚠️ " + i18n("exchange_failed"), e.message); const stored = localStorage.getItem("exchangeRates"); if (stored && stored !== "undefined") { exchangeRates = JSON.parse(stored); if (status) status.textContent = "⚠️ " + i18n("using_stored_exchange"); } else { exchangeRates = { USD: 1, TWD: 30, JPY: 150, EUR: 0.9 }; if (status) status.textContent = "⚠️ " + i18n("using_default_exchange"); } } }
+
+// ===== 股票查價（TwelveData / 台股）===== async function fetchStockPrice(symbol, category) { try { if (category === "台股") { const now = new Date(); const yyyy = now.getFullYear(); const mm = String(now.getMonth() + 1).padStart(2, "0"); const dd = String(now.getDate()).padStart(2, "0"); const date = ${yyyy}${mm}${dd}; const url = https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date=${date}&stockNo=${symbol}; const res = await fetch(url); const data = await res.json(); if (data.stat !== "OK" || !data.data?.length) return null; const lastRow = data.data[data.data.length - 1]; const close = parseFloat(lastRow[6].replace(/,/g, "")); return close; } else { const apiKey = "de909496c6754a89bc33db0306c2def8"; // Your TwelveData API key const url = https://api.twelvedata.com/price?symbol=${symbol}&apikey=${apiKey}; const res = await fetch(url); const data = await res.json(); if (data.status === "error" || data.code || !data.price) return null; return parseFloat(data.price); } } catch (e) { console.error("❌ " + i18n("stock_price_error"), e); return null; } }
+
+// ===== 更新所有股票現價 ===== async function updateAllStockPrices() { const updatedAssets = await Promise.all( assets.map(async (item) => { if (item.type === "股票" && item.stockSymbol && item.stockCategory) { const newPrice = await fetchStockPrice(item.stockSymbol, item.stockCategory); if (newPrice !== null) item.price = newPrice; } return item; }) ); assets = updatedAssets; localStorage.setItem(getLocalStorageKey(), JSON.stringify(assets)); if (typeof FINORA_AUTH !== "undefined" && FINORA_AUTH.saveUserAssets) { await FINORA_AUTH.saveUserAssets(assets); } }
+
+// ===== DOMContentLoaded 初始化程序 ===== document.addEventListener("DOMContentLoaded", async () => { try { // 綁定表單與畫面元素 form = document.getElementById("asset-form"); typeSelect = document.getElementById("type"); stockFields = document.getElementById("stock-fields"); insuranceFields = document.getElementById("insurance-fields"); amountField = document.getElementById("amount-field"); assetList = document.getElementById("asset-list"); totalsList = document.getElementById("totals-list"); profitList = document.getElementById("stock-profit-list"); bankDatalist = document.getElementById("bank-list");
+
+form.addEventListener("submit", handleSubmit);
+typeSelect.addEventListener("change", toggleFields);
+
+bankHistory.forEach((b) => {
+  const option = document.createElement("option");
+  option.value = b;
+  bankDatalist.appendChild(option);
+});
+
+const stockSymbolInput = document.getElementById("stock-symbol");
+const stockCategorySelect = document.getElementById("stock-category");
+const stockPriceInput = document.getElementById("stock-price");
+if (stockSymbolInput && stockCategorySelect && stockPriceInput) {
+  stockSymbolInput.addEventListener("blur", async () => {
+    const symbol = stockSymbolInput.value.trim();
+    const category = stockCategorySelect.value;
+    if (!symbol || !category) return;
+    const price = await fetchStockPrice(symbol, category);
+    if (price !== null) {
+      stockPriceInput.value = price;
+      console.log(`✅ ${symbol} ${i18n("price_updated")}：${price}`);
+    } else {
+      console.warn(`⚠️ ${i18n("price_fetch_failed")} ${symbol}`);
+    }
+  });
+}
+
+const cryptoSymbolInput = document.getElementById("crypto-symbol");
+const cryptoPriceInput = document.getElementById("crypto-price");
+if (cryptoSymbolInput && cryptoPriceInput) {
+  cryptoSymbolInput.addEventListener("blur", async () => {
+    const symbol = cryptoSymbolInput.value.trim().toLowerCase();
+    if (!symbol) return;
+    try {
+      const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${symbol}&vs_currencies=usd`);
+      const data = await res.json();
+      const price = data[symbol]?.usd;
+      if (price) {
+        cryptoPriceInput.value = price;
+        console.log(`✅ ${symbol} ${i18n("price_updated")}：${price}`);
+      } else {
+        console.warn(`⚠️ ${i18n("price_not_found")} ${symbol}`);
+      }
+    } catch (e) {
+      console.error("❌ " + i18n("crypto_price_error"), e);
+    }
+  });
+}
+
+await fetchExchangeRates();
+await updateAllStockPrices();
+toggleFields();
+render();
+console.log("✅ " + i18n("init_success"));
+
+} catch (e) { console.error("❌ " + i18n("init_failed"), e); alert(i18n("init_error_alert")); } });
+
+用上次儲存的匯率資料";
     } else {
       exchangeRates = { USD: 1, TWD: 30, JPY: 150, EUR: 0.9 };
       if (status) status.textContent = "⚠️ 使用預設匯率資料";
