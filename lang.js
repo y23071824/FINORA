@@ -210,8 +210,7 @@ const translations = {
     no_account_selected: "（アカウント未選択）",
     please_login_first: "⚠️ 未ログインです。まず Google アカウントにログインしてください。",
     init_error: "システム初期化エラー。ページを再読み込みしてください。"
-  }
-};
+  },
 zh-Hant: {
   total_asset: "總資產",
   exchange_rate_updated: "匯率更新時間",
