@@ -188,16 +188,6 @@ async function handleSubmit(e) {
   }
 }
 
-<label for="total-currency">💱 顯示折算幣別：</label>
-<select id="total-currency">
-  <option value="TWD">TWD</option>
-  <option value="USD">USD</option>
-  <option value="JPY">JPY</option>
-  <option value="EUR">EUR</option>
-  <option value="CNH">CN</option>
-</select>
-
-
 // ===== Part 3：畫面渲染與計算 =====
 function render() {
   assetList.innerHTML = "";
