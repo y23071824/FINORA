@@ -271,7 +271,7 @@ function render() {
     }
   }
 
-  // 幣別加總
+// 幣別加總
   for (const currency in totalsByCurrency) {
     const total = totalsByCurrency[currency];
     const rate = exchangeRates[currency] || 1;
@@ -282,19 +282,21 @@ function render() {
   }
 
   const selectedCurrency = localStorage.getItem("displayCurrency") || "TWD";
-const selectedRate = exchangeRates[selectedCurrency] || 1;
-let convertedTotal = 0;
+  const selectedRate = exchangeRates[selectedCurrency] || 1;
+  let convertedTotal = 0;
 
-for (const currency in totalsByCurrency) {
-  const value = totalsByCurrency[currency];
-  const rate = exchangeRates[currency] || 1;
-  const valueInSelected = value * (rate / selectedRate);
-  convertedTotal += valueInSelected;
-}
+  for (const currency in totalsByCurrency) {
+    const value = totalsByCurrency[currency];
+    const rate = exchangeRates[currency] || 1;
+    const valueInSelected = (currency === selectedCurrency)
+      ? value
+      : value * (rate / selectedRate);
+    convertedTotal += valueInSelected;
+  }
 
-const convertedLi = document.createElement("li");
-convertedLi.textContent = `💰 ${i18n("total_asset")}（${selectedCurrency}）：${convertedTotal.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${selectedCurrency}`;
-totalsList.appendChild(convertedLi);
+  const convertedLi = document.createElement("li");
+  convertedLi.textContent = `💰 ${i18n("total_asset")}（${selectedCurrency}）：${convertedTotal.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${selectedCurrency}`;
+  totalsList.appendChild(convertedLi);
   
   // 匯率時間
   const now = new Date();
@@ -357,27 +359,26 @@ function deleteAsset(index) {
 // ===== Part 4：啟動函式與登入綁定 =====
 document.addEventListener("DOMContentLoaded", () => {
   console.log("🔄 系統初始化中...");
-  const currencySelect = document.getElementById("display-currency");
-if (currencySelect) {
-  currencySelect.addEventListener("change", () => {
-    localStorage.setItem("displayCurrency", currencySelect.value);
-    render();
-  });
-}
-document.getElementById("display-currency").addEventListener("change", (e) => {
-  localStorage.setItem("displayCurrency", e.target.value);
-  render();
-});
-  const lang = localStorage.getItem("lang") || "zh-Hant";
-  const currencySelect = document.getElementById("base-currency");
-  if (currencySelect) {
-    const savedCurrency = localStorage.getItem("baseCurrency") || "TWD";
-    currencySelect.value = savedCurrency;
 
-    currencySelect.addEventListener("change", () => {
-      const selected = currencySelect.value;
-      localStorage.setItem("baseCurrency", selected);
-      if (typeof render === "function") render();
+  // 顯示幣別選單（顯示總資產用）
+  const displayCurrencySelect = document.getElementById("display-currency");
+  if (displayCurrencySelect) {
+    const savedDisplayCurrency = localStorage.getItem("displayCurrency") || "TWD";
+    displayCurrencySelect.value = savedDisplayCurrency;
+    displayCurrencySelect.addEventListener("change", () => {
+      localStorage.setItem("displayCurrency", displayCurrencySelect.value);
+      render();
+    });
+  }
+
+  // 基準幣別選單（匯率換算工具用）
+  const baseCurrencySelect = document.getElementById("base-currency");
+  if (baseCurrencySelect) {
+    const savedBaseCurrency = localStorage.getItem("baseCurrency") || "TWD";
+    baseCurrencySelect.value = savedBaseCurrency;
+    baseCurrencySelect.addEventListener("change", () => {
+      localStorage.setItem("baseCurrency", baseCurrencySelect.value);
+      render();
     });
   }
 
