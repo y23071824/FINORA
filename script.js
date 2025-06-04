@@ -354,6 +354,16 @@ function deleteAsset(index) {
 document.addEventListener("DOMContentLoaded", () => {
   console.log("🔄 系統初始化中...");
   const lang = localStorage.getItem("lang") || "zh-Hant";
+  const currencySelect = document.getElementById("base-currency");
+  const savedCurrency = localStorage.getItem("baseCurrency") || "TWD";
+  currencySelect.value = savedCurrency;
+
+  currencySelect.addEventListener("change", () => {
+    const selected = currencySelect.value;
+    localStorage.setItem("baseCurrency", selected);
+    render(); // 假設你有 render() 會重新計算總資產顯示的
+  });
+});
 
   // Firebase 登入狀態監聽
   FINORA_AUTH.onUserChanged(async (user) => {
