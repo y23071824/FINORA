@@ -285,7 +285,13 @@ function render() {
   const totalLi = document.createElement("li");
   totalLi.textContent = `💰 ${i18n("total_asset")}：NT$ ${totalTWD.toLocaleString()}`;
   totalsList.appendChild(totalLi);
-
+// ➕ 額外顯示：使用者自選幣別總資產
+const selectedCurrency = localStorage.getItem("displayCurrency") || "TWD";
+const finalRate = exchangeRates[selectedCurrency] || 1;
+const converted = totalTWD / finalRate;
+const customLi = document.createElement("li");
+customLi.textContent = `🌐 ${i18n("total_asset")}（${selectedCurrency}）：${converted.toLocaleString()} ${selectedCurrency}`;
+totalsList.appendChild(customLi);
   // 匯率時間
   const now = new Date();
   const rateTime = document.getElementById("rate-time");
