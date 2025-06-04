@@ -6,6 +6,7 @@
   <title data-i18n="asset_title">FINORA 資產登記</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
+  <script src="lang.js"></script>
 </head>
 <body class="logo-full-bg">
   <h1 data-i18n="asset_title">登記你的好好資產</h1>
@@ -155,6 +156,11 @@
       }
     });
   </script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    applyLang(); // ✅ 根據 localStorage.lang 自動套用語言
+  });
+</script>
 
   <div class="getting-started">
     <p class="guide-note" data-i18n="privacy_note">🔐 所有資料皆保存在你的 Google 帳號與雲端帳本中，不用擔心遺失或外洩。</p>
