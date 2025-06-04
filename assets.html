@@ -109,6 +109,16 @@
   <ul id="asset-list"></ul>
   <h2 data-i18n="asset_total">資產加總</h2>
   <ul id="totals-list"></ul>
+  <div id="total-display-control" style="margin-top: 1rem;">
+  <label for="display-currency">💱 總資產顯示幣別：</label>
+  <select id="display-currency">
+    <option value="TWD">TWD</option>
+    <option value="USD">USD</option>
+    <option value="JPY">JPY</option>
+    <option value="EUR">EUR</option>
+    <option value="CNH">CNH</option>
+  </select>
+  </div>
   <div id="stock-profit-list"></div>
   <p id="rate-time" style="font-size: 0.9em; color: #666;"></p>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
