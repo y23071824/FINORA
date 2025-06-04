@@ -215,14 +215,13 @@ function render() {
     totalsByCurrency[currency] += value;
 
     li.innerHTML = `
-      <div>${text}</div>
-      <div class="note">${display}</div>
-      <div class="actions">
-        <button onclick="editAsset(${index})">✏️</button>
-        <button onclick="deleteAsset(${index})">🗑️</button>
-      </div>`;
-    assetList.appendChild(li);
-  });
+  <div>${text}</div>
+  <div class="note">${display}</div>
+  <div class="actions">
+    <button onclick="editAsset(${index})">✏️</button>
+    <button onclick="deleteAsset(${index})">🗑️</button>
+  </div>
+`;
 
   // 類別加總
   for (const type in totalsByType) {
