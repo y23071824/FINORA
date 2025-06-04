@@ -54,6 +54,22 @@ async function fetchExchangeRates() {
     }
   }
 }
+// ✅ 更新所有股票現價（支援美股與台股）
+async function updateAllStockPrices() {
+  const updatedAssets = [];
+  for (let asset of assets) {
+    if (asset.type === "股票" && asset.symbol && asset.category) {
+      const price = await fetchStockPrice(asset.symbol, asset.category);
+      if (price !== null) {
+        asset.price = price;
+      }
+    }
+    updatedAssets.push(asset);
+  }
+  assets = updatedAssets;
+  localStorage.setItem(getLocalStorageKey(), JSON.stringify(assets));
+  await FINORA_AUTH.saveUserAssets(assets);
+}
 
 // ===== 表單欄位切換 =====
 function toggleFields() {
