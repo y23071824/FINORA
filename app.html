@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html>
 <head>
   <meta charset="UTF-8" />
   <title data-i18n="title">FINORA 好好存</title>
@@ -40,7 +40,7 @@
     <button id="logout-btn" data-i18n="logout" style="display:none;">🚪 登出</button>
   </div>
 
-  <!-- 語言切換放登入下方 -->
+  <!-- 語言切換 -->
   <div style="text-align:center; margin: 1rem 0;">
     <label for="lang-select" data-i18n="langLabel">🌐 Language / 語言：</label>
     <select id="lang-select">
@@ -51,7 +51,6 @@
     </select>
   </div>
 
-  <!-- 隱私宣告 -->
   <p class="privacy-note" data-i18n="privacy">FINORA 重視隱私。你的資產，只屬於你自己。</p>
 
   <!-- Firebase SDK -->
@@ -61,10 +60,11 @@
   <script src="firebase-sync.js"></script>
   <script src="lang.js"></script>
 
-  <!-- 初始化邏輯 -->
   <script>
+    document.documentElement.lang = localStorage.getItem("lang") || "zh-Hant";
+
     document.addEventListener("DOMContentLoaded", () => {
-      // ✅ 套用語言
+      // ✅ 套用語言翻譯
       if (typeof applyLang === "function") applyLang();
 
       // ✅ 初始化語言選擇器
@@ -72,10 +72,11 @@
       langSelect.value = localStorage.getItem("lang") || "zh-Hant";
       langSelect.addEventListener("change", function () {
         localStorage.setItem("lang", this.value);
-        location.reload();
+        document.documentElement.lang = this.value;
+        applyLang(); // 不 reload，直接重套語言
       });
 
-      // ✅ 登入/登出邏輯
+      // ✅ 登入邏輯
       document.getElementById("login-btn").addEventListener("click", async () => {
         try {
           const user = await FINORA_AUTH.signInWithGoogle();
@@ -95,6 +96,7 @@
         location.reload();
       });
 
+      // ✅ 狀態變化監聽
       FINORA_AUTH.onUserChanged((user) => {
         document.getElementById("login-btn").style.display = user ? "none" : "inline-block";
         document.getElementById("logout-btn").style.display = user ? "inline-block" : "none";
@@ -102,7 +104,6 @@
     });
   </script>
 
-  <!-- 頁尾 -->
   <p style="text-align:center; font-size:0.8rem; color:#aaa; margin-top:3rem;" data-i18n="version">
     v0.9 beta - 2025-06-04
   </p>
