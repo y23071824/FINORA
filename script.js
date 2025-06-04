@@ -75,13 +75,14 @@ async function fetchStockPrice(symbol, category) {
       const res = await fetch(`https://api.twelvedata.com/price?symbol=${symbol}&apikey=de909496c6754a89bc33db0306c2def8`);
       const data = await res.json();
       if (data && data.price) return parseFloat(data.price);
-    if (category === "台股") {
+    } else if (category === "台股") {
       const today = new Date().toISOString().slice(0, 10);
       const res = await fetch(`https://api.finmindtrade.com/api/v4/data?dataset=TaiwanStockPrice&data_id=${symbol}&start_date=${today}`);
       const data = await res.json();
       if (data.data && data.data.length > 0) {
         return data.data[0].close;
       }
+    }
   } catch (e) {
     console.warn("❌ " + i18n("stock_price_error") + "：" + e.message);
   }
