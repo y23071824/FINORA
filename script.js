@@ -481,6 +481,8 @@ document.addEventListener("DOMContentLoaded", () => {
       typeSelect = document.getElementById("type");
       stockFields = document.getElementById("stock-fields");
       insuranceFields = document.getElementById("insurance-fields");
+      fundFields = document.getElementById("fund-fields");
+      cryptoFields = document.getElementById("crypto-fields");
       amountField = document.getElementById("amount-field");
       assetList = document.getElementById("asset-list");
       totalsList = document.getElementById("totals-list");
@@ -495,15 +497,17 @@ document.addEventListener("DOMContentLoaded", () => {
       if (accountEl) accountEl.textContent = `${displayName}（${list.length} / ${MAX_ACCOUNT_COUNT}）`;
 
       // 表單綁定
-      form.addEventListener("submit", handleSubmit);
-      typeSelect.addEventListener("change", toggleFields);
+      if (form) form.addEventListener("submit", handleSubmit);
+      if (typeSelect) typeSelect.addEventListener("change", toggleFields);
 
       // 銀行記憶選單
-      bankHistory.forEach((b) => {
-        const option = document.createElement("option");
-        option.value = b;
-        bankDatalist.appendChild(option);
-      });
+      if (bankDatalist && Array.isArray(bankHistory)) {
+        bankHistory.forEach((b) => {
+          const option = document.createElement("option");
+          option.value = b;
+          bankDatalist.appendChild(option);
+        });
+      }
 
       // 股票查價綁定
       const stockSymbolInput = document.getElementById("stock-symbol");
@@ -537,7 +541,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
 
-      // 執行初始化流程
+      // 初始化流程
       await fetchExchangeRates();
       await updateAllStockPrices();
       assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
