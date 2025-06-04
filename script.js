@@ -27,7 +27,7 @@ let assetList, totalsList, profitList, bankDatalist;
 // ✅ 匯率查詢
 async function fetchExchangeRates() {
   try {
-    const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
+    const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR,CNH");
     const data = await res.json();
     if (!data || !data.rates) throw new Error("❌ " + i18n("invalid_exchange_data"));
     exchangeRates = {
@@ -35,6 +35,7 @@ async function fetchExchangeRates() {
       TWD: data.rates.TWD || 30,
       JPY: data.rates.JPY || 150,
       EUR: data.rates.EUR || 0.9,
+      CNH: data.rates.CNH || 7,
     };
     localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
   } catch (e) {
@@ -85,6 +86,7 @@ async function fetchStockPrice(symbol, category) {
   }
   return null;
 }
+
 
 // ===== Part 2：表單處理與存儲 =====
 
@@ -185,6 +187,16 @@ async function handleSubmit(e) {
     alert(i18n("input_error") || "輸入錯誤，請檢查欄位");
   }
 }
+
+<label for="total-currency">💱 顯示折算幣別：</label>
+<select id="total-currency">
+  <option value="TWD">TWD</option>
+  <option value="USD">USD</option>
+  <option value="JPY">JPY</option>
+  <option value="EUR">EUR</option>
+  <option value="CNH">CN</option>
+</select>
+
 
 // ===== Part 3：畫面渲染與計算 =====
 function render() {
@@ -374,6 +386,14 @@ document.addEventListener("DOMContentLoaded", () => {
       const displayName = list.find(acc => acc.id === accountId)?.displayName || accountId;
       if (emailEl) emailEl.textContent = user.email;
       if (accountEl) accountEl.textContent = `${displayName}（${list.length} / ${MAX_ACCOUNT_COUNT}）`;
+      
+const displayCurrency = document.getElementById("total-currency").value || "TWD";
+const finalRate = exchangeRates[displayCurrency] || 1;
+const totalConverted = totalTWD / finalRate;
+
+const totalLi = document.createElement("li");
+totalLi.textContent = `💰 ${i18n("total_asset")}：${displayCurrency} ${totalConverted.toLocaleString()}`;
+totalsList.appendChild(totalLi);
 
       // 表單與欄位監聽
       if (form) form.addEventListener("submit", handleSubmit);
