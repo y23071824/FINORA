@@ -397,13 +397,6 @@ document.addEventListener("DOMContentLoaded", () => {
       if (emailEl) emailEl.textContent = user.email;
       if (accountEl) accountEl.textContent = `${displayName}（${list.length} / ${MAX_ACCOUNT_COUNT}）`;
       
-const displayCurrency = document.getElementById("total-currency").value || "TWD";
-const finalRate = exchangeRates[displayCurrency] || 1;
-const totalConverted = totalTWD / finalRate;
-
-const totalLi = document.createElement("li");
-totalLi.textContent = `💰 ${i18n("total_asset")}：${displayCurrency} ${totalConverted.toLocaleString()}`;
-totalsList.appendChild(totalLi);
 
       // 表單與欄位監聽
       if (form) form.addEventListener("submit", handleSubmit);
