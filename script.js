@@ -280,30 +280,40 @@ function render() {
     li.textContent = `💱 ${currency}：${total.toFixed(2)} ≈ NT$ ${converted}`;
     totalsList.appendChild(li);
   }
+const selectedCurrency = localStorage.getItem("displayCurrency") || "TWD";
+const selectedRate = exchangeRates[selectedCurrency];
 
-  const selectedCurrency = localStorage.getItem("displayCurrency") || "TWD";
-  const selectedRate = exchangeRates[selectedCurrency] || 1;
-  let convertedTotal = 0;
+// 若無法取得選擇幣別的匯率，直接跳出錯誤提示
+if (!selectedRate || isNaN(selectedRate)) {
+  console.error(`❌ 無效匯率：${selectedCurrency}`);
+  alert(`⚠️ 無法取得 ${selectedCurrency} 的匯率，請稍後再試`);
+  return;
+}
 
-  for (const currency in totalsByCurrency) {
-    const value = totalsByCurrency[currency];
-    const rate = exchangeRates[currency] || 1;
-    const valueInSelected = (currency === selectedCurrency)
-      ? value
-      : value * (rate / selectedRate);
-    convertedTotal += valueInSelected;
-  }
-
-  const convertedLi = document.createElement("li");
-  convertedLi.textContent = `💰 ${i18n("total_asset")}（${selectedCurrency}）：${convertedTotal.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${selectedCurrency}`;
-  totalsList.appendChild(convertedLi);
+let convertedTotal = 0;
+for (const currency in totalsByCurrency) {
+  const value = totalsByCurrency[currency];
+  const rate = exchangeRates[currency];
   
-  // 匯率時間
-  const now = new Date();
-  const rateTime = document.getElementById("rate-time");
-  if (rateTime) {
-    rateTime.textContent = `${i18n("exchange_rate_updated")}：${now.toLocaleTimeString()}`;
-  }
+  // 忽略匯率無效的幣別
+  if (!rate || isNaN(rate)) continue;
+
+  const valueInSelected = (currency === selectedCurrency)
+    ? value
+    : value * (rate / selectedRate);
+
+  convertedTotal += valueInSelected;
+}
+
+const convertedLi = document.createElement("li");
+convertedLi.textContent = `💰 ${i18n("total_asset")}（${selectedCurrency}）：${convertedTotal.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${selectedCurrency}`;
+totalsList.appendChild(convertedLi);
+
+// 匯率時間
+const now = new Date();
+const rateTime = document.getElementById("rate-time");
+if (rateTime) {
+  rateTime.textContent = `${i18n("exchange_rate_updated")}：${now.toLocaleTimeString()}`;
 }
 
 // ===== 編輯與刪除 =====
