@@ -212,6 +212,40 @@ const translations = {
     init_error: "システム初期化エラー。ページを再読み込みしてください。"
   }
 };
+zh-Hant: {
+  total_asset: "總資產",
+  exchange_rate_updated: "匯率更新時間",
+  股票: "股票",
+  定存: "定存",
+  儲蓄保險: "儲蓄保險",
+  現金: "現金",
+  房產: "房產",
+  其他: "其他",
+  基金: "基金",
+  加密貨幣: "加密貨幣",
+  cost: "成本",
+  current_price: "現價",
+  market_value: "市值",
+  profit: "盈餘",
+},
+ja: {
+  total_asset: "資産合計",
+  exchange_rate_updated: "為替レート更新時間",
+  股票: "株式",
+  定存: "定期預金",
+  儲蓄保險: "保険",
+  現金: "現金",
+  房產: "不動産",
+  其他: "その他",
+  基金: "ファンド",
+  加密貨幣: "暗号通貨",
+  cost: "取得価格",
+  current_price: "現在価格",
+  market_value: "評価額",
+  profit: "利益",
+}
+
+
 
 function applyLang() {
   const lang = localStorage.getItem("lang") || "zh-Hant";
