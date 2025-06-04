@@ -1,5 +1,4 @@
-<!DOCTYPE html><html lang="zh-Hant">
-<head>
+<!DOCTYPE html><html lang="zh-Hant"><head>
   <meta charset="UTF-8" />
   <link rel="icon" href="favicon.png" type="image/png" />
   <title data-i18n="asset_title">FINORA 資產登記</title>
@@ -8,125 +7,115 @@
   <script src="lang.js"></script>
 </head>
 <body class="logo-full-bg">
-  <h1 data-i18n="asset_title">登記你的好好資產</h1>  <!-- ✅ 登入與帳本狀態顯示 -->  <div id="auth-status" style="margin-bottom: 1rem; font-size: 0.9rem; color: #555;">
+  <h1 data-i18n="asset_title">登記你的好好資產</h1>
+  <div id="auth-status" style="margin-bottom: 1rem; font-size: 0.9rem; color: #555;">
     <span data-i18n="user">使用者：</span><span id="auth-email">（尚未登入）</span><br />
     <span data-i18n="account">帳本：</span><span id="account-name">（尚未選擇）</span>
-  </div>  <!-- ✅ 資產表單 -->  <form id="asset-form">
+  </div>
+  <form id="asset-form">
     <div class="getting-started">
       <p data-i18n="guide_select_type">📢 從下方選單挑選資產種類（股票、保單、加密貨幣等）</p>
       <p data-i18n="guide_stock_auto">🪙 台股與美股會自動查詢最新現價</p>
       <p data-i18n="guide_currency_auto">🔗 輸入外幣資產時，系統會自動帶入最新匯率</p>
-    </div><label data-i18n="label_type">種類：</label>
-<select id="type">
-  <option value="" data-i18n-option="option_select">請選擇</option>
-  <option value="股票" data-i18n-option="option_stock">股票</option>
-  <option value="定存" data-i18n-option="option_deposit">定存</option>
-  <option value="現金" data-i18n-option="option_cash">現金</option>
-  <option value="房產" data-i18n-option="option_property">房產</option>
-  <option value="儲蓄保險" data-i18n-option="option_insurance">儲蓄保險</option>
-  <option value="基金" data-i18n-option="option_fund">基金</option>
-  <option value="加密貨幣" data-i18n-option="option_crypto">加密貨幣</option>
-  <option value="其他" data-i18n-option="option_other">其他</option>
-</select>
-
-<!-- 股票欄位 -->
-<div id="stock-fields" style="display: none;">
-  <label data-i18n="label_stock_category">股票類型：</label>
-  <select id="stock-category">
-    <option value="" data-i18n-option="option_select">請選擇</option>
-    <option value="美股" data-i18n-option="option_us">美股</option>
-    <option value="台股" data-i18n-option="option_tw">台股</option>
-    <option value="ETF">ETF</option>
-    <option value="港股" data-i18n-option="option_hk">港股</option>
-    <option value="REITs">REITs</option>
-    <option value="自訂" data-i18n-option="option_custom">自訂</option>
-  </select>
-
-  <label data-i18n="label_stock_symbol">股票代碼：</label>
-  <input type="text" id="stock-symbol" />
-
-  <label data-i18n="label_shares">股數：</label>
-  <input type="number" id="stock-shares" />
-
-  <label data-i18n="label_cost">成本（每股）：</label>
-  <input type="number" id="stock-cost" step="0.0001" />
-
-  <label data-i18n="label_price">現價（每股）：</label>
-  <input type="number" id="stock-price" step="0.0001" />
-</div>
-
-<!-- 儲蓄保險欄位 -->
-<div id="insurance-fields" style="display: none;">
-  <label data-i18n="label_insurance_name">保單名稱：</label>
-  <input type="text" id="insurance-name" />
-
-  <label data-i18n="label_insurance_amount">保額：</label>
-  <input type="number" id="insurance-amount" />
-
-  <label data-i18n="label_insurance_years">年期：</label>
-  <input type="number" id="insurance-years" />
-
-  <label data-i18n="label_insurance_payment">年繳保費：</label>
-  <input type="number" id="insurance-payment" />
-</div>
-
-<!-- 基金欄位 -->
-<div id="fund-fields" style="display: none;">
-  <label data-i18n="label_fund_name">基金名稱：</label>
-  <input type="text" id="fund-name" />
-
-  <label data-i18n="label_fund_units">單位數：</label>
-  <input type="number" id="fund-units" />
-
-  <label data-i18n="label_fund_nav">淨值：</label>
-  <input type="number" id="fund-nav" step="0.0001" />
-</div>
-
-<!-- 加密貨幣欄位 -->
-<div id="crypto-fields" style="display: none;">
-  <label data-i18n="label_crypto_symbol">幣種（如 BTC/ETH）：</label>
-  <input type="text" id="crypto-symbol" />
-
-  <label data-i18n="label_crypto_amount">數量：</label>
-  <input type="number" id="crypto-amount" />
-
-  <label data-i18n="label_crypto_price">現價（每單位）：</label>
-  <input type="number" id="crypto-price" step="0.0001" />
-</div>
-
-<!-- 其他通用欄位 -->
-<div id="amount-field">
-  <label data-i18n="label_amount">金額：</label>
-  <input type="number" id="amount" />
-</div>
-
-<label data-i18n="label_currency">幣別：</label>
-<select id="currency">
-  <option value="TWD">TWD</option>
-  <option value="USD">USD</option>
-  <option value="JPY">JPY</option>
-  <option value="EUR">EUR</option>
-</select>
-
-<label data-i18n="label_bank">銀行：</label>
-<input type="text" id="bank" list="bank-list" />
-
-<label data-i18n="label_note">備註：</label>
-<input type="text" id="note" />
-
-<div class="button-center">
-  <button id="save-button">
-  💾 <span data-i18n="save_asset">儲存資產</span>
-  </button>
-</div>
-
-  </form><datalist id="bank-list"></datalist>
-
+    </div>
+    <label data-i18n="label_type">種類：</label>
+    <select id="type">
+      <option value="" data-i18n-option="option_select">請選擇</option>
+      <option value="股票" data-i18n-option="option_stock">股票</option>
+      <option value="定存" data-i18n-option="option_deposit">定存</option>
+      <option value="現金" data-i18n-option="option_cash">現金</option>
+      <option value="房產" data-i18n-option="option_property">房產</option>
+      <option value="儲蓄保險" data-i18n-option="option_insurance">儲蓄保險</option>
+      <option value="基金" data-i18n-option="option_fund">基金</option>
+      <option value="加密貨幣" data-i18n-option="option_crypto">加密貨幣</option>
+      <option value="其他" data-i18n-option="option_other">其他</option>
+    </select>
+    <!-- 股票欄位 -->
+    <div id="stock-fields" style="display: none;">
+      <label data-i18n="label_stock_category">股票類型：</label>
+      <select id="stock-category">
+        <option value="" data-i18n-option="option_select">請選擇</option>
+        <option value="美股" data-i18n-option="option_us">美股</option>
+        <option value="台股" data-i18n-option="option_tw">台股</option>
+        <option value="ETF">ETF</option>
+        <option value="港股" data-i18n-option="option_hk">港股</option>
+        <option value="REITs">REITs</option>
+        <option value="自訂" data-i18n-option="option_custom">自訂</option>
+      </select>
+      <label data-i18n="label_stock_symbol">股票代碼：</label>
+      <input type="text" id="stock-symbol" />
+      <label data-i18n="label_shares">股數：</label>
+      <input type="number" id="stock-shares" />
+      <label data-i18n="label_cost">成本（每股）：</label>
+      <input type="number" id="stock-cost" step="0.0001" />
+      <label data-i18n="label_price">現價（每股）：</label>
+      <input type="number" id="stock-price" step="0.0001" />
+    </div>
+    <!-- 儲蓄保險欄位 -->
+    <div id="insurance-fields" style="display: none;">
+      <label data-i18n="label_insurance_name">保單名稱：</label>
+      <input type="text" id="insurance-name" />
+      <label data-i18n="label_insurance_amount">保額：</label>
+      <input type="number" id="insurance-amount" />
+      <label data-i18n="label_insurance_years">年期：</label>
+      <input type="number" id="insurance-years" />
+      <label data-i18n="label_insurance_payment">年繳保費：</label>
+      <input type="number" id="insurance-payment" />
+    </div>
+    <!-- 基金欄位 -->
+    <div id="fund-fields" style="display: none;">
+      <label data-i18n="label_fund_name">基金名稱：</label>
+      <input type="text" id="fund-name" />
+      <label data-i18n="label_fund_units">單位數：</label>
+      <input type="number" id="fund-units" />
+      <label data-i18n="label_fund_nav">淨值：</label>
+      <input type="number" id="fund-nav" step="0.0001" />
+    </div>
+    <!-- 加密貨幣欄位 -->
+    <div id="crypto-fields" style="display: none;">
+      <label data-i18n="label_crypto_symbol">幣種（如 BTC/ETH）：</label>
+      <input type="text" id="crypto-symbol" />
+      <label data-i18n="label_crypto_amount">數量：</label>
+      <input type="number" id="crypto-amount" />
+      <label data-i18n="label_crypto_price">現價（每單位）：</label>
+      <input type="number" id="crypto-price" step="0.0001" />
+    </div>
+    <!-- 其他通用欄位 -->
+    <div id="amount-field">
+      <label data-i18n="label_amount">金額：</label>
+      <input type="number" id="amount" />
+    </div>
+    <label data-i18n="label_currency">幣別：</label>
+    <select id="currency">
+      <option value="TWD">TWD</option>
+      <option value="USD">USD</option>
+      <option value="JPY">JPY</option>
+      <option value="EUR">EUR</option>
+      <option value="CNH">CNH</option>
+    </select>
+    <label data-i18n="label_bank">銀行：</label>
+    <input type="text" id="bank" list="bank-list" />
+    <label data-i18n="label_note">備註：</label>
+    <input type="text" id="note" />
+    <div class="button-center">
+      <button id="save-button">
+      💾 <span data-i18n="save_asset">儲存資產</span>
+      </button>
+    </div>
+  </form>
+  <datalist id="bank-list"></datalist>
   <h2 data-i18n="asset_list">資產列表</h2>
-  <ul id="asset-list"></ul>  <h2 data-i18n="asset_total">資產加總</h2>
+  <ul id="asset-list"></ul>
+  <h2 data-i18n="asset_total">資產加總</h2>
   <ul id="totals-list"></ul>
   <div id="stock-profit-list"></div>
-  <p id="rate-time" style="font-size: 0.9em; color: #666;"></p>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>  <script src="firebase-sync.js"></script>  <script src="script.js"></script>  <script>
+  <p id="rate-time" style="font-size: 0.9em; color: #666;"></p>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="firebase-sync.js"></script>
+  <script src="script.js"></script>
+  <script>
     document.addEventListener("DOMContentLoaded", () => {
       applyLang();
       const emailEl = document.getElementById("auth-email");
@@ -152,10 +141,14 @@
         });
       }
     });
-  </script>  <div class="getting-started">
+  </script>
+  <script>
+    render();
+  </script>
+  <div class="getting-started">
     <p class="guide-note" data-i18n="privacy_note">🔐 所有資料皆保存在你的 Google 帳號與雲端帳本中，不用擔心遺失或外洩。</p>
-  </div><a href="app.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374" data-i18n="back_to_home">← 返回首頁</a>
-
+  </div>
+  <a href="app.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374" data-i18n="back_to_home">← 返回首頁</a>
   <footer class="site-footer">
     <p data-i18n="footer_copyright">© 2025 FINORA 好好存｜家庭友善資產整合工具</p>
     <div class="footer-links">
