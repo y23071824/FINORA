@@ -320,6 +320,7 @@ function render() {
 // ===== Part 4：啟動函式與登入綁定 =====
 document.addEventListener("DOMContentLoaded", () => {
   console.log("🔄 系統初始化中...");
+  applyLang(); // 套用語言
   const lang = localStorage.getItem("lang") || "zh-Hant";
 
   // Firebase 登入狀態監聽
@@ -358,7 +359,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (form) form.addEventListener("submit", handleSubmit);
       if (typeSelect) typeSelect.addEventListener("change", toggleFields);
 
-      // 銀行選單
+      // 銀行清單填入 datalist
       bankDatalist.innerHTML = "";
       bankHistory.forEach(b => {
         const opt = document.createElement("option");
@@ -391,30 +392,28 @@ document.addEventListener("DOMContentLoaded", () => {
             const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${symbol}&vs_currencies=usd`);
             const data = await res.json();
             const price = data[symbol]?.usd;
-            if (price) cryptoPriceInput.value = price;
+            if (price) {
+              cryptoPriceInput.value = price;
+            } else {
+              alert(i18n("fetch_crypto_price_failed"));
+              cryptoPriceInput.value = "";
+            }
           } catch (e) {
-            console.error("❌ 加密貨幣查詢失敗", e);
+            console.warn("❗ 查詢加密幣價格失敗：", e);
+            alert(i18n("fetch_crypto_price_failed"));
           }
         });
       }
 
-      // 🔁 初始化流程
+      // 匯率查詢與畫面渲染
       await fetchExchangeRates();
       await updateAllStockPrices();
-
-      // 重新載入資產（避免未更新）
-      assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
-
-      toggleFields();
       render();
-      applyLang();
-
-      console.log("✅ 初始化完成");
-
     } catch (e) {
-      console.error("❌ 初始化失敗", e);
-      alert(i18n("init_error") || "系統初始化錯誤，請重新整理頁面");
+      console.error("❌ 初始化錯誤：", e);
+      alert(i18n("init_error"));
     }
   });
-});
 
+  console.log("✅ 初始化完成");
+});
