@@ -57,9 +57,16 @@
   <script src="lang.js"></script>
 
   <script>
+    // 放在 lang.js 後才能執行 applyLang
     document.addEventListener("DOMContentLoaded", async () => {
       const lang = localStorage.getItem("lang") || "zh-Hant";
-      applyLang(lang);
+
+      // 確保 lang.js 有載入成功
+      if (typeof applyLang === "function") {
+        applyLang(lang);
+      } else {
+        console.error("❌ applyLang 未定義，請確認 lang.js 是否成功載入");
+      }
 
       const langSelect = document.getElementById("lang-select");
       langSelect.value = lang;
@@ -68,6 +75,7 @@
         location.reload();
       });
 
+      // 登入按鈕
       document.getElementById("login-btn").addEventListener("click", async () => {
         try {
           const user = await FINORA_AUTH.signInWithGoogle();
@@ -81,12 +89,14 @@
         }
       });
 
+      // 登出按鈕
       document.getElementById("logout-btn").addEventListener("click", async () => {
         await FINORA_AUTH.signOutFromGoogle();
         alert("🚪 已登出");
         location.reload();
       });
 
+      // 使用者變動時更新登入狀態與帳本選單
       FINORA_AUTH.onUserChanged(async (user) => {
         const loginBtn = document.getElementById("login-btn");
         const logoutBtn = document.getElementById("logout-btn");
