@@ -281,17 +281,21 @@ function render() {
     totalsList.appendChild(li);
   }
 
-  // 折合台幣總資產
-  const totalLi = document.createElement("li");
-  totalLi.textContent = `💰 ${i18n("total_asset")}：NT$ ${totalTWD.toLocaleString()}`;
-  totalsList.appendChild(totalLi);
-// ➕ 額外顯示：使用者自選幣別總資產
-const selectedCurrency = localStorage.getItem("displayCurrency") || "TWD";
-const finalRate = exchangeRates[selectedCurrency] || 1;
-const converted = totalTWD / finalRate;
-const customLi = document.createElement("li");
-customLi.textContent = `🌐 ${i18n("total_asset")}（${selectedCurrency}）：${converted.toLocaleString()} ${selectedCurrency}`;
-totalsList.appendChild(customLi);
+  const selectedCurrency = localStorage.getItem("displayCurrency") || "TWD";
+const selectedRate = exchangeRates[selectedCurrency] || 1;
+let convertedTotal = 0;
+
+for (const currency in totalsByCurrency) {
+  const value = totalsByCurrency[currency];
+  const rate = exchangeRates[currency] || 1;
+  const valueInSelected = value * (rate / selectedRate);
+  convertedTotal += valueInSelected;
+}
+
+const convertedLi = document.createElement("li");
+convertedLi.textContent = `💰 ${i18n("total_asset")}（${selectedCurrency}）：${convertedTotal.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${selectedCurrency}`;
+totalsList.appendChild(convertedLi);
+  
   // 匯率時間
   const now = new Date();
   const rateTime = document.getElementById("rate-time");
