@@ -211,7 +211,7 @@ const translations = {
     please_login_first: "⚠️ 未ログインです。まず Google アカウントにログインしてください。",
     init_error: "システム初期化エラー。ページを再読み込みしてください。"
   },
-zh-Hant: {
+ "zh-Hans": {
   total_asset: "總資產",
   exchange_rate_updated: "匯率更新時間",
   股票: "股票",
@@ -227,7 +227,7 @@ zh-Hant: {
   market_value: "市值",
   profit: "盈餘",
 },
-ja: {
+"ja": {
   total_asset: "資産合計",
   exchange_rate_updated: "為替レート更新時間",
   股票: "株式",
