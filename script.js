@@ -201,7 +201,10 @@ function render() {
     const li = document.createElement("li");
     li.className = "asset-item";
 
-    let text = `📌 ${asset.type}`;
+    const typeText = i18n(asset.type) || asset.type;
+text = `📌 ${typeText}`;
+
+display = `${asset.symbol} × ${shares}｜${i18n("cost")} ${totalCost.toFixed(2)}｜${i18n("current_price")} ${price}｜${i18n("market_value")} ${market.toFixed(2)}｜${i18n("profit")} ${profit.toFixed(2)}`;
     let value = 0;
     let cost = 0;
     let display = "";
