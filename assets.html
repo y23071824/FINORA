@@ -54,11 +54,12 @@
   <label data-i18n="label_price">現價（每股）：</label>
   <input type="number" id="stock-price" step="0.0001" />
 </div>
+
 <!-- 儲蓄保險欄位 -->
 <div id="insurance-fields" style="display: none;">
   <label data-i18n="label_insurance_name">保單名稱：</label>
   <input type="text" id="insurance-name" />
-  
+
   <label data-i18n="label_insurance_amount">保額：</label>
   <input type="number" id="insurance-amount" />
 
@@ -92,6 +93,7 @@
   <label data-i18n="label_crypto_price">現價（每單位）：</label>
   <input type="number" id="crypto-price" step="0.0001" />
 </div>
+
 <!-- 其他通用欄位 -->
 <div id="amount-field">
   <label data-i18n="label_amount">金額：</label>
@@ -127,16 +129,13 @@
       applyLang();
       const emailEl = document.getElementById("auth-email");
       const accountEl = document.getElementById("account-name");
-
       const accountId = localStorage.getItem("selectedAccount");
       if (!accountId) {
-        alert("\u26a0\ufe0f 尚未選擇帳本，請返回首頁登入並選擇帳本！");
+        alert("⚠️ 尚未選擇帳本，請返回首頁登入並選擇帳本！");
         window.location.href = "app.html";
         return;
       }
-
       accountEl.textContent = accountId;
-
       if (typeof FINORA_AUTH !== "undefined") {
         FINORA_AUTH.onUserChanged(user => {
           if (user) {
