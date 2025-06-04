@@ -343,16 +343,19 @@ function deleteAsset(index) {
 // ===== Part 4：啟動函式與登入綁定 =====
 document.addEventListener("DOMContentLoaded", () => {
   console.log("🔄 系統初始化中...");
+
   const lang = localStorage.getItem("lang") || "zh-Hant";
   const currencySelect = document.getElementById("base-currency");
-  const savedCurrency = localStorage.getItem("baseCurrency") || "TWD";
-  currencySelect.value = savedCurrency;
+  if (currencySelect) {
+    const savedCurrency = localStorage.getItem("baseCurrency") || "TWD";
+    currencySelect.value = savedCurrency;
 
-  currencySelect.addEventListener("change", () => {
-    const selected = currencySelect.value;
-    localStorage.setItem("baseCurrency", selected);
-    render();
-  });
+    currencySelect.addEventListener("change", () => {
+      const selected = currencySelect.value;
+      localStorage.setItem("baseCurrency", selected);
+      if (typeof render === "function") render();
+    });
+  }
 
   // Firebase 登入狀態監聽
   FINORA_AUTH.onUserChanged(async (user) => {
@@ -361,9 +364,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const MAX_ACCOUNT_COUNT = 3;
 
     if (!user) {
-      if (emailEl) emailEl.textContent = i18n("not_logged_in");
-      if (accountEl) accountEl.textContent = i18n("no_account_selected");
-      alert(i18n("please_login_first"));
+      if (emailEl) emailEl.textContent = typeof i18n === "function" ? i18n("not_logged_in") : "尚未登入";
+      if (accountEl) accountEl.textContent = typeof i18n === "function" ? i18n("no_account_selected") : "未選帳本";
+      alert(typeof i18n === "function" ? i18n("please_login_first") : "請先登入！");
       return;
     }
 
@@ -391,12 +394,14 @@ document.addEventListener("DOMContentLoaded", () => {
       if (typeSelect) typeSelect.addEventListener("change", toggleFields);
 
       // 銀行選單
-      bankDatalist.innerHTML = "";
-      bankHistory.forEach(b => {
-        const opt = document.createElement("option");
-        opt.value = b;
-        bankDatalist.appendChild(opt);
-      });
+      if (bankDatalist) {
+        bankDatalist.innerHTML = "";
+        bankHistory.forEach(b => {
+          const opt = document.createElement("option");
+          opt.value = b;
+          bankDatalist.appendChild(opt);
+        });
+      }
 
       // 股票查價
       const stockSymbolInput = document.getElementById("stock-symbol");
@@ -434,18 +439,17 @@ document.addEventListener("DOMContentLoaded", () => {
       await fetchExchangeRates();
       await updateAllStockPrices();
 
-      // 重新載入資產（避免未更新）
       assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
 
-      toggleFields();
-      render();
-      applyLang();
+      if (typeof toggleFields === "function") toggleFields();
+      if (typeof render === "function") render();
+      if (typeof applyLang === "function") applyLang();
 
       console.log("✅ 初始化完成");
 
     } catch (e) {
       console.error("❌ 初始化失敗", e);
-      alert(i18n("init_error") || "系統初始化錯誤，請重新整理頁面");
+      alert(typeof i18n === "function" ? i18n("init_error") : "初始化失敗");
     }
   });
 });
