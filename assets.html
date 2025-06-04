@@ -1,140 +1,175 @@
-<!DOCTYPE html>  <html lang="zh-Hant">  
-<head>  
-  <meta charset="UTF-8" />  
-   <link rel="icon" href="favicon.png" type="image/png" />  
-  <title>FINORA 資產登記</title>  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />  
-  <link rel="stylesheet" href="style.css" />  
-</head>  
-  <body class="logo-full-bg">  
-<body>  
-  <h1>登記你的好好資產</h1>    <!-- ✅ 登入與帳本狀態顯示 -->    <div id="auth-status" style="margin-bottom: 1rem; font-size: 0.9rem; color: #555;">  
-    使用者：<span id="auth-email">（尚未登入）</span><br />  
-    帳本：<span id="account-name">（尚未選擇）</span>  
-  </div>    <!-- ✅ 資產表單 -->    <form id="asset-form">  
-    <!-- ✅ 功能提示區塊 -->  
-<div class="getting-started">  
-    <p>📢 從下方選單挑選資產種類（股票、保單、加密貨幣等）</p>  
-    <p>🪙 台股與美股會自動查詢最新現價</p>  
-    <p>🔗 輸入外幣資產時，系統會自動帶入最新匯率</p>  
-</div>  
-    <label>種類：  
-      <select id="type">  
-        <option value="">請選擇</option>  
-        <option value="股票">股票</option>  
-        <option value="定存">定存</option>  
-        <option value="現金">現金</option>  
-        <option value="房產">房產</option>  
-        <option value="儲蓄保險">儲蓄保險</option>  
-        <option value="基金">基金</option>  
-        <option value="加密貨幣">加密貨幣</option>  
-        <option value="其他">其他</option>  
-      </select>  
-    </label>  <!-- 股票欄位 -->  
-<div id="stock-fields" style="display: none;">  
-  <label>股票類型：  
-    <select id="stock-category">  
-      <option value="">請選擇</option>  
-      <option value="美股">美股</option>  
-      <option value="台股">台股</option>  
-      <option value="ETF">ETF</option>  
-      <option value="港股">港股</option>  
-      <option value="REITs">REITs</option>  
-      <option value="自訂">自訂</option>  
-    </select>  
-  </label>  
-  <label>股票代碼：<input type="text" id="stock-symbol" /></label>  
-  <label>股數：<input type="number" id="stock-shares" /></label>  
-  <label>成本（每股）：<input type="number" id="stock-cost" step="0.0001" /></label>  
-  <label>現價（每股）：<input type="number" id="stock-price" step="0.0001" /></label>  
-</div>  
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" href="favicon.png" type="image/png" />
+  <title data-i18n="asset_title">FINORA 資產登記</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="logo-full-bg">
+  <h1 data-i18n="asset_title">登記你的好好資產</h1>
 
-<!-- 儲蓄保險欄位 -->  
-<div id="insurance-fields" style="display: none;">  
-  <label>保單名稱：<input type="text" id="insurance-name" /></label>  
-  <label>保額：<input type="number" id="insurance-amount" /></label>  
-  <label>年期：<input type="number" id="insurance-years" /></label>  
-  <label>年繳保費：<input type="number" id="insurance-payment" /></label>  
-</div>  
+  <!-- ✅ 登入與帳本狀態顯示 -->
+  <div id="auth-status" style="margin-bottom: 1rem; font-size: 0.9rem; color: #555;">
+    <span data-i18n="user">使用者：</span><span id="auth-email">（尚未登入）</span><br />
+    <span data-i18n="account">帳本：</span><span id="account-name">（尚未選擇）</span>
+  </div>
 
-<!-- 基金欄位 -->  
-<div id="fund-fields" style="display: none;">  
-  <label>基金名稱：<input type="text" id="fund-name" /></label>  
-  <label>單位數：<input type="number" id="fund-units" /></label>  
-  <label>淨值：<input type="number" id="fund-nav" step="0.0001" /></label>  
-</div>  
+  <!-- ✅ 資產表單 -->
+  <form id="asset-form">
+    <!-- ✅ 功能提示區塊 -->
+    <div class="getting-started">
+      <p data-i18n="guide_select_type">📢 從下方選單挑選資產種類（股票、保單、加密貨幣等）</p>
+      <p data-i18n="guide_stock_auto">🪙 台股與美股會自動查詢最新現價</p>
+      <p data-i18n="guide_currency_auto">🔗 輸入外幣資產時，系統會自動帶入最新匯率</p>
+    </div>
 
-<!-- 加密貨幣欄位 -->  
-<div id="crypto-fields" style="display: none;">  
-  <label>幣種（如 BTC/ETH）：<input type="text" id="crypto-symbol" /></label>  
-  <label>數量：<input type="number" id="crypto-amount" /></label>  
-  <label>現價（每單位）：<input type="number" id="crypto-price" step="0.0001" /></label>  
-</div>  
+    <label data-i18n="type">種類：
+      <select id="type">
+        <option value="">請選擇</option>
+        <option value="股票">股票</option>
+        <option value="定存">定存</option>
+        <option value="現金">現金</option>
+        <option value="房產">房產</option>
+        <option value="儲蓄保險">儲蓄保險</option>
+        <option value="基金">基金</option>
+        <option value="加密貨幣">加密貨幣</option>
+        <option value="其他">其他</option>
+      </select>
+    </label>
 
-<div id="amount-field">  
-  <label>金額：<input type="number" id="amount" /></label>  
-</div>  
+    <!-- 股票欄位 -->
+    <div id="stock-fields" style="display: none;">
+      <label>股票類型：
+        <select id="stock-category">
+          <option value="">請選擇</option>
+          <option value="美股">美股</option>
+          <option value="台股">台股</option>
+          <option value="ETF">ETF</option>
+          <option value="港股">港股</option>
+          <option value="REITs">REITs</option>
+          <option value="自訂">自訂</option>
+        </select>
+      </label>
+      <label>股票代碼：<input type="text" id="stock-symbol" /></label>
+      <label>股數：<input type="number" id="stock-shares" /></label>
+      <label>成本（每股）：<input type="number" id="stock-cost" step="0.0001" /></label>
+      <label>現價（每股）：<input type="number" id="stock-price" step="0.0001" /></label>
+    </div>
 
-<label>幣別：  
-  <select id="currency">  
-    <option value="TWD">TWD</option>  
-    <option value="USD">USD</option>  
-    <option value="JPY">JPY</option>  
-    <option value="EUR">EUR</option>  
-  </select>  
-</label>  
+    <!-- 儲蓄保險欄位 -->
+    <div id="insurance-fields" style="display: none;">
+      <label>保單名稱：<input type="text" id="insurance-name" /></label>
+      <label>保額：<input type="number" id="insurance-amount" /></label>
+      <label>年期：<input type="number" id="insurance-years" /></label>
+      <label>年繳保費：<input type="number" id="insurance-payment" /></label>
+    </div>
 
-<label>銀行：<input type="text" id="bank" list="bank-list" /></label>  
-<label>備註：<input type="text" id="note" /></label>
+    <!-- 基金欄位 -->
+    <div id="fund-fields" style="display: none;">
+      <label>基金名稱：<input type="text" id="fund-name" /></label>
+      <label>單位數：<input type="number" id="fund-units" /></label>
+      <label>淨值：<input type="number" id="fund-nav" step="0.0001" /></label>
+    </div>
 
-<div class="button-center">  
-  <button id="save-asset-btn">💾 儲存資產</button>  
-</div>  
-  </form>  <datalist id="bank-list"></datalist>
+    <!-- 加密貨幣欄位 -->
+    <div id="crypto-fields" style="display: none;">
+      <label>幣種（如 BTC/ETH）：<input type="text" id="crypto-symbol" /></label>
+      <label>數量：<input type="number" id="crypto-amount" /></label>
+      <label>現價（每單位）：<input type="number" id="crypto-price" step="0.0001" /></label>
+    </div>
 
-  <!-- ✅ 資產顯示區塊 -->    <h2>資產列表</h2>  
-  <ul id="asset-list"></ul>    <h2>資產加總</h2>  
-  <ul id="totals-list"></ul>    <div id="stock-profit-list"></div>  
-  <p id="rate-time" style="font-size: 0.9em; color: #666;"></p>    <!-- ✅ Firebase SDK -->    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>    <!-- ✅ 雲端同步邏輯 -->    <script src="firebase-sync.js"></script>    <!-- ✅ 主程式邏輯 -->    <script src="script.js"></script>    <!-- ✅ 驗證登入與帳本顯示名稱 -->    <script>  
-    document.addEventListener("DOMContentLoaded", () => {  
-      const emailEl = document.getElementById("auth-email");  
-      const accountEl = document.getElementById("account-name");  
-  
-      const accountId = localStorage.getItem("selectedAccount");  
-      if (!accountId) {  
-        alert("⚠️ 尚未選擇帳本，請返回首頁登入並選擇帳本！");  
-        window.location.href = "app.html";  
-        return;  
-      }  
-  
-      accountEl.textContent = accountId;  
-  
-      if (typeof FINORA_AUTH !== "undefined") {  
-        FINORA_AUTH.onUserChanged(user => {  
-          if (user) {  
-            emailEl.textContent = user.email;  
-  
-        FINORA_AUTH.fetchAccountList().then(list => {  
-          const displayName = list.find(acc => acc.id === accountId)?.displayName || accountId;  
-          accountEl.textContent = displayName;  // ✅ 這裡是你要的最終寫法  
-        });  
-  
-          } else {  
-            emailEl.textContent = "（尚未登入）";  
-          }  
-        });  
-      }  
-    });  
-  </script>    <div class="getting-started">  
-  <p class="guide-note">🔐 所有資料皆保存在你的 Google 帳號與雲端帳本中，不用擔心遺失或外洩。</p>  
-</div>  
-  <!-- ✅ 返回首頁連結 -->  
-  <a href="app.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374">← 返回首頁</a>    <footer class="site-footer">  
-  <p>© 2025 FINORA 好好存｜家庭友善資產整合工具</p>  
-  <div class="footer-links">  
-    <a href="howto.html">使用說明</a>・  
-    <a href="mailto:service@finora.life?subject=聯絡詢問">聯絡我們</a>・  
-    <a href="privacy.html">隱私權條款</a>  
-  </div>  
-</footer>  </body>  
+    <div id="amount-field">
+      <label>金額：<input type="number" id="amount" /></label>
+    </div>
+
+    <label>幣別：
+      <select id="currency">
+        <option value="TWD">TWD</option>
+        <option value="USD">USD</option>
+        <option value="JPY">JPY</option>
+        <option value="EUR">EUR</option>
+      </select>
+    </label>
+
+    <label>銀行：<input type="text" id="bank" list="bank-list" /></label>
+    <label>備註：<input type="text" id="note" /></label>
+
+    <div class="button-center">
+      <button id="save-asset-btn" data-i18n="save_btn">💾 儲存資產</button>
+    </div>
+  </form>
+
+  <datalist id="bank-list"></datalist>
+
+  <!-- ✅ 資產顯示區塊 -->
+  <h2 data-i18n="asset_list">資產列表</h2>
+  <ul id="asset-list"></ul>
+
+  <h2 data-i18n="asset_total">資產加總</h2>
+  <ul id="totals-list"></ul>
+  <div id="stock-profit-list"></div>
+  <p id="rate-time" style="font-size: 0.9em; color: #666;"></p>
+
+  <!-- ✅ Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <!-- ✅ 雲端同步邏輯 -->
+  <script src="firebase-sync.js"></script>
+
+  <!-- ✅ 主程式邏輯 -->
+  <script src="script.js"></script>
+
+  <!-- ✅ 語言切換邏輯 -->
+  <script src="lang.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      applyLang(); // 語言切換
+      const emailEl = document.getElementById("auth-email");
+      const accountEl = document.getElementById("account-name");
+
+      const accountId = localStorage.getItem("selectedAccount");
+      if (!accountId) {
+        alert("⚠️ 尚未選擇帳本，請返回首頁登入並選擇帳本！");
+        window.location.href = "app.html";
+        return;
+      }
+
+      accountEl.textContent = accountId;
+
+      if (typeof FINORA_AUTH !== "undefined") {
+        FINORA_AUTH.onUserChanged(user => {
+          if (user) {
+            emailEl.textContent = user.email;
+            FINORA_AUTH.fetchAccountList().then(list => {
+              const displayName = list.find(acc => acc.id === accountId)?.displayName || accountId;
+              accountEl.textContent = displayName;
+            });
+          } else {
+            emailEl.textContent = "（尚未登入）";
+          }
+        });
+      }
+    });
+  </script>
+
+  <div class="getting-started">
+    <p class="guide-note" data-i18n="privacy_note">🔐 所有資料皆保存在你的 Google 帳號與雲端帳本中，不用擔心遺失或外洩。</p>
+  </div>
+
+  <!-- ✅ 返回首頁連結 -->
+  <a href="app.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374" data-i18n="back_to_home">← 返回首頁</a>
+
+  <footer class="site-footer">
+    <p>© 2025 FINORA 好好存｜家庭友善資產整合工具</p>
+    <div class="footer-links">
+      <a href="howto.html" data-i18n="footer_help">使用說明</a>・
+      <a href="mailto:service@finora.life?subject=聯絡詢問" data-i18n="footer_contact">聯絡我們</a>・
+      <a href="privacy.html" data-i18n="footer_privacy">隱私權條款</a>
+    </div>
+  </footer>
+</body>
 </html>
