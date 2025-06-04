@@ -46,7 +46,11 @@ const translations = {
     option_insurance: "儲蓄保險",
     option_fund: "基金",
     option_crypto: "加密貨幣",
-    option_other: "其他"
+    option_other: "其他",
+    not_logged_in: "（尚未登入）",
+    no_account_selected: "（尚未選擇）",
+    please_login_first: "⚠️ 尚未登入，請先登入 Google 帳號",
+    init_error: "系統初始化錯誤，請重新整理頁面"
   },
   "zh-Hans": {
     title: "FINORA 好好存",
@@ -95,7 +99,11 @@ const translations = {
     option_insurance: "储蓄保险",
     option_fund: "基金",
     option_crypto: "加密货币",
-    option_other: "其他"
+    option_other: "其他",
+    not_logged_in: "（尚未登录）",
+    no_account_selected: "（尚未选择）",
+    please_login_first: "⚠️ 尚未登录，请先登录 Google 账号",
+    init_error: "系统初始化错误，请重新刷新页面"
   },
   "en": {
     title: "FINORA Wealth Planner",
@@ -144,7 +152,11 @@ const translations = {
     option_insurance: "Insurance",
     option_fund: "Fund",
     option_crypto: "Cryptocurrency",
-    option_other: "Other"
+    option_other: "Other",
+    not_logged_in: "(Not logged in)",
+    no_account_selected: "(No account selected)",
+    please_login_first: "⚠️ Not logged in. Please sign in with your Google account first.",
+    init_error: "System initialization error. Please refresh the page."
   },
   "ja": {
     title: "FINORA 資産管理",
@@ -193,7 +205,11 @@ const translations = {
     option_insurance: "保険",
     option_fund: "投資信託",
     option_crypto: "暗号通貨",
-    option_other: "その他"
+    option_other: "その他",
+    not_logged_in: "（未ログイン）",
+    no_account_selected: "（アカウント未選択）",
+    please_login_first: "⚠️ 未ログインです。まず Google アカウントにログインしてください。",
+    init_error: "システム初期化エラー。ページを再読み込みしてください。"
   }
 };
 
@@ -212,29 +228,4 @@ function applyLang() {
     const key = el.getAttribute("data-i18n-option");
     if (dict[key]) el.innerText = dict[key];
   });
-}const translations = {
-  "zh-Hant": {
-    not_logged_in: "（尚未登入）",
-    no_account_selected: "（尚未選擇）",
-    please_login_first: "⚠️ 尚未登入，請先登入 Google 帳號",
-    init_error: "系統初始化錯誤，請重新整理頁面"
-  },
-  "zh-Hans": {
-    not_logged_in: "（尚未登录）",
-    no_account_selected: "（尚未选择）",
-    please_login_first: "⚠️ 尚未登录，请先登录 Google 账号",
-    init_error: "系统初始化错误，请重新刷新页面"
-  },
-  "en": {
-    not_logged_in: "(Not logged in)",
-    no_account_selected: "(No account selected)",
-    please_login_first: "⚠️ Not logged in. Please sign in with your Google account first.",
-    init_error: "System initialization error. Please refresh the page."
-  },
-  "ja": {
-    not_logged_in: "（未ログイン）",
-    no_account_selected: "（アカウント未選択）",
-    please_login_first: "⚠️ 未ログインです。まず Google アカウントにログインしてください。",
-    init_error: "システム初期化エラー。ページを再読み込みしてください。"
-  }
-};
+}
