@@ -242,8 +242,8 @@ ja: {
   current_price: "現在価格",
   market_value: "評価額",
   profit: "利益",
-}
-
+  }
+};
 
 
 function applyLang() {
