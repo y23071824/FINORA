@@ -1,6 +1,6 @@
 function i18n(key) {
   const lang = localStorage.getItem("lang") || "zh-Hant";
-  return (window.dictionary?.[lang] && window.dictionary[lang][key]) || key;
+  return (translations?.[lang]?.[key]) || key;
 }
 
 function applyLang(lang = localStorage.getItem("lang") || "zh-Hant") {
@@ -16,6 +16,7 @@ function applyLang(lang = localStorage.getItem("lang") || "zh-Hant") {
     if (dict[key]) el.placeholder = dict[key];
   });
 }
+
 
 
 
