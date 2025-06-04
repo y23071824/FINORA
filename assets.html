@@ -144,6 +144,13 @@
   </script>
   <script>
     render();
+    const displayCurrency = document.getElementById("total-currency").value || "TWD";
+const finalRate = exchangeRates[displayCurrency] || 1;
+const totalConverted = totalTWD / finalRate;
+
+const totalLi = document.createElement("li");
+totalLi.textContent = `💰 ${i18n("total_asset")}：${displayCurrency} ${totalConverted.toLocaleString()}`;
+totalsList.appendChild(totalLi);
   </script>
   <div class="getting-started">
     <p class="guide-note" data-i18n="privacy_note">🔐 所有資料皆保存在你的 Google 帳號與雲端帳本中，不用擔心遺失或外洩。</p>
