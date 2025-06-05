@@ -281,10 +281,10 @@ li.innerHTML = `
       <div><strong>${text}</strong></div>
       <div class="note">${display}</div>
     </div>
-    <div style="display: flex; gap: 0.5rem;">
-      <button onclick="editAsset(${index})" class="action-button">✏️</button>
-      <button onclick="deleteAsset(${index})" class="action-button">🗑️</button>
-    </div>
+    <div style="display: flex; flex-direction: column; gap: 0.3rem; align-items: center;">
+  <button onclick="editAsset(${index})" class="action-button">✏️</button>
+  <button onclick="deleteAsset(${index})" class="action-button">🗑️</button>
+</div>
   </div>
 `;
     assetList.appendChild(li);
