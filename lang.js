@@ -24,7 +24,8 @@ function applyLang(lang = localStorage.getItem("lang") || "zh-Hant") {
 
 const translations = {
   "zh-Hant": {
-    // ...（其他語句同上）
+    // ...（保留原本內容）
+    label_display_currency: "💱 總資產顯示幣別：",
     option_股票: "股票",
     option_定存: "定存",
     option_現金: "現金",
@@ -35,6 +36,8 @@ const translations = {
     option_其他: "其他"
   },
   "zh-Hans": {
+    // ...（保留原本內容）
+    label_display_currency: "💱 总资产显示币别：",
     option_股票: "股票",
     option_定存: "定存",
     option_現金: "现金",
@@ -45,6 +48,8 @@ const translations = {
     option_其他: "其他"
   },
   "en": {
+    // ...（保留原本內容）
+    label_display_currency: "💱 Display currency for total assets:",
     option_股票: "Stock",
     option_定存: "Deposit",
     option_現金: "Cash",
@@ -55,6 +60,8 @@ const translations = {
     option_其他: "Other"
   },
   "ja": {
+    // ...（保留原本內容）
+    label_display_currency: "💱 総資産の表示通貨：",
     option_股票: "株式",
     option_定存: "定期預金",
     option_現金: "現金",
@@ -65,7 +72,6 @@ const translations = {
     option_其他: "その他"
   }
 };
-
 
 
 const translations = {
