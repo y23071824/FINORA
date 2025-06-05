@@ -56,8 +56,8 @@ async function fetchExchangeRates() {
         "USD": 1,
         "TWD": 32,
         "JPY": 155,
-        "EUR": 1.08
-        "CNY": 7.18
+        "EUR": 1.08,
+        "CNY": 7.18,
       };
       console.log("📦 使用預設匯率資料", exchangeRates);
     }
