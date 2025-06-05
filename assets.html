@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="zh-Hant"><head>
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
   <meta charset="UTF-8" />
   <link rel="icon" href="favicon.png" type="image/png" />
   <title data-i18n="asset_title">FINORA 資產登記</title>
@@ -59,8 +61,8 @@
       <input type="number" id="insurance-amount" />
       <label data-i18n="label_insurance_years">年期：</label>
       <input type="number" id="insurance-years" />
-      <label data-i18n="label_insurance_payment">年繳保費：</label>
-      <input type="number" id="insurance-payment" />
+      <label data-i18n="label_insurance_annual">年繳保費：</label>
+      <input type="number" id="insurance-annual" />
     </div>
     <!-- 基金欄位 -->
     <div id="fund-fields" style="display: none;">
@@ -94,7 +96,6 @@
       <option value="EUR">EUR</option>
       <option value="CNH">CNH</option>
     </select>
-
     <!-- 基準幣別（全局用） -->
     <label data-i18n="label_base_currency">基準幣別：</label>
     <select id="base-currency">
@@ -104,14 +105,13 @@
       <option value="EUR">EUR</option>
       <option value="CNH">CNH</option>
     </select>
-
     <label data-i18n="label_bank">銀行：</label>
     <input type="text" id="bank" list="bank-list" />
     <label data-i18n="label_note">備註：</label>
     <input type="text" id="note" />
     <div class="button-center">
-      <button id="save-button">
-      💾 <span data-i18n="save_asset">儲存資產</span>
+      <button id="save-button" type="submit">
+        💾 <span data-i18n="save_asset">儲存資產</span>
       </button>
     </div>
   </form>
@@ -121,58 +121,17 @@
   <h2 data-i18n="asset_total">資產加總</h2>
   <ul id="totals-list"></ul>
   <div id="total-display-control" style="margin-top: 1rem;">
-  <label for="display-currency">💱 總資產顯示幣別：</label>
-  <select id="display-currency">
-    <option value="TWD">TWD</option>
-    <option value="USD">USD</option>
-    <option value="JPY">JPY</option>
-    <option value="EUR">EUR</option>
-    <option value="CNH">CNH</option>
-  </select>
+    <label for="display-currency">💱 總資產顯示幣別：</label>
+    <select id="display-currency">
+      <option value="TWD">TWD</option>
+      <option value="USD">USD</option>
+      <option value="JPY">JPY</option>
+      <option value="EUR">EUR</option>
+      <option value="CNH">CNH</option>
+    </select>
   </div>
-  <div id="stock-profit-list"></div>
+  <ul id="stock-profit-list"></ul>
   <p id="rate-time" style="font-size: 0.9em; color: #666;"></p>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-  <script src="firebase-sync.js"></script>
-  <script src="script.js"></script>
-  
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  if (typeof applyLang === "function") applyLang();
-
-  const emailEl = document.getElementById("auth-email");
-  const accountEl = document.getElementById("account-name");
-
-  if (typeof FINORA_AUTH !== "undefined") {
-    FINORA_AUTH.onUserChanged(user => {
-      const accountId = localStorage.getItem("selectedAccount");
-      if (!accountId) {
-        alert("⚠️ 尚未選擇帳本，請返回首頁登入並選擇帳本！");
-        window.location.href = "app.html";
-        return;
-      }
-
-      if (accountEl) accountEl.textContent = accountId;
-
-      if (user) {
-        if (emailEl) emailEl.textContent = user.email;
-        FINORA_AUTH.fetchAccountList().then(list => {
-          const displayName = list.find(acc => acc.id === accountId)?.displayName || accountId;
-          if (accountEl) accountEl.textContent = displayName;
-        });
-      } else {
-        if (emailEl) emailEl.textContent = i18n("not_logged_in") || "（尚未登入）";
-      }
-    });
-  }
-
-  // 呼叫畫面渲染邏輯
-  if (typeof render === "function") render();
-});
-</script>
-
   <div class="getting-started">
     <p class="guide-note" data-i18n="privacy_note">🔐 所有資料皆保存在你的 Google 帳號與雲端帳本中，不用擔心遺失或外洩。</p>
   </div>
@@ -185,5 +144,11 @@ document.addEventListener("DOMContentLoaded", () => {
       <a href="privacy.html" data-i18n="footer_privacy">隱私權條款</a>
     </div>
   </footer>
+  <!-- JS 載入區，請勿重複 -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="firebase-sync.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
