@@ -271,14 +271,14 @@ function render() {
 
     // 渲染每筆資產
 li.innerHTML = `
-  <div class="asset-row">
-    <div class="note-text">
-      <div>${text}</div>
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+      <div><strong>${text}</strong></div>
       <div class="note">${display}</div>
     </div>
-    <div class="actions">
-      <button onclick="editAsset(${index})">✏️</button>
-      <button onclick="deleteAsset(${index})">🗑️</button>
+    <div style="display: flex; gap: 0.5rem;">
+      <button onclick="editAsset(${index})" class="action-button">✏️</button>
+      <button onclick="deleteAsset(${index})" class="action-button">🗑️</button>
     </div>
   </div>
 `;
