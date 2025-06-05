@@ -370,24 +370,13 @@ function deleteAsset(index) {
 document.addEventListener("DOMContentLoaded", () => {
   console.log("🔄 系統初始化中...");
 
-  // 顯示幣別選單（顯示總資產用）
+  // 顯示幣別選單（總資產計價幣別）
   const displayCurrencySelect = document.getElementById("display-currency");
   if (displayCurrencySelect) {
     const savedDisplayCurrency = localStorage.getItem("displayCurrency") || "TWD";
     displayCurrencySelect.value = savedDisplayCurrency;
     displayCurrencySelect.addEventListener("change", () => {
       localStorage.setItem("displayCurrency", displayCurrencySelect.value);
-      render();
-    });
-  }
-
-  // 基準幣別選單（匯率換算工具用）
-  const baseCurrencySelect = document.getElementById("base-currency");
-  if (baseCurrencySelect) {
-    const savedBaseCurrency = localStorage.getItem("baseCurrency") || "TWD";
-    baseCurrencySelect.value = savedBaseCurrency;
-    baseCurrencySelect.addEventListener("change", () => {
-      localStorage.setItem("baseCurrency", baseCurrencySelect.value);
       render();
     });
   }
@@ -406,7 +395,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     try {
-      // 元素綁定
+      // DOM 元素綁定
       form = document.getElementById("asset-form");
       typeSelect = document.getElementById("type");
       stockFields = document.getElementById("stock-fields");
@@ -417,7 +406,7 @@ document.addEventListener("DOMContentLoaded", () => {
       profitList = document.getElementById("stock-profit-list");
       bankDatalist = document.getElementById("bank-list");
 
-      // 顯示帳戶資訊
+      // 顯示帳本資訊
       const accountId = getSelectedAccount();
       const list = await FINORA_AUTH.fetchAccountList();
       const displayName = list.find(acc => acc.id === accountId)?.displayName || accountId;
@@ -470,7 +459,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
 
-      // 🔁 初始化流程
+      // 資料與畫面初始化
       await fetchExchangeRates();
       await updateAllStockPrices();
 
@@ -481,7 +470,6 @@ document.addEventListener("DOMContentLoaded", () => {
       if (typeof applyLang === "function") applyLang();
 
       console.log("✅ 初始化完成");
-
     } catch (e) {
       console.error("❌ 初始化失敗", e);
       alert(typeof i18n === "function" ? i18n("init_error") : "初始化失敗");
