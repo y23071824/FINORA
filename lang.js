@@ -24,58 +24,6 @@ function applyLang(lang = localStorage.getItem("lang") || "zh-Hant") {
 
 const translations = {
   "zh-Hant": {
-    // ...（保留原本內容）
-    label_display_currency: "💱 總資產顯示幣別：",
-    option_股票: "股票",
-    option_定存: "定存",
-    option_現金: "現金",
-    option_房產: "房產",
-    option_儲蓄保險: "儲蓄保險",
-    option_基金: "基金",
-    option_加密貨幣: "加密貨幣",
-    option_其他: "其他"
-  },
-  "zh-Hans": {
-    // ...（保留原本內容）
-    label_display_currency: "💱 总资产显示币别：",
-    option_股票: "股票",
-    option_定存: "定存",
-    option_現金: "现金",
-    option_房產: "房产",
-    option_儲蓄保險: "储蓄保险",
-    option_基金: "基金",
-    option_加密貨幣: "加密货币",
-    option_其他: "其他"
-  },
-  "en": {
-    // ...（保留原本內容）
-    label_display_currency: "💱 Display currency for total assets:",
-    option_股票: "Stock",
-    option_定存: "Deposit",
-    option_現金: "Cash",
-    option_房產: "Property",
-    option_儲蓄保險: "Insurance",
-    option_基金: "Fund",
-    option_加密貨幣: "Cryptocurrency",
-    option_其他: "Other"
-  },
-  "ja": {
-    // ...（保留原本內容）
-    label_display_currency: "💱 総資産の表示通貨：",
-    option_股票: "株式",
-    option_定存: "定期預金",
-    option_現金: "現金",
-    option_房產: "不動産",
-    option_儲蓄保險: "保険",
-    option_基金: "投資信託",
-    option_加密貨幣: "暗号通貨",
-    option_其他: "その他"
-  }
-};
-
-
-const translations = {
-  "zh-Hant": {
     title: "FINORA 好好存",
     subtitle: "讓資產更有力，退休不焦慮。",
     asset: "資產管理",
@@ -133,7 +81,17 @@ const translations = {
     current_price: "現價",
     market_value: "市值",
     profit: "盈餘"
+    label_display_currency: "💱 總資產顯示幣別：",
+    option_股票: "股票",
+    option_定存: "定存",
+    option_現金: "現金",
+    option_房產: "房產",
+    option_儲蓄保險: "儲蓄保險",
+    option_基金: "基金",
+    option_加密貨幣: "加密貨幣",
+    option_其他: "其他"
   },
+
   "zh-Hans": {
     title: "FINORA 好好存",
     subtitle: "让资产更有力，退休不焦虑。",
@@ -192,6 +150,15 @@ const translations = {
     current_price: "现价",
     market_value: "市值",
     profit: "盈余"
+    label_display_currency: "💱 总资产显示币别：",
+    option_股票: "股票",
+    option_定存: "定存",
+    option_現金: "现金",
+    option_房產: "房产",
+    option_儲蓄保險: "储蓄保险",
+    option_基金: "基金",
+    option_加密貨幣: "加密货币",
+    option_其他: "其他"
   },
   "en": {
     title: "FINORA Wealth Planner",
@@ -251,7 +218,17 @@ const translations = {
     current_price: "Current Price",
     market_value: "Market Value",
     profit: "Profit"
+    label_display_currency: "💱 Display currency for total assets:",
+    option_股票: "Stock",
+    option_定存: "Deposit",
+    option_現金: "Cash",
+    option_房產: "Property",
+    option_儲蓄保險: "Insurance",
+    option_基金: "Fund",
+    option_加密貨幣: "Cryptocurrency",
+    option_其他: "Other"
   },
+
   "ja": {
     title: "FINORA 資産管理",
     subtitle: "資産を強く、安心なリタイアへ。",
@@ -310,5 +287,13 @@ const translations = {
     current_price: "現在価格",
     market_value: "評価額",
     profit: "利益"
-  }
-};
+     label_display_currency: "💱 総資産の表示通貨：",
+    option_股票: "株式",
+    option_定存: "定期預金",
+    option_現金: "現金",
+    option_房產: "不動産",
+    option_儲蓄保險: "保険",
+    option_基金: "投資信託",
+    option_加密貨幣: "暗号通貨",
+    option_其他: "その他"
+  },
