@@ -291,14 +291,6 @@ li.innerHTML = `
   });
 
   // 類別加總
-for (const type in totalsByType) {
-  for (const currency in totalsByType[type]) {
-    const total = totalsByType[type][currency].toFixed(2);
-    const li = document.createElement("li");
-    li.textContent = `📌 ${i18n("option_" + type)}：${total} ${currency}`;
-    totalsList.appendChild(li);
-  }
-}
   // ➕ 建立盈餘分類容器
 const profitByTypeCurrency = {};  // 例：{ 股票: { USD: 123.45, TWD: 543.21 } }
 
