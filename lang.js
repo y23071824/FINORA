@@ -97,7 +97,9 @@ const translations = {
   cost: "成本",
   current_price: "現價",
   market_value: "市值",
-  profit: "盈餘"
+  profit: "盈餘",
+  option_select: "請選擇",
+  save_asset: "儲存資產"
 },
  "zh-Hans": {
   title: "FINORA 好好存",
@@ -168,7 +170,9 @@ const translations = {
   cost: "成本",
   current_price: "现价",
   market_value: "市值",
-  profit: "盈余"
+  profit: "盈余",
+   option_select: "请选择",
+save_asset: "保存资产"
 },
 "en": {
   title: "FINORA Wealth Planner",
@@ -239,7 +243,9 @@ const translations = {
   cost: "Cost",
   current_price: "Current Price",
   market_value: "Market Value",
-  profit: "Profit"
+  profit: "Profit",
+  option_select: "Please select",
+save_asset: "Save Asset"
 },
  "ja": {
   title: "FINORA 資産管理",
@@ -310,7 +316,9 @@ const translations = {
   cost: "取得価格",
   current_price: "現在価格",
   market_value: "評価額",
-  profit: "利益"
+  profit: "利益",
+   option_select: "選択してください",
+save_asset: "資産を保存する"
 }
 };
 
