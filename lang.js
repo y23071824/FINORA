@@ -297,3 +297,4 @@ const translations = {
     option_加密貨幣: "暗号通貨",
     option_其他: "その他"
   },
+};
