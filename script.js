@@ -29,21 +29,37 @@ async function fetchExchangeRates() {
   try {
     const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
     const data = await res.json();
-    if (!data || !data.rates || !data.rates.TWD) throw new Error("無效匯率資料");
+
+    if (!data || typeof data !== "object" || !data.rates || !data.rates.TWD) {
+      throw new Error("無效匯率資料");
+    }
 
     exchangeRates = data.rates;
     exchangeRates["USD"] = 1;
+
+// ✅ 儲存至 localStorage 作為備援資料
     localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
+    localStorage.setItem("exchangeRateTime", new Date().toISOString());
+
     console.log("📊 匯率更新成功", exchangeRates);
   } catch (e) {
     console.warn("⚠️ exchange_failed：❌ invalid_exchange_data", e);
-    // ➕ 使用備援資料
-    exchangeRates = {
-      "USD": 1,
-      "TWD": 32,
-      "JPY": 155,
-      "EUR": 1.08
-    };
+
+    // ⛑ 嘗試從 localStorage 取出上次成功的資料
+    const backup = localStorage.getItem("exchangeRates");
+    if (backup) {
+      exchangeRates = JSON.parse(backup);
+      console.log("📦 使用備援匯率資料（localStorage）", exchangeRates);
+    } else {
+      // 🚨 最終備援（寫死的安全預設值）
+      exchangeRates = {
+        "USD": 1,
+        "TWD": 32,
+        "JPY": 155,
+        "EUR": 1.08
+      };
+      console.log("📦 使用預設匯率資料", exchangeRates);
+    }
   }
 }
 
