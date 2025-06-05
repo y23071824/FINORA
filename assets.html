@@ -85,14 +85,25 @@
       <label data-i18n="label_amount">金額：</label>
       <input type="number" id="amount" />
     </div>
-   <label data-i18n="label_currency">幣別：</label>
-<select id="base-currency">
-  <option value="TWD">TWD</option>
-  <option value="USD">USD</option>
-  <option value="JPY">JPY</option>
-  <option value="EUR">EUR</option>
-  <option value="CNH">CNH</option>
-</select>
+    <!-- 資產表單的幣別 -->
+    <label data-i18n="label_currency">幣別：</label>
+    <select id="currency">
+      <option value="TWD">TWD</option>
+      <option value="USD">USD</option>
+      <option value="JPY">JPY</option>
+      <option value="EUR">EUR</option>
+      <option value="CNH">CNH</option>
+    </select>
+
+    <!-- 基準幣別（全局用） -->
+    <label data-i18n="label_base_currency">基準幣別：</label>
+    <select id="base-currency">
+      <option value="TWD">TWD</option>
+      <option value="USD">USD</option>
+      <option value="JPY">JPY</option>
+      <option value="EUR">EUR</option>
+      <option value="CNH">CNH</option>
+    </select>
 
     <label data-i18n="label_bank">銀行：</label>
     <input type="text" id="bank" list="bank-list" />
@@ -161,7 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const totalsList = document.getElementById("totals-list");
   if (totalsList) {
     totalsList.innerHTML = "";
-    const displayCurrency = document.getElementById("total-currency").value || "TWD";
+    const displayCurrency = document.getElementById("display-currency").value || "TWD";
     const finalRate = window.exchangeRates?.[displayCurrency] || 1;
     const totalTWD = window.totalTWD || 0;
     const totalConverted = totalTWD / finalRate;
