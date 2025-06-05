@@ -67,8 +67,7 @@ async function fetchExchangeRates() {
       };
       console.log("📦 使用預設匯率資料", exchangeRates);
     }
-  }
-}
+  
 
 // ✅ 更新所有股票現價（支援美股與台股）
 async function updateAllStockPrices() {
