@@ -98,9 +98,7 @@ const translations = {
   current_price: "現價",
   market_value: "市值",
   profit: "盈餘"
-}
-
-
+},
  "zh-Hans": {
   title: "FINORA 好好存",
   subtitle: "让资产更有力，退休不焦虑。",
@@ -171,8 +169,7 @@ const translations = {
   current_price: "现价",
   market_value: "市值",
   profit: "盈余"
-}
-
+},
 "en": {
   title: "FINORA Wealth Planner",
   subtitle: "Make your assets powerful. Retire without worries.",
@@ -243,8 +240,7 @@ const translations = {
   current_price: "Current Price",
   market_value: "Market Value",
   profit: "Profit"
-}
-
+},
  "ja": {
   title: "FINORA 資産管理",
   subtitle: "資産を強く、安心なリタイアへ。",
@@ -315,6 +311,6 @@ const translations = {
   current_price: "現在価格",
   market_value: "評価額",
   profit: "利益"
-},
+}
 };
 
