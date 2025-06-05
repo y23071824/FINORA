@@ -150,5 +150,45 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script src="firebase-sync.js"></script>
   <script src="script.js"></script>
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    applyLang();
+
+    const emailEl = document.getElementById("auth-email");
+    const accountEl = document.getElementById("account-name");
+
+    if (typeof FINORA_AUTH !== "undefined") {
+      FINORA_AUTH.onUserChanged(async (user) => {
+        const accountId = localStorage.getItem("selectedAccount");
+        if (!accountId) {
+          alert("⚠️ 尚未選擇帳本，請返回首頁登入並選擇帳本！");
+          window.location.href = "app.html";
+          return;
+        }
+
+        accountEl.textContent = accountId;
+
+        if (user) {
+          emailEl.textContent = user.email;
+
+          const list = await FINORA_AUTH.fetchAccountList();
+          const displayName = list.find(acc => acc.id === accountId)?.displayName || accountId;
+          accountEl.textContent = displayName;
+
+          // 初始化資料與畫面
+          if (typeof fetchExchangeRates === "function") await fetchExchangeRates();
+          if (typeof updateAllStockPrices === "function") await updateAllStockPrices();
+
+          assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
+          if (typeof toggleFields === "function") toggleFields();
+          if (typeof render === "function") render();
+        } else {
+          emailEl.textContent = i18n("not_logged_in") || "尚未登入";
+        }
+      });
+    }
+  });
+</script>
+
 </body>
 </html>
