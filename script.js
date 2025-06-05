@@ -57,6 +57,7 @@ async function fetchExchangeRates() {
         "TWD": 32,
         "JPY": 155,
         "EUR": 1.08
+        "CNY": 7.18
       };
       console.log("📦 使用預設匯率資料", exchangeRates);
     }
@@ -224,7 +225,7 @@ function render() {
     const li = document.createElement("li");
     li.className = "asset-item";
 
-    let text = `📌 ${asset.type}`;
+    let text = `📌 ${i18n("option_" + typeToKey(asset.type))}`;
     let value = 0;
     let cost = 0;
     let display = "";
@@ -236,7 +237,7 @@ function render() {
       const profit = market - totalCost;
       value = market;
       cost = totalCost;
-      display = `${stockSymbol} × ${shares}｜成本 ${totalCost.toFixed(2)}｜現價 ${price}｜市值 ${market.toFixed(2)}｜盈餘 ${profit.toFixed(2)}`;
+      display = `${stockSymbol} × ${shares}｜${i18n("cost")} ${...}｜${i18n("current_price")} ${...}｜${i18n("market_value")} ${...}｜${i18n("profit")} ${...}`;
     } else if (asset.type === "儲蓄保險") {
       const { insuranceName = "", insuranceAmount = 0, insuranceYears = 0, insuranceAnnual = 0 } = asset;
       value = insuranceAmount;
@@ -268,14 +269,18 @@ function render() {
     totalsByCurrency[currency] += value;
 
     // 渲染每筆資產
-    li.innerHTML = `
+li.innerHTML = `
+  <div class="asset-row">
+    <div class="note-text">
       <div>${text}</div>
       <div class="note">${display}</div>
-      <div class="actions">
-        <button onclick="editAsset(${index})">✏️</button>
-        <button onclick="deleteAsset(${index})">🗑️</button>
-      </div>
-    `;
+    </div>
+    <div class="actions">
+      <button onclick="editAsset(${index})">✏️</button>
+      <button onclick="deleteAsset(${index})">🗑️</button>
+    </div>
+  </div>
+`;
     assetList.appendChild(li);
   });
 
@@ -368,8 +373,10 @@ function editAsset(index) {
     document.getElementById("currency").value = asset.currency || "TWD";
     document.getElementById("bank").value = asset.bank || "";
     document.getElementById("note").value = asset.note || "";
+    document.getElementById("asset-form").scrollIntoView({ behavior: "smooth", block: "start" });
+
   }, 100);
-}
+  }
 
 function deleteAsset(index) {
   const lang = localStorage.getItem("lang") || "zh-Hant";
@@ -384,6 +391,19 @@ function deleteAsset(index) {
   render();
 }
 
+function typeToKey(type) {
+  switch (type) {
+    case "股票": return "stock";
+    case "定存": return "deposit";
+    case "現金": return "cash";
+    case "房產": return "property";
+    case "儲蓄保險": return "insurance";
+    case "基金": return "fund";
+    case "加密貨幣": return "crypto";
+    case "其他": return "other";
+    default: return "other";
+  }
+}
 
 // ===== Part 5：啟動函式與登入綁定 =====
 document.addEventListener("DOMContentLoaded", () => {
