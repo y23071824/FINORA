@@ -189,15 +189,12 @@ async function handleSubmit(e) {
 }
 
 // ===== Part 3：畫面渲染與計算 =====
-  function render() {
+function render() {
   if (!Array.isArray(assets)) return;
   if (!exchangeRates || Object.keys(exchangeRates).length === 0) {
     console.warn("❌ 缺少匯率資料，無法 render");
     return;
   }
-}
-
-  if (!assetList || !totalsList || !profitList) return;
 
   assetList.innerHTML = "";
   totalsList.innerHTML = "";
@@ -321,7 +318,7 @@ async function handleSubmit(e) {
   }
 } // ← 補上缺少的 render() 結尾大括號
 
-// ===== Part 3 補充：編輯與刪除函式（請放在 render() 外部） =====
+// ===== Part 4：編輯與刪除函式（請放在 render() 外部） =====
 function editAsset(index) {
   const asset = assets[index];
   editIndex = index;
@@ -372,7 +369,7 @@ function deleteAsset(index) {
 }
 
 
-// ===== Part 4：啟動函式與登入綁定 =====
+// ===== Part 5：啟動函式與登入綁定 =====
 document.addEventListener("DOMContentLoaded", () => {
   console.log("🔄 系統初始化中...");
 
