@@ -27,25 +27,23 @@ let assetList, totalsList, profitList, bankDatalist;
 // ✅ 匯率查詢
 async function fetchExchangeRates() {
   try {
-    const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR,CNH");
+    const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
     const data = await res.json();
-    if (!data || !data.rates) throw new Error("❌ " + i18n("invalid_exchange_data"));
-    exchangeRates = {
-      USD: 1,
-      TWD: data.rates.TWD || 30,
-      JPY: data.rates.JPY || 150,
-      EUR: data.rates.EUR || 0.9,
-      CNH: data.rates.CNH || 7,
-    };
+    if (!data || !data.rates || !data.rates.TWD) throw new Error("無效匯率資料");
+
+    exchangeRates = data.rates;
+    exchangeRates["USD"] = 1;
     localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
+    console.log("📊 匯率更新成功", exchangeRates);
   } catch (e) {
-    console.warn("⚠️ " + i18n("exchange_failed") + "：" + e.message);
-    const saved = localStorage.getItem("exchangeRates");
-    if (saved) {
-      exchangeRates = JSON.parse(saved);
-    } else {
-      exchangeRates = { USD: 1, TWD: 30, JPY: 150, EUR: 0.9 };
-    }
+    console.warn("⚠️ exchange_failed：❌ invalid_exchange_data", e);
+    // ➕ 使用備援資料
+    exchangeRates = {
+      "USD": 1,
+      "TWD": 32,
+      "JPY": 155,
+      "EUR": 1.08
+    };
   }
 }
 
@@ -191,7 +189,14 @@ async function handleSubmit(e) {
 }
 
 // ===== Part 3：畫面渲染與計算 =====
-function render() {
+  function render() {
+  if (!Array.isArray(assets)) return;
+  if (!exchangeRates || Object.keys(exchangeRates).length === 0) {
+    console.warn("❌ 缺少匯率資料，無法 render");
+    return;
+  }
+}
+
   if (!assetList || !totalsList || !profitList) return;
 
   assetList.innerHTML = "";
