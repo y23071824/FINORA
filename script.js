@@ -312,23 +312,74 @@ assets.forEach(asset => {
 });
 
 // 🟠 類別加總 + 顯示盈餘
-for (const type in totalsByType) {
-  for (const currency in totalsByType[type]) {
-    const total = totalsByType[type][currency].toFixed(2);
-    const li = document.createElement("li");
+function render() {
+  const assets = getAssets(); // 假設你有這個函式取出 localStorage or Firebase 的資料
+  const totalsByType = {};
+  const totalsByCurrency = {};
+  const profitByTypeCurrency = {};
+  const allConverted = {};
+  const selectedCurrency = localStorage.getItem("selectedCurrency") || "TWD";
+  const totalsList = document.getElementById("totals-list");
 
-    // 判斷是否有盈餘可顯示
-    const profit = profitByTypeCurrency?.[type]?.[currency] || 0;
-    const profitText = profit !== 0 ? `（${i18n("profit")}：${profit.toFixed(2)} ${currency}）` : "";
+  // 🔁 初始化加總
+  assets.forEach(asset => {
+    const { type, currency = "TWD", amount = 0, shares = 0, cost = 0, price = 0 } = asset;
+    const cur = currency;
+    let value = 0;
 
-    li.textContent = `📌 ${i18n("option_" + type)}：${total} ${currency} ${profitText}`;
-    if (profit > 0) li.style.color = "green";
-    if (profit < 0) li.style.color = "red";
-    totalsList.appendChild(li);
+    // 股票市值
+    if (type === "股票") {
+      const costNum = parseFloat(cost) || 0;
+      const priceNum = parseFloat(price) || 0;
+      const sharesNum = parseFloat(shares) || 0;
+      const marketValue = priceNum * sharesNum;
+      const costTotal = costNum * sharesNum;
+      const profit = marketValue - costTotal;
+      value = marketValue;
+
+      // ➕ 盈餘加總
+      if (!profitByTypeCurrency[type]) profitByTypeCurrency[type] = {};
+      if (!profitByTypeCurrency[type][cur]) profitByTypeCurrency[type][cur] = 0;
+      profitByTypeCurrency[type][cur] += profit;
+    } else {
+      value = parseFloat(amount) || 0;
+    }
+
+    // ➕ 分類加總
+    if (!totalsByType[type]) totalsByType[type] = {};
+    if (!totalsByType[type][cur]) totalsByType[type][cur] = 0;
+    totalsByType[type][cur] += value;
+
+    // ➕ 幣別加總
+    if (!totalsByCurrency[cur]) totalsByCurrency[cur] = 0;
+    totalsByCurrency[cur] += value;
+  });
+
+  // 💱 匯率換算
+  for (const currency in totalsByCurrency) {
+    const rate = exchangeRates[currency] || 1;
+    allConverted[currency] = totalsByCurrency[currency] * rate;
   }
-}
 
-  // 幣別加總
+  // 📌 顯示區塊渲染
+  totalsList.innerHTML = "";
+
+  // 📌 類別加總（含盈餘）
+  for (const type in totalsByType) {
+    for (const currency in totalsByType[type]) {
+      const total = totalsByType[type][currency].toFixed(2);
+      const profit = profitByTypeCurrency?.[type]?.[currency] || 0;
+      const profitText = profit !== 0 ? `（${i18n("profit")}：${profit.toFixed(2)} ${currency}）` : "";
+
+      const li = document.createElement("li");
+      li.textContent = `📌 ${i18n("option_" + type)}：${total} ${currency} ${profitText}`;
+      if (profit > 0) li.style.color = "green";
+      if (profit < 0) li.style.color = "red";
+      totalsList.appendChild(li);
+    }
+  }
+
+  // 💱 幣別加總
   for (const currency in totalsByCurrency) {
     const total = totalsByCurrency[currency];
     const rate = exchangeRates[currency] || 1;
@@ -338,40 +389,19 @@ for (const type in totalsByType) {
     totalsList.appendChild(li);
   }
 
-  // 最下方總資產換算（使用選擇的幣別）
-  const selectedCurrency = localStorage.getItem("displayCurrency") || "TWD";
-  const selectedRate = exchangeRates[selectedCurrency];
-
-  if (!selectedRate || isNaN(selectedRate)) {
-    console.error(`❌ 無效匯率：${selectedCurrency}`);
-    alert(`⚠️ 無法取得 ${selectedCurrency} 的匯率，請稍後再試`);
-    return;
-  }
-
-  let convertedTotal = 0;
-  for (const currency in totalsByCurrency) {
-    const value = totalsByCurrency[currency];
-    const rate = exchangeRates[currency];
-    if (!rate || isNaN(rate)) continue;
-
-    const valueInSelected = (currency === selectedCurrency)
-      ? value
-      : value * (rate / selectedRate);
-
-    convertedTotal += valueInSelected;
-  }
-
+  // 💰 顯示總資產（依使用者選擇幣別）
+  const convertedTotal = allConverted[selectedCurrency] || 0;
   const convertedLi = document.createElement("li");
   convertedLi.textContent = `💰 ${i18n("total_asset")}（${selectedCurrency}）：${convertedTotal.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${selectedCurrency}`;
   totalsList.appendChild(convertedLi);
 
-  // 匯率更新時間
+  // 🕒 匯率更新時間
   const now = new Date();
   const rateTime = document.getElementById("rate-time");
   if (rateTime) {
     rateTime.textContent = `${i18n("exchange_rate_updated")}：${now.toLocaleTimeString()}`;
   }
-} // ← 補上缺少的 render() 結尾大括號
+}
 
 // ===== Part 4：編輯與刪除函式（請放在 render() 外部） =====
 function editAsset(index) {
