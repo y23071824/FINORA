@@ -299,6 +299,42 @@ for (const type in totalsByType) {
     totalsList.appendChild(li);
   }
 }
+  // ➕ 建立盈餘分類容器
+const profitByTypeCurrency = {};  // 例：{ 股票: { USD: 123.45, TWD: 543.21 } }
+
+// 先掃過每筆資產，把盈餘分類加總起來
+assets.forEach(asset => {
+  if (asset.type === "股票") {
+    const shares = parseFloat(asset.shares || 0);
+    const cost = parseFloat(asset.cost || 0);
+    const price = parseFloat(asset.price || 0);
+    const currency = asset.currency || "TWD";
+    const type = asset.type;
+
+    const profit = (price - cost) * shares;
+
+    if (!profitByTypeCurrency[type]) profitByTypeCurrency[type] = {};
+    if (!profitByTypeCurrency[type][currency]) profitByTypeCurrency[type][currency] = 0;
+    profitByTypeCurrency[type][currency] += profit;
+  }
+});
+
+// 🟠 類別加總 + 顯示盈餘
+for (const type in totalsByType) {
+  for (const currency in totalsByType[type]) {
+    const total = totalsByType[type][currency].toFixed(2);
+    const li = document.createElement("li");
+
+    // 判斷是否有盈餘可顯示
+    const profit = profitByTypeCurrency?.[type]?.[currency] || 0;
+    const profitText = profit !== 0 ? `（${i18n("profit")}：${profit.toFixed(2)} ${currency}）` : "";
+
+    li.textContent = `📌 ${i18n("option_" + type)}：${total} ${currency} ${profitText}`;
+    if (profit > 0) li.style.color = "green";
+    if (profit < 0) li.style.color = "red";
+    totalsList.appendChild(li);
+  }
+}
 
   // 幣別加總
   for (const currency in totalsByCurrency) {
