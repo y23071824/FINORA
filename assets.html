@@ -100,9 +100,13 @@
     <label data-i18n="label_note">備註：</label>
     <input type="text" id="note" />
     <div class="button-center">
-      <button id="save-button" type="submit">
-        💾 <span data-i18n="save_asset">儲存資產</span>
-      </button>
+     <!-- 下拉選單選項 -->
+<option value="" data-i18n-option="option_please_select">請選擇</option>
+
+<!-- 儲存按鈕 -->
+<button id="save-button" type="submit">
+  💾 <span data-i18n="save_asset">儲存資產</span>
+</button>
     </div>
   </form>
   <datalist id="bank-list"></datalist>
