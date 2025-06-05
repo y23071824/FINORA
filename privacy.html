@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>隱私權政策｜FINORA</title>
+  <title data-i18n="privacy_title">隱私權政策｜FINORA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="../style.css" />
   <link rel="icon" href="favicon.png" type="image/png" />
@@ -42,33 +42,40 @@
   </style>
 </head>
 <body class="logo-full-bg">
-  <h1>隱私權政策</h1>
+  <h1 data-i18n="privacy_heading">隱私權政策</h1>
 
-  <p>FINORA｜好好存，尊重並保護使用者的個人資料。以下是我們如何蒐集、使用及保護您的資訊。</p>
+  <p data-i18n="privacy_intro">FINORA｜好好存，尊重並保護使用者的個人資料。以下是我們如何蒐集、使用及保護您的資訊。</p>
 
-  <h2>一、蒐集資訊</h2>
-  <p>我們僅會在使用者自願提供的情況下收集姓名、Email 等資訊。Google 登入僅用於個人資料同步，不會另作其他用途。</p>
+  <h2 data-i18n="privacy_collect_title">一、蒐集資訊</h2>
+  <p data-i18n="privacy_collect_text">我們僅會在使用者自願提供的情況下收集姓名、Email 等資訊。Google 登入僅用於個人資料同步，不會另作其他用途。</p>
 
-  <h2>二、資料用途</h2>
-  <p>收集的資料將僅用於帳本同步、功能使用分析與產品改善，不會出售或提供給第三方。</p>
+  <h2 data-i18n="privacy_usage_title">二、資料用途</h2>
+  <p data-i18n="privacy_usage_text">收集的資料將僅用於帳本同步、功能使用分析與產品改善，不會出售或提供給第三方。</p>
 
-  <h2>三、資料儲存與安全</h2>
-  <p>所有資料均儲存在 Google Firebase Cloud，採用標準化加密與身份驗證保護。</p>
+  <h2 data-i18n="privacy_storage_title">三、資料儲存與安全</h2>
+  <p data-i18n="privacy_storage_text">所有資料均儲存在 Google Firebase Cloud，採用標準化加密與身份驗證保護。</p>
 
-  <h2>四、使用者權益</h2>
-  <p>使用者可隨時刪除帳本內容與個人資料。如欲刪除帳號，請來信聯絡我們。</p>
+  <h2 data-i18n="privacy_rights_title">四、使用者權益</h2>
+  <p data-i18n="privacy_rights_text">使用者可隨時刪除帳本內容與個人資料。如欲刪除帳號，請來信聯絡我們。</p>
 
-  <h2>五、政策更新</h2>
-  <p>我們將視需求更新隱私政策。更新後將公佈於本頁，重大變更將另行通知使用者。</p>
+  <h2 data-i18n="privacy_update_title">五、政策更新</h2>
+  <p data-i18n="privacy_update_text">我們將視需求更新隱私政策。更新後將公佈於本頁，重大變更將另行通知使用者。</p>
 
-<a href="app.html" class="cta-full">立即開始使用</a>
-  
+  <a href="app.html" class="cta-full" data-i18n="howto_cta">立即開始使用</a>
+
   <footer>
     <p>© 2025 FINORA 好好存｜家庭友善資產整合工具</p>
     <div class="footer-links">
-      <a href="howto.html">使用說明</a>・
-      <a href="mailto:service@finora.life?subject=隱私權詢問">聯絡我們</a>
+      <a href="howto.html" data-i18n="footer_help">使用說明</a>・
+      <a href="mailto:service@finora.life?subject=隱私權詢問" data-i18n="footer_contact">聯絡我們</a>
     </div>
   </footer>
+
+  <script src="../lang.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      applyLang();
+    });
+  </script>
 </body>
 </html>
