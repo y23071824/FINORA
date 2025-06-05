@@ -237,7 +237,8 @@ function render() {
       const profit = market - totalCost;
       value = market;
       cost = totalCost;
-      display = `${stockSymbol} × ${shares}｜${i18n("cost")} ${...}｜${i18n("current_price")} ${...}｜${i18n("market_value")} ${...}｜${i18n("profit")} ${...}`;
+     display = `${stockSymbol} × ${shares}｜${i18n("cost")} ${totalCost.toFixed(2)}｜${i18n("current_price")} ${price}｜${i18n("market_value")} ${market.toFixed(2)}｜${i18n("profit")} ${profit.toFixed(2)}`;
+    
     } else if (asset.type === "儲蓄保險") {
       const { insuranceName = "", insuranceAmount = 0, insuranceYears = 0, insuranceAnnual = 0 } = asset;
       value = insuranceAmount;
