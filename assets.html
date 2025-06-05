@@ -167,19 +167,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (typeof render === "function") {
     render();
   }
-
-  // 若 render 沒有處理 totals-list，才需要這段
-  const totalsList = document.getElementById("totals-list");
-  if (totalsList) {
-    totalsList.innerHTML = "";
-    const displayCurrency = document.getElementById("display-currency").value || "TWD";
-    const finalRate = window.exchangeRates?.[displayCurrency] || 1;
-    const totalTWD = window.totalTWD || 0;
-    const totalConverted = totalTWD / finalRate;
-    const totalLi = document.createElement("li");
-    totalLi.textContent = `💰 ${i18n("total_asset")}：${displayCurrency} ${totalConverted.toLocaleString()}`;
-    totalsList.appendChild(totalLi);
-  }
 });
 </script>
 
