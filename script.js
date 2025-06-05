@@ -27,23 +27,29 @@ let assetList, totalsList, profitList, bankDatalist;
 // ✅ 匯率查詢
 async function fetchExchangeRates() {
   try {
-    const res = await fetch("https://api.exchangerate.host/latest?base=USD&symbols=TWD,JPY,EUR");
+    const res = await fetch("https://v6.exchangerate-api.com/v6/747171c8dd2eaa9173e2d890/latest/USD");
     const data = await res.json();
 
-    if (!data || typeof data !== "object" || !data.rates || !data.rates.TWD) {
-      throw new Error("無效匯率資料");
-    }
+    if (!data || data.result !== "success") throw new Error("匯率查詢失敗");
 
-    exchangeRates = data.rates;
-    exchangeRates["USD"] = 1;
+    exchangeRates = {
+      USD: 1,
+      TWD: data.conversion_rates.TWD,
+      JPY: data.conversion_rates.JPY,
+      EUR: data.conversion_rates.EUR
+    };
 
-// ✅ 儲存至 localStorage 作為備援資料
     localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
-    localStorage.setItem("exchangeRateTime", new Date().toISOString());
+    localStorage.setItem("exchangeRatesTimestamp", Date.now());
+    console.log("💱 匯率已更新：", exchangeRates);
 
-    console.log("📊 匯率更新成功", exchangeRates);
-  } catch (e) {
-    console.warn("⚠️ exchange_failed：❌ invalid_exchange_data", e);
+    // 更新匯率顯示
+    render();
+  } catch (err) {
+    console.error("❌ 匯率查詢錯誤（ExchangeRate-API）", err);
+    alert("⚠️ 無法取得匯率資料，請稍後再試或檢查網路連線");
+  }
+}
 
     // ⛑ 嘗試從 localStorage 取出上次成功的資料
     const backup = localStorage.getItem("exchangeRates");
