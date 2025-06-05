@@ -61,7 +61,7 @@
   <h2 data-i18n="privacy_update_title">五、政策更新</h2>
   <p data-i18n="privacy_update_text">我們將視需求更新隱私政策。更新後將公佈於本頁，重大變更將另行通知使用者。</p>
 
-  <a href="app.html" class="cta-full" data-i18n="howto_cta">立即開始使用</a>
+  <a href="app.html" class="cta-full" data-i18n="privacy_start">立即開始使用</a>
 
   <footer>
     <p>© 2025 FINORA 好好存｜家庭友善資產整合工具</p>
@@ -71,20 +71,14 @@
     </div>
   </footer>
 
- <script src="../lang.js"></script>
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    if (typeof applyLang === "function") {
-      applyLang();
-    } else {
-      console.error("❌ applyLang 未定義，請確認 lang.js 是否成功載入");
-    }
-  });
-</script>
-
+  <script src="../lang.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      applyLang();
+      if (typeof applyLang === "function") {
+        applyLang();
+      } else {
+        console.error("❌ applyLang 未定義，請確認 lang.js 是否成功載入");
+      }
     });
   </script>
 </body>
