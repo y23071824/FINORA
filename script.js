@@ -224,13 +224,13 @@ function render() {
       value = insuranceAmount;
       display = `${insuranceName}｜保額 ${insuranceAmount}｜年期 ${insuranceYears}｜年繳 ${insuranceAnnual}`;
     } else if (asset.type === "基金") {
-      const { fundName = "", fundUnits = 0, fundNav = 0 } = asset;
+      const { fundName = "", fundUnits = 0, fundNav = 0, currency } = asset;
       value = fundUnits * fundNav;
-      display = `${fundName} × ${fundUnits}｜淨值 ${fundNav}｜市值 ${value.toFixed(2)}`;
+      display = `${fundName} × ${fundUnits}｜淨值 ${fundNav}｜市值 ${value.toFixed(2)} ${currency}`;
     } else if (asset.type === "加密貨幣") {
-      const { cryptoSymbol = "", cryptoAmount = 0, cryptoPrice = 0 } = asset;
+      const { cryptoSymbol = "", cryptoAmount = 0, cryptoPrice = 0, currency } = asset;
       value = cryptoAmount * cryptoPrice;
-      display = `${cryptoSymbol.toUpperCase()} × ${cryptoAmount}｜現價 ${cryptoPrice}｜市值 ${value.toFixed(2)}`;
+      display = `${cryptoSymbol.toUpperCase()} × ${cryptoAmount}｜現價 ${cryptoPrice}｜市值 ${value.toFixed(2)} ${currency}`;
     } else {
       value = asset.amount || 0;
       display = `${asset.note || ""}｜金額 ${value}`;
@@ -271,7 +271,7 @@ function render() {
     }
   }
 
-// 幣別加總
+  // 幣別加總
   for (const currency in totalsByCurrency) {
     const total = totalsByCurrency[currency];
     const rate = exchangeRates[currency] || 1;
@@ -280,43 +280,43 @@ function render() {
     li.textContent = `💱 ${currency}：${total.toFixed(2)} ≈ NT$ ${converted}`;
     totalsList.appendChild(li);
   }
-const selectedCurrency = localStorage.getItem("displayCurrency") || "TWD";
-const selectedRate = exchangeRates[selectedCurrency];
 
-// 若無法取得選擇幣別的匯率，直接跳出錯誤提示
-if (!selectedRate || isNaN(selectedRate)) {
-  console.error(`❌ 無效匯率：${selectedCurrency}`);
-  alert(`⚠️ 無法取得 ${selectedCurrency} 的匯率，請稍後再試`);
-  return;
-}
+  // 最下方總資產換算（使用選擇的幣別）
+  const selectedCurrency = localStorage.getItem("displayCurrency") || "TWD";
+  const selectedRate = exchangeRates[selectedCurrency];
 
-let convertedTotal = 0;
-for (const currency in totalsByCurrency) {
-  const value = totalsByCurrency[currency];
-  const rate = exchangeRates[currency];
-  
-  // 忽略匯率無效的幣別
-  if (!rate || isNaN(rate)) continue;
+  if (!selectedRate || isNaN(selectedRate)) {
+    console.error(`❌ 無效匯率：${selectedCurrency}`);
+    alert(`⚠️ 無法取得 ${selectedCurrency} 的匯率，請稍後再試`);
+    return;
+  }
 
-  const valueInSelected = (currency === selectedCurrency)
-    ? value
-    : value * (rate / selectedRate);
+  let convertedTotal = 0;
+  for (const currency in totalsByCurrency) {
+    const value = totalsByCurrency[currency];
+    const rate = exchangeRates[currency];
+    if (!rate || isNaN(rate)) continue;
 
-  convertedTotal += valueInSelected;
-}
+    const valueInSelected = (currency === selectedCurrency)
+      ? value
+      : value * (rate / selectedRate);
 
-const convertedLi = document.createElement("li");
-convertedLi.textContent = `💰 ${i18n("total_asset")}（${selectedCurrency}）：${convertedTotal.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${selectedCurrency}`;
-totalsList.appendChild(convertedLi);
+    convertedTotal += valueInSelected;
+  }
 
-// 匯率時間
-const now = new Date();
-const rateTime = document.getElementById("rate-time");
-if (rateTime) {
-  rateTime.textContent = `${i18n("exchange_rate_updated")}：${now.toLocaleTimeString()}`;
-}
+  const convertedLi = document.createElement("li");
+  convertedLi.textContent = `💰 ${i18n("total_asset")}（${selectedCurrency}）：${convertedTotal.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${selectedCurrency}`;
+  totalsList.appendChild(convertedLi);
 
-// ===== 編輯與刪除 =====
+  // 匯率更新時間
+  const now = new Date();
+  const rateTime = document.getElementById("rate-time");
+  if (rateTime) {
+    rateTime.textContent = `${i18n("exchange_rate_updated")}：${now.toLocaleTimeString()}`;
+  }
+} // ← 補上缺少的 render() 結尾大括號
+
+// ===== Part 3 補充：編輯與刪除函式（請放在 render() 外部） =====
 function editAsset(index) {
   const asset = assets[index];
   editIndex = index;
@@ -365,6 +365,7 @@ function deleteAsset(index) {
   }
   render();
 }
+
 
 // ===== Part 4：啟動函式與登入綁定 =====
 document.addEventListener("DOMContentLoaded", () => {
