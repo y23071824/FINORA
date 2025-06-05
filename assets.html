@@ -137,9 +137,11 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script src="firebase-sync.js"></script>
   <script src="script.js"></script>
+  
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  applyLang();
+  if (typeof applyLang === "function") applyLang();
+
   const emailEl = document.getElementById("auth-email");
   const accountEl = document.getElementById("account-name");
 
@@ -151,25 +153,25 @@ document.addEventListener("DOMContentLoaded", () => {
         window.location.href = "app.html";
         return;
       }
-      accountEl.textContent = accountId;
+
+      if (accountEl) accountEl.textContent = accountId;
+
       if (user) {
-        emailEl.textContent = user.email;
+        if (emailEl) emailEl.textContent = user.email;
         FINORA_AUTH.fetchAccountList().then(list => {
           const displayName = list.find(acc => acc.id === accountId)?.displayName || accountId;
-          accountEl.textContent = displayName;
+          if (accountEl) accountEl.textContent = displayName;
         });
       } else {
-        emailEl.textContent = i18n("not_logged_in") || "（尚未登入）";
+        if (emailEl) emailEl.textContent = i18n("not_logged_in") || "（尚未登入）";
       }
     });
   }
 
-  if (typeof render === "function") {
-    render();
-  }
+  // 呼叫畫面渲染邏輯
+  if (typeof render === "function") render();
 });
 </script>
-
 
   <div class="getting-started">
     <p class="guide-note" data-i18n="privacy_note">🔐 所有資料皆保存在你的 Google 帳號與雲端帳本中，不用擔心遺失或外洩。</p>
