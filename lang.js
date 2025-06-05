@@ -80,7 +80,7 @@ const translations = {
     cost: "成本",
     current_price: "現價",
     market_value: "市值",
-    profit: "盈餘"
+    profit: "盈餘",
     label_display_currency: "💱 總資產顯示幣別：",
     option_股票: "股票",
     option_定存: "定存",
@@ -149,7 +149,7 @@ const translations = {
     cost: "成本",
     current_price: "现价",
     market_value: "市值",
-    profit: "盈余"
+    profit: "盈余",
     label_display_currency: "💱 总资产显示币别：",
     option_股票: "股票",
     option_定存: "定存",
@@ -217,7 +217,7 @@ const translations = {
     cost: "Cost",
     current_price: "Current Price",
     market_value: "Market Value",
-    profit: "Profit"
+    profit: "Profit",
     label_display_currency: "💱 Display currency for total assets:",
     option_股票: "Stock",
     option_定存: "Deposit",
@@ -286,7 +286,7 @@ const translations = {
     cost: "取得価格",
     current_price: "現在価格",
     market_value: "評価額",
-    profit: "利益"
+    profit: "利益",
      label_display_currency: "💱 総資産の表示通貨：",
     option_股票: "株式",
     option_定存: "定期預金",
