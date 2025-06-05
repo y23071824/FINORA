@@ -1,5 +1,3 @@
-// ✅ 多語言模組（整合版）
-
 function i18n(key) {
   const lang = localStorage.getItem("lang") || "zh-Hant";
   return (translations?.[lang]?.[key]) || key;
@@ -8,24 +6,66 @@ function i18n(key) {
 function applyLang(lang = localStorage.getItem("lang") || "zh-Hant") {
   const dict = translations[lang] || translations["zh-Hant"];
 
-  // 所有內文元素
   document.querySelectorAll("[data-i18n]").forEach(el => {
     const key = el.getAttribute("data-i18n");
     if (dict[key]) el.textContent = dict[key];
   });
 
-  // select 選單內的 option
   document.querySelectorAll("option[data-i18n-option]").forEach(opt => {
     const key = opt.getAttribute("data-i18n-option");
     if (dict[key]) opt.textContent = dict[key];
   });
 
-  // input 的 placeholder
   document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
     const key = el.getAttribute("data-i18n-placeholder");
     if (dict[key]) el.placeholder = dict[key];
   });
 }
+
+const translations = {
+  "zh-Hant": {
+    // ...（其他語句同上）
+    option_股票: "股票",
+    option_定存: "定存",
+    option_現金: "現金",
+    option_房產: "房產",
+    option_儲蓄保險: "儲蓄保險",
+    option_基金: "基金",
+    option_加密貨幣: "加密貨幣",
+    option_其他: "其他"
+  },
+  "zh-Hans": {
+    option_股票: "股票",
+    option_定存: "定存",
+    option_現金: "现金",
+    option_房產: "房产",
+    option_儲蓄保險: "储蓄保险",
+    option_基金: "基金",
+    option_加密貨幣: "加密货币",
+    option_其他: "其他"
+  },
+  "en": {
+    option_股票: "Stock",
+    option_定存: "Deposit",
+    option_現金: "Cash",
+    option_房產: "Property",
+    option_儲蓄保險: "Insurance",
+    option_基金: "Fund",
+    option_加密貨幣: "Cryptocurrency",
+    option_其他: "Other"
+  },
+  "ja": {
+    option_股票: "株式",
+    option_定存: "定期預金",
+    option_現金: "現金",
+    option_房產: "不動産",
+    option_儲蓄保險: "保険",
+    option_基金: "投資信託",
+    option_加密貨幣: "暗号通貨",
+    option_其他: "その他"
+  }
+};
+
 
 
 const translations = {
