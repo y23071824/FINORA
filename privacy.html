@@ -71,7 +71,17 @@
     </div>
   </footer>
 
-  <script src="../lang.js"></script>
+ <script src="../lang.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    if (typeof applyLang === "function") {
+      applyLang();
+    } else {
+      console.error("❌ applyLang 未定義，請確認 lang.js 是否成功載入");
+    }
+  });
+</script>
+
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       applyLang();
