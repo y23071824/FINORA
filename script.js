@@ -286,14 +286,14 @@ li.innerHTML = `
   });
 
   // 類別加總
-  for (const type in totalsByType) {
-    for (const currency in totalsByType[type]) {
-      const total = totalsByType[type][currency].toFixed(2);
-      const li = document.createElement("li");
-      li.textContent = `📌 ${type}：${total} ${currency}`;
-      totalsList.appendChild(li);
-    }
+for (const type in totalsByType) {
+  for (const currency in totalsByType[type]) {
+    const total = totalsByType[type][currency].toFixed(2);
+    const li = document.createElement("li");
+    li.textContent = `📌 ${i18n("option_" + type)}：${total} ${currency}`;
+    totalsList.appendChild(li);
   }
+}
 
   // 幣別加總
   for (const currency in totalsByCurrency) {
