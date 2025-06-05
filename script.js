@@ -487,4 +487,4 @@ document.addEventListener("DOMContentLoaded", () => {
       alert(typeof i18n === "function" ? i18n("init_error") : "初始化失敗");
     }
   });
-});
+});}
