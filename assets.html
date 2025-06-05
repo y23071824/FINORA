@@ -87,29 +87,33 @@
       <label data-i18n="label_amount">金額：</label>
       <input type="number" id="amount" />
     </div>
-    <!-- 資產表單的幣別 -->
-    <label data-i18n="label_currency">幣別：</label>
-    <select id="currency">
-      <option value="TWD">TWD</option>
-      <option value="USD">USD</option>
-      <option value="JPY">JPY</option>
-      <option value="EUR">EUR</option>
-      <option value="CNH">CNH</option></select> 
-    
-    <label for="bank" data-i18n="label_bank">銀行名稱：</label>
+  <!-- 資產表單的幣別 -->
+<label data-i18n="label_currency">幣別：</label>
+<select id="currency">
+  <option value="" data-i18n-option="option_please_select">請選擇</option>
+  <option value="TWD">TWD</option>
+  <option value="USD">USD</option>
+  <option value="JPY">JPY</option>
+  <option value="EUR">EUR</option>
+  <option value="CNH">CNH</option>
+</select>
+
+<!-- 銀行名稱 -->
+<label for="bank" data-i18n="label_bank">銀行名稱：</label>
 <input type="text" id="bank" list="bank-list" />
 <datalist id="bank-list"></datalist>
-    <label data-i18n="label_note">備註：</label>
-    <input type="text" id="note" />
-    <div class="button-center">
-     <!-- 下拉選單選項 -->
-<option value="" data-i18n-option="option_please_select">請選擇</option>
+
+<!-- 備註 -->
+<label for="note" data-i18n="label_note">備註：</label>
+<input type="text" id="note" />
 
 <!-- 儲存按鈕 -->
-<button id="save-button" type="submit">
-  💾 <span data-i18n="save_asset">儲存資產</span>
-</button>
-    </div>
+<div class="button-center">
+  <button id="save-button" type="submit">
+    💾 <span data-i18n="save_btn">儲存資產</span>
+  </button>
+</div>
+    
   </form>
   <datalist id="bank-list"></datalist>
   <h2 data-i18n="asset_list">資產列表</h2>
