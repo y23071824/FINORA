@@ -225,7 +225,7 @@ function render() {
     const li = document.createElement("li");
     li.className = "asset-item";
 
-    let text = `📌 ${i18n("option_" + asset.type)}`;
+    text = `📌 ${i18n("option_" + asset.type)}`;
     let value = 0;
     let cost = 0;
     let display = "";
