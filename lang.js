@@ -1,3 +1,5 @@
+// ✅ 多語言模組（整合版）
+
 function i18n(key) {
   const lang = localStorage.getItem("lang") || "zh-Hant";
   return (translations?.[lang]?.[key]) || key;
@@ -6,18 +8,24 @@ function i18n(key) {
 function applyLang(lang = localStorage.getItem("lang") || "zh-Hant") {
   const dict = translations[lang] || translations["zh-Hant"];
 
+  // 所有內文元素
   document.querySelectorAll("[data-i18n]").forEach(el => {
     const key = el.getAttribute("data-i18n");
     if (dict[key]) el.textContent = dict[key];
   });
 
+  // select 選單內的 option
+  document.querySelectorAll("option[data-i18n-option]").forEach(opt => {
+    const key = opt.getAttribute("data-i18n-option");
+    if (dict[key]) opt.textContent = dict[key];
+  });
+
+  // input 的 placeholder
   document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
     const key = el.getAttribute("data-i18n-placeholder");
     if (dict[key]) el.placeholder = dict[key];
   });
 }
-
-
 
 
 const translations = {
