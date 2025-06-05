@@ -364,3 +364,11 @@ body.logo-full-bg::before {
   font-size: 1.2rem;
 }
 
+.action-button {
+  padding: 6px 10px;
+  border: 1px solid #b4695d;
+  background-color: white;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
