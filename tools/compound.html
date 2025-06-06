@@ -5,8 +5,8 @@
   <title>複利試算｜FINORA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="../style.css" />
- <link rel="icon" href="favicon.png" type="image/png" />
-  
+  <link rel="icon" href="favicon.png" type="image/png" />
+
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
@@ -14,20 +14,24 @@
   <!-- FINORA Firebase 模組 -->
   <script src="../firebase-sync.js"></script>
 </head>
-  <body class="logo-full-bg">
-<body>
+<body class="logo-full-bg">
   <h1>模擬好好未來</h1>
-  <!-- ✅ 使用者與帳本資訊 -->
-<div id="user-info" style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;"></div>
-  <!-- ✅ 使用引導區塊 -->
-<div class="getting-started">
-    <p>🔢 輸入起始金額、年報酬率與時間,模擬複利增值的成長效果</p>
-</div>
 
+  <!-- ✅ 使用者與帳本資訊 -->
+  <div id="user-info" style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;"></div>
+
+  <!-- ✅ 使用引導區塊 -->
+  <div class="getting-started">
+    <p>🔢 輸入起始金額、年報酬率與時間，模擬複利增值的成長效果</p>
+  </div>
+
+  <!-- ✅ 資產區塊 -->
+  <div id="exchange-status" style="font-size: 0.85rem; color: #666;"></div>
   <div id="asset-summary" style="margin: 1rem 0; font-weight: bold;"></div>
   <div id="total-assets">💰 資產加總讀取中...</div>
   <div id="asset-list" style="margin-top: 1rem;"></div>
 
+  <!-- ✅ 複利輸入 -->
   <label>初始投入金額（元）：
     <input type="number" id="principal" />
   </label>
@@ -72,193 +76,197 @@
   <div id="fx-result" style="margin-top: 0.5rem;"></div>
   <div id="exchange-rates" style="margin-top: 1rem;"></div>
 
-<script>
-  let exchangeRates = {};
+  <script>
+    let exchangeRates = {};
 
-  async function fetchExchangeRates() {
-  const status = document.getElementById("exchange-status");
-  try {
-    if (status) status.textContent = "📡 查詢最新匯率中...";
-    
-    const res = await fetch("https://api.frankfurter.app/latest?from=USD&to=TWD,JPY,EUR");
-    const data = await res.json();
+    async function fetchExchangeRates() {
+      const status = document.getElementById("exchange-status");
+      try {
+        if (status) status.textContent = "📡 查詢最新匯率中...";
+        const res = await fetch("https://api.frankfurter.app/latest?from=USD&to=TWD,JPY,EUR");
+        const data = await res.json();
 
-    if (!data || !data.rates) throw new Error("無效匯率資料");
+        if (!data || !data.rates) throw new Error("無效匯率資料");
 
-    exchangeRates = {
-      USD: 1,
-      TWD: data.rates.TWD || 30,
-      JPY: data.rates.JPY || 150,
-      EUR: data.rates.EUR || 0.9,
-    };
+        exchangeRates = {
+          USD: 1,
+          TWD: data.rates.TWD || 30,
+          JPY: data.rates.JPY || 150,
+          EUR: data.rates.EUR || 0.9,
+        };
 
-    localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
-    if (status) status.textContent = "✅ 匯率更新完成";
-  } catch (e) {
-    console.warn("⚠️ 匯率查詢失敗，改用本地資料", e.message);
-    const stored = localStorage.getItem("exchangeRates");
-    if (stored && stored !== "undefined") {
-      exchangeRates = JSON.parse(stored);
-      if (status) status.textContent = "⚠️ 使用上次儲存的匯率資料";
-    } else {
-      exchangeRates = { USD: 1, TWD: 30, JPY: 150, EUR: 0.9 };
-      if (status) status.textContent = "⚠️ 使用預設匯率資料";
-    }
-  }
-  }
-
-
-  function calculateCompound() {
-    const p = parseFloat(document.getElementById("principal").value) || 0;
-    const r = (parseFloat(document.getElementById("rate").value) || 0) / 100;
-    const y = parseInt(document.getElementById("years").value) || 0;
-    const annual = parseFloat(document.getElementById("annual").value) || 0;
-    const monthly = parseFloat(document.getElementById("monthly").value) || 0;
-
-    let total = p;
-    const months = y * 12;
-    const monthlyRate = r / 12;
-
-    for (let m = 1; m <= months; m++) {
-      total *= (1 + monthlyRate);
-      total += monthly;
-      if (m % 12 === 0) total += annual;
-    }
-
-    document.getElementById("result").textContent =
-      `投入 ${y} 年後，期末總資產：約 ${total.toFixed(2)} 元`;
-
-    localStorage.setItem("compoundResult", total.toFixed(2));
-  }
-
-  function convertFx() {
-    const amt = parseFloat(document.getElementById("fx-amount").value) || 0;
-    const from = document.getElementById("fx-from").value;
-    const to = document.getElementById("fx-to").value;
-    if (!exchangeRates[from] || !exchangeRates[to]) return;
-    const result = (amt / exchangeRates[from]) * exchangeRates[to];
-    document.getElementById("fx-result").innerText =
-      `${amt} ${from} ≈ ${result.toFixed(2)} ${to}`;
-  }
-
-  async function loadAssets() {
-  if (!exchangeRates["TWD"]) {
-    document.getElementById("total-assets").textContent = "⚠️ 匯率尚未就緒，無法顯示市值";
-    return;
-  }
-
-  const selectedAccount = localStorage.getItem("selectedAccount") || "default";
-  let assets = [];
-
-  try {
-    assets = await FINORA_AUTH.fetchUserAssets();
-  } catch (e) {
-    const key = `assets_${selectedAccount}`;
-    assets = JSON.parse(localStorage.getItem(key) || "[]");
-  }
-
-  if (!assets.length) {
-    document.getElementById("asset-list").innerHTML = "⚠️ 尚未登記任何資產";
-    return;
-  }
-
-  const summary = {};         // 資產分類加總
-  const currencyTotals = {};  // 幣別總市值加總
-  let totalInTWD = 0;
-  let listHtml = "<ul>";
-
-  for (const item of assets) {
-    const type = item.type || "";
-    const currency = item.currency || "TWD";
-    const price = parseFloat(item.currentPrice || item.price || 0); // ✅ 修正取價方式
-    const shares = parseFloat(item.shares || item.units || 0);
-    const amount = parseFloat(item.amount || 0);
-    const cost = parseFloat(item.cost || 0);
-    const name = item.name || item.symbol || item.stock || item.fund || item.crypto || item.insurance || "-";
-
-    let marketValue = 0;
-    let profit = 0;
-
-    if (["股票", "基金", "加密貨幣"].includes(type)) {
-      marketValue = shares * price;
-      profit = marketValue - cost;
-    } else if (type === "儲蓄保險") {
-      marketValue = cost;
-    } else {
-      marketValue = amount;
-    }
-
-    // 資產分類加總
-    if (!summary[type]) summary[type] = {};
-    if (!summary[type][currency]) summary[type][currency] = 0;
-    summary[type][currency] += marketValue;
-
-    // 幣別總加總
-    if (!currencyTotals[currency]) currencyTotals[currency] = 0;
-    currencyTotals[currency] += marketValue;
-
-    // 折合台幣市值
-    const usdToTwd = exchangeRates["TWD"] || 30;
-    const usdToCurrency = exchangeRates[currency] || 1;
-    const rate = usdToTwd / usdToCurrency;
-    const marketTWD = marketValue * rate;
-    const profitTWD = profit * rate;
-
-    totalInTWD += marketTWD;
-
-    listHtml += `<li><strong>【${type}】</strong> ${name} ｜ 🪩 ${currency} ${marketValue.toLocaleString()}（盈餘 ${profitTWD.toFixed(0)} TWD）</li>`;
-  }
-
-  listHtml += "</ul>";
-  document.getElementById("asset-list").innerHTML = listHtml;
-
-  // 顯示資產總市值（台幣折合）
-  document.getElementById("total-assets").textContent =
-    `💰 目前資產總市值（折合台幣）：${Math.round(totalInTWD).toLocaleString()} 元`;
-
-  // 渲染分類加總
-  renderAssetSummary(summary);
-
-  // 渲染幣別總市值
-  let currencyHtml = "<br><strong>💱 幣別總市值：</strong><br>";
-  Object.entries(currencyTotals).forEach(([currency, amount]) => {
-    currencyHtml += `🌍 ${currency}：${amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}<br>`;
-  });
-  document.getElementById("asset-summary").innerHTML += currencyHtml;
-}
-
-  document.addEventListener("DOMContentLoaded", async () => {
-    try {
-      const user = await FINORA_AUTH.waitForLogin();
-      const email = user.email;
-      const selectedId = localStorage.getItem("selectedAccount");
-      const list = await FINORA_AUTH.fetchAccountList();
-      const index = list.findIndex(acc => acc.id === selectedId);
-      const displayName = list[index]?.displayName || selectedId;
-      const label = `使用者：${email}<br>帳本：${displayName}`;
-      document.getElementById("user-info").innerHTML = label;
-
-      await fetchExchangeRates();
-      await loadAssets();
-
-      const saved = localStorage.getItem("compoundResult");
-      if (saved) {
-        document.getElementById("result").textContent =
-          `🛎 最近一次試算結果：約 ${Number(saved).toLocaleString()} 元`;
+        localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
+        if (status) status.textContent = "✅ 匯率更新完成";
+      } catch (e) {
+        console.warn("⚠️ 匯率查詢失敗", e.message);
+        const stored = localStorage.getItem("exchangeRates");
+        if (stored && stored !== "undefined") {
+          exchangeRates = JSON.parse(stored);
+          if (status) status.textContent = "⚠️ 使用上次儲存的匯率資料";
+        } else {
+          exchangeRates = { USD: 1, TWD: 30, JPY: 150, EUR: 0.9 };
+          if (status) status.textContent = "⚠️ 使用預設匯率資料";
+        }
       }
-    } catch (e) {
-      alert("請先登入後再使用此功能");
     }
-  });
-</script>
-    <a href="../app.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374">← 返回首頁</a>
-<footer class="site-footer">
-  <p>© 2025 FINORA 好好存｜家庭友善資產整合工具</p>
-  <div class="footer-links">
-    <a href="howto.html">使用說明</a>・
-    <a href="mailto:service@finora.life?subject=聯絡詢問">聯絡我們</a>・
-    <a href="privacy.html">隱私權條款</a>
-  </div>
-</footer>
+
+    function calculateCompound() {
+      const p = parseFloat(document.getElementById("principal").value) || 0;
+      const r = (parseFloat(document.getElementById("rate").value) || 0) / 100;
+      const y = parseInt(document.getElementById("years").value) || 0;
+      const annual = parseFloat(document.getElementById("annual").value) || 0;
+      const monthly = parseFloat(document.getElementById("monthly").value) || 0;
+
+      let total = p;
+      const months = y * 12;
+      const monthlyRate = r / 12;
+
+      for (let m = 1; m <= months; m++) {
+        total *= (1 + monthlyRate);
+        total += monthly;
+        if (m % 12 === 0) total += annual;
+      }
+
+      document.getElementById("result").textContent =
+        `投入 ${y} 年後，期末總資產：約 ${total.toFixed(2)} 元`;
+
+      localStorage.setItem("compoundResult", total.toFixed(2));
+    }
+
+    function convertFx() {
+      const amt = parseFloat(document.getElementById("fx-amount").value) || 0;
+      const from = document.getElementById("fx-from").value;
+      const to = document.getElementById("fx-to").value;
+      if (!exchangeRates[from] || !exchangeRates[to]) return;
+      const result = (amt / exchangeRates[from]) * exchangeRates[to];
+      document.getElementById("fx-result").innerText =
+        `${amt} ${from} ≈ ${result.toFixed(2)} ${to}`;
+    }
+
+    function renderAssetSummary(summary) {
+      const summaryContainer = document.getElementById("asset-summary");
+      let html = "<strong>📊 資產分類加總：</strong><br>";
+      Object.entries(summary).forEach(([type, byCurrency]) => {
+        const line = Object.entries(byCurrency)
+          .map(([currency, amount]) => `${amount.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${currency}`)
+          .join(" ｜ ");
+        html += `【${type}】${line}<br>`;
+      });
+      summaryContainer.innerHTML = html;
+    }
+
+    async function loadAssets() {
+      if (!exchangeRates["TWD"]) {
+        document.getElementById("total-assets").textContent = "⚠️ 匯率尚未就緒，無法顯示市值";
+        return;
+      }
+
+      const selectedAccount = localStorage.getItem("selectedAccount") || "default";
+      let assets = [];
+
+      try {
+        assets = await FINORA_AUTH.fetchUserAssets();
+      } catch (e) {
+        const key = `assets_${selectedAccount}`;
+        assets = JSON.parse(localStorage.getItem(key) || "[]");
+      }
+
+      if (!assets.length) {
+        document.getElementById("asset-list").innerHTML = "⚠️ 尚未登記任何資產";
+        return;
+      }
+
+      const summary = {};
+      const currencyTotals = {};
+      let totalInTWD = 0;
+      let listHtml = "<ul>";
+
+      for (const item of assets) {
+        const type = item.type || "";
+        const currency = item.currency || "TWD";
+        const price = parseFloat(item.currentPrice || item.price || 0);
+        const shares = parseFloat(item.shares || item.units || 0);
+        const amount = parseFloat(item.amount || 0);
+        const cost = parseFloat(item.cost || 0);
+        const name = item.name || item.symbol || item.stock || item.fund || item.crypto || item.insurance || "-";
+
+        let marketValue = 0;
+        let profit = 0;
+
+        if (["股票", "基金", "加密貨幣"].includes(type)) {
+          marketValue = shares * price;
+          profit = marketValue - cost;
+        } else if (type === "儲蓄保險") {
+          marketValue = cost;
+        } else {
+          marketValue = amount;
+        }
+
+        if (!summary[type]) summary[type] = {};
+        if (!summary[type][currency]) summary[type][currency] = 0;
+        summary[type][currency] += marketValue;
+
+        if (!currencyTotals[currency]) currencyTotals[currency] = 0;
+        currencyTotals[currency] += marketValue;
+
+        const usdToTwd = exchangeRates["TWD"] || 30;
+        const usdToCurrency = exchangeRates[currency] || 1;
+        const rate = usdToTwd / usdToCurrency;
+        const marketTWD = marketValue * rate;
+        const profitTWD = profit * rate;
+
+        totalInTWD += marketTWD;
+
+        listHtml += `<li><strong>【${type}】</strong> ${name} ｜ 🪩 ${currency} ${marketValue.toLocaleString(undefined, {maximumFractionDigits:2})}（盈餘 ${profitTWD.toFixed(0)} TWD）</li>`;
+      }
+
+      listHtml += "</ul>";
+      document.getElementById("asset-list").innerHTML = listHtml;
+      document.getElementById("total-assets").textContent =
+        `💰 目前資產總市值（折合台幣）：${Math.round(totalInTWD).toLocaleString()} 元`;
+
+      renderAssetSummary(summary);
+
+      let currencyHtml = "<br><strong>💱 幣別總市值：</strong><br>";
+      Object.entries(currencyTotals).forEach(([currency, amount]) => {
+        currencyHtml += `🌍 ${currency}：${amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}<br>`;
+      });
+      document.getElementById("asset-summary").innerHTML += currencyHtml;
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      try {
+        const user = await FINORA_AUTH.waitForLogin();
+        const email = user.email;
+        const selectedId = localStorage.getItem("selectedAccount");
+        const list = await FINORA_AUTH.fetchAccountList();
+        const index = list.findIndex(acc => acc.id === selectedId);
+        const displayName = list[index]?.displayName || selectedId;
+        const label = `使用者：${email}<br>帳本：${displayName}`;
+        document.getElementById("user-info").innerHTML = label;
+
+        await fetchExchangeRates();
+        await loadAssets();
+
+        const saved = localStorage.getItem("compoundResult");
+        if (saved) {
+          document.getElementById("result").textContent =
+            `🛎 最近一次試算結果：約 ${Number(saved).toLocaleString()} 元`;
+        }
+      } catch (e) {
+        alert("請先登入後再使用此功能");
+      }
+    });
+  </script>
+
+  <a href="../app.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374">← 返回首頁</a>
+  <footer class="site-footer">
+    <p>© 2025 FINORA 好好存｜家庭友善資產整合工具</p>
+    <div class="footer-links">
+      <a href="howto.html">使用說明</a>・
+      <a href="mailto:service@finora.life?subject=聯絡詢問">聯絡我們</a>・
+      <a href="privacy.html">隱私權條款</a>
+    </div>
+  </footer>
 </body>
 </html>
