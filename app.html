@@ -95,7 +95,36 @@
         alert("🚪 已登出");
         location.reload();
       });
+// 帳本操作按鈕功能
+document.getElementById("rename-account-btn").addEventListener("click", async () => {
+  const newName = prompt(i18n("rename_prompt"), "");
+  if (newName) {
+    await FINORA_AUTH.renameAccount(newName);
+    alert(i18n("rename_success"));
+    location.reload();
+  }
+});
 
+document.getElementById("new-account-btn").addEventListener("click", () => {
+  document.getElementById("new-account-input-group").style.display = "block";
+});
+
+document.getElementById("save-new-account").addEventListener("click", async () => {
+  const nameInput = document.getElementById("new-account-name");
+  const name = nameInput.value.trim();
+  if (!name) return alert(i18n("account_name_required"));
+  await FINORA_AUTH.addAccount(name);
+  alert(i18n("add_success"));
+  location.reload();
+});
+
+document.getElementById("delete-account-btn").addEventListener("click", async () => {
+  if (confirm(i18n("confirm_delete"))) {
+    await FINORA_AUTH.deleteAccount();
+    alert(i18n("delete_success"));
+    location.reload();
+  }
+});
       // 使用者變動時更新登入狀態與帳本選單
       FINORA_AUTH.onUserChanged(async (user) => {
         const loginBtn = document.getElementById("login-btn");
