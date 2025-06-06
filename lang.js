@@ -168,7 +168,15 @@ label_amount: "金額：",
 label_from: "從：",
 label_to: "轉換為：",
 convert_button: "換算",
-exchange_updated: "✅ 匯率更新完成"
+exchange_updated: "✅ 匯率更新完成",
+   type_股票: "股票",
+type_基金: "基金",
+type_加密貨幣: "加密貨幣",
+type_儲蓄保險: "儲蓄保險",
+type_現金: "現金",
+type_房產: "房產",
+type_定存: "定存",
+type_其他: "其他"
 },
   
  "zh-Hans": {
@@ -311,7 +319,15 @@ label_amount: "金额：",
 label_from: "从：",
 label_to: "转换为：",
 convert_button: "换算",
-exchange_updated: "✅ 汇率更新完成"
+exchange_updated: "✅ 汇率更新完成",
+   type_股票: "股票",
+type_基金: "基金",
+type_加密貨幣: "加密货币",
+type_儲蓄保險: "储蓄保险",
+type_現金: "现金",
+type_房產: "房产",
+type_定存: "定存",
+type_其他: "其他"
 },
 
 "en": {
@@ -454,7 +470,15 @@ label_amount: "Amount:",
 label_from: "From:",
 label_to: "To:",
 convert_button: "Convert",
-exchange_updated: "✅ Exchange rates updated"
+exchange_updated: "✅ Exchange rates updated",
+  type_股票: "Stocks",
+type_基金: "Funds",
+type_加密貨幣: "Crypto",
+type_儲蓄保險: "Insurance",
+type_現金: "Cash",
+type_房產: "Real Estate",
+type_定存: "Fixed Deposit",
+type_其他: "Other"
 },
  "ja": {
   title: "FINORA 資産管理",
@@ -596,7 +620,15 @@ label_amount: "金額：",
 label_from: "から：",
 label_to: "へ：",
 convert_button: "換算",
-exchange_updated: "✅ 為替レート更新完了"
+exchange_updated: "✅ 為替レート更新完了",
+   type_股票: "株式",
+type_基金: "ファンド",
+type_加密貨幣: "暗号資産",
+type_儲蓄保險: "保険",
+type_現金: "現金",
+type_房產: "不動産",
+type_定存: "定期預金",
+type_其他: "その他"
 }
 };
 
