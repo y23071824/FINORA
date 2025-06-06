@@ -328,15 +328,16 @@ for (const type in totalsByType) {
   }
 }
 
-  // 幣別加總
-  for (const currency in totalsByCurrency) {
-    const total = totalsByCurrency[currency];
-    const rate = exchangeRates[currency] || 1;
-    const converted = (total * rate).toFixed(0);
-    const li = document.createElement("li");
-    li.textContent = `💱 ${currency}：${total.toFixed(2)} ≈ NT$ ${converted}`;
-    totalsList.appendChild(li);
-  }
+// 幣別加總（正確換算成 TWD）
+for (const currency in totalsByCurrency) {
+  const total = totalsByCurrency[currency];
+  const baseRate = exchangeRates[currency] || 1;
+  const rateToTWD = exchangeRates["TWD"] / baseRate;
+  const converted = (total * rateToTWD).toFixed(0);
+  const li = document.createElement("li");
+  li.textContent = `💱 ${currency}：${total.toFixed(2)} ≈ NT$ ${converted}`;
+  totalsList.appendChild(li);
+}
 
   // 最下方總資產換算（使用選擇的幣別）
   const selectedCurrency = localStorage.getItem("displayCurrency") || "TWD";
