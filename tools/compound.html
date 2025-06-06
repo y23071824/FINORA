@@ -6,7 +6,16 @@
   <title data-i18n="compound_title">複利試算｜FINORA</title>  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />  
   <link rel="stylesheet" href="../style.css" />  
-  <link rel="icon" href="favicon.png" type="image/png" />    <!-- Firebase SDK -->    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>    <!-- FINORA 模組 -->    <script src="../firebase-sync.js"></script>    <script src="../lang.js"></script> <!-- ✅ 多語系 -->  </head>  
+  <link rel="icon" href="favicon.png" type="image/png" />
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<!-- FINORA 模組 -->
+<script src="../firebase-sync.js"></script>
+<script src="../lang.js"></script> <!-- ✅ 多語系 -->
 <body class="logo-full-bg">  
   <h1 data-i18n="compound_title">模擬好好未來</h1>    <!-- ✅ 使用者與帳本資訊 -->    <div id="user-info" style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;"></div>    <!-- ✅ 使用引導區塊 -->    <div class="getting-started">  
     <p data-i18n="compound_intro">🔢 輸入起始金額、年報酬率與時間,模擬複利增值的成長效果</p>  
@@ -78,7 +87,7 @@ async function fetchExchangeRates() {
   const status = document.getElementById("exchange-status");  
   try {  
     if (status) status.textContent = i18n("fetching_exchange");  
-    const res = await fetch("https://api.frankfurter.app/latest?from=USD&to=TWD,JPY,EUR,CNY");  
+    const res = await fetch("https://api.frankfurter.app/latest?amount=1&from=USD&to=TWD,JPY,EUR,CNY");
     const data = await res.json();  
   
     if (!data || !data.rates) throw new Error(i18n("invalid_exchange"));  
