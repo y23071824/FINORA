@@ -138,6 +138,19 @@
       `${amt} ${from} ≈ ${result.toFixed(2)} ${to}`;
   }
 
+function renderAssetSummary(summary) {
+  const summaryContainer = document.getElementById("asset-summary");
+  let html = "<strong>📊 資產分類加總：</strong><br>";
+  Object.entries(summary).forEach(([type, byCurrency]) => {
+    const line = Object.entries(byCurrency)
+      .map(([currency, amount]) =>
+        `${amount.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${currency}`
+      ).join(" ｜ ");
+    html += `【${type}】${line}<br>`;
+  });
+  summaryContainer.innerHTML = html;
+}
+  
   async function loadAssets() {
   if (!exchangeRates["TWD"]) {
     document.getElementById("total-assets").textContent = "⚠️ 匯率尚未就緒，無法顯示市值";
