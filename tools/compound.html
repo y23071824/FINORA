@@ -155,7 +155,8 @@ function renderAssetSummary(summary) {
       .map(([currency, amount]) =>  
         `${amount.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${currency}`  
       ).join(" ｜ ");  
-    html += `【${type}】${line}<br>`;  
+    const translatedType = i18n(`type_${type}`) || type;
+html += `【${translatedType}】${line}<br>`;
   });  
   summaryContainer.innerHTML = html;  
 }  
