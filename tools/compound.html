@@ -216,6 +216,35 @@
         return `【${type}】${line}`;
       }).join("<br>");
   }
+// 幣別總和
+const currencyTotals = {}; // 幣別：加總市值
+assets.forEach(asset => {
+  const currency = asset.currency || "TWD";
+  const type = asset.type || "";
+  const price = parseFloat(asset.price) || 0;
+  const shares = parseFloat(asset.shares || asset.units || 0);
+  const amount = parseFloat(asset.amount || 0);
+  const cost = parseFloat(asset.cost || 0);
+  let marketValue = 0;
+
+  if (["股票", "基金", "加密貨幣"].includes(type)) {
+    marketValue = shares * price;
+  } else if (type === "儲蓄保險") {
+    marketValue = cost;
+  } else {
+    marketValue = amount;
+  }
+
+  if (!currencyTotals[currency]) currencyTotals[currency] = 0;
+  currencyTotals[currency] += marketValue;
+});
+
+// 顯示幣別總和
+let currencyHtml = "<strong>💱 幣別總市值：</strong><br>";
+Object.entries(currencyTotals).forEach(([currency, amount]) => {
+  currencyHtml += `🌍 ${currency}：${amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}<br>`;
+});
+document.getElementById("asset-summary").innerHTML += "<br>" + currencyHtml;
 
   document.addEventListener("DOMContentLoaded", async () => {
     try {
