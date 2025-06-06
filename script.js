@@ -213,6 +213,9 @@ async function handleSubmit(e) {
 // ===== Part 3：畫面渲染與計算 =====
 function render() {
   if (!Array.isArray(assets)) return;
+  if (!exchangeRates["TWD"]) {
+  console.warn("❌ TWD 匯率尚未就緒，跳過渲染");
+  return;
   if (!exchangeRates || Object.keys(exchangeRates).length === 0) {
     console.warn("❌ 缺少匯率資料，無法 render");
     return;
@@ -328,11 +331,9 @@ for (const type in totalsByType) {
   }
 }
 
-// 幣別加總（正確換算成 TWD）
 for (const currency in totalsByCurrency) {
   const total = totalsByCurrency[currency];
-  const baseRate = exchangeRates[currency] || 1;
-  const rateToTWD = exchangeRates["TWD"] / baseRate;
+  const rateToTWD = exchangeRates[currency] ? (exchangeRates["TWD"] / exchangeRates[currency]) : 1;
   const converted = (total * rateToTWD).toFixed(0);
   const li = document.createElement("li");
   li.textContent = `💱 ${currency}：${total.toFixed(2)} ≈ NT$ ${converted}`;
