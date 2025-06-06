@@ -218,8 +218,6 @@ function renderAssetSummary(summary) {
     const profitTWD = profit * rate;
 
     totalInTWD += marketTWD;
-
-    listHtml += `<li><strong>【${type}】</strong> ${name} ｜ 🪩 ${currency} ${marketValue.toLocaleString()}（盈餘 ${profitTWD.toFixed(0)} TWD）</li>`;
   }
 
   listHtml += "</ul>";
