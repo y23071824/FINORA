@@ -77,6 +77,7 @@
       <option>USD</option>
       <option>JPY</option>
       <option>EUR</option>
+      <option>CNY</option>
     </select>
   </label>
   <button onclick="convertFx()">換算</button>
@@ -90,7 +91,7 @@
   const status = document.getElementById("exchange-status"); // ✅ 補上
   try {
     if (status) status.textContent = "📡 查詢最新匯率中...";
-    const res = await fetch("https://api.frankfurter.app/latest?from=USD&to=TWD,JPY,EUR");
+    const res = await fetch("https://api.frankfurter.app/latest?from=USD&to=TWD,JPY,EUR,CNY");
     const data = await res.json();
 
     if (!data || !data.rates) throw new Error("無效匯率資料");
@@ -100,6 +101,7 @@
       TWD: data.rates.TWD || 30,
       JPY: data.rates.JPY || 150,
       EUR: data.rates.EUR || 0.9,
+      CNY: data.rates.CNY || 7,
     };
 
     localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
@@ -189,7 +191,6 @@ function renderAssetSummary(summary) {
   const currencyTotals = {};  // 幣別總市值加總
   const selectedCurrency = document.getElementById("currency-select").value || "TWD";
 let totalInSelectedCurrency = 0;
-  let listHtml = "<ul>";
 
   for (const item of assets) {
     const type = item.type || "";
@@ -230,8 +231,7 @@ const marketConverted = marketValue * rate;
 totalInSelectedCurrency += marketConverted;
   }
 
-  listHtml += "</ul>";
-  document.getElementById("asset-list").innerHTML = listHtml;
+  document.getElementById("asset-list").innerHTML = "";
 
   // 顯示資產總市值（台幣折合）
   document.getElementById("total-assets").textContent =
@@ -272,8 +272,6 @@ const label = `使用者：${user.email}<br>帳本：${displayName}`;
 document.getElementById("user-info").innerHTML = label;
       
 const savedCurrency = localStorage.getItem("preferredCurrency") || "TWD";
-document.getElementById("currency-select").value = savedCurrency;
-      
       await fetchExchangeRates();
       await loadAssets();
 
