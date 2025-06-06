@@ -48,6 +48,8 @@
 
   <hr />
   <h2>💱 匯率換算</h2>
+<div id="exchange-status" style="font-size: 0.85rem; color: #666; margin-bottom: 0.5rem;"></div>
+
   <label>金額：
     <input type="number" id="fx-amount" />
   </label>
@@ -74,11 +76,7 @@
 <script>
   let exchangeRates = {};
 
-  async function fetchExchangeRates() {
-  const status = document.getElementById("exchange-status");
-  try {
-    if (status) status.textContent = "📡 查詢最新匯率中...";
-    
+  aync function fetchExchangeRates() {ㄧ
     const res = await fetch("https://api.frankfurter.app/latest?from=USD&to=TWD,JPY,EUR");
     const data = await res.json();
 
