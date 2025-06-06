@@ -241,12 +241,24 @@ function renderAssetSummary(summary) {
     try {
       const user = await FINORA_AUTH.waitForLogin();
       const email = user.email;
-      const selectedId = localStorage.getItem("selectedAccount");
-      const list = await FINORA_AUTH.fetchAccountList();
-      const index = list.findIndex(acc => acc.id === selectedId);
-      const displayName = list[index]?.displayName || selectedId;
-      const label = `使用者：${email}<br>帳本：${displayName}`;
-      document.getElementById("user-info").innerHTML = label;
+ const selectedId = localStorage.getItem("selectedAccount");
+const list = await FINORA_AUTH.fetchAccountList();
+
+// 找不到 selectedAccount 或帳本列表中沒有對應 ID，就用第一本帳本（或顯示錯誤）
+let selected = list.find(acc => acc.id === selectedId);
+
+if (!selected && list.length > 0) {
+  selected = list[0]; // fallback 用第一本帳本
+  localStorage.setItem("selectedAccount", selected.id);
+} else if (!selected) {
+  alert("⚠️ 找不到任何帳本，請先回首頁建立帳本");
+  window.location.href = "../app.html";
+  return;
+}
+
+const displayName = selected.displayName || selected.id;
+const label = `使用者：${user.email}<br>帳本：${displayName}`;
+document.getElementById("user-info").innerHTML = label;
 
       await fetchExchangeRates();
       await loadAssets();
