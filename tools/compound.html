@@ -24,7 +24,17 @@
 </div>
 
   <div id="asset-summary" style="margin: 1rem 0; font-weight: bold;"></div>
-  <div id="total-assets">💰 資產加總讀取中...</div>
+  <label for="currency-select" style="display: block; margin-top: 1rem;">
+  選擇顯示幣別：
+  <select id="currency-select">
+    <option value="TWD">TWD</option>
+    <option value="USD">USD</option>
+    <option value="JPY">JPY</option>
+    <option value="EUR">EUR</option>
+    <option value="CNY">CNY</option>
+  </select>
+  </label>
+    <div id="total-assets">💰 資產加總讀取中...</div>
   <div id="asset-list" style="margin-top: 1rem;"></div>
 
   <label>初始投入金額（元）：
@@ -177,7 +187,8 @@ function renderAssetSummary(summary) {
 
   const summary = {};         // 資產分類加總
   const currencyTotals = {};  // 幣別總市值加總
-  let totalInTWD = 0;
+  const selectedCurrency = document.getElementById("currency-select").value || "TWD";
+let totalInSelectedCurrency = 0;
   let listHtml = "<ul>";
 
   for (const item of assets) {
@@ -210,14 +221,13 @@ function renderAssetSummary(summary) {
     if (!currencyTotals[currency]) currencyTotals[currency] = 0;
     currencyTotals[currency] += marketValue;
 
-    // 折合台幣市值
-    const usdToTwd = exchangeRates["TWD"] || 30;
-    const usdToCurrency = exchangeRates[currency] || 1;
-    const rate = usdToTwd / usdToCurrency;
-    const marketTWD = marketValue * rate;
-    const profitTWD = profit * rate;
-
-    totalInTWD += marketTWD;
+    // 通用幣別折算邏輯
+    
+const baseToSelected = exchangeRates[selectedCurrency] || 1;
+const baseToCurrency = exchangeRates[currency] || 1;
+const rate = baseToSelected / baseToCurrency;
+const marketConverted = marketValue * rate;
+totalInSelectedCurrency += marketConverted;
   }
 
   listHtml += "</ul>";
@@ -225,7 +235,7 @@ function renderAssetSummary(summary) {
 
   // 顯示資產總市值（台幣折合）
   document.getElementById("total-assets").textContent =
-    `💰 目前資產總市值（折合台幣）：${Math.round(totalInTWD).toLocaleString()} 元`;
+  `💰 目前資產總市值（折合 ${selectedCurrency}）：${Math.round(totalInSelectedCurrency).toLocaleString()} ${selectedCurrency}`;
 
   // 渲染分類加總
   renderAssetSummary(summary);
@@ -260,7 +270,10 @@ if (!selected && list.length > 0) {
 const displayName = selected.displayName || selected.id;
 const label = `使用者：${user.email}<br>帳本：${displayName}`;
 document.getElementById("user-info").innerHTML = label;
-
+      
+const savedCurrency = localStorage.getItem("preferredCurrency") || "TWD";
+document.getElementById("currency-select").value = savedCurrency;
+      
       await fetchExchangeRates();
       await loadAssets();
 
@@ -273,6 +286,11 @@ document.getElementById("user-info").innerHTML = label;
       alert("請先登入後再使用此功能");
     }
   });
+  document.getElementById("currency-select").addEventListener("change", () => {
+  const selected = document.getElementById("currency-select").value;
+  localStorage.setItem("preferredCurrency", selected);
+  loadAssets(); // 切換幣別後重算市值
+});
 </script>
     <a href="../app.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374">← 返回首頁</a>
 <footer class="site-footer">
