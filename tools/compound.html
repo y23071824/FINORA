@@ -215,9 +215,9 @@ async function loadAssets() {
   }  
   
   document.getElementById("asset-list").innerHTML = "";  
-  document.getElementById("total-assets").textContent ="";  
-    `${i18n("total_asset_value", { currency: selectedCurrency })}${Math.round(totalInSelectedCurrency).toLocaleString()} ${selectedCurrency}`;  
-  
+document.getElementById("total-assets").textContent =
+  `${i18n("total_asset_value", { currency: selectedCurrency })}${Math.round(totalInSelectedCurrency).toLocaleString()} ${selectedCurrency}`;
+
   renderAssetSummary(summary);  
   
   let currencyHtml = `<br><strong>${i18n("currency_totals")}</strong><br>`;  
