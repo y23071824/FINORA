@@ -162,7 +162,13 @@ label_annual: "每年定期投入金額：",
 label_monthly: "每月定期投入金額：",
 compound_input_title: "📈 複利試算",
 calculate_button: "計算複利",
-last_calculated: "上次試算結果："
+last_calculated: "上次試算結果：",
+   exchange_tool: "匯率換算",
+label_amount: "金額：",
+label_from: "從：",
+label_to: "轉換為：",
+convert_button: "換算",
+exchange_updated: "✅ 匯率更新完成"
 },
   
  "zh-Hans": {
@@ -299,7 +305,13 @@ label_annual: "每年定期投入金额：",
 label_monthly: "每月定期投入金额：",
 compound_input_title: "📈 复利试算",
 calculate_button: "计算复利",
-last_calculated: "上次试算结果："
+last_calculated: "上次试算结果：",
+   exchange_tool: "汇率换算",
+label_amount: "金额：",
+label_from: "从：",
+label_to: "转换为：",
+convert_button: "换算",
+exchange_updated: "✅ 汇率更新完成"
 },
 
 "en": {
@@ -436,7 +448,13 @@ label_annual: "Annual Regular Investment:",
 label_monthly: "Monthly Regular Investment:",
 compound_input_title: "📈 Compound Calculator",
 calculate_button: "Calculate Compound",
-last_calculated: "Last calculated:"
+last_calculated: "Last calculated:",
+  exchange_tool: "Exchange Rate Converter",
+label_amount: "Amount:",
+label_from: "From:",
+label_to: "To:",
+convert_button: "Convert",
+exchange_updated: "✅ Exchange rates updated"
 },
  "ja": {
   title: "FINORA 資産管理",
@@ -572,7 +590,13 @@ label_annual: "年間定期投資額：",
 label_monthly: "毎月定期投資額：",
 compound_input_title: "📈 複利計算",
 calculate_button: "複利を計算",
-last_calculated: "前回の計算結果："
+last_calculated: "前回の計算結果：",
+   exchange_tool: "為替換算",
+label_amount: "金額：",
+label_from: "から：",
+label_to: "へ：",
+convert_button: "換算",
+exchange_updated: "✅ 為替レート更新完了"
 }
 };
 
