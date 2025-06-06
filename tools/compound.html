@@ -32,7 +32,7 @@
     <option value="EUR">EUR</option>
     <option value="CNY">CNY</option>
   </select>
-<div id="total-assets" style="display: none;"></div>
+<div id="total-assets" data-i18n="total_asset_loading">💰 資產加總讀取中...</div>
   <div id="asset-list" style="margin-top: 1rem;"></div>
 
   <hr />
@@ -215,7 +215,7 @@ async function loadAssets() {
   }  
   
   document.getElementById("asset-list").innerHTML = "";  
-  document.getElementById("total-assets").textContent =  
+  document.getElementById("total-assets").textContent ="";  
     `${i18n("total_asset_value", { currency: selectedCurrency })}${Math.round(totalInSelectedCurrency).toLocaleString()} ${selectedCurrency}`;  
   
   renderAssetSummary(summary);  
