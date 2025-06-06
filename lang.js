@@ -154,8 +154,17 @@ privacy_start: "立即開始使用",
     footer_guide: "使用說明",
     footer_contact: "聯絡我們",
     footer_privacy: "隱私權條款",
-    footer_copyright: "© 2025 FINORA 好好存｜家庭友善資產整合工具"
+    footer_copyright: "© 2025 FINORA 好好存｜家庭友善資產整合工具",
+   label_principal: "初始投入金額（元）：",
+label_rate: "年報酬率（%）：",
+label_years: "投資年數：",
+label_annual: "每年定期投入金額：",
+label_monthly: "每月定期投入金額：",
+compound_input_title: "📈 複利試算",
+calculate_button: "計算複利",
+last_calculated: "上次試算結果："
 },
+  
  "zh-Hans": {
   title: "FINORA 好好存",
   subtitle: "让资产更有力，退休不焦虑。",
@@ -282,8 +291,17 @@ privacy_start: "立即开始使用",
     footer_guide: "使用说明",
     footer_contact: "联系我们",
     footer_privacy: "隐私权条款",
-    footer_copyright: "© 2025 FINORA 好好存｜家庭友善资产整合工具"
+    footer_copyright: "© 2025 FINORA 好好存｜家庭友善资产整合工具",
+   label_principal: "初始投入金额（元）：",
+label_rate: "年回报率（%）：",
+label_years: "投资年数：",
+label_annual: "每年定期投入金额：",
+label_monthly: "每月定期投入金额：",
+compound_input_title: "📈 复利试算",
+calculate_button: "计算复利",
+last_calculated: "上次试算结果："
 },
+
 "en": {
   title: "FINORA Wealth Planner",
   subtitle: "Make your assets powerful. Retire without worries.",
@@ -410,7 +428,15 @@ privacy_start: "Start Using Now",
     footer_guide: "How to Use",
     footer_contact: "Contact Us",
     footer_privacy: "Privacy Policy",
-    footer_copyright: "© 2025 FINORA｜A family-friendly asset management tool"
+    footer_copyright: "© 2025 FINORA｜A family-friendly asset management tool",
+  label_principal: "Initial Investment (NTD):",
+label_rate: "Annual Return Rate (%):",
+label_years: "Investment Years:",
+label_annual: "Annual Regular Investment:",
+label_monthly: "Monthly Regular Investment:",
+compound_input_title: "📈 Compound Calculator",
+calculate_button: "Calculate Compound",
+last_calculated: "Last calculated:"
 },
  "ja": {
   title: "FINORA 資産管理",
@@ -538,7 +564,15 @@ privacy_start: "今すぐ始める",
     footer_guide: "使い方",
     footer_contact: "お問い合わせ",
     footer_privacy: "プライバシーポリシー",
-    footer_copyright: "© 2025 FINORA｜家族向けの資産統合ツール"
+    footer_copyright: "© 2025 FINORA｜家族向けの資産統合ツール",
+   label_principal: "初期投資金額（元）：",
+label_rate: "年利回り（%）：",
+label_years: "投資年数：",
+label_annual: "年間定期投資額：",
+label_monthly: "毎月定期投資額：",
+compound_input_title: "📈 複利計算",
+calculate_button: "複利を計算",
+last_calculated: "前回の計算結果："
 }
 };
 
