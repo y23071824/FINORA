@@ -218,6 +218,32 @@ document.addEventListener("DOMContentLoaded", async () => {
     alert(i18n("please_login"));  
   }  
 });  
+    <hr />
+<h2 data-i18n="exchange_tool">💱 匯率換算</h2>
+<div id="exchange-status" style="font-size: 0.85rem; color: #666; margin-bottom: 0.5rem;"></div>
+
+<label data-i18n="label_amount">金額：
+  <input type="number" id="fx-amount" />
+</label>
+<label data-i18n="label_from">從：
+  <select id="fx-from">
+    <option value="USD">USD</option>
+    <option value="TWD">TWD</option>
+    <option value="JPY">JPY</option>
+    <option value="EUR">EUR</option>
+  </select>
+</label>
+<label data-i18n="label_to">轉換為：
+  <select id="fx-to">
+    <option value="TWD">TWD</option>
+    <option value="USD">USD</option>
+    <option value="JPY">JPY</option>
+    <option value="EUR">EUR</option>
+    <option value="CNY">CNY</option>
+  </select>
+</label>
+<button onclick="convertFx()" data-i18n="convert_button">換算</button>
+<div id="fx-result" style="margin-top: 0.5rem;"></div>
 </script>  <a href="../app.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374" data-i18n="back_home_link">← 返回首頁</a>
 
 <footer class="site-footer">  
