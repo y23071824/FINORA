@@ -2,36 +2,30 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title data-i18n="compound_title">複利試算｜FINORA</title>
+  <title>複利試算｜FINORA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="../style.css" />
- <link rel="icon" href="/favicon.png" type="image/png" />
-
+ <link rel="icon" href="favicon.png" type="image/png" />
+  
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-
-  <!-- FINORA 模組 -->
+  <!-- FINORA Firebase 模組 -->
   <script src="../firebase-sync.js"></script>
-  <script src="../lang.js"></script> <!-- ✅ 多語系 -->
 </head>
-<body class="logo-full-bg">
-  <h1 data-i18n="compound_title">模擬好好未來</h1>
-
+  <body class="logo-full-bg">
+  <h1>模擬好好未來</h1>
   <!-- ✅ 使用者與帳本資訊 -->
-  <div id="user-info" style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;"></div>
-
+<div id="user-info" style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;"></div>
   <!-- ✅ 使用引導區塊 -->
-  <div class="getting-started">
-    <p data-i18n="compound_intro">🔢 輸入起始金額、年報酬率與時間,模擬複利增值的成長效果</p>
-  </div>
+<div class="getting-started">
+    <p>🔢 輸入起始金額、年報酬率與時間,模擬複利增值的成長效果</p>
+</div>
 
   <div id="asset-summary" style="margin: 1rem 0; font-weight: bold;"></div>
-
-  <label for="currency-select" style="display: block; margin-top: 1rem;" data-i18n="currency_label">
-    資產總市值幣別：
-  </label>
+  <label for="currency-select" style="display: block; margin-top: 1rem;">
+  資產總市值幣別：
   <select id="currency-select">
     <option value="TWD">TWD</option>
     <option value="USD">USD</option>
@@ -39,9 +33,56 @@
     <option value="EUR">EUR</option>
     <option value="CNY">CNY</option>
   </select>
-
-  <div id="total-assets" data-i18n="total_asset_loading">💰 資產加總讀取中...</div>
+  </label>
+    <div id="total-assets">💰 資產加總讀取中...</div>
   <div id="asset-list" style="margin-top: 1rem;"></div>
+
+  <label>初始投入金額（元）：
+    <input type="number" id="principal" />
+  </label>
+  <label>年報酬率（%）：
+    <input type="number" id="rate" />
+  </label>
+  <label>投資年數：
+    <input type="number" id="years" />
+  </label>
+  <label>每年定期投入金額：
+    <input type="number" id="annual" />
+  </label>
+  <label>每月定期投入金額：
+    <input type="number" id="monthly" />
+  </label>
+  <button onclick="calculateCompound()">計算複利</button>
+
+  <div id="result" style="margin-top: 1rem; font-weight: bold;"></div>
+
+  <hr />
+  <h2>💱 匯率換算</h2>
+<div id="exchange-status" style="font-size: 0.85rem; color: #666; margin-bottom: 0.5rem;"></div>
+
+  <label>金額：
+    <input type="number" id="fx-amount" />
+  </label>
+  <label>從：
+    <select id="fx-from">
+      <option>USD</option>
+      <option>TWD</option>
+      <option>JPY</option>
+      <option>EUR</option>
+    </select>
+  </label>
+  <label>轉換為：
+    <select id="fx-to">
+      <option>TWD</option>
+      <option>USD</option>
+      <option>JPY</option>
+      <option>EUR</option>
+      <option>CNY</option>
+    </select>
+  </label>
+  <button onclick="convertFx()">換算</button>
+  <div id="fx-result" style="margin-top: 0.5rem;"></div>
+  <div id="exchange-rates" style="margin-top: 1rem;"></div>
   
 <script>
 let exchangeRates = {};
