@@ -1,77 +1,68 @@
-<!DOCTYPE html>
 
-<html lang="zh-Hant">  
-<head>  
-  <meta charset="UTF-8" />  
-  <title data-i18n="compound_title">複利試算｜FINORA</title>  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />  
-  <link rel="stylesheet" href="../style.css" />  
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title data-i18n="compound_title">複利試算｜FINORA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../style.css" />
   <link rel="icon" href="favicon.png" type="image/png" />
 
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
-<!-- FINORA 模組 -->
-<script src="../firebase-sync.js"></script>
-<script src="../lang.js"></script> <!-- ✅ 多語系 -->
+  <!-- FINORA 模組 -->
+  <script src="../firebase-sync.js"></script>
+  <script src="../lang.js"></script> <!-- ✅ 多語系 -->
 </head>
-  
-  <body class="logo-full-bg">  
-  <h1 data-i18n="compound_title">模擬好好未來</h1>    <!-- ✅ 使用者與帳本資訊 -->    <div id="user-info" style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;"></div>    <!-- ✅ 使用引導區塊 -->    <div class="getting-started">  
-    <p data-i18n="compound_intro">🔢 輸入起始金額、年報酬率與時間,模擬複利增值的成長效果</p>  
-  </div>    <div id="asset-summary" style="margin: 1rem 0; font-weight: bold;"></div>    <label for="currency-select" style="display: block; margin-top: 1rem;" data-i18n="currency_label">  
-    資產總市值幣別：  
-  </label>  
-  <select id="currency-select">  
-    <option value="TWD">TWD</option>  
-    <option value="USD">USD</option>  
-    <option value="JPY">JPY</option>  
-    <option value="EUR">EUR</option>  
-    <option value="CNY">CNY</option>  
-  </select>    
-  <div id="asset-list" style="margin-top: 1rem;"></div> 
+<body class="logo-full-bg">
+  <h1 data-i18n="compound_title">模擬好好未來</h1>
+  <div id="user-info" style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;"></div>
+  <div class="getting-started">
+    <p data-i18n="compound_intro">🔢 輸入起始金額、年報酬率與時間,模擬複利增值的成長效果</p>
+  </div>
+  <div id="asset-summary" style="margin: 1rem 0; font-weight: bold;"></div>
+  <label for="currency-select" style="display: block; margin-top: 1rem;" data-i18n="currency_label">資產總市值幣別：</label>
+  <select id="currency-select">
+    <option value="TWD">TWD</option>
+    <option value="USD">USD</option>
+    <option value="JPY">JPY</option>
+    <option value="EUR">EUR</option>
+    <option value="CNY">CNY</option>
+  </select>
+  <div id="total-assets" data-i18n="total_asset_loading">💰 資產加總讀取中...</div>
+  <div id="asset-list" style="margin-top: 1rem;"></div>
 
-<hr />
-<h2 data-i18n="compound_input_title">📈 複利試算</h2>
-
-<label data-i18n="label_principal">初始投入金額（元）：
+  <hr />
+  <h2 data-i18n="compound_input_title">📈 複利試算</h2>
+  <label for="principal" data-i18n="label_principal">初始投入金額（元）：</label>
   <input type="number" id="principal" />
-</label>
-<label data-i18n="label_rate">年報酬率（%）：
+  <label for="rate" data-i18n="label_rate">年報酬率（%）：</label>
   <input type="number" id="rate" />
-</label>
-<label data-i18n="label_years">投資年數：
+  <label for="years" data-i18n="label_years">投資年數：</label>
   <input type="number" id="years" />
-</label>
-<label data-i18n="label_annual">每年定期投入金額：
+  <label for="annual" data-i18n="label_annual">每年定期投入金額：</label>
   <input type="number" id="annual" />
-</label>
-<label data-i18n="label_monthly">每月定期投入金額：
+  <label for="monthly" data-i18n="label_monthly">每月定期投入金額：</label>
   <input type="number" id="monthly" />
-</label>
-<button onclick="calculateCompound()" data-i18n="calculate_button">計算複利</button>
+  <button onclick="calculateCompound()" data-i18n="calculate_button">計算複利</button>
+  <div id="result" style="margin-top: 1rem; font-weight: bold;"></div>
 
-<div id="result" style="margin-top: 1rem; font-weight: bold;"></div>
-  
-<!-- 🔽 匯率換算區塊：放在 script 之前 -->
-<hr />
-<h2 data-i18n="exchange_tool">💱 匯率換算</h2>
-<div id="exchange-status" style="font-size: 0.85rem; color: #666; margin-bottom: 0.5rem;"></div>
-
-<label data-i18n="label_amount">金額：
+  <hr />
+  <h2 data-i18n="exchange_tool">💱 匯率換算</h2>
+  <div id="exchange-status" style="font-size: 0.85rem; color: #666; margin-bottom: 0.5rem;"></div>
+  <label for="fx-amount" data-i18n="label_amount">金額：</label>
   <input type="number" id="fx-amount" />
-</label>
-<label data-i18n="label_from">從：
+  <label for="fx-from" data-i18n="label_from">從：</label>
   <select id="fx-from">
     <option value="USD">USD</option>
     <option value="TWD">TWD</option>
     <option value="JPY">JPY</option>
     <option value="EUR">EUR</option>
   </select>
-</label>
-<label data-i18n="label_to">轉換為：
+  <label for="fx-to" data-i18n="label_to">轉換為：</label>
   <select id="fx-to">
     <option value="TWD">TWD</option>
     <option value="USD">USD</option>
@@ -79,9 +70,8 @@
     <option value="EUR">EUR</option>
     <option value="CNY">CNY</option>
   </select>
-</label>
-<button onclick="convertFx()" data-i18n="convert_button">換算</button>
-<div id="fx-result" style="margin-top: 0.5rem;"></div>
+  <button onclick="convertFx()" data-i18n="convert_button">換算</button>
+  <div id="fx-result" style="margin-top: 0.5rem;"></div>
   
   <script>  
 let exchangeRates = {};  
@@ -282,15 +272,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     alert(i18n("please_login"));  
   }  
 });  
-</script>  <a href="../app.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374" data-i18n="back_home_link">← 返回首頁</a>
-
-<footer class="site-footer">  
-  <p data-i18n="footer_copyright">© 2025 FINORA 好好存｜家庭友善資產整合工具</p>  
-  <div class="footer-links">  
-    <a href="howto.html" data-i18n="footer_guide">使用說明</a>・  
-    <a href="mailto:service@finora.life?subject=聯絡詢問" data-i18n="footer_contact">聯絡我們</a>・  
-    <a href="privacy.html" data-i18n="footer_privacy">隱私權條款</a>  
-  </div>  
-</footer>  
-</body>  
+</script>  
+  
+  <a href="../app.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374" data-i18n="back_home_link">← 返回首頁</a>
+  <footer class="site-footer">
+    <p data-i18n="footer_copyright">© 2025 FINORA 好好存｜家庭友善資產整合工具</p>
+    <div class="footer-links">
+      <a href="howto.html" data-i18n="footer_guide">使用說明</a>・
+      <a href="mailto:service@finora.life?subject=聯絡詢問" data-i18n="footer_contact">聯絡我們</a>・
+      <a href="privacy.html" data-i18n="footer_privacy">隱私權條款</a>
+    </div>
+  </footer>
+</body>
 </html>
