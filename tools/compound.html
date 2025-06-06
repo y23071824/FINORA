@@ -142,109 +142,90 @@
   }
 
   async function loadAssets() {
-    if (!exchangeRates["TWD"]) {
-      document.getElementById("total-assets").textContent = "⚠️ 匯率尚未就緒，無法顯示市值";
-      return;
-    }
-
-    const selectedAccount = localStorage.getItem("selectedAccount") || "default";
-    let assets = [];
-
-    try {
-      assets = await FINORA_AUTH.fetchUserAssets();
-    } catch (e) {
-      const key = `assets_${selectedAccount}`;
-      assets = JSON.parse(localStorage.getItem(key) || "[]");
-    }
-
-    let total = 0;
-    const summary = {};
-    let listHtml = "<ul>";
-
-    for (const item of assets) {
-      const type = item.type || "";
-      const currency = item.currency || "TWD";
-      const price = parseFloat(item.price) || 0;
-      const units = parseFloat(item.shares) || parseFloat(item.units) || 0;
-      const amount = parseFloat(item.amount) || 0;
-      const cost = parseFloat(item.cost) || 0;
-      const name = item.name || item.symbol || item.stock || item.fund || item.crypto || item.insurance || "-";
-
-      let marketValue = 0;
-      let profit = 0;
-
-      if (["股票", "基金", "加密貨幣"].includes(type)) {
-        marketValue = units * price;
-        profit = marketValue - cost;
-      } else if (type === "儲蓄保險") {
-        marketValue = cost;
-      } else {
-        marketValue = amount;
-      }
-
-      if (!summary[type]) summary[type] = {};
-      if (!summary[type][currency]) summary[type][currency] = 0;
-      summary[type][currency] += marketValue;
-
-      const usdToTwd = exchangeRates["TWD"] || 30;
-      const usdToCurrency = exchangeRates[currency] || 1;
-      const rate = usdToTwd / usdToCurrency;
-      const marketTWD = marketValue * rate;
-      const profitTWD = profit * rate;
-
-      total += marketTWD;
-
-      listHtml += `<li><strong>【${type}】</strong> ${name} ｜ 🪩 ${currency} ${marketValue.toLocaleString()}（盈餘 ${profitTWD.toFixed(0)} TWD）</li>`;
-    }
-
-    listHtml += "</ul>";
-
-    document.getElementById("total-assets").textContent =
-      `💰 目前資產總市值（折合台幣）：${Math.round(total).toLocaleString()} 元`;
-    document.getElementById("asset-list").innerHTML = listHtml;
-
-    renderAssetSummary(summary);
+  if (!exchangeRates["TWD"]) {
+    document.getElementById("total-assets").textContent = "⚠️ 匯率尚未就緒，無法顯示市值";
+    return;
   }
 
-  function renderAssetSummary(summary) {
-    const summaryContainer = document.getElementById("asset-summary");
-    summaryContainer.innerHTML = "<strong>💵 資產分類加總：</strong><br>" + 
-      Object.entries(summary).map(([type, byCurrency]) => {
-        const line = Object.entries(byCurrency)
-          .map(([currency, amount]) => `${amount.toLocaleString()} ${currency}`)
-          .join(" ｜ ");
-        return `【${type}】${line}`;
-      }).join("<br>");
-  }
-// 幣別總和
-const currencyTotals = {}; // 幣別：加總市值
-assets.forEach(asset => {
-  const currency = asset.currency || "TWD";
-  const type = asset.type || "";
-  const price = parseFloat(asset.price) || 0;
-  const shares = parseFloat(asset.shares || asset.units || 0);
-  const amount = parseFloat(asset.amount || 0);
-  const cost = parseFloat(asset.cost || 0);
-  let marketValue = 0;
+  const selectedAccount = localStorage.getItem("selectedAccount") || "default";
+  let assets = [];
 
-  if (["股票", "基金", "加密貨幣"].includes(type)) {
-    marketValue = shares * price;
-  } else if (type === "儲蓄保險") {
-    marketValue = cost;
-  } else {
-    marketValue = amount;
+  try {
+    assets = await FINORA_AUTH.fetchUserAssets();
+  } catch (e) {
+    const key = `assets_${selectedAccount}`;
+    assets = JSON.parse(localStorage.getItem(key) || "[]");
   }
 
-  if (!currencyTotals[currency]) currencyTotals[currency] = 0;
-  currencyTotals[currency] += marketValue;
-});
+  if (!assets.length) {
+    document.getElementById("asset-list").innerHTML = "⚠️ 尚未登記任何資產";
+    return;
+  }
 
-// 顯示幣別總和
-let currencyHtml = "<strong>💱 幣別總市值：</strong><br>";
-Object.entries(currencyTotals).forEach(([currency, amount]) => {
-  currencyHtml += `🌍 ${currency}：${amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}<br>`;
-});
-document.getElementById("asset-summary").innerHTML += "<br>" + currencyHtml;
+  const summary = {};         // 資產分類加總
+  const currencyTotals = {};  // 幣別總市值加總
+  let totalInTWD = 0;
+  let listHtml = "<ul>";
+
+  for (const item of assets) {
+    const type = item.type || "";
+    const currency = item.currency || "TWD";
+    const price = parseFloat(item.currentPrice || item.price || 0); // ✅ 修正取價方式
+    const shares = parseFloat(item.shares || item.units || 0);
+    const amount = parseFloat(item.amount || 0);
+    const cost = parseFloat(item.cost || 0);
+    const name = item.name || item.symbol || item.stock || item.fund || item.crypto || item.insurance || "-";
+
+    let marketValue = 0;
+    let profit = 0;
+
+    if (["股票", "基金", "加密貨幣"].includes(type)) {
+      marketValue = shares * price;
+      profit = marketValue - cost;
+    } else if (type === "儲蓄保險") {
+      marketValue = cost;
+    } else {
+      marketValue = amount;
+    }
+
+    // 資產分類加總
+    if (!summary[type]) summary[type] = {};
+    if (!summary[type][currency]) summary[type][currency] = 0;
+    summary[type][currency] += marketValue;
+
+    // 幣別總加總
+    if (!currencyTotals[currency]) currencyTotals[currency] = 0;
+    currencyTotals[currency] += marketValue;
+
+    // 折合台幣市值
+    const usdToTwd = exchangeRates["TWD"] || 30;
+    const usdToCurrency = exchangeRates[currency] || 1;
+    const rate = usdToTwd / usdToCurrency;
+    const marketTWD = marketValue * rate;
+    const profitTWD = profit * rate;
+
+    totalInTWD += marketTWD;
+
+    listHtml += `<li><strong>【${type}】</strong> ${name} ｜ 🪩 ${currency} ${marketValue.toLocaleString()}（盈餘 ${profitTWD.toFixed(0)} TWD）</li>`;
+  }
+
+  listHtml += "</ul>";
+  document.getElementById("asset-list").innerHTML = listHtml;
+
+  // 顯示資產總市值（台幣折合）
+  document.getElementById("total-assets").textContent =
+    `💰 目前資產總市值（折合台幣）：${Math.round(totalInTWD).toLocaleString()} 元`;
+
+  // 渲染分類加總
+  renderAssetSummary(summary);
+
+  // 渲染幣別總市值
+  let currencyHtml = "<br><strong>💱 幣別總市值：</strong><br>";
+  Object.entries(currencyTotals).forEach(([currency, amount]) => {
+    currencyHtml += `🌍 ${currency}：${amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}<br>`;
+  });
+  document.getElementById("asset-summary").innerHTML += currencyHtml;
+}
 
   document.addEventListener("DOMContentLoaded", async () => {
     try {
