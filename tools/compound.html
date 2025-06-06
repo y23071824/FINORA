@@ -76,7 +76,10 @@
 <script>
   let exchangeRates = {};
 
-  aync function fetchExchangeRates() {ㄧ
+  async function fetchExchangeRates() {
+  const status = document.getElementById("exchange-status"); // ✅ 補上
+  try {
+    if (status) status.textContent = "📡 查詢最新匯率中...";
     const res = await fetch("https://api.frankfurter.app/latest?from=USD&to=TWD,JPY,EUR");
     const data = await res.json();
 
@@ -102,7 +105,7 @@
       if (status) status.textContent = "⚠️ 使用預設匯率資料";
     }
   }
-  }
+}
 
 
   function calculateCompound() {
