@@ -180,8 +180,6 @@ async function loadAssets() {
   const currencyTotals = {};
   const selectedCurrency = document.getElementById("currency-select").value || "TWD";
   let totalInSelectedCurrency = 0;
-  const assetListDiv = document.getElementById("asset-list");
-  assetListDiv.innerHTML = "";
 
   for (const item of assets) {
     const type = item.type || "";
@@ -190,14 +188,11 @@ async function loadAssets() {
     const shares = parseFloat(item.shares || item.units || 0);
     const amount = parseFloat(item.amount || 0);
     const cost = parseFloat(item.cost || 0);
-    const name = item.name || item.symbol || item.stock || item.fund || item.crypto || item.insurance || "-";
 
     let marketValue = 0;
-    let profit = 0;
 
     if (["股票", "基金", "加密貨幣"].includes(type)) {
       marketValue = shares * price;
-      profit = marketValue - cost;
     } else if (type === "儲蓄保險") {
       marketValue = cost;
     } else {
@@ -214,10 +209,10 @@ async function loadAssets() {
     const baseToSelected = exchangeRates[selectedCurrency] || 1;
     const baseToCurrency = exchangeRates[currency] || 1;
     const rate = baseToSelected / baseToCurrency;
-    const marketConverted = marketValue * rate;
-    totalInSelectedCurrency += marketConverted;
+    totalInSelectedCurrency += marketValue * rate;
+  }
 
-  // 顯示總市值
+  // 顯示總資產市值
   if (isNaN(totalInSelectedCurrency)) {
     document.getElementById("total-assets").textContent = i18n("exchange_not_ready");
   } else {
@@ -227,7 +222,6 @@ async function loadAssets() {
 
   renderAssetSummary(summary);
 
-  // 幣別分類總額
   let currencyHtml = `<br><strong>${i18n("currency_totals")}</strong><br>`;
   Object.entries(currencyTotals).forEach(([currency, amount]) => {
     currencyHtml += `🌍 ${currency}：${amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}<br>`;
