@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>緊急預備金試算</title>
+  <title data-i18n="emergency_title">緊急預備金試算</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="../style.css">
    <link rel="icon" href="favicon.png" type="image/png" />
@@ -36,30 +36,30 @@
 </head>
   <body class="logo-full-bg">
 <body>
-  <h1>理財第一步</h1>
-  <div style="color: #555; font-size: 0.9rem;">目前帳本：<strong id="account-id">(讀取中...)</strong></div>
+ <h1 data-i18n="emergency_title">理財第一步</h1>
+  <div style="color: #555; font-size: 0.9rem;"><span data-i18n="account_label">目前帳本：</span><strong id="account-id">(讀取中...)</strong></div>
 
   <div class="getting-started">
-      <p>📝 輸入每月固定收入與支出，建立財務護城河</p>
+    <p data-i18n="emergency_intro">📝 輸入每月固定收入與支出，建立財務護城河</p>
   </div>
 
-  <h2>📝 每月收入登記</h2>
+  <h2 data-i18n="monthly_income">📝 每月收入登記</h2>
   <div id="income-list"></div>
-  <button id="add-income">+ 新增收入項目</button>
+  <button id="add-income" data-i18n="add_income">+ 新增收入項目</button>
   <div class="summary" id="income-total"></div>
 
-  <h2>💰 每月支出登記</h2>
+  <h2 data-i18n="monthly_expense">💰 每月支出登記</h2>
   <div id="expense-list"></div>
-  <button id="add-expense">+ 新增支出項目</button>
+  <button id="add-expense" data-i18n="add_expense">+ 新增支出項目</button>
   <div class="summary" id="expense-total"></div>
 
-  <h2>🧯 預備金建議試算</h2>
-  <label>選擇涵蓋月數：
+  <h2 data-i18n="reserve_calc">🧯 預備金建議試算</h2>
+  <label data-i18n="select_months_label">選擇涵蓋月數：
     <select id="reserve-months">
-      <option value="3">3 個月</option>
-      <option value="6">6 個月</option>
-      <option value="9">9 個月</option>
-      <option value="12">12 個月</option>
+      <option value="3">3 <span data-i18n="months">個月</span></option>
+      <option value="6">6 <span data-i18n="months">個月</span></option>
+      <option value="9">9 <span data-i18n="months">個月</span></option>
+      <option value="12">12 <span data-i18n="months">個月</span></option>
     </select>
   </label>
   <div class="summary" id="reserve-suggestion"></div>
@@ -73,213 +73,210 @@
   <script src="../firebase-sync.js"></script>
 
   <script>
-    selectedAccount = localStorage.getItem("selectedAccount");
+selectedAccount = localStorage.getItem("selectedAccount");
 
-    if (!selectedAccount) {
-      alert("⚠️ 尚未選擇帳本，請先回首頁登入並選擇帳本！");
-      window.location.href = "../index.html";
-    }
+if (!selectedAccount) {
+  alert(typeof i18n === "function" ? i18n("no_account_selected_alert") : "尚未選擇帳本，請先回首頁登入並選擇帳本！");
+  window.location.href = "../index.html";
+}
 
-    const incomeKey = `emergencyIncome_${selectedAccount}`;
-    const expenseKey = `emergencyExpenses_${selectedAccount}`;
+const incomeKey = `emergencyIncome_${selectedAccount}`;
+const expenseKey = `emergencyExpenses_${selectedAccount}`;
+let income = [], expenses = [];
 
-    let income = [];
-    let expenses = [];
+async function loadDisplayName() {
+  try {
+    await FINORA_AUTH.waitForLogin();
+    const list = await FINORA_AUTH.fetchAccountList();
+    const match = list.find(acc => acc.id === selectedAccount);
+    const name = match?.displayName || selectedAccount;
+    document.getElementById("account-id").textContent = name;
+  } catch (e) {
+    console.warn("❗ 帳本名稱讀取失敗", e);
+    document.getElementById("account-id").textContent = selectedAccount;
+  }
+}
 
-    async function loadDisplayName() {
-      try {
-        await FINORA_AUTH.waitForLogin();
-        const list = await FINORA_AUTH.fetchAccountList();
-        const match = list.find(acc => acc.id === selectedAccount);
-        const name = match?.displayName || selectedAccount;
-        document.getElementById("account-id").textContent = name;
-      } catch (e) {
-        console.warn("❗ 帳本名稱讀取失敗", e);
-        document.getElementById("account-id").textContent = selectedAccount;
-      }
-    }
+async function loadEmergencyData() {
+  try {
+    await FINORA_AUTH.waitForLogin();
+    const user = firebase.auth().currentUser;
+    const ref = firebase.firestore()
+      .collection("users").doc(user.uid)
+      .collection("accounts").doc(selectedAccount)
+      .collection("emergency");
 
-    async function loadEmergencyData() {
-      try {
-        await FINORA_AUTH.waitForLogin();
-        const user = firebase.auth().currentUser;
-        const ref = firebase.firestore()
-          .collection("users")
-          .doc(user.uid)
-          .collection("accounts")
-          .doc(selectedAccount)
-          .collection("emergency");
+    const incomeSnap = await ref.doc("income").get();
+    const expenseSnap = await ref.doc("expenses").get();
 
-        const incomeSnap = await ref.doc("income").get();
-        const expenseSnap = await ref.doc("expenses").get();
+    income = incomeSnap.exists ? incomeSnap.data().items || [] : [];
+    expenses = expenseSnap.exists ? expenseSnap.data().items || [] : [];
 
-        income = incomeSnap.exists ? incomeSnap.data().items || [] : [];
-        expenses = expenseSnap.exists ? expenseSnap.data().items || [] : [];
+    localStorage.setItem(incomeKey, JSON.stringify(income));
+    localStorage.setItem(expenseKey, JSON.stringify(expenses));
+  } catch (e) {
+    console.warn("❗ 雲端 emergency 資料讀取失敗", e);
+    income = JSON.parse(localStorage.getItem(incomeKey) || '[]');
+    expenses = JSON.parse(localStorage.getItem(expenseKey) || '[]');
+  }
+}
 
-        // 儲存一份在 localStorage
-        localStorage.setItem(incomeKey, JSON.stringify(income));
-        localStorage.setItem(expenseKey, JSON.stringify(expenses));
-      } catch (e) {
-        console.warn("❗ 雲端 emergency 資料讀取失敗", e);
-        // fallback: 讀 localStorage
-        income = JSON.parse(localStorage.getItem(incomeKey) || '[]');
-        expenses = JSON.parse(localStorage.getItem(expenseKey) || '[]');
-      }
-    }
+async function saveEmergencyData() {
+  localStorage.setItem(incomeKey, JSON.stringify(income));
+  localStorage.setItem(expenseKey, JSON.stringify(expenses));
 
-    async function saveEmergencyData() {
-      localStorage.setItem(incomeKey, JSON.stringify(income));
-      localStorage.setItem(expenseKey, JSON.stringify(expenses));
+  try {
+    const user = firebase.auth().currentUser;
+    const ref = firebase.firestore()
+      .collection("users").doc(user.uid)
+      .collection("accounts").doc(selectedAccount)
+      .collection("emergency");
 
-      try {
-        const user = firebase.auth().currentUser;
-        const ref = firebase.firestore()
-          .collection("users")
-          .doc(user.uid)
-          .collection("accounts")
-          .doc(selectedAccount)
-          .collection("emergency");
+    const batch = firebase.firestore().batch();
+    const docs = await ref.get();
+    docs.forEach(doc => batch.delete(doc.ref));
 
-        const batch = firebase.firestore().batch();
-        const docs = await ref.get();
-        docs.forEach(doc => batch.delete(doc.ref)); // 清空原資料
+    batch.set(ref.doc("income"), { items: income });
+    batch.set(ref.doc("expenses"), { items: expenses });
 
-        batch.set(ref.doc("income"), { items: income });
-        batch.set(ref.doc("expenses"), { items: expenses });
+    await batch.commit();
+  } catch (e) {
+    console.warn("❌ 雲端儲存失敗", e);
+  }
+}
 
-        await batch.commit();
-      } catch (e) {
-        console.warn("❌ 雲端儲存失敗", e);
-      }
-    }
+function saveAndRender() {
+  saveEmergencyData();
+  render();
+}
 
-    function saveAndRender() {
+function render() {
+  const incomeList = document.getElementById('income-list');
+  const expenseList = document.getElementById('expense-list');
+  incomeList.innerHTML = '';
+  expenseList.innerHTML = '';
+
+  income.forEach((item, i) => {
+    const row = document.createElement('div');
+    row.className = 'item-row';
+
+    const nameInput = document.createElement('input');
+    nameInput.placeholder = i18n("income_item");
+    nameInput.value = item.name || '';
+    nameInput.addEventListener('input', () => {
+      income[i].name = nameInput.value;
       saveEmergencyData();
-      render();
-    }
-
-    function render() {
-      const incomeList = document.getElementById('income-list');
-      const expenseList = document.getElementById('expense-list');
-      incomeList.innerHTML = '';
-      expenseList.innerHTML = '';
-
-      income.forEach((item, i) => {
-        const row = document.createElement('div');
-        row.className = 'item-row';
-
-        const nameInput = document.createElement('input');
-        nameInput.placeholder = '收入項目';
-        nameInput.value = item.name || '';
-        nameInput.addEventListener('input', () => {
-          income[i].name = nameInput.value;
-          saveEmergencyData();
-          updateSummary();
-        });
-
-        const amountInput = document.createElement('input');
-        amountInput.type = 'number';
-        amountInput.placeholder = '金額';
-        amountInput.value = item.amount || 0;
-        amountInput.addEventListener('input', () => {
-          income[i].amount = parseFloat(amountInput.value) || 0;
-          saveEmergencyData();
-          updateSummary();
-        });
-
-        const delBtn = document.createElement('button');
-        delBtn.textContent = '🗑️';
-        delBtn.addEventListener('click', () => {
-          income.splice(i, 1);
-          saveAndRender();
-        });
-
-        row.appendChild(nameInput);
-        row.appendChild(amountInput);
-        row.appendChild(delBtn);
-        incomeList.appendChild(row);
-      });
-
-      expenses.forEach((item, i) => {
-        const row = document.createElement('div');
-        row.className = 'item-row';
-
-        const nameInput = document.createElement('input');
-        nameInput.placeholder = '支出項目';
-        nameInput.value = item.name || '';
-        nameInput.addEventListener('input', () => {
-          expenses[i].name = nameInput.value;
-          saveEmergencyData();
-          updateSummary();
-        });
-
-        const amountInput = document.createElement('input');
-        amountInput.type = 'number';
-        amountInput.placeholder = '金額';
-        amountInput.value = item.amount || 0;
-        amountInput.addEventListener('input', () => {
-          expenses[i].amount = parseFloat(amountInput.value) || 0;
-          saveEmergencyData();
-          updateSummary();
-        });
-
-        const delBtn = document.createElement('button');
-        delBtn.textContent = '🗑️';
-        delBtn.addEventListener('click', () => {
-          expenses.splice(i, 1);
-          saveAndRender();
-        });
-
-        row.appendChild(nameInput);
-        row.appendChild(amountInput);
-        row.appendChild(delBtn);
-        expenseList.appendChild(row);
-      });
-
       updateSummary();
-    }
-
-    function updateSummary() {
-      const totalIncome = income.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
-      const totalExpense = expenses.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
-
-      document.getElementById('income-total').textContent =
-        `♟️ 每月收入總額：${totalIncome.toLocaleString()} 元`;
-      document.getElementById('expense-total').textContent =
-        `♟️ 每月支出總額：${totalExpense.toLocaleString()} 元`;
-
-      const months = parseInt(document.getElementById('reserve-months').value) || 3;
-      const suggestion = totalExpense * months;
-      document.getElementById('reserve-suggestion').textContent =
-        `♟️ 建議預備金（${months} 個月）：${suggestion.toLocaleString()} 元`;
-    }
-
-    document.addEventListener('DOMContentLoaded', async () => {
-      await loadDisplayName();
-      await loadEmergencyData(); // ✅ 雲端讀取
-      document.getElementById('add-income').addEventListener('click', () => {
-        income.push({ name: '', amount: 0 });
-        saveAndRender();
-      });
-
-      document.getElementById('add-expense').addEventListener('click', () => {
-        expenses.push({ name: '', amount: 0 });
-        saveAndRender();
-      });
-
-      document.getElementById('reserve-months').addEventListener('change', updateSummary);
-      render();
     });
+
+    const amountInput = document.createElement('input');
+    amountInput.type = 'number';
+    amountInput.placeholder = i18n("amount");
+    amountInput.value = item.amount || 0;
+    amountInput.addEventListener('input', () => {
+      income[i].amount = parseFloat(amountInput.value) || 0;
+      saveEmergencyData();
+      updateSummary();
+    });
+
+    const delBtn = document.createElement('button');
+    delBtn.textContent = '🗑️';
+    delBtn.addEventListener('click', () => {
+      income.splice(i, 1);
+      saveAndRender();
+    });
+
+    row.appendChild(nameInput);
+    row.appendChild(amountInput);
+    row.appendChild(delBtn);
+    incomeList.appendChild(row);
+  });
+
+  expenses.forEach((item, i) => {
+    const row = document.createElement('div');
+    row.className = 'item-row';
+
+    const nameInput = document.createElement('input');
+    nameInput.placeholder = i18n("expense_item");
+    nameInput.value = item.name || '';
+    nameInput.addEventListener('input', () => {
+      expenses[i].name = nameInput.value;
+      saveEmergencyData();
+      updateSummary();
+    });
+
+    const amountInput = document.createElement('input');
+    amountInput.type = 'number';
+    amountInput.placeholder = i18n("amount");
+    amountInput.value = item.amount || 0;
+    amountInput.addEventListener('input', () => {
+      expenses[i].amount = parseFloat(amountInput.value) || 0;
+      saveEmergencyData();
+      updateSummary();
+    });
+
+    const delBtn = document.createElement('button');
+    delBtn.textContent = '🗑️';
+    delBtn.addEventListener('click', () => {
+      expenses.splice(i, 1);
+      saveAndRender();
+    });
+
+    row.appendChild(nameInput);
+    row.appendChild(amountInput);
+    row.appendChild(delBtn);
+    expenseList.appendChild(row);
+  });
+
+  updateSummary();
+}
+
+function updateSummary() {
+  const totalIncome = income.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
+  const totalExpense = expenses.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
+  const months = parseInt(document.getElementById('reserve-months').value) || 3;
+  const suggestion = totalExpense * months;
+
+  document.getElementById('income-total').textContent =
+    `♟️ ${i18n("monthly_income_total")}：${totalIncome.toLocaleString()} ${i18n("currency_unit")}`;
+  document.getElementById('expense-total').textContent =
+    `♟️ ${i18n("monthly_expense_total")}：${totalExpense.toLocaleString()} ${i18n("currency_unit")}`;
+  document.getElementById('reserve-suggestion').textContent =
+    `♟️ ${i18n("suggested_reserve", { months })}：${suggestion.toLocaleString()} ${i18n("currency_unit")}`;
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadDisplayName();
+  await loadEmergencyData();
+
+  document.getElementById('add-income').textContent = `+ ${i18n("add_income")}`;
+  document.getElementById('add-expense').textContent = `+ ${i18n("add_expense")}`;
+
+  document.getElementById('add-income').addEventListener('click', () => {
+    income.push({ name: '', amount: 0 });
+    saveAndRender();
+  });
+
+  document.getElementById('add-expense').addEventListener('click', () => {
+    expenses.push({ name: '', amount: 0 });
+    saveAndRender();
+  });
+
+  document.getElementById('reserve-months').addEventListener('change', updateSummary);
+
+  if (typeof applyLang === "function") applyLang(); // ⬅️ 載入頁面語系
+  render();
+});
   </script>
 
   <a href="../app.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374">← 返回首頁</a>
-<footer class="site-footer">
-  <p>© 2025 FINORA 好好存｜家庭友善資產整合工具</p>
-  <div class="footer-links">
-    <a href="howto.html">使用說明</a>・
-    <a href="mailto:service@finora.life?subject=聯絡詢問">聯絡我們</a>・
-    <a href="privacy.html">隱私權條款</a>
-  </div>
-</footer>
+  <footer class="site-footer">
+    <p data-i18n="footer_copyright">© 2025 FINORA 好好存｜家庭友善資產整合工具</p>
+    <div class="footer-links">
+      <a href="howto.html" data-i18n="footer_guide">使用說明</a>・
+      <a href="mailto:service@finora.life?subject=聯絡詢問" data-i18n="footer_contact">聯絡我們</a>・
+      <a href="privacy.html" data-i18n="footer_privacy">隱私權條款</a>
+    </div>
+  </footer>
 </body>
 </html>
