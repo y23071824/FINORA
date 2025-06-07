@@ -213,8 +213,12 @@ async function handleSubmit(e) {
 // ===== Part 3：畫面渲染與計算 =====
 function render() {
   if (!Array.isArray(assets)) return;
-  if (!exchangeRates["TWD"]) {
-  console.warn("❌ TWD 匯率尚未就緒，跳過渲染");
+
+  if (!exchangeRates || Object.keys(exchangeRates).length === 0 || !exchangeRates["TWD"]) {
+    console.warn("❌ 匯率尚未就緒，跳過渲染");
+    return;
+  }
+
   return;
   if (!exchangeRates || Object.keys(exchangeRates).length === 0) {
     console.warn("❌ 缺少匯率資料，無法 render");
