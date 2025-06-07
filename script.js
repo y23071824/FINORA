@@ -214,14 +214,13 @@ async function handleSubmit(e) {
 function render() {
   if (!Array.isArray(assets)) return;
 
-  if (!exchangeRates || Object.keys(exchangeRates).length === 0 || !exchangeRates["TWD"]) {
-    console.warn("❌ 匯率尚未就緒，跳過渲染");
+  if (!exchangeRates || Object.keys(exchangeRates).length === 0) {
+    console.warn("❌ 缺少匯率資料，無法 render");
     return;
   }
 
-  return;
-  if (!exchangeRates || Object.keys(exchangeRates).length === 0) {
-    console.warn("❌ 缺少匯率資料，無法 render");
+  if (!exchangeRates["TWD"]) {
+    console.warn("❌ TWD 匯率尚未就緒，跳過渲染");
     return;
   }
 
