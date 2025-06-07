@@ -485,10 +485,26 @@ document.addEventListener("DOMContentLoaded", () => {
       profitList = document.getElementById("stock-profit-list");
       bankDatalist = document.getElementById("bank-list");
 
-      // 顯示帳本資訊
-      const accountId = getSelectedAccount();
+      // 顯示帳本資訊與 fallback
+      const selectedId = localStorage.getItem("selectedAccount");
       const list = await FINORA_AUTH.fetchAccountList();
-      const displayName = list.find(acc => acc.id === accountId)?.displayName || accountId;
+
+      console.log("📚 所有帳本清單：", list);
+      console.log("📌 localStorage selectedAccount：", selectedId);
+
+      let selected = list.find(acc => acc.id === selectedId);
+
+      if (!selected && list.length > 0) {
+        selected = list[0];
+        localStorage.setItem("selectedAccount", selected.id);
+        console.warn("⚠️ 找不到帳本，已自動切換為第一本帳本：", selected.id);
+      } else if (!selected) {
+        alert(i18n("no_account_warning") || "⚠️ 找不到任何帳本，請返回首頁建立");
+        window.location.href = "../app.html";
+        return;
+      }
+
+      const displayName = selected.displayName || selected.id;
       if (emailEl) emailEl.textContent = user.email;
       if (accountEl) accountEl.textContent = `${displayName}（${list.length} / ${MAX_ACCOUNT_COUNT}）`;
 
@@ -541,6 +557,9 @@ document.addEventListener("DOMContentLoaded", () => {
       // 資料與畫面初始化
       await fetchExchangeRates();
       await updateAllStockPrices();
+
+      console.log("📦 目前使用的 localStorage key：", getLocalStorageKey());
+      console.log("📂 對應儲存資料：", localStorage.getItem(getLocalStorageKey()));
 
       assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
 
