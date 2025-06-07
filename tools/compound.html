@@ -210,7 +210,29 @@ async function loadAssets() {
     const rate = baseToSelected / baseToCurrency;
     totalInSelectedCurrency += marketValue * rate;
   }
+function saveInputsToLocalStorage() {
+  const inputs = {
+    principal: document.getElementById("principal").value || "",
+    rate: document.getElementById("rate").value || "",
+    years: document.getElementById("years").value || "",
+    annual: document.getElementById("annual").value || "",
+    monthly: document.getElementById("monthly").value || ""
+  };
+  localStorage.setItem("compoundInputs", JSON.stringify(inputs));
+}
+function loadInputsFromLocalStorage() {
+  const saved = localStorage.getItem("compoundInputs");
+  if (!saved) return;
 
+  const inputs = JSON.parse(saved);
+  document.getElementById("principal").value = inputs.principal || "";
+  document.getElementById("rate").value = inputs.rate || "";
+  document.getElementById("years").value = inputs.years || "";
+  document.getElementById("annual").value = inputs.annual || "";
+  document.getElementById("monthly").value = inputs.monthly || "";
+}
+
+  
   // 顯示總資產市值
   if (isNaN(totalInSelectedCurrency)) {
     document.getElementById("total-assets").textContent = i18n("exchange_not_ready");
@@ -258,19 +280,26 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     await fetchExchangeRates();
     await loadAssets();
+    loadInputsFromLocalStorage();
 
+["principal", "rate", "years", "annual", "monthly"].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener("input", saveInputsToLocalStorage);
+});
+    
     const saved = localStorage.getItem("compoundResult");
     const savedCurrencyResult = localStorage.getItem("compoundResultCurrency") || savedCurrency;
     if (saved) {
       document.getElementById("result").textContent =
         `${i18n("last_calculated")} ${Number(saved).toLocaleString()} ${savedCurrencyResult}`;
     }
-
+    
     if (typeof applyLang === "function") applyLang();
   } catch (e) {
     alert(i18n("please_login"));
   }
 });
+
 </script>
   <a href="../app.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374" data-i18n="back_home_link">← 返回首頁</a>
   <footer class="site-footer">
