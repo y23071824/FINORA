@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -165,7 +164,7 @@ async function loadAssets() {
   let assets = [];
 
   try {
-    assets = await FINORA_AUTH.fetchUserAssets(selectedAccount);
+    assets = await FINORA_AUTH.fetchUserAssets();
   } catch (e) {
     const key = `assets_${selectedAccount}`;
     assets = JSON.parse(localStorage.getItem(key) || "[]");
