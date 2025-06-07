@@ -176,7 +176,18 @@ type_儲蓄保險: "儲蓄保險",
 type_現金: "現金",
 type_房產: "房產",
 type_定存: "定存",
-type_其他: "其他"
+type_其他: "其他",
+   title: "緊急預備金試算",
+    no_account_selected_alert: "尚未選擇帳本，請先回首頁登入並選擇帳本！",
+    income_item: "收入項目",
+    expense_item: "支出項目",
+    amount: "金額",
+    monthly_income_total: "每月收入總額",
+    monthly_expense_total: "每月支出總額",
+    suggested_reserve: "建議預備金（{months} 個月）",
+    currency_unit: "元",
+    add_income: "新增收入項目",
+    add_expense: "新增支出項目"
 },
   
  "zh-Hans": {
@@ -327,7 +338,18 @@ type_儲蓄保險: "储蓄保险",
 type_現金: "现金",
 type_房產: "房产",
 type_定存: "定存",
-type_其他: "其他"
+type_其他: "其他", 
+   title: "紧急预备金试算",
+    no_account_selected_alert: "尚未选择账本，请先回首页登录并选择账本！",
+    income_item: "收入项目",
+    expense_item: "支出项目",
+    amount: "金额",
+    monthly_income_total: "每月收入总额",
+    monthly_expense_total: "每月支出总额",
+    suggested_reserve: "建议预备金（{months} 个月）",
+    currency_unit: "元",
+    add_income: "新增收入项目",
+    add_expense: "新增支出项目"
 },
 
 "en": {
@@ -478,8 +500,20 @@ type_儲蓄保險: "Insurance",
 type_現金: "Cash",
 type_房產: "Real Estate",
 type_定存: "Fixed Deposit",
-type_其他: "Other"
+type_其他: "Other", 
+   title: "Emergency Fund Estimator",
+    no_account_selected_alert: "No account selected. Please go back to the homepage to sign in and choose an account.",
+    income_item: "Income Item",
+    expense_item: "Expense Item",
+    amount: "Amount",
+    monthly_income_total: "Total Monthly Income",
+    monthly_expense_total: "Total Monthly Expenses",
+    suggested_reserve: "Suggested Reserve ({months} months)",
+    currency_unit: "NTD",
+    add_income: "Add Income Item",
+    add_expense: "Add Expense Item"
 },
+  
  "ja": {
   title: "FINORA 資産管理",
   subtitle: "資産を強く、安心なリタイアへ。",
@@ -628,7 +662,18 @@ type_儲蓄保險: "保険",
 type_現金: "現金",
 type_房產: "不動産",
 type_定存: "定期預金",
-type_其他: "その他"
-}
+type_其他: "その他", 
+   title: "緊急予備資金シミュレーター",
+    no_account_selected_alert: "アカウントが選択されていません。ホームページに戻ってログインしてください。",
+    income_item: "収入項目",
+    expense_item: "支出項目",
+    amount: "金額",
+    monthly_income_total: "月間収入合計",
+    monthly_expense_total: "月間支出合計",
+    suggested_reserve: "推奨予備金（{months} ヶ月分）",
+    currency_unit: "円",
+    add_income: "収入項目を追加",
+    add_expense: "支出項目を追加"
+  }
 };
 
