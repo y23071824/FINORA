@@ -187,7 +187,17 @@ type_其他: "其他",
     suggested_reserve: "建議預備金（{months} 個月）",
     currency_unit: "元",
     add_income: "新增收入項目",
-    add_expense: "新增支出項目"
+    add_expense: "新增支出項目",
+       subtitle: "輸入每月固定收入與支出，建立財務護城河",
+    current_account: "目前帳本",
+    income_title: "📝 每月收入登記",
+    expense_title: "💰 每月支出登記",
+    add_income: "新增收入項目",
+    add_expense: "新增支出項目",
+    total_income: "每月收入總額",
+    total_expense: "每月支出總額",
+    reserve_title: "🧯 預備金建議試算",
+    select_months: "選擇涵蓋月數"
 },
   
  "zh-Hans": {
@@ -349,7 +359,17 @@ type_其他: "其他",
     suggested_reserve: "建议预备金（{months} 个月）",
     currency_unit: "元",
     add_income: "新增收入项目",
-    add_expense: "新增支出项目"
+    add_expense: "新增支出项目",
+   subtitle: "输入每月固定收入与支出，建立财务护城河",
+    current_account: "当前账本",
+    income_title: "📝 每月收入登记",
+    expense_title: "💰 每月支出登记",
+    add_income: "新增收入项目",
+    add_expense: "新增支出项目",
+    total_income: "每月收入总额",
+    total_expense: "每月支出总额",
+    reserve_title: "🧯 预备金建议试算",
+    select_months: "选择涵盖月数"
 },
 
 "en": {
@@ -511,7 +531,17 @@ type_其他: "Other",
     suggested_reserve: "Suggested Reserve ({months} months)",
     currency_unit: "NTD",
     add_income: "Add Income Item",
-    add_expense: "Add Expense Item"
+    add_expense: "Add Expense Item", 
+  subtitle: "Enter your fixed monthly income and expenses to build your financial moat",
+    current_account: "Current Account",
+    income_title: "📝 Monthly Income",
+    expense_title: "💰 Monthly Expenses",
+    add_income: "Add Income Item",
+    add_expense: "Add Expense Item",
+    total_income: "Total Monthly Income",
+    total_expense: "Total Monthly Expenses",
+    reserve_title: "🧯 Reserve Suggestion",
+    select_months: "Select Coverage Months"
 },
   
  "ja": {
@@ -673,7 +703,17 @@ type_其他: "その他",
     suggested_reserve: "推奨予備金（{months} ヶ月分）",
     currency_unit: "円",
     add_income: "収入項目を追加",
-    add_expense: "支出項目を追加"
+    add_expense: "支出項目を追加",
+   subtitle: "毎月の収入と支出を入力して、財務の堀を築こう",
+    current_account: "現在の帳簿",
+    income_title: "📝 毎月の収入記録",
+    expense_title: "💰 毎月の支出記録",
+    add_income: "収入項目を追加",
+    add_expense: "支出項目を追加",
+    total_income: "毎月の収入合計",
+    total_expense: "毎月の支出合計",
+    reserve_title: "🧯 予備資金の試算",
+    select_months: "カバー月数を選択",
   }
 };
 
