@@ -179,3 +179,15 @@ window.FINORA_AUTH = {
   createNewAccount,
   deleteAccount
 };
+
+async function loadDisplayName() {
+  try {
+    await FINORA_AUTH.waitForLogin();
+    const list = await FINORA_AUTH.fetchAccountList();
+    const match = list.find(acc => acc.id === selectedAccount);
+    document.getElementById("account-id").textContent = match?.displayName || selectedAccount;
+  } catch (e) {
+    console.warn("❗ 帳本名稱讀取失敗", e);
+    document.getElementById("account-id").textContent = selectedAccount;
+  }
+}
