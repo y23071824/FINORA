@@ -147,27 +147,26 @@
 </div>
 <script src="../firebase-sync.js"></script>
 <script>
-  document.addEventListener("DOMContentLoaded", async () => {
-    applyLang(); // ← 套用語言（一定要有）
- document.title = i18n("withdraw_title");
-    try {
-      await FINORA_AUTH.waitForLogin();
-      const selectedAccount = localStorage.getItem("selectedAccount");
-      const list = await FINORA_AUTH.fetchAccountList();
-      const match = list.find(acc => acc.id === selectedAccount);
-      const name = match?.displayName || selectedAccount;
-      document.getElementById("account-id").textContent = name;
+firebase.auth().onAuthStateChanged(async (user) => {
+  if (!user) {
+    alert(i18n("please_login_first"));
+    return;
+  }
 
-      const saved = localStorage.getItem("compoundResult");
-      if (saved && !isNaN(saved)) {
-        document.getElementById("total").value = Number(saved);
-        document.getElementById("compound-info").innerHTML =
-          `💰 ${i18n("recent_compound_result")}：<strong>NT$ ${Number(saved).toLocaleString()}</strong>`;
-      }
-    } catch (e) {
-      alert(i18n("please_login_first")); // 🔁 請先登入後再使用此功能
-    }
-  });
+  const selectedAccount = localStorage.getItem("selectedAccount");
+  const list = await FINORA_AUTH.fetchAccountList();
+  const match = list.find(acc => acc.id === selectedAccount);
+  const name = match?.displayName || selectedAccount;
+  document.getElementById("account-id").textContent = name;
+
+  // 讀入 compoundResult
+  const saved = localStorage.getItem("compoundResult");
+  if (saved && !isNaN(saved)) {
+    document.getElementById("total").value = Number(saved);
+    document.getElementById("compound-info").innerHTML =
+      `💰 ${i18n("recent_compound_result")}：<strong>NT$ ${Number(saved).toLocaleString()}</strong>`;
+  }
+});
 
   function calculateWithdraw() {
     const total = parseFloat(document.getElementById("total").value);
