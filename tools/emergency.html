@@ -70,9 +70,8 @@
   </label>
   <div class="summary" id="reserve-suggestion"></div>
 </body>
-  <script>
-// ✅ 帳本與 localStorage key 初始化
-const selectedAccount = localStorage.getItem("selectedAccount") || "default";
+ <script>
+// ✅ 帳本與 localStorage key 初始化（selectedAccount 已由 firebase-sync.js 提供）
 const incomeKey = `emergencyIncome_${selectedAccount}`;
 const expenseKey = `emergencyExpenses_${selectedAccount}`;
 let income = [], expenses = [];
@@ -293,7 +292,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   render();
 });
-  </script>
+</script>
+
 
  <a href="../app.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374" data-i18n="back_home_link">← 返回首頁</a>
   <footer class="site-footer">
