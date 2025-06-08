@@ -68,7 +68,6 @@
   </label>
   <div class="summary" id="reserve-suggestion"></div>
 
-  <script src="../scripts/emergency-i18n-full.js"></script>
   
 <script>
 // ✅ 多語言函式（含佔位變數處理）
@@ -106,7 +105,7 @@ function applyLang() {
 }
 
 // ✅ 帳本取得與驗證（防呆）
-const selectedAccount = localStorage.getItem("selectedAccount");
+var selectedAccount = localStorage.getItem("selectedAccount");
 if (!selectedAccount) {
   alert(i18n("no_account_selected_alert") || "尚未選擇帳本，請先回首頁登入並選擇帳本！");
   window.location.href = "../index.html";
