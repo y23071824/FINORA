@@ -372,3 +372,10 @@ body.logo-full-bg::before {
   font-size: 1.2rem;
   cursor: pointer;
 }
+
+@media (max-width: 480px) {
+  .action-button {
+    max-width: 90px;
+    font-size: 0.85rem;
+  }
+}
