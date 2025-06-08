@@ -5,18 +5,18 @@
   <title data-i18n="emergency_title">緊急預備金試算</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="../style.css">
-   <link rel="icon" href="favicon.png" type="image/png" />
-  
+  <link rel="icon" href="favicon.png" type="image/png" />
+
   <script src="../lang.js"></script>
 
-    <!-- ✅ Firebase SDK -->
+  <!-- ✅ Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
   <!-- ✅ FINORA 認證模組 -->
   <script src="../firebase-sync.js"></script>
-  
+
   <style>
     body { max-width: 700px; margin: auto; padding: 1.5rem; font-family: sans-serif; background: white; }
     h1 { color: #c96374; text-align: center; }
@@ -24,53 +24,51 @@
     .item-row { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
     .item-row input:nth-child(1) { flex: 0 0 50%; }
     .item-row input:nth-child(2) { flex: 0 0 35%; }
-.item-row button {
-  flex: 0 0 15%;
-  background: white;
-  border: 2px solid #c96374;
-  color: #c96374;
-  padding: 0.3rem;
-  font-size: 1.2rem;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-}
-
-.item-row button:hover {
-  background: #fcecec;
-  color: #a94456;
-}
+    .item-row button {
+      flex: 0 0 15%;
+      background: white;
+      border: 2px solid #c96374;
+      color: #c96374;
+      padding: 0.3rem;
+      font-size: 1.2rem;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .item-row button:hover {
+      background: #fcecec;
+      color: #a94456;
+    }
     label, select { margin-top: 1rem; display: block; }
     .summary { margin-top: 1rem; font-weight: bold; }
   </style>
 </head>
 
-  
-  <body class="logo-full-bg">
- <h1 data-i18n="emergency_title">理財第一步</h1>
+<body class="logo-full-bg">
+  <h1 data-i18n="emergency_title">理財第一步</h1>
   <div style="color: #555; font-size: 0.9rem;"><span data-i18n="account_label">目前帳本：</span><strong id="account-id">(讀取中...)</strong></div>
 
   <div class="getting-started">
-    <p data-i18n="emergency_intro">📝 輸入每月固定收入與支出，建立財務護城河</p>
+    <p data-i18n="emergency_intro">🗘️ 輸入每月固定收入與支出，建立財務護城沿</p>
   </div>
 
-  <h2 data-i18n="monthly_income">📝 每月收入登記</h2>
+  <h2 data-i18n="monthly_income">🗘️ 每月收入發布</h2>
   <div id="income-list"></div>
   <button id="add-income" data-i18n="add_income">+ 新增收入項目</button>
   <div class="summary" id="income-total"></div>
 
-  <h2 data-i18n="monthly_expense">💰 每月支出登記</h2>
+  <h2 data-i18n="monthly_expense">💰 每月支出發布</h2>
   <div id="expense-list"></div>
   <button id="add-expense" data-i18n="add_expense">+ 新增支出項目</button>
   <div class="summary" id="expense-total"></div>
 
-  <h2 data-i18n="reserve_calc">🧯 預備金建議試算</h2>
+  <h2 data-i18n="reserve_calc">🧫 預備金建議計算</h2>
   <label data-i18n="select_months_label">選擇涵蓋月數：
     <select id="reserve-months">
-<option value="3" data-i18n="months_option_3">3 個月</option>
-<option value="6" data-i18n="months_option_6">6 個月</option>
-<option value="9" data-i18n="months_option_9">9 個月</option>
-<option value="12" data-i18n="months_option_12">12 個月</option>
+      <option value="3" data-i18n-option="months_option_3">3 個月</option>
+      <option value="6" data-i18n-option="months_option_6">6 個月</option>
+      <option value="9" data-i18n-option="months_option_9">9 個月</option>
+      <option value="12" data-i18n-option="months_option_12">12 個月</option>
     </select>
   </label>
   <div class="summary" id="reserve-suggestion"></div>
@@ -78,6 +76,7 @@
   
 
 <script>
+// ✅ 多語言函式（含佔位變數處理）
 function i18n(key, vars) {
   const lang = localStorage.getItem("lang") || "zh-Hant";
   const dict = translations[lang] || {};
@@ -85,6 +84,7 @@ function i18n(key, vars) {
   return typeof val === "function" ? val(vars || {}) : val || key;
 }
 
+// ✅ 多語言套用
 function applyLang() {
   const lang = localStorage.getItem("lang") || "zh-Hant";
   const dict = translations[lang] || translations["zh-Hant"];
@@ -104,18 +104,16 @@ function applyLang() {
   const titleTag = document.querySelector("title[data-i18n]");
   if (titleTag) {
     const titleKey = titleTag.getAttribute("data-i18n");
-    if (dict[titleKey]) {
-      titleTag.textContent = typeof dict[titleKey] === "function" ? dict[titleKey]({ months: 3 }) : dict[titleKey];
-    } else {
-      console.warn("❗ title 遺漏翻譯 key：", titleKey);
-    }
+    titleTag.textContent = typeof dict[titleKey] === "function"
+      ? dict[titleKey]({ months: 3 })
+      : dict[titleKey] || titleKey;
   }
 }
 
-// 避免重複宣告錯誤，僅在本頁定義 selectedAccount
+// ✅ 帳本取得與驗證（防呆）
 let selectedAccount = localStorage.getItem("selectedAccount");
 if (!selectedAccount) {
-  alert(typeof i18n === "function" ? i18n("no_account_selected_alert") : "尚未選擇帳本，請先回首頁登入並選擇帳本！");
+  alert(i18n("no_account_selected_alert") || "尚未選擇帳本，請先回首頁登入並選擇帳本！");
   window.location.href = "../index.html";
 }
 
@@ -123,19 +121,20 @@ const incomeKey = `emergencyIncome_${selectedAccount}`;
 const expenseKey = `emergencyExpenses_${selectedAccount}`;
 let income = [], expenses = [];
 
+// ✅ 顯示帳本名稱
 async function loadDisplayName() {
   try {
     await FINORA_AUTH.waitForLogin();
     const list = await FINORA_AUTH.fetchAccountList();
     const match = list.find(acc => acc.id === selectedAccount);
-    const name = match?.displayName || selectedAccount;
-    document.getElementById("account-id").textContent = name;
+    document.getElementById("account-id").textContent = match?.displayName || selectedAccount;
   } catch (e) {
     console.warn("❗ 帳本名稱讀取失敗", e);
     document.getElementById("account-id").textContent = selectedAccount;
   }
 }
 
+// ✅ 載入 emergency 資料
 async function loadEmergencyData() {
   try {
     await FINORA_AUTH.waitForLogin();
@@ -163,6 +162,7 @@ async function loadEmergencyData() {
   }
 }
 
+// ✅ 儲存 emergency 資料（含雲端與本地）
 async function saveEmergencyData() {
   localStorage.setItem(incomeKey, JSON.stringify(income));
   localStorage.setItem(expenseKey, JSON.stringify(expenses));
@@ -192,6 +192,7 @@ function saveAndRender() {
   render();
 }
 
+// ✅ 渲染畫面
 function render() {
   const incomeList = document.getElementById('income-list');
   const expenseList = document.getElementById('expense-list');
@@ -273,6 +274,7 @@ function render() {
   updateSummary();
 }
 
+// ✅ 總和計算
 function updateSummary() {
   const monthsSelect = document.getElementById('reserve-months');
   if (!monthsSelect) return console.warn("⚠️ reserve-months not found");
@@ -290,6 +292,7 @@ function updateSummary() {
     `♟️ ${i18n("suggested_reserve", { months })}：${suggestion.toLocaleString()} ${i18n("currency_unit")}`;
 }
 
+// ✅ 啟動主流程
 document.addEventListener('DOMContentLoaded', async () => {
   await loadDisplayName();
   await loadEmergencyData();
@@ -314,7 +317,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   render();
 });
 </script>
-
   
 <a href="../app.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374" data-i18n="back_home_link">← 返回首頁</a>
   <footer class="site-footer">
