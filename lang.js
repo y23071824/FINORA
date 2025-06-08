@@ -243,7 +243,25 @@ type_其他: "其他",
     inflation_enabled: "已啟用通膨調整",
     inflation_disabled: "每年提領金額根據通膨調整",
     please_login_first: "請先登入後再使用此功能",
-    recent_compound_result: "最近一次複利結果"
+    recent_compound_result: "最近一次複利結果",
+// 📌 提領說明區塊
+section_explanation_title: "📌 提領方式說明：",
+
+method_basic: "<strong>一般月領：</strong>總資產 ÷ 每月需求 = 可支撐年數。",
+method_4percent: "<strong>4%法則：</strong>每年提領 4%以下，資產理想可撐 30 年以上。",
+method_real_rate: "<strong>報酬－通膨：</strong>年報酬與通膨比較後，提供實質購買力試算。", 
+method_adjust_inflation: "<strong>通膨調整提領：</strong>模擬購買力保值，每年提領金額隨通膨上升。",
+
+btn_explain_more: "📖 什麼是通膨保值提領？",
+
+explain_why: "為什麼要通膨調整？",
+explain_reason: "每年的物價會慢慢上漲，如果每月都提一樣的金額，實際能買的東西會越來越少。",
+explain_how: "怎麼做？",
+
+step_1: "第一年每月提 30,000 元",
+step_2: "通膨 2%，第二年提 30,600 元",
+step_3: "第三年提 31,212 元… 以此類推"
+
 },
   
  "zh-Hans": {
@@ -462,7 +480,24 @@ type_其他: "其他",
     inflation_enabled: "已启用通胀调整",
     inflation_disabled: "每年提领金额根据通胀调整",
     please_login_first: "请先登入后再使用此功能",
-    recent_compound_result: "最近一次复利结果"
+    recent_compound_result: "最近一次复利结果",
+section_explanation_title: "📌 提领方式说明：",
+
+method_basic: "<strong>基本月领：</strong>总资产 ÷ 每月需求 = 可支撑年数。",
+method_4percent: "<strong>4%法则：</strong>每年提领 4%以下，资产理想可撑 30 年以上。",
+method_real_rate: "<strong>报酬－通胀：</strong>年报酬与通胀比较后，提供实际购买力试算。",
+method_adjust_inflation: "<strong>通胀调整提领：</strong>模拟购买力保值，每年提领金额随通胀上升。",
+
+btn_explain_more: "📖 什么是通胀保值提领？",
+
+explain_why: "为什么要通胀调整？",
+explain_reason: "每年的物价会慢慢上涨，如果每月都提一样的金额，实际能买的东西会越来越少。",
+explain_how: "怎么做？",
+
+step_1: "第一年每月提 30,000 元",
+step_2: "通胀 2%，第二年提 30,600 元",
+step_3: "第三年提 31,212 元… 以此类推"
+
 },
 
 "en": {
@@ -680,7 +715,24 @@ title: "FINORA",
     inflation_enabled: "Inflation adjustment enabled",
     inflation_disabled: "Adjust monthly withdrawal by inflation",
     please_login_first: "Please log in to use this feature.",
-    recent_compound_result: "Latest compound result"
+    recent_compound_result: "Latest compound result",
+section_explanation_title: "📌 Withdrawal Methods：",
+
+method_basic: "<strong>Basic Monthly:</strong> Total assets ÷ monthly needs = years of support.",
+method_4percent: "<strong>4% Rule:</strong> Withdraw 4% or less annually, ideally lasts 30+ years.",
+method_real_rate: "<strong>Return - Inflation:</strong> Calculates real purchasing power after adjusting.",
+method_adjust_inflation: "<strong>Inflation Adjusted:</strong> Simulates maintaining purchasing power over time.",
+
+btn_explain_more: "📖 What is inflation-adjusted withdrawal?",
+
+explain_why: "Why adjust for inflation?",
+explain_reason: "Prices rise over time. If you withdraw the same amount each year, it buys less and less.",
+explain_how: "How does it work?",
+
+step_1: "Year 1: Withdraw NT$30,000/month",
+step_2: "2% inflation → Year 2: NT$30,600",
+step_3: "Year 3: NT$31,212… and so on"
+
 },
   
  "ja": {
@@ -898,7 +950,24 @@ type_其他: "その他",
     inflation_enabled: "インフレ調整が有効です",
     inflation_disabled: "インフレに応じて引き出し額を調整",
     please_login_first: "この機能を使用するにはログインが必要です。",
-    recent_compound_result: "最近の複利結果"
+    recent_compound_result: "最近の複利結果",
+section_explanation_title: "📌 引き出し方法の説明：",
+
+method_basic: "<strong>基本月額：</strong>総資産 ÷ 月額支出 = 支持可能な年数",
+method_4percent: "<strong>4%ルール：</strong>年間4%未満を引き出せば30年以上持続可能",
+method_real_rate: "<strong>利回り－インフレ：</strong>インフレ調整後の実質購買力を試算",
+method_adjust_inflation: "<strong>インフレ調整引き出し：</strong>購買力を維持するため、毎年金額を上昇させる",
+
+btn_explain_more: "📖 インフレ調整引き出しとは？",
+
+explain_why: "なぜインフレ調整が必要？",
+explain_reason: "毎年物価が上がるため、同じ金額では買える物が少なくなる。",
+explain_how: "どうやって？",
+
+step_1: "1年目：月額 30,000元 を引き出す",
+step_2: "インフレ 2%、2年目は 30,600元",
+step_3: "3年目は 31,212元… 以降同様"
+
   }
 };
 
