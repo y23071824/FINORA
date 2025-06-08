@@ -146,40 +146,55 @@
   </div>
 </div>
 <script>
-function applyLang() {
-  const lang = localStorage.getItem("lang") || "zh-Hant";
-  const elements = document.querySelectorAll("[data-i18n]");
-
-  elements.forEach(el => {
-    const key = el.getAttribute("data-i18n");
-    const translation = LANG_DICT[lang] && LANG_DICT[lang][key];
-
-    if (translation) {
-      // 🛠️ 根據 tag 類型決定用 textContent 還是 innerHTML
-      if (el.tagName === "INPUT" || el.tagName === "TEXTAREA") {
-        el.placeholder = translation;
-      } else if (el.hasAttribute("data-i18n-safe")) {
-        el.textContent = translation; // 🛠️ 不要破壞原始結構
-      } else {
-        el.innerHTML = translation;   // 🛠️ 必須使用 HTML（例如含 <strong>）
+  function applyLang() {
+    const lang = localStorage.getItem("lang") || "zh-Hant";
+    const elements = document.querySelectorAll("[data-i18n]");
+    elements.forEach(el => {
+      const key = el.getAttribute("data-i18n");
+      const translation = LANG_DICT[lang] && LANG_DICT[lang][key];
+      if (translation) {
+        if (el.tagName === "INPUT" || el.tagName === "TEXTAREA") {
+          el.placeholder = translation;
+        } else if (el.hasAttribute("data-i18n-safe")) {
+          el.textContent = translation;
+        } else {
+          el.innerHTML = translation;
+        }
       }
-    }
-  });
-}
-
-  const selectedAccount = localStorage.getItem("selectedAccount");
-  const list = await FINORA_AUTH.fetchAccountList();
-  const match = list.find(acc => acc.id === selectedAccount);
-  const name = match?.displayName || selectedAccount;
-  document.getElementById("account-id").textContent = name;
-
-  const saved = localStorage.getItem("compoundResult");
-  if (saved && !isNaN(saved)) {
-    document.getElementById("total").value = Number(saved);
-    document.getElementById("compound-info").innerHTML =
-      `💰 ${i18n("recent_compound_result")}：<strong>NT$ ${Number(saved).toLocaleString()}</strong>`;
+    });
   }
-});
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    applyLang();
+    document.title = i18n("withdraw_title");
+
+    try {
+      await FINORA_AUTH.waitForLogin();
+      const selectedAccount = localStorage.getItem("selectedAccount");
+      const list = await FINORA_AUTH.fetchAccountList();
+      const match = list.find(acc => acc.id === selectedAccount);
+      const name = match?.displayName || selectedAccount;
+      document.getElementById("account-id").textContent = name;
+
+      const saved = localStorage.getItem("compoundResult");
+      if (saved && !isNaN(saved)) {
+        document.getElementById("total").value = Number(saved);
+        document.getElementById("compound-info").innerHTML =
+          `💰 ${i18n("recent_compound_result")}：<strong>NT$ ${Number(saved).toLocaleString()}</strong>`;
+      }
+    } catch (e) {
+      alert(i18n("please_login_first"));
+    }
+
+    document.getElementById("toggle-inflation").addEventListener("click", () => {
+      const checkbox = document.getElementById("inflation-adjust");
+      checkbox.checked = !checkbox.checked;
+      const btn = document.getElementById("toggle-inflation");
+      btn.textContent = checkbox.checked
+        ? "⭐️ " + i18n("inflation_enabled")
+        : "💡 " + i18n("inflation_disabled");
+    });
+  });
 
   function calculateWithdraw() {
     const total = parseFloat(document.getElementById("total").value);
@@ -196,13 +211,11 @@ function applyLang() {
       return;
     }
 
-    // ✅ 一般月領試算
     if (!isNaN(monthly) && monthly > 0 && !adjust) {
       const months = Math.floor(total / monthly);
       output += `📌 <strong>${i18n("basic_withdraw")}</strong><br>${i18n("monthly")} NT$ ${monthly.toLocaleString()} ${i18n("can_last")} <strong>${Math.floor(months / 12)} ${i18n("years")} ${months % 12} ${i18n("months")}</strong>。<br><br>`;
     }
 
-    // ✅ % 提領法
     if (!isNaN(rate) && rate > 0) {
       const yearly = total * rate / 100;
       const m = yearly / 12;
@@ -210,13 +223,11 @@ function applyLang() {
       output += `📌 <strong>${rate}% ${i18n("withdraw_rate_method")}</strong><br>${i18n("yearly")} NT$ ${yearly.toLocaleString()}，${i18n("monthly")} NT$ ${m.toLocaleString()}，${i18n("estimated_duration")} <strong>${duration.toFixed(1)} ${i18n("years")}</strong>。<br><br>`;
     }
 
-    // ✅ 實質報酬率
     if (!isNaN(r) && !isNaN(i)) {
       const realRate = ((1 + r / 100) / (1 + i / 100)) - 1;
       output += `📌 <strong>${i18n("real_rate_calc")}</strong><br>${i18n("real_rate")} <strong>${(realRate * 100).toFixed(2)}%</strong>。<br><br>`;
     }
 
-    // ✅ 通膨調整提領模擬
     if (adjust && !isNaN(i) && !isNaN(r)) {
       let log = `<strong>📈 ${i18n("inflation_adjusted_withdraw_simulation")}</strong><br>`;
       let monthlyNow = (!isNaN(monthly) && monthly > 0) ? monthly : 30000;
@@ -243,16 +254,6 @@ function applyLang() {
 
     result.innerHTML = output;
   }
-
-  // ✅ 切換通膨模式
-  document.getElementById("toggle-inflation").addEventListener("click", () => {
-    const checkbox = document.getElementById("inflation-adjust");
-    checkbox.checked = !checkbox.checked;
-    const btn = document.getElementById("toggle-inflation");
-    btn.textContent = checkbox.checked
-      ? "⭐️ " + i18n("inflation_enabled")
-      : "💡 " + i18n("inflation_disabled");
-  });
 
   function toggleExplain() {
     const box = document.getElementById("inflation-explain");
