@@ -78,7 +78,7 @@
 
 
   <script>
-let selectedAccount = localStorage.getItem("selectedAccount");
+selectedAccount = localStorage.getItem("selectedAccount");
 
 if (!selectedAccount) {
   alert(typeof i18n === "function" ? i18n("no_account_selected_alert") : "尚未選擇帳本，請先回首頁登入並選擇帳本！");
