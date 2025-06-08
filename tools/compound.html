@@ -6,7 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="../style.css" />
   <link rel="icon" href="favicon.png" type="image/png" />
-
+  <meta name="language" content="zh-Hant" />
+  
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
@@ -253,6 +254,11 @@ function loadInputsFromLocalStorage() {
 
 document.addEventListener("DOMContentLoaded", async () => {
   try {
+    document.documentElement.lang = localStorage.getItem("lang") || "zh-Hant"; // ⬅️ 加入這行
+
+    const lang = localStorage.getItem("lang") || "zh-Hant";
+    if (typeof applyLang === "function") applyLang(lang); // ⬅️ 建議顯式傳入語言參數
+
     const user = await FINORA_AUTH.waitForLogin();
     const selectedId = localStorage.getItem("selectedAccount");
     const list = await FINORA_AUTH.fetchAccountList();
