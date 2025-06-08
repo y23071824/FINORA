@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>退休提領試算｜FINORA</title>
+<title data-i18n="withdraw_title">退休提領試算｜FINORA</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="../style.css" />
   <link rel="icon" href="favicon.png" type="image/png" />
@@ -85,52 +85,66 @@
   </style>
 </head>
 <body>
-  <h1>退休金怎麼花</h1>
-  <div style="color: #555; font-size: 0.9rem;">目前帳本：<strong id="account-id">(讀取中...)</strong></div>
-  <div class="getting-started">
-    <p>💶 輸入預估資產、提領金額或比率，可加入年報酬率與通膨率</p>
-  </div>
+<h1 data-i18n="withdraw_heading">退休金怎麼花</h1>
+<div style="color: #555; font-size: 0.9rem;">
+  <span data-i18n="current_account">目前帳本：</span><strong id="account-id">(讀取中...)</strong>
+</div>
+<div class="getting-started">
+  <p data-i18n="withdraw_intro">💶 輸入預估資產、提領金額或比率，可加入年報酬率與通膨率</p>
+</div>
 
-  <label>預估資產總額（元）：<input type="number" id="total" /></label>
-  <label>每月提領金額（元）：<input type="number" id="monthly" placeholder="預設 30,000" /></label>
-  <label>提領比率（％）：<input type="number" id="withdraw-rate" value="4" step="0.1" /></label>
-  <label>年報酬率（％）：<input type="number" id="return-rate" value="5" step="0.1" /></label>
-  <label>年通膨率（％）：<input type="number" id="inflation-rate" value="2" step="0.1" /></label>
+<label data-i18n="label_total">
+  預估資產總額（元）：<input type="number" id="total" />
+</label>
+<label data-i18n="label_monthly">
+  每月提領金額（元）：<input type="number" id="monthly" data-i18n-placeholder="placeholder_monthly" placeholder="預設 30,000" />
+</label>
+<label data-i18n="label_withdraw_rate">
+  提領比率（％）：<input type="number" id="withdraw-rate" value="4" step="0.1" />
+</label>
+<label data-i18n="label_return_rate">
+  年報酬率（％）：<input type="number" id="return-rate" value="5" step="0.1" />
+</label>
+<label data-i18n="label_inflation_rate">
+  年通膨率（％）：<input type="number" id="inflation-rate" value="2" step="0.1" />
+</label>
 
-  <div style="text-align: center;">
-    <button id="toggle-inflation" class="inflation-toggle-btn">💡 每年提領金額根據通膨調整</button>
-    <button class="cta-button" onclick="calculateWithdraw()">試算</button>
-  </div>
+<div style="text-align: center;">
+  <button id="toggle-inflation" class="inflation-toggle-btn" data-i18n="btn_toggle_inflation">💡 每年提領金額根據通膨調整</button>
+  <button class="cta-button" onclick="calculateWithdraw()" data-i18n="btn_calculate">試算</button>
+</div>
   <input type="checkbox" id="inflation-adjust" style="display: none;" />
 
   <div id="result"></div>
   <div id="compound-info"></div>
 
   <div id="explanation">
-    <p>📌 <strong>提領方式說明：</strong></p>
-    <ul>
-      <li><strong>一般月領：</strong>總資產 ÷ 每月需求 = 可支撐年數。</li>
-      <li><strong>4%法則：</strong>每年提領 4%以下，資產理想可撐 30 年以上。</li>
-      <li><strong>報酬－通膨：</strong>年報酬與通膨比較後，提供實質購買力試算。</li>
-      <li><strong>通膨調整提領：</strong>模擬購買力保值，每年提領金額隨通膨上升。</li>
-    </ul>
-    <div style="text-align: center; margin-top: 1rem;">
-      <button onclick="toggleExplain()" class="cta-inline">📖 什麼是通膨保值提領？</button>
-    </div>
-    <div id="inflation-explain" style="display: none; background: #fff5f4; padding: 1rem; border-left: 4px solid var(--main-color); border-radius: 6px; font-size: 0.95rem; line-height: 1.6; margin-top: 0.5rem;">
-      <p><strong>為什麼要通膨調整？</strong></p>
-      <p>每年的物價會慢慢上漲，如果每月都提一樣的金額，實際能買的東西會越來越少。</p>
-      <p><strong>怎麼做？</strong></p>
-      <ul style="padding-left: 1.2rem; margin-top: 0.5rem;">
-        <li>第一年每月提 30,000 元</li>
-        <li>通膨 2%，第二年提 30,600 元</li>
-        <li>第三年提 31,212 元… 以此類推</li>
-      </ul>
-    </div>
+  <p><strong data-i18n="section_explanation_title">📌 提領方式說明：</strong></p>
+  <ul>
+    <li data-i18n="method_basic"><strong>一般月領：</strong>總資產 ÷ 每月需求 = 可支撐年數。</li>
+    <li data-i18n="method_4percent"><strong>4%法則：</strong>每年提領 4%以下，資產理想可撐 30 年以上。</li>
+    <li data-i18n="method_real_rate"><strong>報酬－通膨：</strong>年報酬與通膨比較後，提供實質購買力試算。</li>
+    <li data-i18n="method_adjust_inflation"><strong>通膨調整提領：</strong>模擬購買力保值，每年提領金額隨通膨上升。</li>
+  </ul>
+  <div style="text-align: center; margin-top: 1rem;">
+    <button onclick="toggleExplain()" class="cta-inline" data-i18n="btn_explain_more">📖 什麼是通膨保值提領？</button>
   </div>
+  <div id="inflation-explain" style="display: none; background: #fff5f4; padding: 1rem; border-left: 4px solid var(--main-color); border-radius: 6px; font-size: 0.95rem; line-height: 1.6; margin-top: 0.5rem;">
+    <p data-i18n="explain_why"><strong>為什麼要通膨調整？</strong></p>
+    <p data-i18n="explain_reason">每年的物價會慢慢上漲，如果每月都提一樣的金額，實際能買的東西會越來越少。</p>
+    <p data-i18n="explain_how"><strong>怎麼做？</strong></p>
+    <ul style="padding-left: 1.2rem; margin-top: 0.5rem;">
+      <li data-i18n="step_1">第一年每月提 30,000 元</li>
+      <li data-i18n="step_2">通膨 2%，第二年提 30,600 元</li>
+      <li data-i18n="step_3">第三年提 31,212 元… 以此類推</li>
+    </ul>
+  </div>
+</div>
 <script src="../firebase-sync.js"></script>
 <script>
   document.addEventListener("DOMContentLoaded", async () => {
+    applyLang(); // ← 套用語言（一定要有）
+
     try {
       await FINORA_AUTH.waitForLogin();
       const selectedAccount = localStorage.getItem("selectedAccount");
@@ -143,10 +157,10 @@
       if (saved && !isNaN(saved)) {
         document.getElementById("total").value = Number(saved);
         document.getElementById("compound-info").innerHTML =
-          `💰 最近一次複利結果：<strong>NT$ ${Number(saved).toLocaleString()}</strong>`;
+          `💰 ${i18n("recent_compound_result")}：<strong>NT$ ${Number(saved).toLocaleString()}</strong>`;
       }
     } catch (e) {
-      alert("請先登入後再使用此功能");
+      alert(i18n("please_login_first")); // 🔁 請先登入後再使用此功能
     }
   });
 
@@ -161,14 +175,14 @@
     let output = "";
 
     if (!total || total <= 0) {
-      result.textContent = "請輸入正確的資產總額";
+      result.textContent = i18n("error_invalid_total");
       return;
     }
 
-    // ✅ 一般月領試算（未勾選通膨調整時顯示）
+    // ✅ 一般月領試算
     if (!isNaN(monthly) && monthly > 0 && !adjust) {
       const months = Math.floor(total / monthly);
-      output += `📌 <strong>一般月領試算</strong><br>每月 NT$ ${monthly.toLocaleString()} 可支撐約 <strong>${Math.floor(months / 12)} 年 ${months % 12} 個月</strong>。<br><br>`;
+      output += `📌 <strong>${i18n("basic_withdraw")}</strong><br>${i18n("monthly")} NT$ ${monthly.toLocaleString()} ${i18n("can_last")} <strong>${Math.floor(months / 12)} ${i18n("years")} ${months % 12} ${i18n("months")}</strong>。<br><br>`;
     }
 
     // ✅ % 提領法
@@ -176,21 +190,21 @@
       const yearly = total * rate / 100;
       const m = yearly / 12;
       const duration = total / yearly;
-      output += `📌 <strong>${rate}% 提領法</strong><br>每年約 NT$ ${yearly.toLocaleString()}，每月約 NT$ ${m.toLocaleString()}，預估可支撐 <strong>${duration.toFixed(1)} 年</strong>。<br><br>`;
+      output += `📌 <strong>${rate}% ${i18n("withdraw_rate_method")}</strong><br>${i18n("yearly")} NT$ ${yearly.toLocaleString()}，${i18n("monthly")} NT$ ${m.toLocaleString()}，${i18n("estimated_duration")} <strong>${duration.toFixed(1)} ${i18n("years")}</strong>。<br><br>`;
     }
 
-    // ✅ 實質報酬率（有填報酬與通膨時顯示）
+    // ✅ 實質報酬率
     if (!isNaN(r) && !isNaN(i)) {
       const realRate = ((1 + r / 100) / (1 + i / 100)) - 1;
-      output += `📌 <strong>報酬與通膨調整</strong><br>實質年報酬率約為 <strong>${(realRate * 100).toFixed(2)}%</strong>。<br><br>`;
+      output += `📌 <strong>${i18n("real_rate_calc")}</strong><br>${i18n("real_rate")} <strong>${(realRate * 100).toFixed(2)}%</strong>。<br><br>`;
     }
 
     // ✅ 通膨調整提領模擬
     if (adjust && !isNaN(i) && !isNaN(r)) {
-      let log = "<strong>📈 通膨保值提領模擬：</strong><br>";
+      let log = `<strong>📈 ${i18n("inflation_adjusted_withdraw_simulation")}</strong><br>`;
       let monthlyNow = (!isNaN(monthly) && monthly > 0) ? monthly : 30000;
       if (isNaN(monthly) || monthly <= 0) {
-        log += `(⚠️ 未輸入預估月提領金額，預設從 NT$30,000 起算)<br>`;
+        log += `(${i18n("default_monthly_warn")})<br>`;
       }
 
       let year = 1;
@@ -201,26 +215,26 @@
       while (remaining > 0 && year <= 100) {
         const yearlyOut = monthlyNow * 12;
         remaining = (remaining - yearlyOut) * (1 + returnRate);
-        log += `第 ${year} 年：每月 ${monthlyNow.toFixed(0)}，年支出 ${yearlyOut.toFixed(0)}，剩餘資產 NT$ ${remaining.toFixed(0)}<br>`;
+        log += `${i18n("year")} ${year}：${i18n("monthly")} ${monthlyNow.toFixed(0)}，${i18n("yearly_out")} ${yearlyOut.toFixed(0)}，${i18n("remaining_asset")} NT$ ${remaining.toFixed(0)}<br>`;
         monthlyNow *= (1 + growth);
         year++;
       }
 
-      log += `<br>✅ 預估可提領至第 <strong>${year - 1} 年</strong> 結束。<br><br>`;
+      log += `<br>✅ ${i18n("withdraw_until_year")} <strong>${year - 1}</strong>。<br><br>`;
       output += log;
     }
 
     result.innerHTML = output;
   }
 
-  // ✅ 切換通膨模式按鈕
+  // ✅ 切換通膨模式
   document.getElementById("toggle-inflation").addEventListener("click", () => {
     const checkbox = document.getElementById("inflation-adjust");
     checkbox.checked = !checkbox.checked;
     const btn = document.getElementById("toggle-inflation");
     btn.textContent = checkbox.checked
-      ? "⭐️ 已啟用通膨調整"
-      : "💡 每年提領金額根據通膨調整";
+      ? "⭐️ " + i18n("inflation_enabled")
+      : "💡 " + i18n("inflation_disabled");
   });
 
   function toggleExplain() {
@@ -228,16 +242,16 @@
     box.style.display = box.style.display === "none" ? "block" : "none";
   }
 </script>
-  <footer>
-    <div style="margin-bottom: 0.8rem;">
-      <a href="../app.html" style="text-align: center; display: block; font-size: 1rem; color: var(--main-color); text-decoration: none;">← 返回首頁</a>
-    </div>
-    <p>© 2025 FINORA 好好存｜家庭友善資產整合工具</p>
-    <div class="footer-links">
-      <a href="howto.html">使用說明</a>・
-      <a href="mailto:service@finora.life?subject=聯絡詢問">聯絡我們</a>・
-      <a href="privacy.html">隱私權條款</a>
-    </div>
-  </footer>
+<footer>
+  <div style="margin-bottom: 0.8rem;">
+    <a href="../app.html" style="text-align: center; display: block; font-size: 1rem; color: var(--main-color); text-decoration: none;" data-i18n="btn_back_home">← 返回首頁</a>
+  </div>
+  <p>© 2025 FINORA 好好存｜家庭友善資產整合工具</p>
+  <div class="footer-links">
+    <a href="howto.html" data-i18n="footer_howto">使用說明</a>・
+    <a href="mailto:service@finora.life?subject=聯絡詢問" data-i18n="footer_contact">聯絡我們</a>・
+    <a href="privacy.html" data-i18n="footer_privacy">隱私權條款</a>
+  </div>
+</footer>
 </body>
 </html>
