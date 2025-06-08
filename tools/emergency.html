@@ -68,8 +68,7 @@
   </label>
   <div class="summary" id="reserve-suggestion"></div>
 
-  
-<script>
+  <script>
 // ✅ 多語言函式（含佔位變數處理）
 function i18n(key, vars) {
   const lang = localStorage.getItem("lang") || "zh-Hant";
@@ -101,30 +100,6 @@ function applyLang() {
     titleTag.textContent = typeof dict[titleKey] === "function"
       ? dict[titleKey]({ months: 3 })
       : dict[titleKey] || titleKey;
-  }
-}
-
-// ✅ 帳本取得與驗證（防呆）
-var selectedAccount = localStorage.getItem("selectedAccount");
-if (!selectedAccount) {
-  alert(i18n("no_account_selected_alert") || "尚未選擇帳本，請先回首頁登入並選擇帳本！");
-  window.location.href = "../index.html";
-}
-
-const incomeKey = `emergencyIncome_${selectedAccount}`;
-const expenseKey = `emergencyExpenses_${selectedAccount}`;
-let income = [], expenses = [];
-
-// ✅ 顯示帳本名稱
-async function loadDisplayName() {
-  try {
-    await FINORA_AUTH.waitForLogin();
-    const list = await FINORA_AUTH.fetchAccountList();
-    const match = list.find(acc => acc.id === selectedAccount);
-    document.getElementById("account-id").textContent = match?.displayName || selectedAccount;
-  } catch (e) {
-    console.warn("❗ 帳本名稱讀取失敗", e);
-    document.getElementById("account-id").textContent = selectedAccount;
   }
 }
 
@@ -310,7 +285,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   render();
 });
-</script>
+
 
  <a href="../app.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374" data-i18n="back_home_link">← 返回首頁</a>
   <footer class="site-footer">
