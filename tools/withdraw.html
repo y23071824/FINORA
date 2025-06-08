@@ -149,8 +149,17 @@
 <script>
 firebase.auth().onAuthStateChanged(async (user) => {
   if (!user) {
-    alert(i18n("please_login_first"));
-    return;
+document.addEventListener("DOMContentLoaded", async () => {
+  applyLang();
+  document.title = i18n("withdraw_title");
+
+  if (!firebase.auth().currentUser) {
+    try {
+      await FINORA_AUTH.waitForLogin();
+    } catch (e) {
+      alert(i18n("please_login_first"));
+      return;
+    }
   }
 
   const selectedAccount = localStorage.getItem("selectedAccount");
@@ -159,7 +168,6 @@ firebase.auth().onAuthStateChanged(async (user) => {
   const name = match?.displayName || selectedAccount;
   document.getElementById("account-id").textContent = name;
 
-  // 讀入 compoundResult
   const saved = localStorage.getItem("compoundResult");
   if (saved && !isNaN(saved)) {
     document.getElementById("total").value = Number(saved);
