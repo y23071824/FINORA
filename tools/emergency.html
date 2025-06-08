@@ -76,10 +76,42 @@
   
   
 
+<script>
+function i18n(key, vars) {
+  const lang = localStorage.getItem("lang") || "zh-Hant";
+  const dict = translations[lang] || {};
+  const val = dict[key];
+  return typeof val === "function" ? val(vars || {}) : val || key;
+}
 
-  <script>
+function applyLang() {
+  const lang = localStorage.getItem("lang") || "zh-Hant";
+  const dict = translations[lang] || translations["zh-Hant"];
+
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const key = el.getAttribute("data-i18n");
+    const value = dict[key];
+    if (typeof value === "function") {
+      el.innerHTML = value({ months: document.getElementById("reserve-months")?.value || 3 });
+    } else if (value !== undefined) {
+      el.innerHTML = value;
+    } else {
+      console.warn("❗ 遺漏翻譯 key：", key);
+    }
+  });
+
+  const titleTag = document.querySelector("title[data-i18n]");
+  if (titleTag) {
+    const titleKey = titleTag.getAttribute("data-i18n");
+    if (dict[titleKey]) {
+      titleTag.textContent = typeof dict[titleKey] === "function" ? dict[titleKey]({ months: 3 }) : dict[titleKey];
+    } else {
+      console.warn("❗ title 遺漏翻譯 key：", titleKey);
+    }
+  }
+}
+
 selectedAccount = localStorage.getItem("selectedAccount");
-
 if (!selectedAccount) {
   alert(typeof i18n === "function" ? i18n("no_account_selected_alert") : "尚未選擇帳本，請先回首頁登入並選擇帳本！");
   window.location.href = "../index.html";
@@ -116,6 +148,9 @@ async function loadEmergencyData() {
 
     income = incomeSnap.exists ? incomeSnap.data().items || [] : [];
     expenses = expenseSnap.exists ? expenseSnap.data().items || [] : [];
+
+    if (income.length === 0) income.push({ name: "", amount: 0 });
+    if (expenses.length === 0) expenses.push({ name: "", amount: 0 });
 
     localStorage.setItem(incomeKey, JSON.stringify(income));
     localStorage.setItem(expenseKey, JSON.stringify(expenses));
@@ -237,9 +272,12 @@ function render() {
 }
 
 function updateSummary() {
+  const monthsSelect = document.getElementById('reserve-months');
+  if (!monthsSelect) return console.warn("⚠️ reserve-months not found");
+
+  const months = parseInt(monthsSelect.value) || 3;
   const totalIncome = income.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
   const totalExpense = expenses.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
-  const months = parseInt(document.getElementById('reserve-months').value) || 3;
   const suggestion = totalExpense * months;
 
   document.getElementById('income-total').textContent =
@@ -253,6 +291,8 @@ function updateSummary() {
 document.addEventListener('DOMContentLoaded', async () => {
   await loadDisplayName();
   await loadEmergencyData();
+
+  if (typeof applyLang === "function") applyLang();
 
   document.getElementById('add-income').textContent = `+ ${i18n("add_income")}`;
   document.getElementById('add-expense').textContent = `+ ${i18n("add_expense")}`;
@@ -269,10 +309,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   document.getElementById('reserve-months').addEventListener('change', updateSummary);
 
-  if (typeof applyLang === "function") applyLang(); // ⬅️ 載入頁面語系
   render();
 });
-  </script>
+</script>
+
   
 <a href="../app.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374" data-i18n="back_home_link">← 返回首頁</a>
   <footer class="site-footer">
