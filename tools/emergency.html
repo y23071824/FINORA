@@ -67,10 +67,10 @@
   <h2 data-i18n="reserve_calc">🧯 預備金建議試算</h2>
   <label data-i18n="select_months_label">選擇涵蓋月數：
     <select id="reserve-months">
-      <option value="3">3 <span data-i18n="months">3個月</option>
-      <option value="6">6 <span data-i18n="months">6個月</option>
-      <option value="9">9 <span data-i18n="months">9個月</option>
-      <option value="12">12 <span data-i18n="months">12個月</option>
+<option value="3" data-i18n="months_option_3">3 個月</option>
+<option value="6" data-i18n="months_option_6">6 個月</option>
+<option value="9" data-i18n="months_option_9">9 個月</option>
+<option value="12" data-i18n="months_option_12">12 個月</option>
     </select>
   </label>
   <div class="summary" id="reserve-suggestion"></div>
@@ -112,7 +112,7 @@ function applyLang() {
   }
 }
 
-selectedAccount = localStorage.getItem("selectedAccount");
+let selectedAccount = localStorage.getItem("selectedAccount");
 if (!selectedAccount) {
   alert(typeof i18n === "function" ? i18n("no_account_selected_alert") : "尚未選擇帳本，請先回首頁登入並選擇帳本！");
   window.location.href = "../index.html";
