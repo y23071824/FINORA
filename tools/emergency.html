@@ -59,16 +59,18 @@
   <button id="add-expense" data-i18n="add_expense">+ 新增支出項目</button>
   <div class="summary" id="expense-total"></div>
 
-  <h2 data-i18n="reserve_calc">🧯 預備金建議試算</h2>
-  <label data-i18n="select_months_label">選擇涵蓋月數：
-    <select id="reserve-months">
-      <option value="3" data-i18n-option="months_option_3">3 個月</option>
-      <option value="6" data-i18n-option="months_option_6">6 個月</option>
-      <option value="9" data-i18n-option="months_option_9">9 個月</option>
-      <option value="12" data-i18n-option="months_option_12">12 個月</option>
-    </select>
-  </label>
-  <div class="summary" id="reserve-suggestion"></div>
+<h2 data-i18n="reserve_calc">🧯 預備金建議試算</h2>
+
+<label for="reserve-months" data-i18n="select_months_label">選擇涵蓋月數：</label>
+<select id="reserve-months">
+  <option value="3" data-i18n-option="months_option_3">3 個月</option>
+  <option value="6" data-i18n-option="months_option_6">6 個月</option>
+  <option value="9" data-i18n-option="months_option_9">9 個月</option>
+  <option value="12" data-i18n-option="months_option_12">12 個月</option>
+</select>
+
+<div class="summary" id="reserve-suggestion"></div>
+
 </body>
  <script>
 // ✅ 帳本與 localStorage key 初始化（selectedAccount 已由 firebase-sync.js 提供）
