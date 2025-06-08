@@ -194,3 +194,10 @@ async function loadDisplayName() {
     document.getElementById("account-id").textContent = fallback;
   }
 }
+
+// ✅ 帳本與 localStorage key 初始化
+const selectedAccount = localStorage.getItem("selectedAccount") || "default";
+const incomeKey = `emergencyIncome_${selectedAccount}`;
+const expenseKey = `emergencyExpenses_${selectedAccount}`;
+let income = [], expenses = [];
+
