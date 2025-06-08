@@ -71,6 +71,12 @@
   <div class="summary" id="reserve-suggestion"></div>
 </body>
   <script>
+// ✅ 帳本與 localStorage key 初始化
+const selectedAccount = localStorage.getItem("selectedAccount") || "default";
+const incomeKey = `emergencyIncome_${selectedAccount}`;
+const expenseKey = `emergencyExpenses_${selectedAccount}`;
+let income = [], expenses = [];
+
 // ✅ 多語言函式（含佔位變數處理）
 function i18n(key, vars) {
   const lang = localStorage.getItem("lang") || "zh-Hant";
