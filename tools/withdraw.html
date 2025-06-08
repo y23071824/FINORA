@@ -147,20 +147,26 @@
 </div>
 <script src="../firebase-sync.js"></script>
 <script>
-firebase.auth().onAuthStateChanged(async (user) => {
-  if (!user) {
-document.addEventListener("DOMContentLoaded", async () => {
-  applyLang();
-  document.title = i18n("withdraw_title");
+function applyLang() {
+  const lang = localStorage.getItem("lang") || "zh-Hant";
+  const elements = document.querySelectorAll("[data-i18n]");
 
-  if (!firebase.auth().currentUser) {
-    try {
-      await FINORA_AUTH.waitForLogin();
-    } catch (e) {
-      alert(i18n("please_login_first"));
-      return;
+  elements.forEach(el => {
+    const key = el.getAttribute("data-i18n");
+    const translation = LANG_DICT[lang] && LANG_DICT[lang][key];
+
+    if (translation) {
+      // 🛠️ 根據 tag 類型決定用 textContent 還是 innerHTML
+      if (el.tagName === "INPUT" || el.tagName === "TEXTAREA") {
+        el.placeholder = translation;
+      } else if (el.hasAttribute("data-i18n-safe")) {
+        el.textContent = translation; // 🛠️ 不要破壞原始結構
+      } else {
+        el.innerHTML = translation;   // 🛠️ 必須使用 HTML（例如含 <strong>）
+      }
     }
-  }
+  });
+}
 
   const selectedAccount = localStorage.getItem("selectedAccount");
   const list = await FINORA_AUTH.fetchAccountList();
