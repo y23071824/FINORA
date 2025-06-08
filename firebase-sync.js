@@ -180,14 +180,17 @@ window.FINORA_AUTH = {
   deleteAccount
 };
 
+// ✅ 載入帳本顯示名稱
 async function loadDisplayName() {
   try {
     await FINORA_AUTH.waitForLogin();
     const list = await FINORA_AUTH.fetchAccountList();
+    const selectedAccount = localStorage.getItem("selectedAccount");
     const match = list.find(acc => acc.id === selectedAccount);
     document.getElementById("account-id").textContent = match?.displayName || selectedAccount;
   } catch (e) {
     console.warn("❗ 帳本名稱讀取失敗", e);
-    document.getElementById("account-id").textContent = selectedAccount;
+    const fallback = localStorage.getItem("selectedAccount") || "default";
+    document.getElementById("account-id").textContent = fallback;
   }
 }
