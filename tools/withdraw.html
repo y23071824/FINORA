@@ -145,121 +145,209 @@
     </ul>
   </div>
 </div>
-<script>
-  function applyLang() {
-    const lang = localStorage.getItem("lang") || "zh-Hant";
-    const elements = document.querySelectorAll("[data-i18n]");
-    elements.forEach(el => {
-      const key = el.getAttribute("data-i18n");
-      const translation = LANG_DICT[lang] && LANG_DICT[lang][key];
-      if (translation) {
-        if (el.tagName === "INPUT" || el.tagName === "TEXTAREA") {
-          el.placeholder = translation;
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title data-i18n="withdraw_title">退休提領試算｜FINORA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../style.css" />
+  <link rel="icon" href="../favicon.png" type="image/png" />
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+  <!-- FINORA 模組 -->
+  <script src="../firebase-sync.js"></script>
+  <script src="../lang.js"></script>
+</head>
+<body>
+  <h1 data-i18n="withdraw_heading">退休金怎麼花</h1>
+  <div style="color: #555; font-size: 0.9rem;">
+    <span data-i18n="current_account">目前帳本：</span><strong id="account-id">(讀取中...)</strong>
+  </div>
+  <div class="getting-started">
+    <p data-i18n="withdraw_intro">💶 輸入預估資產、提領金額或比率，可加入年報酬率與通膨率</p>
+  </div>
+
+  <label data-i18n="label_total">預估資產總額（元）：</label>
+  <input type="number" id="total" />
+
+  <label data-i18n="label_monthly">每月提領金額（元）：</label>
+  <input type="number" id="monthly" placeholder="預設 30,000" />
+
+  <label data-i18n="label_withdraw_rate">提領比率（％）：</label>
+  <input type="number" id="withdraw-rate" value="4" step="0.1" />
+
+  <label data-i18n="label_return_rate">年報酬率（％）：</label>
+  <input type="number" id="return-rate" value="5" step="0.1" />
+
+  <label data-i18n="label_inflation_rate">年通膨率（％）：</label>
+  <input type="number" id="inflation-rate" value="2" step="0.1" />
+
+  <div style="text-align: center;">
+    <button id="toggle-inflation" class="inflation-toggle-btn" data-i18n="btn_toggle_inflation">💡 每年提領金額根據通膨調整</button>
+    <button class="cta-button" onclick="calculateWithdraw()" data-i18n="btn_calculate">試算</button>
+  </div>
+  <input type="checkbox" id="inflation-adjust" style="display: none;" />
+
+  <div id="result"></div>
+  <div id="compound-info"></div>
+
+  <div id="explanation">
+    <p><strong data-i18n="section_explanation_title">📌 提領方式說明：</strong></p>
+    <ul>
+      <li data-i18n="method_basic"><strong>一般月領：</strong>總資產 ÷ 每月需求 = 可支撐年數。</li>
+      <li data-i18n="method_4percent"><strong>4%法則：</strong>每年提領 4%以下，資產理想可撐 30 年以上。</li>
+      <li data-i18n="method_real_rate"><strong>報酬－通膨：</strong>年報酬與通膨比較後，提供實質購買力試算。</li>
+      <li data-i18n="method_adjust_inflation"><strong>通膨調整提領：</strong>模擬購買力保值，每年提領金額隨通膨上升。</li>
+    </ul>
+    <div style="text-align: center; margin-top: 1rem;">
+      <button onclick="toggleExplain()" class="cta-inline" data-i18n="btn_explain_more">📖 什麼是通膨保值提領？</button>
+    </div>
+    <div id="inflation-explain" style="display: none; background: #fff5f4; padding: 1rem; border-left: 4px solid var(--main-color); border-radius: 6px; font-size: 0.95rem; line-height: 1.6; margin-top: 0.5rem;">
+      <p data-i18n="explain_why"><strong>為什麼要通膨調整？</strong></p>
+      <p data-i18n="explain_reason">每年的物價會慢慢上漲，如果每月都提一樣的金額，實際能買的東西會越來越少。</p>
+      <p data-i18n="explain_how"><strong>怎麼做？</strong></p>
+      <ul style="padding-left: 1.2rem; margin-top: 0.5rem;">
+        <li data-i18n="step_1">第一年每月提 30,000 元</li>
+        <li data-i18n="step_2">通膨 2%，第二年提 30,600 元</li>
+        <li data-i18n="step_3">第三年提 31,212 元… 以此類推</li>
+      </ul>
+    </div>
+  </div>
+
+  <footer>
+    <div style="margin-bottom: 0.8rem;">
+      <a href="../app.html" style="text-align: center; display: block; font-size: 1rem; color: var(--main-color); text-decoration: none;" data-i18n="btn_back_home">← 返回首頁</a>
+    </div>
+    <p>© 2025 FINORA 好好存｜家庭友善資產整合工具</p>
+    <div class="footer-links">
+      <a href="howto.html" data-i18n="footer_howto">使用說明</a>・
+      <a href="mailto:service@finora.life?subject=聯絡詢問" data-i18n="footer_contact">聯絡我們</a>・
+      <a href="privacy.html" data-i18n="footer_privacy">隱私權條款</a>
+    </div>
+  </footer>
+
+  <!-- ✅ Script 區塊 -->
+  <script>
+    function applyLang() {
+      const lang = localStorage.getItem("lang") || "zh-Hant";
+      const elements = document.querySelectorAll("[data-i18n]");
+      elements.forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        const t = LANG_DICT[lang] && LANG_DICT[lang][key];
+        if (!t) return;
+        if (el.tagName === "INPUT") {
+          el.placeholder = t;
         } else if (el.hasAttribute("data-i18n-safe")) {
-          el.textContent = translation;
+          el.textContent = t;
         } else {
-          el.innerHTML = translation;
+          el.innerHTML = t;
         }
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      applyLang();
+      document.title = i18n("withdraw_title");
+
+      try {
+        await FINORA_AUTH.waitForLogin();
+        const selectedAccount = localStorage.getItem("selectedAccount");
+        const list = await FINORA_AUTH.fetchAccountList();
+        const match = list.find(acc => acc.id === selectedAccount);
+        const name = match?.displayName || selectedAccount;
+        document.getElementById("account-id").textContent = name;
+
+        const saved = localStorage.getItem("compoundResult");
+        if (saved && !isNaN(saved)) {
+          document.getElementById("total").value = Number(saved);
+          document.getElementById("compound-info").innerHTML =
+            `💰 ${i18n("recent_compound_result")}：<strong>NT$ ${Number(saved).toLocaleString()}</strong>`;
+        }
+      } catch (e) {
+        alert(i18n("please_login_first"));
       }
+
+      document.getElementById("toggle-inflation").addEventListener("click", () => {
+        const checkbox = document.getElementById("inflation-adjust");
+        checkbox.checked = !checkbox.checked;
+        const btn = document.getElementById("toggle-inflation");
+        btn.textContent = checkbox.checked
+          ? "⭐️ " + i18n("inflation_enabled")
+          : "💡 " + i18n("inflation_disabled");
+      });
     });
-  }
 
-  document.addEventListener("DOMContentLoaded", async () => {
-    applyLang();
-    document.title = i18n("withdraw_title");
+    function calculateWithdraw() {
+      const total = parseFloat(document.getElementById("total").value);
+      const monthly = parseFloat(document.getElementById("monthly").value);
+      const rate = parseFloat(document.getElementById("withdraw-rate").value);
+      const r = parseFloat(document.getElementById("return-rate").value);
+      const i = parseFloat(document.getElementById("inflation-rate").value);
+      const adjust = document.getElementById("inflation-adjust").checked;
+      const result = document.getElementById("result");
+      let output = "";
 
-    try {
-      await FINORA_AUTH.waitForLogin();
-      const selectedAccount = localStorage.getItem("selectedAccount");
-      const list = await FINORA_AUTH.fetchAccountList();
-      const match = list.find(acc => acc.id === selectedAccount);
-      const name = match?.displayName || selectedAccount;
-      document.getElementById("account-id").textContent = name;
-
-      const saved = localStorage.getItem("compoundResult");
-      if (saved && !isNaN(saved)) {
-        document.getElementById("total").value = Number(saved);
-        document.getElementById("compound-info").innerHTML =
-          `💰 ${i18n("recent_compound_result")}：<strong>NT$ ${Number(saved).toLocaleString()}</strong>`;
-      }
-    } catch (e) {
-      alert(i18n("please_login_first"));
-    }
-
-    document.getElementById("toggle-inflation").addEventListener("click", () => {
-      const checkbox = document.getElementById("inflation-adjust");
-      checkbox.checked = !checkbox.checked;
-      const btn = document.getElementById("toggle-inflation");
-      btn.textContent = checkbox.checked
-        ? "⭐️ " + i18n("inflation_enabled")
-        : "💡 " + i18n("inflation_disabled");
-    });
-  });
-
-  function calculateWithdraw() {
-    const total = parseFloat(document.getElementById("total").value);
-    const monthly = parseFloat(document.getElementById("monthly").value);
-    const rate = parseFloat(document.getElementById("withdraw-rate").value);
-    const r = parseFloat(document.getElementById("return-rate").value);
-    const i = parseFloat(document.getElementById("inflation-rate").value);
-    const adjust = document.getElementById("inflation-adjust").checked;
-    const result = document.getElementById("result");
-    let output = "";
-
-    if (!total || total <= 0) {
-      result.textContent = i18n("error_invalid_total");
-      return;
-    }
-
-    if (!isNaN(monthly) && monthly > 0 && !adjust) {
-      const months = Math.floor(total / monthly);
-      output += `📌 <strong>${i18n("basic_withdraw")}</strong><br>${i18n("monthly")} NT$ ${monthly.toLocaleString()} ${i18n("can_last")} <strong>${Math.floor(months / 12)} ${i18n("years")} ${months % 12} ${i18n("months")}</strong>。<br><br>`;
-    }
-
-    if (!isNaN(rate) && rate > 0) {
-      const yearly = total * rate / 100;
-      const m = yearly / 12;
-      const duration = total / yearly;
-      output += `📌 <strong>${rate}% ${i18n("withdraw_rate_method")}</strong><br>${i18n("yearly")} NT$ ${yearly.toLocaleString()}，${i18n("monthly")} NT$ ${m.toLocaleString()}，${i18n("estimated_duration")} <strong>${duration.toFixed(1)} ${i18n("years")}</strong>。<br><br>`;
-    }
-
-    if (!isNaN(r) && !isNaN(i)) {
-      const realRate = ((1 + r / 100) / (1 + i / 100)) - 1;
-      output += `📌 <strong>${i18n("real_rate_calc")}</strong><br>${i18n("real_rate")} <strong>${(realRate * 100).toFixed(2)}%</strong>。<br><br>`;
-    }
-
-    if (adjust && !isNaN(i) && !isNaN(r)) {
-      let log = `<strong>📈 ${i18n("inflation_adjusted_withdraw_simulation")}</strong><br>`;
-      let monthlyNow = (!isNaN(monthly) && monthly > 0) ? monthly : 30000;
-      if (isNaN(monthly) || monthly <= 0) {
-        log += `(${i18n("default_monthly_warn")})<br>`;
+      if (!total || total <= 0) {
+        result.textContent = i18n("error_invalid_total");
+        return;
       }
 
-      let year = 1;
-      let remaining = total;
-      const growth = i / 100;
-      const returnRate = r / 100;
-
-      while (remaining > 0 && year <= 100) {
-        const yearlyOut = monthlyNow * 12;
-        remaining = (remaining - yearlyOut) * (1 + returnRate);
-        log += `${i18n("year")} ${year}：${i18n("monthly")} ${monthlyNow.toFixed(0)}，${i18n("yearly_out")} ${yearlyOut.toFixed(0)}，${i18n("remaining_asset")} NT$ ${remaining.toFixed(0)}<br>`;
-        monthlyNow *= (1 + growth);
-        year++;
+      if (!isNaN(monthly) && monthly > 0 && !adjust) {
+        const months = Math.floor(total / monthly);
+        output += `📌 <strong>${i18n("basic_withdraw")}</strong><br>${i18n("monthly")} NT$ ${monthly.toLocaleString()} ${i18n("can_last")} <strong>${Math.floor(months / 12)} ${i18n("years")} ${months % 12} ${i18n("months")}</strong>。<br><br>`;
       }
 
-      log += `<br>✅ ${i18n("withdraw_until_year")} <strong>${year - 1}</strong>。<br><br>`;
-      output += log;
+      if (!isNaN(rate) && rate > 0) {
+        const yearly = total * rate / 100;
+        const m = yearly / 12;
+        const duration = total / yearly;
+        output += `📌 <strong>${rate}% ${i18n("withdraw_rate_method")}</strong><br>${i18n("yearly")} NT$ ${yearly.toLocaleString()}，${i18n("monthly")} NT$ ${m.toLocaleString()}，${i18n("estimated_duration")} <strong>${duration.toFixed(1)} ${i18n("years")}</strong>。<br><br>`;
+      }
+
+      if (!isNaN(r) && !isNaN(i)) {
+        const realRate = ((1 + r / 100) / (1 + i / 100)) - 1;
+        output += `📌 <strong>${i18n("real_rate_calc")}</strong><br>${i18n("real_rate")} <strong>${(realRate * 100).toFixed(2)}%</strong>。<br><br>`;
+      }
+
+      if (adjust && !isNaN(i) && !isNaN(r)) {
+        let log = `<strong>📈 ${i18n("inflation_adjusted_withdraw_simulation")}</strong><br>`;
+        let monthlyNow = (!isNaN(monthly) && monthly > 0) ? monthly : 30000;
+        if (isNaN(monthly) || monthly <= 0) {
+          log += `(${i18n("default_monthly_warn")})<br>`;
+        }
+
+        let year = 1;
+        let remaining = total;
+        const growth = i / 100;
+        const returnRate = r / 100;
+
+        while (remaining > 0 && year <= 100) {
+          const yearlyOut = monthlyNow * 12;
+          remaining = (remaining - yearlyOut) * (1 + returnRate);
+          log += `${i18n("year")} ${year}：${i18n("monthly")} ${monthlyNow.toFixed(0)}，${i18n("yearly_out")} ${yearlyOut.toFixed(0)}，${i18n("remaining_asset")} NT$ ${remaining.toFixed(0)}<br>`;
+          monthlyNow *= (1 + growth);
+          year++;
+        }
+
+        log += `<br>✅ ${i18n("withdraw_until_year")} <strong>${year - 1}</strong>。<br><br>`;
+        output += log;
+      }
+
+      result.innerHTML = output;
     }
 
-    result.innerHTML = output;
-  }
-
-  function toggleExplain() {
-    const box = document.getElementById("inflation-explain");
-    box.style.display = box.style.display === "none" ? "block" : "none";
-  }
-</script>
+    function toggleExplain() {
+      const box = document.getElementById("inflation-explain");
+      box.style.display = box.style.display === "none" ? "block" : "none";
+    }
+  </script>
+</body>
+</html>
 <footer>
   <div style="margin-bottom: 0.8rem;">
     <a href="../app.html" style="text-align: center; display: block; font-size: 1rem; color: var(--main-color); text-decoration: none;" data-i18n="btn_back_home">← 返回首頁</a>
