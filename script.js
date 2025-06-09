@@ -410,6 +410,88 @@ function render() {
       const profit = profitByTypeCurrency[type][currency] || 0;
       const profitText = profit !== 0 ? `（${i18n("profit")}：${profit.toFixed(2)} ${currency}）` : "";
       const li = document.createElement("li");
+function render() {
+  if (!Array.isArray(assets)) return;
+  if (!exchangeRates || Object.keys(exchangeRates).length === 0) return;
+  if (!exchangeRates["TWD"]) return;
+
+  assetList.innerHTML = "";
+  totalsList.innerHTML = "";
+  profitList.innerHTML = "";
+
+  let totalsByType = {};
+  let totalsByCurrency = {};
+  const profitByTypeCurrency = {};
+
+  assets.forEach((asset, index) => {
+    const li = document.createElement("li");
+    li.className = "asset-item";
+
+    let text = `📌 ${i18n("option_" + asset.type) || asset.type}`;
+    let value = 0;
+    let cost = 0;
+    let display = "";
+
+    if (asset.type === "股票") {
+      const { stockSymbol = asset.symbol || "?", shares = 0, cost: c = 0, price = 0, currency } = asset;
+      const market = shares * price;
+      const totalCost = shares * c;
+      const profit = market - totalCost;
+      value = market;
+      cost = totalCost;
+      display = `${stockSymbol} × ${shares}｜${i18n("cost")} ${totalCost.toFixed(2)}｜${i18n("current_price")} ${price}｜${i18n("market_value")} ${market.toFixed(2)}｜${i18n("profit")} ${profit.toFixed(2)}`;
+
+      // 盈餘統計
+      const cur = asset.currency || "TWD";
+      profitByTypeCurrency["股票"] ??= {};
+      profitByTypeCurrency["股票"][cur] ??= 0;
+      profitByTypeCurrency["股票"][cur] += profit;
+
+    } else if (asset.type === "儲蓄保險") {
+      const { insuranceName = "", insuranceAmount = 0, insuranceYears = 0, insuranceAnnual = 0 } = asset;
+      value = insuranceAmount;
+      display = `${insuranceName}｜保額 ${insuranceAmount}｜年期 ${insuranceYears}｜年繳 ${insuranceAnnual}`;
+    } else if (asset.type === "基金") {
+      const { fundName = "", fundUnits = 0, fundNav = 0, currency } = asset;
+      value = fundUnits * fundNav;
+      display = `${fundName} × ${fundUnits}｜淨值 ${fundNav}｜市值 ${value.toFixed(2)} ${currency}`;
+    } else if (asset.type === "加密貨幣") {
+      const { cryptoSymbol = "", cryptoAmount = 0, cryptoPrice = 0, currency } = asset;
+      value = cryptoAmount * cryptoPrice;
+      display = `${cryptoSymbol.toUpperCase()} × ${cryptoAmount}｜現價 ${cryptoPrice}｜市值 ${value.toFixed(2)} ${currency}`;
+    } else {
+      value = asset.amount || 0;
+      display = `${asset.note || ""}｜金額 ${value}`;
+    }
+
+    const currency = asset.currency || "TWD";
+    const rate = exchangeRates[currency] || 1;
+
+    totalsByType[asset.type] ??= {};
+    totalsByType[asset.type][currency] ??= 0;
+    totalsByType[asset.type][currency] += value;
+
+    totalsByCurrency[currency] ??= 0;
+    totalsByCurrency[currency] += value;
+
+    li.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div><strong>${text}</strong><div class="note">${display}</div></div>
+        <div style="display: flex; flex-direction: column; gap: 0.3rem; align-items: center;">
+          <button onclick="editAsset(${index})" class="action-button">✏️</button>
+          <button onclick="deleteAsset(${index})" class="action-button">🗑️</button>
+        </div>
+      </div>`;
+    assetList.appendChild(li);
+  });
+
+  // 類別加總（含盈餘）
+  for (const type in totalsByType) {
+    for (const currency in totalsByType[type]) {
+      const total = totalsByType[type][currency].toFixed(2);
+      const profit = profitByTypeCurrency?.[type]?.[currency] || 0;
+      const profitText = profit !== 0 ? `（${i18n("profit")}：${profit.toFixed(2)} ${currency}）` : "";
+      const li = document.createElement("li");
       li.textContent = `📌 ${i18n("option_" + type)}：${total} ${currency} ${profitText}`;
       if (profit > 0) li.style.color = "green";
       if (profit < 0) li.style.color = "red";
@@ -417,38 +499,32 @@ function render() {
     }
   }
 
-  // 幣別加總
+  // 幣別加總 + 台幣換算顯示
   for (const currency in totalsByCurrency) {
     const total = totalsByCurrency[currency];
-    const rateToTWD = exchangeRates[currency] ? (exchangeRates["TWD"] / exchangeRates[currency]) : 1;
+    const rateToTWD = exchangeRates["TWD"] / exchangeRates[currency];
     const converted = (total * rateToTWD).toFixed(0);
     const li = document.createElement("li");
     li.textContent = `💱 ${currency}：${total.toFixed(2)} ≈ NT$ ${converted}`;
     totalsList.appendChild(li);
   }
 
-  // 總資產顯示（使用選定幣別）
+  // 最下方總資產加總（依照幣別）
   const selectedCurrency = localStorage.getItem("displayCurrency") || "TWD";
   const selectedRate = exchangeRates[selectedCurrency];
-
-  if (!selectedRate || isNaN(selectedRate)) {
-    console.error(`❌ 無效匯率：${selectedCurrency}`);
-    alert(`⚠️ 無法取得 ${selectedCurrency} 的匯率，請稍後再試`);
-    return;
-  }
+  if (!selectedRate || isNaN(selectedRate)) return;
 
   let totalConverted = 0;
   for (const asset of assets) {
     let value = 0;
-
     if (asset.type === "股票") {
-      value = parseFloat(asset.price || 0) * parseFloat(asset.shares || 0);
+      value = (asset.price || 0) * (asset.shares || 0);
     } else if (asset.type === "基金") {
-      value = parseFloat(asset.fundNav || 0) * parseFloat(asset.fundUnits || 0);
+      value = (asset.fundNav || 0) * (asset.fundUnits || 0);
     } else if (asset.type === "加密貨幣") {
-      value = parseFloat(asset.cryptoPrice || 0) * parseFloat(asset.cryptoAmount || 0);
+      value = (asset.cryptoPrice || 0) * (asset.cryptoAmount || 0);
     } else {
-      value = parseFloat(asset.amount || 0);
+      value = asset.amount || 0;
     }
 
     const rate = exchangeRates[asset.currency];
@@ -465,7 +541,6 @@ function render() {
   convertedLi.textContent = `💰 ${i18n("total_asset")}（${selectedCurrency}）：${totalConverted.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${selectedCurrency}`;
   totalsList.appendChild(convertedLi);
 
-  // 匯率更新時間
   const now = new Date();
   const rateTime = document.getElementById("rate-time");
   if (rateTime) {
