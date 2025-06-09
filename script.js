@@ -258,41 +258,56 @@ function render() {
     totalsByCurrency[currency] += value;
   }
 
- // 資產項目列表顯示
-  assets.forEach((asset, index) => {
-    const li = document.createElement("li");
-    li.className = "asset-item";
+// 資產項目列表顯示
+assets.forEach((asset, index) => {
+  const li = document.createElement("li");
+  li.className = "asset-item";
+  li.style.display = "flex";
+  li.style.justifyContent = "space-between";
+  li.style.alignItems = "center";
 
-    const currency = asset.currency || "TWD";
-    const type = asset.type || "其他";
-    let text = `${i18n("option_" + type) || type}（${currency}）`;
+  const currency = asset.currency || "TWD";
+  const type = asset.type || "其他";
+  let text = `${i18n("option_" + type) || type}（${currency}）`;
 
-   if (type === "股票") {
-  const shares = parseFloat(asset.shares || 0);
-  const price = parseFloat(asset.price || 0);
-  const marketValue = (shares * price).toFixed(2);
-  text += ` - ${asset.stockSymbol || ""} ${shares}股 成本 ${asset.cost}，現價 ${price} ｜市值：${marketValue} ${currency}`;
-} else if (type === "基金") {
-      text += ` - ${asset.fundName || ""} ${asset.fundUnits}單位 × ${asset.fundNav}`;
-    } else if (type === "加密貨幣") {
-      text += ` - ${asset.cryptoSymbol || ""} ${asset.cryptoAmount} × ${asset.cryptoPrice}`;
-    } else if (type === "儲蓄保險") {
-      text += ` - ${asset.insuranceName || ""} 保額 ${asset.insuranceAmount}`;
-    } else {
-      text += ` - ${asset.amount || 0}`;
-    }
+  if (type === "股票") {
+    const shares = parseFloat(asset.shares || 0);
+    const price = parseFloat(asset.price || 0);
+    const marketValue = (shares * price).toFixed(2);
+    text += ` - ${asset.stockSymbol || ""} ${shares}股 成本 ${asset.cost}，現價 ${price} ｜市值：${marketValue} ${currency}`;
+  } else if (type === "基金") {
+    text += ` - ${asset.fundName || ""} ${asset.fundUnits}單位 × ${asset.fundNav}`;
+  } else if (type === "加密貨幣") {
+    text += ` - ${asset.cryptoSymbol || ""} ${asset.cryptoAmount} × ${asset.cryptoPrice}`;
+  } else if (type === "儲蓄保險") {
+    text += ` - ${asset.insuranceName || ""} 保額 ${asset.insuranceAmount}`;
+  } else {
+    text += ` - ${asset.amount || 0}`;
+  }
 
-    if (asset.note) text += ` ｜ ${asset.note}`;
+  if (asset.note) {
+    text += ` ｜ ${asset.note}`;
+  }
 
-    const btns = document.createElement("div");
-    btns.style.display = "flex";
-    btns.style.gap = "0.5rem";
-    btns.innerHTML = `<button onclick="editAsset(${index})" class="action-button">✏️</button><button onclick="deleteAsset(${index})" class="action-button">🗑️</button>`;
+  const textDiv = document.createElement("div");
+  textDiv.textContent = text;
+  textDiv.style.flex = "1";
 
-    li.textContent = text;
-    li.appendChild(btns);
-    assetList.appendChild(li);
-  });
+  const btns = document.createElement("div");
+  btns.style.display = "flex";
+  btns.style.flexDirection = "column"; // 若你想左右排，改為 row
+  btns.style.gap = "0.25rem";
+  btns.style.flexShrink = "0";
+  btns.innerHTML = `
+    <button onclick="editAsset(${index})" class="action-button">✏️</button>
+    <button onclick="deleteAsset(${index})" class="action-button">🗑️</button>
+  `;
+
+  li.appendChild(textDiv);
+  li.appendChild(btns);
+  assetList.appendChild(li);
+});
+
 
  // 資產分類加總
   for (const type in totalsByType) {
