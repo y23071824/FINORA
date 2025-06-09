@@ -245,13 +245,9 @@ function render() {
       cost = shares * costPerShare;
       profitByTypeCurrency[type][currency] += value - cost;
     } else if (type === "基金") {
-      const units = parseFloat(asset.fundUnits || 0);
-      const nav = parseFloat(asset.fundNav || 0);
-      value = units * nav;
+      value = parseFloat(asset.fundUnits || 0) * parseFloat(asset.fundNav || 0);
     } else if (type === "加密貨幣") {
-      const amount = parseFloat(asset.cryptoAmount || 0);
-      const price = parseFloat(asset.cryptoPrice || 0);
-      value = amount * price;
+      value = parseFloat(asset.cryptoAmount || 0) * parseFloat(asset.cryptoPrice || 0);
     } else if (type === "儲蓄保險") {
       value = parseFloat(asset.insuranceAmount || 0);
     } else {
@@ -262,7 +258,7 @@ function render() {
     totalsByCurrency[currency] += value;
   }
 
-  // 資產項目列表顯示
+ // 資產項目列表顯示
   assets.forEach((asset, index) => {
     const li = document.createElement("li");
     li.className = "asset-item";
@@ -295,15 +291,14 @@ function render() {
     assetList.appendChild(li);
   });
 
-  // 資產分類加總（依類別與幣別）
+ // 資產分類加總
   for (const type in totalsByType) {
     for (const currency in totalsByType[type]) {
       const total = totalsByType[type][currency].toFixed(2);
-      const li = document.createElement("li");
-
       const profit = profitByTypeCurrency?.[type]?.[currency] || 0;
       const profitText = profit !== 0 ? `（${i18n("profit")}：${profit.toFixed(2)} ${currency}）` : "";
 
+      const li = document.createElement("li");
       li.textContent = `📌 ${i18n("option_" + type)}：${total} ${currency} ${profitText}`;
       if (profit > 0) li.style.color = "green";
       if (profit < 0) li.style.color = "red";
@@ -311,7 +306,7 @@ function render() {
     }
   }
 
-  // 幣別加總與換算
+  // 幣別加總
   for (const currency in totalsByCurrency) {
     const total = totalsByCurrency[currency];
     const rateToTWD = exchangeRates[currency] ? (exchangeRates["TWD"] / exchangeRates[currency]) : 1;
@@ -320,8 +315,7 @@ function render() {
     li.textContent = `💱 ${currency}：${total.toFixed(2)} ≈ NT$ ${converted}`;
     totalsList.appendChild(li);
   }
-
-  // 顯示總資產（依使用者選擇的幣別）
+  // 顯示總資產
   const selectedCurrency = localStorage.getItem("displayCurrency") || "TWD";
   const selectedRate = exchangeRates[selectedCurrency];
 
@@ -346,11 +340,14 @@ function render() {
     } else {
       value = parseFloat(asset.amount || 0);
     }
+
     const rate = exchangeRates[asset.currency];
     if (!rate || isNaN(value)) continue;
+
     const converted = (asset.currency === selectedCurrency)
       ? value
       : value * (rate / selectedRate);
+
     totalConverted += converted;
   }
 
@@ -400,8 +397,7 @@ function editAsset(index) {
     document.getElementById("bank").value = asset.bank || "";
     document.getElementById("note").value = asset.note || "";
     document.getElementById("asset-form").scrollIntoView({ behavior: "smooth", block: "start" });
-
-   }, 100);
+  }, 100);
 }
 
 function deleteAsset(index) {
