@@ -298,29 +298,6 @@ li.innerHTML = `
   });
 
   // 類別加總
-  // ➕ 建立盈餘分類容器
-const profitByTypeCurrency = {};  // 例：{ 股票: { USD: 123.45, TWD: 543.21 } }
-
-// 先掃過每筆資產，把盈餘分類加總起來
-assets.forEach(asset => {
-  if (asset.type === "股票") {
-    const shares = parseFloat(asset.shares || 0);
-    const cost = parseFloat(asset.cost || 0);
-    const price = parseFloat(asset.price || 0);
-    const currency = asset.currency || "TWD";
-    const type = asset.type;
-
-    const profit = (price - cost) * shares;
-
-    if (!profitByTypeCurrency[type]) profitByTypeCurrency[type] = {};
-    if (!profitByTypeCurrency[type][currency]) profitByTypeCurrency[type][currency] = 0;
-    profitByTypeCurrency[type][currency] += profit;
-  }
-});
-
-// 🟠 類別加總 + 顯示盈餘
-for (const type in totalsByType) {
-  for (const currency in totalsByType[type]) {
     const total = totalsByType[type][currency].toFixed(2);
     const li = document.createElement("li");
 
@@ -390,6 +367,7 @@ for (const asset of assets) {
     rateTime.textContent = `${i18n("exchange_rate_updated")}：${now.toLocaleTimeString()}`;
   }
 } // ← 補上缺少的 render() 結尾大括號
+
 
 // ===== Part 4：編輯與刪除函式（請放在 render() 外部） =====
 function editAsset(index) {
