@@ -533,6 +533,6 @@ try {
   alert(i18n("init_error") || "初始化失敗");
 }
 
-  }); 
-;
+}); // 👈 關閉 FINORA_AUTH.onUserChanged
+}); // 👈 關閉 DOMContentLoaded
 
