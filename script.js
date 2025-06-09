@@ -36,7 +36,8 @@ async function fetchExchangeRates() {
       USD: 1,
       TWD: data.conversion_rates.TWD,
       JPY: data.conversion_rates.JPY,
-      EUR: data.conversion_rates.EUR
+      EUR: data.conversion_rates.EUR,
+      CNY: data.conversion_rates.CNY
     };
 
     localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
@@ -88,7 +89,7 @@ async function updateAllStockPrices() {
   }
 }
 
-// ✅ 股票查價（TwelveData / 台股 Yahoo）
+// ✅ 股票查價（TwelveData / 台股 finmindtrade）
 async function fetchStockPrice(symbol, category) {
   try {
     if (category === "美股") {
