@@ -457,11 +457,26 @@ function typeToKey(type) {
   }
 }
 
-// ===== Part 5：啟動函式與登入綁定 =====
+// ===== Part 5：初始化與登入綁定（修正版） =====
+
 document.addEventListener("DOMContentLoaded", () => {
   console.log("🔄 系統初始化中...");
 
-  // 顯示幣別選單（總資產計價幣別）
+  // 🔧 綁定 DOM 元素
+  form = document.getElementById("asset-form");
+  typeSelect = document.getElementById("type");
+  stockFields = document.getElementById("stock-fields");
+  insuranceFields = document.getElementById("insurance-fields");
+  amountField = document.getElementById("amount-field");
+  assetList = document.getElementById("asset-list");
+  totalsList = document.getElementById("totals-list");
+  profitList = document.getElementById("stock-profit-list");
+  bankDatalist = document.getElementById("bank-list");
+
+  // 🈯️ 套用語系
+  if (typeof applyLang === "function") applyLang();
+
+  // 🔑 顯示幣別選單（總資產計價幣別）
   const displayCurrencySelect = document.getElementById("display-currency");
   if (displayCurrencySelect) {
     const savedDisplayCurrency = localStorage.getItem("displayCurrency") || "TWD";
@@ -472,46 +487,30 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Firebase 登入狀態監聽
+  // 🧩 Firebase 登入後開始載入資料
   FINORA_AUTH.onUserChanged(async (user) => {
     const emailEl = document.getElementById("auth-email");
     const accountEl = document.getElementById("account-name");
     const MAX_ACCOUNT_COUNT = 3;
 
     if (!user) {
-      if (emailEl) emailEl.textContent = typeof i18n === "function" ? i18n("not_logged_in") : "尚未登入";
-      if (accountEl) accountEl.textContent = typeof i18n === "function" ? i18n("no_account_selected") : "未選帳本";
-      alert(typeof i18n === "function" ? i18n("please_login_first") : "請先登入！");
+      if (emailEl) emailEl.textContent = i18n("not_logged_in");
+      if (accountEl) accountEl.textContent = i18n("no_account_selected");
+      alert(i18n("please_login_first"));
       return;
     }
 
     try {
-      // DOM 元素綁定
-      form = document.getElementById("asset-form");
-      typeSelect = document.getElementById("type");
-      stockFields = document.getElementById("stock-fields");
-      insuranceFields = document.getElementById("insurance-fields");
-      amountField = document.getElementById("amount-field");
-      assetList = document.getElementById("asset-list");
-      totalsList = document.getElementById("totals-list");
-      profitList = document.getElementById("stock-profit-list");
-      bankDatalist = document.getElementById("bank-list");
-
-      // 顯示帳本資訊與 fallback
       const selectedId = localStorage.getItem("selectedAccount");
       const list = await FINORA_AUTH.fetchAccountList();
-
-      console.log("📚 所有帳本清單：", list);
-      console.log("📌 localStorage selectedAccount：", selectedId);
-
       let selected = list.find(acc => acc.id === selectedId);
 
       if (!selected && list.length > 0) {
         selected = list[0];
         localStorage.setItem("selectedAccount", selected.id);
-        console.warn("⚠️ 找不到帳本，已自動切換為第一本帳本：", selected.id);
+        console.warn("⚠️ 找不到帳本，自動切換為第一本帳本：", selected.id);
       } else if (!selected) {
-        alert(i18n("no_account_warning") || "⚠️ 找不到任何帳本，請返回首頁建立");
+        alert(i18n("no_account_warning"));
         window.location.href = "../app.html";
         return;
       }
@@ -520,11 +519,11 @@ document.addEventListener("DOMContentLoaded", () => {
       if (emailEl) emailEl.textContent = user.email;
       if (accountEl) accountEl.textContent = `${displayName}（${list.length} / ${MAX_ACCOUNT_COUNT}）`;
 
-      // 表單與欄位監聽
+      // 🔗 表單欄位監聽
       if (form) form.addEventListener("submit", handleSubmit);
       if (typeSelect) typeSelect.addEventListener("change", toggleFields);
 
-      // 銀行選單
+      // 📘 銀行選單
       if (bankDatalist) {
         bankDatalist.innerHTML = "";
         bankHistory.forEach(b => {
@@ -534,7 +533,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
 
-      // 股票查價
+      // 📈 股票查價
       const stockSymbolInput = document.getElementById("stock-symbol");
       const stockCategoryInput = document.getElementById("stock-category");
       const stockPriceInput = document.getElementById("stock-price");
@@ -548,7 +547,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
 
-      // 加密貨幣查價
+      // 💰 加密貨幣查價
       const cryptoSymbolInput = document.getElementById("crypto-symbol");
       const cryptoPriceInput = document.getElementById("crypto-price");
       if (cryptoSymbolInput && cryptoPriceInput) {
@@ -566,23 +565,21 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
 
-      // 資料與畫面初始化
+      // 📊 載入匯率與資產
       await fetchExchangeRates();
       await updateAllStockPrices();
 
-      console.log("📦 目前使用的 localStorage key：", getLocalStorageKey());
-      console.log("📂 對應儲存資料：", localStorage.getItem(getLocalStorageKey()));
-
+      // 🧾 重新讀入資產
       assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
+      if (!Array.isArray(assets)) assets = [];
 
-      if (typeof toggleFields === "function") toggleFields();
-      if (typeof render === "function") render();
-      if (typeof applyLang === "function") applyLang();
-
+      toggleFields();
+      render();
+      applyLang();
       console.log("✅ 初始化完成");
     } catch (e) {
       console.error("❌ 初始化失敗", e);
-      alert(typeof i18n === "function" ? i18n("init_error") : "初始化失敗");
+      alert(i18n("init_error") || "初始化失敗");
     }
   });
 });
