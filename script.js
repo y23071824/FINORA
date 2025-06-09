@@ -433,7 +433,8 @@ function typeToKey(type) {
 
 // ===== Part 5：初始化與登入綁定（修正版） =====
 
-document.addEventListener("DOMContentLoaded",async () => { { console.log("🔄 系統初始化中...");
+document.addEventListener("DOMContentLoaded",async () => { 
+  console.log("🔄 系統初始化中...");
 
 // 🔧 綁定 DOM 元素 form = document.getElementById("asset-form"); typeSelect = document.getElementById("type"); stockFields = document.getElementById("stock-fields"); insuranceFields = document.getElementById("insurance-fields"); amountField = document.getElementById("amount-field"); assetList = document.getElementById("asset-list"); totalsList = document.getElementById("totals-list"); profitList = document.getElementById("stock-profit-list"); bankDatalist = document.getElementById("bank-list");
 
