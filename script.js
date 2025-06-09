@@ -401,8 +401,8 @@ function editAsset(index) {
     document.getElementById("note").value = asset.note || "";
     document.getElementById("asset-form").scrollIntoView({ behavior: "smooth", block: "start" });
 
-  }, 100);
-  }
+   }, 100);
+}
 
 function deleteAsset(index) {
   const lang = localStorage.getItem("lang") || "zh-Hant";
