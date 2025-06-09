@@ -327,29 +327,28 @@ function render() {
 
   let totalConverted = 0;
 
-  for (const asset of assets) {
-    let value = 0;
-    if (asset.type === "股票") {
-      value = parseFloat(asset.price || 0) * parseFloat(asset.shares || 0);
-    } else if (asset.type === "基金") {
-      value = parseFloat(asset.fundNav || 0) * parseFloat(asset.fundUnits || 0);
-    } else if (asset.type === "加密貨幣") {
-      value = parseFloat(asset.cryptoPrice || 0) * parseFloat(asset.cryptoAmount || 0);
-    } else if (asset.type === "儲蓄保險") {
-      value = parseFloat(asset.insuranceAmount || 0);
-    } else {
-      value = parseFloat(asset.amount || 0);
-    }
-
-    const rate = exchangeRates[asset.currency];
-    if (!rate || isNaN(value)) continue;
-
-    const converted = (asset.currency === selectedCurrency)
-      ? value
-      : value * (rate / selectedRate);
-
-    totalConverted += converted;
+for (const asset of assets) {
+  let value = 0;
+  if (asset.type === "股票") {
+    value = parseFloat(asset.price || 0) * parseFloat(asset.shares || 0);
+  } else if (asset.type === "基金") {
+    value = parseFloat(asset.fundNav || 0) * parseFloat(asset.fundUnits || 0);
+  } else if (asset.type === "加密貨幣") {
+    value = parseFloat(asset.cryptoPrice || 0) * parseFloat(asset.cryptoAmount || 0);
+  } else if (asset.type === "儲蓄保險") {
+    value = parseFloat(asset.insuranceAmount || 0);
+  } else {
+    value = parseFloat(asset.amount || 0);
   }
+
+  const assetRate = exchangeRates[asset.currency];
+  if (!assetRate || isNaN(value)) continue;
+
+  // ✅ 正確換算邏輯：value × (selectedCurrency / asset.currency)
+  const converted = value * (selectedRate / assetRate);
+  totalConverted += converted;
+}
+
 
   const convertedLi = document.createElement("li");
   convertedLi.textContent = `💰 ${i18n("total_asset")}（${selectedCurrency}）：${totalConverted.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${selectedCurrency}`;
