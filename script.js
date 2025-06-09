@@ -296,20 +296,6 @@ li.innerHTML = `
 `;
     assetList.appendChild(li);
   });
-
-  // 類別加總
-    const total = totalsByType[type][currency].toFixed(2);
-    const li = document.createElement("li");
-
-    // 判斷是否有盈餘可顯示
-    const profit = profitByTypeCurrency?.[type]?.[currency] || 0;
-    const profitText = profit !== 0 ? `（${i18n("profit")}：${profit.toFixed(2)} ${currency}）` : "";
-
-    li.textContent = `📌 ${i18n("option_" + type)}：${total} ${currency} ${profitText}`;
-    if (profit > 0) li.style.color = "green";
-    if (profit < 0) li.style.color = "red";
-    totalsList.appendChild(li);
-  }
 }
 
 for (const currency in totalsByCurrency) {
