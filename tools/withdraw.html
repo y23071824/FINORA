@@ -6,11 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="../style.css" />
   <link rel="icon" href="../favicon.png" type="image/png" />
-  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-  <!-- FINORA 模組 -->
   <script src="../firebase-sync.js"></script>
   <script src="../lang.js"></script>
   <style>
@@ -45,10 +43,7 @@
       box-sizing: border-box;
     }
     .cta-button {
-      display: block;
-      margin: 1.5rem auto 0;
       padding: 0.8rem;
-      width: 6rem;
       font-size: var(--button-font);
       font-weight: bold;
       background-color: white;
@@ -61,6 +56,11 @@
     .cta-button:hover {
       background-color: var(--main-color);
       color: white;
+    }
+    .cta-button.full-width {
+      width: 100%;
+      box-sizing: border-box;
+      margin-top: 0.8rem;
     }
     #result, #compound-info, #explanation {
       margin-top: 1.5rem;
@@ -109,10 +109,8 @@
 <label data-i18n="label_inflation_rate">年通膨率（％）：</label>
 <input type="number" id="inflation-rate" value="2" step="0.1" />
 
-<div style="text-align: center;">
-  <button id="toggle-inflation" class="cta-button" data-i18n="btn_toggle_inflation">💡 每年提領金額根據通膨調整</button>
-  <button class="cta-button" onclick="calculateWithdraw()" data-i18n="btn_calculate">試算</button>
-</div>
+<button id="toggle-inflation" class="cta-button full-width" data-i18n="btn_toggle_inflation">💡 每年提領金額根據通膨調整</button>
+<button class="cta-button full-width" onclick="calculateWithdraw()" data-i18n="btn_calculate">試算</button>
 <input type="checkbox" id="inflation-adjust" style="display: none;" />
 
 <div id="result"></div>
@@ -127,7 +125,7 @@
     <li data-i18n="method_adjust_inflation"><strong>通膨調整提領：</strong>模擬購買力保值，每年提領金額隨通膨上升。</li>
   </ul>
   <div style="text-align: center; margin-top: 1rem;">
-    <button onclick="toggleExplain()" class="cta-button" data-i18n="btn_explain_more">📖 什麼是通膨保值提領？</button>
+    <button onclick="toggleExplain()" class="cta-button full-width" data-i18n="btn_explain_more">📖 什麼是通膨保值提領？</button>
   </div>
   <div id="inflation-explain" style="display: none; background: #fff5f4; padding: 1rem; border-left: 4px solid var(--main-color); border-radius: 6px;">
     <p data-i18n="explain_why"><strong>為什麼要通膨調整？</strong></p>
