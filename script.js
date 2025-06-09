@@ -432,13 +432,17 @@ function typeToKey(type) {
 document.addEventListener("DOMContentLoaded",async () => { 
   console.log("🔄 系統初始化中...");
 
-// 🔧 綁定 DOM 元素 form = document.getElementById("asset-form"); typeSelect = document.getElementById("type"); stockFields = document.getElementById("stock-fields"); insuranceFields = document.getElementById("insurance-fields"); amountField = document.getElementById("amount-field"); assetList = document.getElementById("asset-list"); totalsList = document.getElementById("totals-list"); profitList = document.getElementById("stock-profit-list"); bankDatalist = document.getElementById("bank-list");
+// 🔧 綁定 DOM 元素 
+  form = document.getElementById("asset-form"); typeSelect = document.getElementById("type"); stockFields = document.getElementById("stock-fields"); insuranceFields = document.getElementById("insurance-fields"); amountField = document.getElementById("amount-field"); assetList = document.getElementById("asset-list"); totalsList = document.getElementById("totals-list"); profitList = document.getElementById("stock-profit-list"); bankDatalist = document.getElementById("bank-list");
 
-// 🈯️ 套用語系 if (typeof applyLang === "function") applyLang();
+// 🈯️ 套用語系 
+  if (typeof applyLang === "function") applyLang();
 
-// 🔑 顯示幣別選單（總資產計價幣別） const displayCurrencySelect = document.getElementById("display-currency"); if (displayCurrencySelect) { const savedDisplayCurrency = localStorage.getItem("displayCurrency") || "TWD"; displayCurrencySelect.value = savedDisplayCurrency; displayCurrencySelect.addEventListener("change", () => { localStorage.setItem("displayCurrency", displayCurrencySelect.value); render(); }); }
+// 🔑 顯示幣別選單（總資產計價幣別） 
+  const displayCurrencySelect = document.getElementById("display-currency"); if (displayCurrencySelect) { const savedDisplayCurrency = localStorage.getItem("displayCurrency") || "TWD"; displayCurrencySelect.value = savedDisplayCurrency; displayCurrencySelect.addEventListener("change", () => { localStorage.setItem("displayCurrency", displayCurrencySelect.value); render(); }); }
 
-// 🧩 Firebase 登入後開始載入資料 FINORA_AUTH.onUserChanged(async (user) => { const emailEl = document.getElementById("auth-email"); const accountEl = document.getElementById("account-name"); const MAX_ACCOUNT_COUNT = 3;
+// 🧩 Firebase 登入後開始載入資料 
+  FINORA_AUTH.onUserChanged(async (user) => { const emailEl = document.getElementById("auth-email"); const accountEl = document.getElementById("account-name"); const MAX_ACCOUNT_COUNT = 3;
 
 if (!user) {
   if (emailEl) emailEl.textContent = i18n("not_logged_in");
