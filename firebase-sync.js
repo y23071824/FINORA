@@ -1,5 +1,4 @@
-// ✅ firebase-sync.js（強化版 + 初始化防呆）
-
+// ✅ Firebase 初始化設定
 if (!firebase.apps.length) {
   const firebaseConfig = {
     apiKey: "AIzaSyBJE12oIoK4gr153jkNBokQ-d3ohnN4aWE",
@@ -25,15 +24,22 @@ function getLocalStorageKey() {
   return `assets_${selectedAccount || "default"}`;
 }
 
+// ✅ 防呆確認登入
 function ensureLoggedIn() {
   currentUser = firebase.auth().currentUser;
   if (!currentUser) throw new Error("尚未登入");
 }
 
-function getAccountDocRef() {
+// ✅ 取得資產子集合路徑
+function getAccountAssetRef() {
   ensureLoggedIn();
   if (!selectedAccount) throw new Error("尚未選擇帳戶");
-  return db.collection("accounts").doc(selectedAccount);
+  return db
+    .collection("users")
+    .doc(currentUser.uid)
+    .collection("accounts")
+    .doc(selectedAccount)
+    .collection("assets");
 }
 
 // ✅ 載入帳本清單
@@ -45,7 +51,7 @@ async function fetchAccountList() {
   return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }
 
-// ✅ 設定帳本顯示名稱
+// ✅ 設定帳本名稱
 async function setAccountDisplayName(accountId, displayName) {
   ensureLoggedIn();
   if (!accountId || !displayName || displayName.trim() === "") throw new Error("帳本資料無效");
@@ -53,7 +59,7 @@ async function setAccountDisplayName(accountId, displayName) {
   await docRef.set({ uid: currentUser.uid, displayName }, { merge: true });
 }
 
-// ✅ 建立新帳本
+// ✅ 建立帳本
 async function createNewAccount(displayName) {
   ensureLoggedIn();
   const list = await fetchAccountList();
@@ -67,7 +73,20 @@ async function createNewAccount(displayName) {
 async function deleteAccount(accountId) {
   ensureLoggedIn();
   if (!accountId) throw new Error("帳本 ID 無效");
-  await db.collection("accounts").doc(accountId).delete();
+  const ref = db.collection("accounts").doc(accountId);
+  const assetRef = db
+    .collection("users")
+    .doc(currentUser.uid)
+    .collection("accounts")
+    .doc(accountId)
+    .collection("assets");
+
+  const assets = await assetRef.get();
+  const batch = db.batch();
+  assets.forEach(doc => batch.delete(doc.ref));
+  batch.delete(ref);
+  await batch.commit();
+
   if (selectedAccount === accountId) {
     selectedAccount = null;
     localStorage.removeItem("selectedAccount");
@@ -75,12 +94,14 @@ async function deleteAccount(accountId) {
   }
 }
 
-// ✅ 主功能包
+// ✅ 主要功能導出
 window.FINORA_AUTH = {
+  // ✅ 登入
   signInWithGoogle: async () => {
     try {
       const result = await auth.signInWithPopup(provider);
       currentUser = result.user;
+
       if (!selectedAccount) {
         selectedAccount = "default";
         localStorage.setItem("selectedAccount", selectedAccount);
@@ -99,6 +120,7 @@ window.FINORA_AUTH = {
     }
   },
 
+  // ✅ 登出
   signOutFromGoogle: async () => {
     await auth.signOut();
     currentUser = null;
@@ -107,6 +129,7 @@ window.FINORA_AUTH = {
     localStorage.removeItem(getLocalStorageKey());
   },
 
+  // ✅ 用戶變更監聽
   onUserChanged: (callback) => {
     auth.onAuthStateChanged(async user => {
       currentUser = user;
@@ -114,10 +137,9 @@ window.FINORA_AUTH = {
         selectedAccount = localStorage.getItem("selectedAccount") || "default";
         localStorage.setItem("selectedAccount", selectedAccount);
         try {
-          const ref = getAccountDocRef();
+          const ref = getAccountAssetRef();
           const snap = await ref.get();
-          const data = snap.data();
-          const assets = Array.isArray(data?.assets) ? data.assets : [];
+          const assets = snap.docs.map(doc => doc.data());
           localStorage.setItem(getLocalStorageKey(), JSON.stringify(assets));
         } catch (e) {
           console.warn("❗雲端讀取失敗：", e);
@@ -127,24 +149,30 @@ window.FINORA_AUTH = {
     });
   },
 
+  // ✅ 載入雲端資產
   fetchUserAssets: async () => {
     await FINORA_AUTH.waitForLogin();
-    const ref = getAccountDocRef();
-    const doc = await ref.get();
-    const data = doc.data();
-    return Array.isArray(data?.assets) ? data.assets : [];
+    const ref = getAccountAssetRef();
+    const snap = await ref.get();
+    return snap.docs.map(doc => doc.data());
   },
 
+  // ✅ 儲存資產
   saveUserAssets: async (assets) => {
     try {
-      const ref = getAccountDocRef();
-      await ref.set({ assets }, { merge: true });
+      const ref = getAccountAssetRef();
+      const batch = db.batch();
+      const docs = await ref.get();
+      docs.forEach(doc => batch.delete(doc.ref));
+      assets.forEach(asset => batch.set(ref.doc(), asset));
+      await batch.commit();
     } catch (e) {
       console.error("❌ 資產儲存失敗：", e);
       alert("❌ 儲存失敗，請確認您已登入並選擇有效帳本");
     }
   },
 
+  // ✅ 等待登入
   waitForLogin: () => {
     return new Promise((resolve, reject) => {
       const unsubscribe = auth.onAuthStateChanged(user => {
@@ -154,6 +182,7 @@ window.FINORA_AUTH = {
     });
   },
 
+  // ✅ 其他功能
   getCurrentAccount: () => selectedAccount,
   setSelectedAccount: (name) => {
     selectedAccount = name;
@@ -164,3 +193,18 @@ window.FINORA_AUTH = {
   createNewAccount,
   deleteAccount
 };
+
+// ✅ 載入帳本名稱（用於頁面顯示）
+async function loadDisplayName() {
+  try {
+    await FINORA_AUTH.waitForLogin();
+    const list = await FINORA_AUTH.fetchAccountList();
+    const selectedAccount = localStorage.getItem("selectedAccount");
+    const match = list.find(acc => acc.id === selectedAccount);
+    document.getElementById("account-id").textContent = match?.displayName || selectedAccount;
+  } catch (e) {
+    console.warn("❗帳本名稱讀取失敗", e);
+    const fallback = localStorage.getItem("selectedAccount") || "default";
+    document.getElementById("account-id").textContent = fallback;
+  }
+}
