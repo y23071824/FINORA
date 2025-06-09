@@ -24,13 +24,13 @@ let editIndex = null;
 let form, typeSelect, stockFields, insuranceFields, amountField;
 let assetList, totalsList, profitList, bankDatalist;
 
-// ✅ 匯率查詢
+// ✅ 匯率查詢（含 CNY 與 fallback）
 async function fetchExchangeRates() {
   try {
     const res = await fetch("https://v6.exchangerate-api.com/v6/747171c8dd2eaa9173e2d890/latest/USD");
     const data = await res.json();
 
-    if (!data || data.result !== "success") throw new Error("匯率查詢失敗");
+    if (data?.result !== "success") throw new Error("匯率查詢失敗");
 
     exchangeRates = {
       USD: 1,
@@ -43,34 +43,54 @@ async function fetchExchangeRates() {
     localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
     localStorage.setItem("exchangeRatesTimestamp", Date.now());
     console.log("💱 匯率已更新：", exchangeRates);
-
-    // 更新匯率顯示
-    render();
   } catch (err) {
-    console.error("❌ 匯率查詢錯誤（ExchangeRate-API）", err);
-    alert("⚠️ 無法取得匯率資料，請稍後再試或檢查網路連線");
-  }
-}
+    console.error("❌ 匯率查詢錯誤：", err.message);
 
-    // ⛑ 嘗試從 localStorage 取出上次成功的資料
+    // 嘗試使用 localStorage 備援
     const backup = localStorage.getItem("exchangeRates");
     if (backup) {
       exchangeRates = JSON.parse(backup);
       console.log("📦 使用備援匯率資料（localStorage）", exchangeRates);
     } else {
-      // 🚨 最終備援（寫死的安全預設值）
+      // 最終預設值
       exchangeRates = {
-        "USD": 1,
-        "TWD": 32,
-        "JPY": 155,
-        "EUR": 1.08,
-        "CNY": 7.18
+        USD: 1,
+        TWD: 32,
+        JPY: 155,
+        EUR: 1.08,
+        CNY: 7.18
       };
-      console.log("📦 使用預設匯率資料", exchangeRates);
+      console.warn("📦 使用預設匯率資料", exchangeRates);
     }
-  
+  }
 
-// ✅ 更新所有股票現價（支援美股與台股）
+  render(); // 更新畫面
+}
+
+// ✅ 股票查價（美股 + 台股）
+async function fetchStockPrice(symbol, category) {
+  try {
+    if (category === "美股") {
+      const res = await fetch(`https://api.twelvedata.com/price?symbol=${symbol}&apikey=de909496c6754a89bc33db0306c2def8`);
+      const data = await res.json();
+      if (data && data.price) return parseFloat(data.price);
+    } else if (category === "台股") {
+      const today = new Date().toISOString().slice(0, 10);
+      const res = await fetch(`https://api.finmindtrade.com/api/v4/data?dataset=TaiwanStockPrice&data_id=${symbol}&start_date=${today}`);
+      const data = await res.json();
+
+      if (data.data && data.data.length > 0) {
+        const latest = data.data.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+        return latest.close;
+      }
+    }
+  } catch (e) {
+    console.warn("❌ " + i18n("stock_price_error") + "：" + e.message);
+  }
+  return null;
+}
+
+// ✅ 更新所有股票現價（含寫入與同步）
 async function updateAllStockPrices() {
   const updatedAssets = [];
 
@@ -84,30 +104,10 @@ async function updateAllStockPrices() {
 
   assets = updatedAssets;
   localStorage.setItem(getLocalStorageKey(), JSON.stringify(assets));
+
   if (typeof FINORA_AUTH !== "undefined" && FINORA_AUTH.saveUserAssets) {
     await FINORA_AUTH.saveUserAssets(assets);
   }
-}
-
-// ✅ 股票查價（TwelveData / 台股 finmindtrade）
-async function fetchStockPrice(symbol, category) {
-  try {
-    if (category === "美股") {
-      const res = await fetch(`https://api.twelvedata.com/price?symbol=${symbol}&apikey=de909496c6754a89bc33db0306c2def8`);
-      const data = await res.json();
-      if (data && data.price) return parseFloat(data.price);
-    } else if (category === "台股") {
-      const today = new Date().toISOString().slice(0, 10);
-      const res = await fetch(`https://api.finmindtrade.com/api/v4/data?dataset=TaiwanStockPrice&data_id=${symbol}&start_date=${today}`);
-      const data = await res.json();
-      if (data.data && data.data.length > 0) {
-        return data.data[0].close;
-      }
-    }
-  } catch (e) {
-    console.warn("❌ " + i18n("stock_price_error") + "：" + e.message);
-  }
-  return null;
 }
 
 
