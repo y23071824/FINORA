@@ -10,9 +10,9 @@
 </head>
 <body class="logo-full-bg">
   <h1 data-i18n="asset_title">登記你的好好資產</h1>
-  <div id="auth-status" style="margin-bottom: 1rem; font-size: 0.9rem; color: #555;">
-    <span data-i18n="user">使用者：</span><span id="auth-email">（尚未登入）</span><br />
-    <span data-i18n="account">帳本：</span><span id="account-name">（尚未選擇）</span>
+  <div id="auth-status">
+    <span data-i18n="user">使用者：</span><span id="auth-email">（未登入）</span><br />
+    <span data-i18n="account">帳本：</span><span id="account-name">（未選擇）</span>
   </div>
   <form id="asset-form">
     <div class="getting-started">
@@ -113,82 +113,70 @@
   <span data-i18n="save_btn">儲存資產</span>
   </button>
 </div>
-    
-  </form>
-  <datalist id="bank-list"></datalist>
+ </form>
   <h2 data-i18n="asset_list">資產列表</h2>
   <ul id="asset-list"></ul>
-  <h2 data-i18n="asset_total">資產加總</h2>
+  <h2 data-i18n="asset_total">資產加縮</h2>
   <ul id="totals-list"></ul>
-  <div id="total-display-control" style="margin-top: 1rem;">
-   <label for="display-currency" data-i18n="label_display_currency">💱 總資產顯示幣別：</label>
+  <div id="total-display-control">
+    <label for="display-currency" data-i18n="label_display_currency">💱 總資產顯示幣別：</label>
     <select id="display-currency">
       <option value="TWD">TWD</option>
       <option value="USD">USD</option>
       <option value="JPY">JPY</option>
       <option value="EUR">EUR</option>
-      <option value="CNH">CNH</option>
+      <option value="CNY">CNY</option>
     </select>
   </div>
   <ul id="stock-profit-list"></ul>
   <p id="rate-time" style="font-size: 0.9em; color: #666;"></p>
   <div class="getting-started">
-    <p class="guide-note" data-i18n="privacy_note">🔐 所有資料皆保存在你的 Google 帳號與雲端帳本中，不用擔心遺失或外洩。</p>
+    <p class="guide-note" data-i18n="privacy_note">🔐 所有資料僅保存於 Google 帳號與雲端帳本</p>
   </div>
-  <a href="app.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374" data-i18n="back_to_home">← 返回首頁</a>
+  <a href="app.html" class="link-back" data-i18n="back_to_home">← 返回首頁</a>
   <footer class="site-footer">
-    <p data-i18n="footer_copyright">© 2025 FINORA 好好存｜家庭友善資產整合工具</p>
+    <p data-i18n="footer_copyright">© 2025 FINORA 好好存</p>
     <div class="footer-links">
       <a href="howto.html" data-i18n="footer_help">使用說明</a>・
-      <a href="mailto:service@finora.life?subject=聯絡詢問" data-i18n="footer_contact">聯絡我們</a>・
-      <a href="privacy.html" data-i18n="footer_privacy">隱私權條款</a>
+      <a href="mailto:service@finora.life" data-i18n="footer_contact">聯繫我們</a>・
+      <a href="privacy.html" data-i18n="footer_privacy">隱私權</a>
     </div>
   </footer>
-  <!-- JS 載入區，請勿重複 -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script src="firebase-sync.js"></script>
   <script src="script.js"></script>
   <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    applyLang();
-
-    const emailEl = document.getElementById("auth-email");
-    const accountEl = document.getElementById("account-name");
-
-    if (typeof FINORA_AUTH !== "undefined") {
-      FINORA_AUTH.onUserChanged(async (user) => {
-        const accountId = localStorage.getItem("selectedAccount");
-        if (!accountId) {
-          alert("⚠️ 尚未選擇帳本，請返回首頁登入並選擇帳本！");
-          window.location.href = "app.html";
-          return;
-        }
-
-        accountEl.textContent = accountId;
-
-        if (user) {
-          emailEl.textContent = user.email;
-
-          const list = await FINORA_AUTH.fetchAccountList();
-          const displayName = list.find(acc => acc.id === accountId)?.displayName || accountId;
-          accountEl.textContent = displayName;
-
-          // 初始化資料與畫面
-          if (typeof fetchExchangeRates === "function") await fetchExchangeRates();
-          if (typeof updateAllStockPrices === "function") await updateAllStockPrices();
-
-          assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
-          if (typeof toggleFields === "function") toggleFields();
-          if (typeof render === "function") render();
-        } else {
-          emailEl.textContent = i18n("not_logged_in") || "尚未登入";
-        }
-      });
-    }
-  });
-</script>
-
+    document.addEventListener("DOMContentLoaded", () => {
+      applyLang();
+      const emailEl = document.getElementById("auth-email");
+      const accountEl = document.getElementById("account-name");
+      if (typeof FINORA_AUTH !== "undefined") {
+        FINORA_AUTH.onUserChanged(async (user) => {
+          const accountId = localStorage.getItem("selectedAccount");
+          if (!accountId) {
+            alert("⚠️ 尚未選擇帳本，請返回首頁登入並選擇帳本！");
+            window.location.href = "app.html";
+            return;
+          }
+          accountEl.textContent = accountId;
+          if (user) {
+            emailEl.textContent = user.email;
+            const list = await FINORA_AUTH.fetchAccountList();
+            const displayName = list.find(acc => acc.id === accountId)?.displayName || accountId;
+            accountEl.textContent = displayName;
+            if (typeof fetchExchangeRates === "function") await fetchExchangeRates();
+            if (typeof updateAllStockPrices === "function") await updateAllStockPrices();
+            assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
+            if (typeof toggleFields === "function") toggleFields();
+            if (typeof render === "function") render();
+          } else {
+            emailEl.textContent = i18n("not_logged_in") || "尚未登入";
+          }
+        });
+      }
+    });
+  </script>
 </body>
 </html>
