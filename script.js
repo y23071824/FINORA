@@ -272,7 +272,7 @@ function render() {
     let text = `${i18n("option_" + type) || type}（${currency}）`;
 
     if (type === "股票") {
-      text += ` - ${asset.stockSymbol || ""`} ${asset.shares}股 成本 ${asset.cost}，現價 ${asset.price}`;{
+      text += ` - ${asset.stockSymbol || ""} ${asset.shares}股 成本 ${asset.cost}，現價 ${asset.price}`;
     } else if (type === "基金") {
       text += ` - ${asset.fundName || ""} ${asset.fundUnits}單位 × ${asset.fundNav}`;
     } else if (type === "加密貨幣") {
