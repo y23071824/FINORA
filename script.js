@@ -274,20 +274,20 @@ assets.forEach((asset, index) => {
     const shares = parseFloat(asset.shares || 0);
     const price = parseFloat(asset.price || 0);
     const marketValue = (shares * price).toFixed(2);
-    text += ` - ${asset.stockSymbol || ""} ${shares}股 成本 ${asset.cost}，現價 ${price} ｜市值：${marketValue} ${currency}`;
-  } else if (type === "基金") {
-    text += ` - ${asset.fundName || ""} ${asset.fundUnits}單位 × ${asset.fundNav}`;
-  } else if (type === "加密貨幣") {
-    text += ` - ${asset.cryptoSymbol || ""} ${asset.cryptoAmount} × ${asset.cryptoPrice}`;
-  } else if (type === "儲蓄保險") {
-    text += ` - ${asset.insuranceName || ""} 保額 ${asset.insuranceAmount}`;
-  } else {
-    text += ` - ${asset.amount || 0}`;
-  }
+    text += ` - ${asset.stockSymbol || ""} ${shares}${i18n("unit_share")} ${i18n("cost")} ${asset.cost}，${i18n("price")} ${price} ｜${i18n("market_value")}：${marketValue} ${currency}`;
+} else if (type === "基金") {
+  text += ` - ${asset.fundName || ""} ${asset.fundUnits}${i18n("unit_fund")} × ${asset.fundNav}`;
+} else if (type === "加密貨幣") {
+  text += ` - ${asset.cryptoSymbol || ""} ${asset.cryptoAmount} × ${asset.cryptoPrice}`;
+} else if (type === "儲蓄保險") {
+  text += ` - ${asset.insuranceName || ""} ${i18n("insured_amount")} ${asset.insuranceAmount}`;
+} else {
+  text += ` - ${asset.amount || 0}`;
+}
 
-  if (asset.note) {
-    text += ` ｜ ${asset.note}`;
-  }
+if (asset.note) {
+  text += ` ｜ ${asset.note}`;
+}
 
   const textDiv = document.createElement("div");
   textDiv.textContent = text;
