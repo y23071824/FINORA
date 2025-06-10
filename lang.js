@@ -247,10 +247,10 @@ type_其他: "其他",
 // 📌 提領說明區塊
 section_explanation_title: "📌 提領方式說明：",
 
-method_basic: "<strong>一般月領：</strong>總資產 ÷ 每月需求 = 可支撐年數。",
-method_4percent: "<strong>4%法則：</strong>每年提領 4%以下，資產理想可撐 30 年以上。",
-method_real_rate: "<strong>報酬－通膨：</strong>年報酬與通膨比較後，提供實質購買力試算。", 
-method_adjust_inflation: "<strong>通膨調整提領：</strong>模擬購買力保值，每年提領金額隨通膨上升。",
+method_basic: "一般月領：總資產 ÷ 每月需求 = 可支撐年數。",
+method_4percent: "4%法則：每年提領 4%以下，資產理想可撐 30 年以上。",
+method_real_rate: "報酬－通膨：年報酬與通膨比較後，提供實質購買力試算。", 
+method_adjust_inflation: "通膨調整提領：模擬購買力保值，每年提領金額隨通膨上升。",
 
 btn_explain_more: "📖 什麼是通膨保值提領？",
 
@@ -483,10 +483,10 @@ type_其他: "其他",
     recent_compound_result: "最近一次复利结果",
 section_explanation_title: "📌 提领方式说明：",
 
-method_basic: "<strong>基本月领：</strong>总资产 ÷ 每月需求 = 可支撑年数。",
-method_4percent: "<strong>4%法则：</strong>每年提领 4%以下，资产理想可撑 30 年以上。",
-method_real_rate: "<strong>报酬－通胀：</strong>年报酬与通胀比较后，提供实际购买力试算。",
-method_adjust_inflation: "<strong>通胀调整提领：</strong>模拟购买力保值，每年提领金额随通胀上升。",
+method_basic: "基本月领：总资产 ÷ 每月需求 = 可支撑年数。",
+method_4percent: "4%法则：每年提领 4%以下，资产理想可撑 30 年以上。",
+method_real_rate: "报酬－通胀：年报酬与通胀比较后，提供实际购买力试算。",
+method_adjust_inflation: "通胀调整提领：模拟购买力保值，每年提领金额随通胀上升。",
 
 btn_explain_more: "📖 什么是通胀保值提领？",
 
@@ -718,10 +718,10 @@ title: "FINORA",
     recent_compound_result: "Latest compound result",
 section_explanation_title: "📌 Withdrawal Methods：",
 
-method_basic: "<strong>Basic Monthly:</strong> Total assets ÷ monthly needs = years of support.",
-method_4percent: "<strong>4% Rule:</strong> Withdraw 4% or less annually, ideally lasts 30+ years.",
-method_real_rate: "<strong>Return - Inflation:</strong> Calculates real purchasing power after adjusting.",
-method_adjust_inflation: "<strong>Inflation Adjusted:</strong> Simulates maintaining purchasing power over time.",
+method_basic: "Basic Monthly: Total assets ÷ monthly needs = years of support.",
+method_4percent: "4% Rule: Withdraw 4% or less annually, ideally lasts 30+ years.",
+method_real_rate: "Return - Inflation: Calculates real purchasing power after adjusting.",
+method_adjust_inflation: "Inflation Adjusted: Simulates maintaining purchasing power over time.",
 
 btn_explain_more: "📖 What is inflation-adjusted withdrawal?",
 
@@ -953,10 +953,10 @@ type_其他: "その他",
     recent_compound_result: "最近の複利結果",
 section_explanation_title: "📌 引き出し方法の説明：",
 
-method_basic: "<strong>基本月額：</strong>総資産 ÷ 月額支出 = 支持可能な年数",
-method_4percent: "<strong>4%ルール：</strong>年間4%未満を引き出せば30年以上持続可能",
-method_real_rate: "<strong>利回り－インフレ：</strong>インフレ調整後の実質購買力を試算",
-method_adjust_inflation: "<strong>インフレ調整引き出し：</strong>購買力を維持するため、毎年金額を上昇させる",
+method_basic: "基本月額：総資産 ÷ 月額支出 = 支持可能な年数",
+method_4percent: "4%ルール：年間4%未満を引き出せば30年以上持続可能",
+method_real_rate: "利回り－インフレ：インフレ調整後の実質購買力を試算",
+method_adjust_inflation: "インフレ調整引き出し：購買力を維持するため、毎年金額を上昇させる",
 
 btn_explain_more: "📖 インフレ調整引き出しとは？",
 
