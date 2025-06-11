@@ -7,24 +7,33 @@
   <link rel="icon" href="favicon.png" type="image/png" />
   <link rel="stylesheet" href="style.css" />
   <style>
-.grid-button-group {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  padding: 0 1rem;
-}
+    .grid-button-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      padding: 0 1rem;
+    }
 
-.grid-button-group a {
-  padding: 1rem;
-  font-size: 0.95rem;
-  text-align: center;
-  border: 2px solid #c96374;
-  border-radius: 16px;
-  color: #c96374;
-  font-weight: bold;
-  text-decoration: none;
-  word-break: break-word;
-}
+    .grid-button-group a,
+    .grid-button-group button {
+      padding: 1rem;
+      font-size: 0.95rem;
+      text-align: center;
+      border: 2px solid #c96374;
+      border-radius: 16px;
+      color: #c96374;
+      font-weight: bold;
+      text-decoration: none;
+      word-break: break-word;
+      background-color: white;
+      cursor: pointer;
+    }
+
+    .grid-button-group a:hover,
+    .grid-button-group button:hover {
+      background-color: #fcecec;
+      color: #a94456;
+    }
   </style>
 </head>
 <body class="logo-full-bg">
