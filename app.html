@@ -7,26 +7,25 @@
   <link rel="icon" href="favicon.png" type="image/png" />
   <link rel="stylesheet" href="style.css" />
   <style>
-    .grid-button-group {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      padding: 0 1rem;
-    }
-    .grid-button-group a,
-    .grid-button-group button {
-      padding: 1rem;
-      font-size: 0.95rem;
-      text-align: center;
-      border: 2px solid #b4695d;
-      border-radius: 16px;
-      color: #b4695d;
-      font-weight: bold;
-      text-decoration: none;
-      word-break: break-word;
-      background-color: white;
-      cursor: pointer;
-    }
+.grid-button-group a,
+.grid-button-group button {
+  padding: 1rem;
+  font-size: 0.95rem;
+  text-align: center;
+  border: 2px solid #b4695d;
+  border-radius: 16px;
+  color: #b4695d;
+  font-weight: bold;
+  text-decoration: none;
+  word-break: break-word;    /* ✅ 長單字強制斷行 */
+  white-space: normal;       /* ✅ 可換行顯示 */
+  hyphens: auto;             /* ✅ 避免英文單字撐爆 */
+  background-color: white;
+  cursor: pointer;
+}
+    max-width: 140px;
+margin: auto;
+    
     .grid-button-group a:hover,
     .grid-button-group button:hover {
       background-color: #fcecec;
