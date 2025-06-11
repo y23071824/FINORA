@@ -101,3 +101,99 @@
   </footer>
 </body>
 </html>
+<!-- Firebase + FINORA Script -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="firebase-sync.js"></script>
+<script src="lang.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", async () => {
+    const lang = localStorage.getItem("lang") || "zh-Hant";
+    if (typeof applyLang === "function") applyLang(lang);
+    document.getElementById("lang-select").value = lang;
+    document.getElementById("lang-select").addEventListener("change", function () {
+      localStorage.setItem("lang", this.value);
+      location.reload();
+    });
+
+    // 登入/登出功能
+    document.getElementById("login-btn").addEventListener("click", async () => {
+      try {
+        const user = await FINORA_AUTH.signInWithGoogle();
+        if (user) {
+          alert("✅ 登入成功");
+          location.reload();
+        }
+      } catch (e) {
+        console.error("登入失敗", e);
+        alert("❌ 登入失敗，請確認網路或稍後再試");
+      }
+    });
+
+    document.getElementById("logout-btn").addEventListener("click", async () => {
+      await FINORA_AUTH.signOutFromGoogle();
+      alert("🚪 已登出");
+      location.reload();
+    });
+
+    // 帳本操作
+    document.getElementById("rename-account-btn").addEventListener("click", async () => {
+      const newName = prompt("輸入新名稱：", "");
+      if (newName) {
+        await FINORA_AUTH.renameAccount(newName);
+        alert("✅ 修改完成");
+        location.reload();
+      }
+    });
+
+    document.getElementById("new-account-btn").addEventListener("click", () => {
+      document.getElementById("new-account-input-group").style.display = "block";
+    });
+
+    document.getElementById("save-new-account").addEventListener("click", async () => {
+      const name = document.getElementById("new-account-name").value.trim();
+      if (!name) return alert("請輸入名稱");
+      await FINORA_AUTH.addAccount(name);
+      alert("✅ 新增完成");
+      location.reload();
+    });
+
+    document.getElementById("delete-account-btn").addEventListener("click", async () => {
+      if (confirm("確定要刪除帳本？")) {
+        await FINORA_AUTH.deleteAccount();
+        alert("✅ 已刪除");
+        location.reload();
+      }
+    });
+
+    // 初始化帳本下拉選單
+    FINORA_AUTH.onUserChanged(async (user) => {
+      const loginBtn = document.getElementById("login-btn");
+      const logoutBtn = document.getElementById("logout-btn");
+      loginBtn.style.display = user ? "none" : "inline-block";
+      logoutBtn.style.display = user ? "inline-block" : "none";
+
+      if (user) {
+        const accountSelect = document.getElementById("account-select");
+        const accounts = await FINORA_AUTH.fetchAccountList();
+        accountSelect.innerHTML = "";
+        accounts.forEach(acc => {
+          const opt = document.createElement("option");
+          opt.value = acc.id;
+          opt.textContent = acc.displayName || acc.id;
+          accountSelect.appendChild(opt);
+        });
+
+        const selected = FINORA_AUTH.getCurrentAccount();
+        if (selected) accountSelect.value = selected;
+
+        accountSelect.onchange = (e) => {
+          FINORA_AUTH.setSelectedAccount(e.target.value);
+          location.reload();
+        };
+      }
+    });
+  });
+</script>
