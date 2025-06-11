@@ -407,3 +407,30 @@ body.logo-full-bg::before {
   background-color: #fcecec;
   color: #a94456;
 }
+
+.grid-button-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  padding: 0 1rem;
+}
+
+.action-button {
+  padding: 1rem;
+  font-size: 0.95rem;
+  text-align: center;
+  border: 2px solid #c96374;
+  border-radius: 16px;
+  color: #c96374;
+  font-weight: bold;
+  text-decoration: none;
+  background-color: white;
+  word-break: break-word;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
+
+.action-button:hover {
+  background-color: #fcecec;
+  color: #a94456;
+}
