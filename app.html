@@ -10,13 +10,12 @@
   <style>
     .grid-button-group {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
       gap: 1rem;
       padding: 0 1rem;
     }
 
-    .grid-button-group a,
-    .grid-button-group button {
+    .action-button {
       padding: 1rem;
       font-size: 0.95rem;
       text-align: center;
@@ -25,13 +24,13 @@
       color: #c96374;
       font-weight: bold;
       text-decoration: none;
-      word-break: break-word;
       background-color: white;
+      word-break: break-word;
       cursor: pointer;
+      transition: background 0.3s, color 0.3s;
     }
 
-    .grid-button-group a:hover,
-    .grid-button-group button:hover {
+    .action-button:hover {
       background-color: #fcecec;
       color: #a94456;
     }
@@ -40,14 +39,26 @@
 <body class="logo-full-bg">
   <h1 data-i18n="title">FINORA 好好存</h1>
   <p class="subtitle" data-i18n="subtitle">讓資產更有力，退休不焦慮。</p>
-adiv id="account-control-wrapper" style="margin-top: 2rem;">
+
+  <div id="account-control-wrapper" style="margin-top: 2rem;">
     <label for="account-select" data-i18n="accountLabel">帳本選擇：</label>
     <select id="account-select" style="width: 100%; margin-bottom: 0.5rem;"></select>
-<div class="grid-button-group" style="margin: 1rem 0;">
-  <button class="action-button" onclick="renameAccount()">✏️ Rename</button>
-  <button class="action-button" onclick="addAccount()">➕ Add Account</button>
-  <button class="action-button" onclick="deleteAccount()">🗑️ Delete Account</button>
-</div>
+
+    <!-- 🔹 四大工具頁按鈕 -->
+    <div class="grid-button-group" style="margin-top: 1.5rem;">
+      <a href="assets.html" class="action-button" data-i18n="nav_assets">📂 資產管理</a>
+      <a href="tools/compound.html" class="action-button" data-i18n="nav_compound">📈 複利試算</a>
+      <a href="tools/withdraw.html" class="action-button" data-i18n="nav_withdraw">💸 提領規劃</a>
+      <a href="tools/emergency.html" class="action-button" data-i18n="nav_emergency">🧯 預備金試算</a>
+    </div>
+
+    <!-- 🔹 中間帳本操作按鈕 -->
+    <div class="grid-button-group" style="margin: 1.5rem 0;">
+      <button id="rename-account-btn" class="action-button" data-i18n="rename">✏️ 重新命名</button>
+      <button id="new-account-btn" class="action-button" data-i18n="add">➕ 新增帳本</button>
+      <button id="delete-account-btn" class="action-button" data-i18n="delete">🗑️ 刪除帳本</button>
+    </div>
+
     <div id="new-account-input-group" style="display: none; margin-top: 0.5rem;">
       <input type="text" id="new-account-name" placeholder="輸入新帳本名稱" data-i18n-placeholder="placeholderNewAccount" />
       <button id="save-new-account" data-i18n="save">儲存</button>
@@ -55,12 +66,12 @@ adiv id="account-control-wrapper" style="margin-top: 2rem;">
   </div>
 
   <div id="firebase-auth" style="margin-top: 1.5rem; text-align: center;">
-    <button id="login-btn" data-i18n="login">🔐 使用 Google 帳號登入</button>
-    <button id="logout-btn" data-i18n="logout" style="display:none;">🚪 登出</button>
+    <button id="login-btn" class="action-button" data-i18n="login">🔐 使用 Google 帳號登入</button>
+    <button id="logout-btn" class="action-button" data-i18n="logout" style="display:none;">🚪 登出</button>
   </div>
 
-  <div style="text-align:center; margin: 1rem 0;">
-    <label for="lang-select" data-i18n="langLabel">🌐 Language / 語言：</label>
+  <div style="text-align:center; margin: 1.5rem 0;">
+    <label for="lang-select" data-i18n="langLabel">🌐 語言：</label>
     <select id="lang-select">
       <option value="zh-Hant">繁體中文</option>
       <option value="zh-Hans">简体中文</option>
@@ -71,7 +82,15 @@ adiv id="account-control-wrapper" style="margin-top: 2rem;">
 
   <p class="privacy-note" data-i18n="privacy">FINORA 重視隱私。你的資產，只屬於你自己。</p>
 
-  <!-- Firebase + App Script -->
+  <!-- 🔹 品牌故事 + 推薦書單按鈕 -->
+  <div class="grid-button-group" style="margin-top: 2rem;">
+    <a href="about.html" class="action-button" data-i18n="nav_about">📖 品牌故事</a>
+    <a href="books.html" class="action-button" data-i18n="nav_books">📚 推薦書單</a>
+  </div>
+
+  <p style="text-align:center; font-size:0.8rem; color:#aaa; margin-top:2rem;" data-i18n="version">v0.9 beta - 2025-06-04</p>
+
+  <!-- 🔧 Firebase / 多語言 / 帳本邏輯 -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
@@ -79,20 +98,12 @@ adiv id="account-control-wrapper" style="margin-top: 2rem;">
   <script src="lang.js"></script>
 
   <script>
-    // 放在 lang.js 後才能執行 applyLang
     document.addEventListener("DOMContentLoaded", async () => {
       const lang = localStorage.getItem("lang") || "zh-Hant";
+      if (typeof applyLang === "function") applyLang(lang);
 
-      // 確保 lang.js 有載入成功
-      if (typeof applyLang === "function") {
-        applyLang(lang);
-      } else {
-        console.error("❌ applyLang 未定義，請確認 lang.js 是否成功載入");
-      }
-
-      const langSelect = document.getElementById("lang-select");
-      langSelect.value = lang;
-      langSelect.addEventListener("change", function () {
+      document.getElementById("lang-select").value = lang;
+      document.getElementById("lang-select").addEventListener("change", function () {
         localStorage.setItem("lang", this.value);
         location.reload();
       });
@@ -106,8 +117,7 @@ adiv id="account-control-wrapper" style="margin-top: 2rem;">
             location.reload();
           }
         } catch (e) {
-          console.error("登入失敗", e);
-          alert("❌ 登入失敗，請檢查授權或稍後再試");
+          alert("❌ 登入失敗");
         }
       });
 
@@ -117,37 +127,38 @@ adiv id="account-control-wrapper" style="margin-top: 2rem;">
         alert("🚪 已登出");
         location.reload();
       });
-// 帳本操作按鈕功能
-document.getElementById("rename-account-btn").addEventListener("click", async () => {
-  const newName = prompt(i18n("rename_prompt"), "");
-  if (newName) {
-    await FINORA_AUTH.renameAccount(newName);
-    alert(i18n("rename_success"));
-    location.reload();
-  }
-});
 
-document.getElementById("new-account-btn").addEventListener("click", () => {
-  document.getElementById("new-account-input-group").style.display = "block";
-});
+      // 帳本操作
+      document.getElementById("rename-account-btn").addEventListener("click", async () => {
+        const newName = prompt(i18n("rename_prompt"), "");
+        if (newName) {
+          await FINORA_AUTH.renameAccount(newName);
+          alert(i18n("rename_success"));
+          location.reload();
+        }
+      });
 
-document.getElementById("save-new-account").addEventListener("click", async () => {
-  const nameInput = document.getElementById("new-account-name");
-  const name = nameInput.value.trim();
-  if (!name) return alert(i18n("account_name_required"));
-  await FINORA_AUTH.addAccount(name);
-  alert(i18n("add_success"));
-  location.reload();
-});
+      document.getElementById("new-account-btn").addEventListener("click", () => {
+        document.getElementById("new-account-input-group").style.display = "block";
+      });
 
-document.getElementById("delete-account-btn").addEventListener("click", async () => {
-  if (confirm(i18n("confirm_delete"))) {
-    await FINORA_AUTH.deleteAccount();
-    alert(i18n("delete_success"));
-    location.reload();
-  }
-});
-      // 使用者變動時更新登入狀態與帳本選單
+      document.getElementById("save-new-account").addEventListener("click", async () => {
+        const name = document.getElementById("new-account-name").value.trim();
+        if (!name) return alert(i18n("account_name_required"));
+        await FINORA_AUTH.addAccount(name);
+        alert(i18n("add_success"));
+        location.reload();
+      });
+
+      document.getElementById("delete-account-btn").addEventListener("click", async () => {
+        if (confirm(i18n("confirm_delete"))) {
+          await FINORA_AUTH.deleteAccount();
+          alert(i18n("delete_success"));
+          location.reload();
+        }
+      });
+
+      // 使用者登入狀態與帳本列表
       FINORA_AUTH.onUserChanged(async (user) => {
         const loginBtn = document.getElementById("login-btn");
         const logoutBtn = document.getElementById("logout-btn");
@@ -157,40 +168,34 @@ document.getElementById("delete-account-btn").addEventListener("click", async ()
         if (user) await updateAccountSelector();
       });
 
-async function updateAccountSelector() {
-  try {
-    const accountSelect = document.getElementById("account-select");
-    const list = await FINORA_AUTH.fetchAccountList();
-    accountSelect.innerHTML = "";
-    list.forEach(acc => {
-      const opt = document.createElement("option");
-      opt.value = acc.id;
-      opt.textContent = acc.displayName || acc.id;
-      accountSelect.appendChild(opt);
-    });
+      async function updateAccountSelector() {
+        try {
+          const accountSelect = document.getElementById("account-select");
+          const list = await FINORA_AUTH.fetchAccountList();
+          accountSelect.innerHTML = "";
+          list.forEach(acc => {
+            const opt = document.createElement("option");
+            opt.value = acc.id;
+            opt.textContent = acc.displayName || acc.id;
+            accountSelect.appendChild(opt);
+          });
 
-    const selected = FINORA_AUTH.getCurrentAccount();
-    if (selected && list.some(acc => acc.id === selected)) accountSelect.value = selected;
+          const selected = FINORA_AUTH.getCurrentAccount();
+          if (selected && list.some(acc => acc.id === selected)) {
+            accountSelect.value = selected;
+          }
 
-    // 先移除舊的事件再綁定
-    accountSelect.onchange = (e) => {
-      FINORA_AUTH.setSelectedAccount(e.target.value);
-      location.reload();
-    };
-  } catch (e) {
-    console.warn("❗ 帳本選單載入失敗", e);
-  }
-}
+          accountSelect.onchange = (e) => {
+            FINORA_AUTH.setSelectedAccount(e.target.value);
+            location.reload();
+          };
+        } catch (e) {
+          console.warn("❗ 無法載入帳本選單", e);
+        }
+      }
     });
   </script>
 
-  <p style="text-align:center; font-size:0.8rem; color:#aaa; margin-top:3rem;" data-i18n="version">v0.9 beta - 2025-06-04</p>
-
-  <div class="grid-button-group" style="margin-top: 2rem;">
-  <a href="about.html" class="cta-button" data-i18n="nav_about">📖 品牌故事</a>
-  <a href="books.html" class="cta-button" data-i18n="nav_books">📚 推薦書單</a>
-</div>
-  
   <footer class="site-footer">
     <p data-i18n="footer">© 2025 FINORA 好好存｜家庭友善資產整合工具</p>
     <div class="footer-links">
