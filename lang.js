@@ -261,8 +261,8 @@ explain_how: "怎麼做？",
 step_1: "第一年每月提 30,000 元",
 step_2: "通膨 2%，第二年提 30,600 元",
 step_3: "第三年提 31,212 元… 以此類推",
-   nav_about: "📖 品牌故事",
-nav_books: "📚 推薦書單"
+   nav_about: "品牌故事",
+nav_books: "推薦書單"
 
 },
   
@@ -499,8 +499,8 @@ explain_how: "怎么做？",
 step_1: "第一年每月提 30,000 元",
 step_2: "通胀 2%，第二年提 30,600 元",
 step_3: "第三年提 31,212 元… 以此类推",
-   nav_about: "📖 品牌故事",
-nav_books: "📚 推荐书单"
+   nav_about: "品牌故事",
+nav_books: "推荐书单"
 
 },
 
@@ -736,8 +736,8 @@ explain_how: "How does it work?",
 step_1: "Year 1: Withdraw NT$30,000/month",
 step_2: "2% inflation → Year 2: NT$30,600",
 step_3: "Year 3: NT$31,212… and so on",
-  nav_about: "📖 About FINORA",
-nav_books: "📚 Recommended Reads"
+  nav_about: "About FINORA",
+nav_books: "Recommended Reads"
 
 },
   
@@ -973,8 +973,8 @@ explain_how: "どうやって？",
 step_1: "1年目：月額 30,000元 を引き出す",
 step_2: "インフレ 2%、2年目は 30,600元",
 step_3: "3年目は 31,212元… 以降同様",
-nav_about: "📖 ブランドストーリー",
-nav_books: "📚 おすすめ書籍"
+nav_about: "ブランドストーリー",
+nav_books: "おすすめ書籍"
   }
 };
 
