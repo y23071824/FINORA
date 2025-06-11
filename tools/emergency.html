@@ -91,6 +91,7 @@ function applyLang() {
   const lang = localStorage.getItem("lang") || "zh-Hant";
   const dict = translations[lang] || translations["zh-Hant"];
 
+  // ✅ 一般文字翻譯
   document.querySelectorAll("[data-i18n]").forEach(el => {
     const key = el.getAttribute("data-i18n");
     const value = dict[key];
@@ -103,6 +104,13 @@ function applyLang() {
     }
   });
 
+  // ✅ <option> 選單翻譯（這段是你缺的）
+  document.querySelectorAll("option[data-i18n-option]").forEach(opt => {
+    const key = opt.getAttribute("data-i18n-option");
+    if (dict[key]) opt.textContent = dict[key];
+  });
+
+  // ✅ 標題翻譯
   const titleTag = document.querySelector("title[data-i18n]");
   if (titleTag) {
     const titleKey = titleTag.getAttribute("data-i18n");
