@@ -50,23 +50,22 @@
 </head>
 <body class="logo-full-bg">
   <h1 data-i18n="title">FINORA 好好存</h1>
-  <p class="subtitle" data-i18n="subtitle">讓資產更有力，退休不焦慮。</p>  <!-- 帳本選擇與操作按鈕 -->  <div id="account-control-wrapper" style="margin-top: 2rem; text-align: center;">
+  <p class="subtitle" data-i18n="subtitle">讓資產更有力，退休不焦慮。</p>  <div id="account-control-wrapper" style="margin-top: 2rem; text-align: center;">
     <label for="account-select" data-i18n="accountLabel">帳本選擇：</label>
-    <select id="account-select" style="width: 100%; max-width: 280px; margin: 0.5rem auto; display: block;"></select><div style="display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap; margin: 0.5rem 0;">
-  <button id="rename-account-btn" class="action-button" data-i18n="rename">✏️ 重新命名</button>
-  <button id="new-account-btn" class="action-button" data-i18n="add">➕ 新增帳本</button>
-  <button id="delete-account-btn" class="action-button" data-i18n="delete">🗑️ 刪除帳本</button>
-</div>
-
-<div id="new-account-input-group" style="display: none; margin-top: 0.5rem;">
-  <input type="text" id="new-account-name" placeholder="輸入新帳本名稱" data-i18n-placeholder="placeholderNewAccount" />
-  <button id="save-new-account" class="action-button" data-i18n="save">儲存</button>
-</div>
-
-  </div>  <!-- 登入按鈕區塊 -->  <div id="firebase-auth" style="margin-top: 1.5rem; text-align: center;">
+    <select id="account-select" style="width: 100%; max-width: 280px; margin: 0.5rem auto; display: block;"></select>
+    <div style="display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap; margin: 0.5rem 0;">
+      <button id="rename-account-btn" class="action-button" data-i18n="rename">✏️ 重新命名</button>
+      <button id="new-account-btn" class="action-button" data-i18n="add">➕ 新增帳本</button>
+      <button id="delete-account-btn" class="action-button" data-i18n="delete">🗑️ 刪除帳本</button>
+    </div>
+    <div id="new-account-input-group" style="display: none; margin-top: 0.5rem;">
+      <input type="text" id="new-account-name" placeholder="輸入新帳本名稱" data-i18n-placeholder="placeholderNewAccount" />
+      <button id="save-new-account" class="action-button" data-i18n="save">儲存</button>
+    </div>
+  </div>  <div id="firebase-auth" style="margin-top: 1.5rem; text-align: center;">
     <button id="login-btn" data-i18n="login">🔐 使用 Google 帳號登入</button>
     <button id="logout-btn" data-i18n="logout" style="display:none;">🚪 登出</button>
-  </div>  <!-- 語言切換 -->  <div style="text-align:center; margin: 1rem 0;">
+  </div>  <div style="text-align:center; margin: 1rem 0;">
     <label for="lang-select" data-i18n="langLabel">🌐 Language / 語言：</label>
     <select id="lang-select">
       <option value="zh-Hant">繁體中文</option>
@@ -74,38 +73,50 @@
       <option value="en">English</option>
       <option value="ja">日本語</option>
     </select>
-  </div>  <p class="privacy-note" data-i18n="privacy">FINORA 重視隱私。你的資產，只屬於你自己。</p>  <!-- 四大功能按鈕區塊 -->  <div class="grid-button-group" style="margin-top: 2rem;">
-    <a href="assets.html" class="cta-button" data-i18n="nav_assets">📊 資產管理</a>
-    <a href="tools/compound.html" class="cta-button" data-i18n="nav_compound">📈 複利試算</a>
-    <a href="tools/withdraw.html" class="cta-button" data-i18n="nav_withdraw">🏖️ 退休提領</a>
-    <a href="tools/emergency.html" class="cta-button" data-i18n="nav_emergency">🧯 預備金試算</a>
-  </div>  <!-- 品牌故事與推薦書單按鈕 -->  <div class="grid-button-group" style="margin-top: 2rem;">
-    <a href="about.html" class="cta-button" data-i18n="nav_about">📖 品牌故事</a>
-    <a href="books.html" class="cta-button" data-i18n="nav_books">📚 推薦書單</a>
-  </div>  <footer class="site-footer">
+  </div>  <div class="grid-button-group" style="margin-top: 2rem;">
+    <a href="assets.html" data-i18n="asset">資產管理</a>
+    <a href="tools/compound.html" data-i18n="compound">複利試算</a>
+    <a href="tools/withdraw.html" data-i18n="withdraw">退休提領</a>
+    <a href="tools/emergency.html" data-i18n="emergency">預備金試算</a>
+  </div>  <div class="grid-button-group" style="margin-top: 2rem;">
+    <a href="about.html" class="cta-button" data-i18n="nav_about">品牌故事</a>
+    <a href="books.html" class="cta-button" data-i18n="nav_books">推薦書單</a>
+  </div>  <p class="privacy-note" data-i18n="privacy">FINORA 重視隱私。你的資產，只屬於你自己。</p>
+  <p style="text-align:center; font-size:0.8rem; color:#aaa; margin-top:3rem;" data-i18n="version">v0.9 beta - 2025-06-04</p>  <footer class="site-footer">
     <p data-i18n="footer">© 2025 FINORA 好好存｜家庭友善資產整合工具</p>
     <div class="footer-links">
       <a href="howto.html" data-i18n="guide">使用說明</a>・
       <a href="mailto:service@finora.life?subject=聯絡詢問" data-i18n="contact">聯絡我們</a>・
       <a href="privacy.html" data-i18n="policy">隱私權條款</a>
     </div>
-  </footer>  <!-- Firebase & 語言腳本 -->  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>  <script src="firebase-sync.js"></script>  <script src="lang.js"></script>  <script>
+  </footer>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>  <script src="firebase-sync.js"></script>  <script src="lang.js"></script>  <script>
     document.addEventListener("DOMContentLoaded", async () => {
       const lang = localStorage.getItem("lang") || "zh-Hant";
       if (typeof applyLang === "function") applyLang(lang);
-      document.getElementById("lang-select").value = lang;
-      document.getElementById("lang-select").addEventListener("change", function () {
+
+      const langSelect = document.getElementById("lang-select");
+      langSelect.value = lang;
+      langSelect.addEventListener("change", function () {
         localStorage.setItem("lang", this.value);
         location.reload();
       });
 
       document.getElementById("login-btn").addEventListener("click", async () => {
-        const user = await FINORA_AUTH.signInWithGoogle();
-        if (user) location.reload();
+        try {
+          const user = await FINORA_AUTH.signInWithGoogle();
+          if (user) {
+            alert("✅ 登入成功");
+            location.reload();
+          }
+        } catch (e) {
+          console.error("登入失敗", e);
+          alert("❌ 登入失敗，請檢查授權或稍後再試");
+        }
       });
 
       document.getElementById("logout-btn").addEventListener("click", async () => {
         await FINORA_AUTH.signOutFromGoogle();
+        alert("🚪 已登出");
         location.reload();
       });
 
@@ -113,6 +124,7 @@
         const newName = prompt(i18n("rename_prompt"), "");
         if (newName) {
           await FINORA_AUTH.renameAccount(newName);
+          alert(i18n("rename_success"));
           location.reload();
         }
       });
@@ -122,22 +134,27 @@
       });
 
       document.getElementById("save-new-account").addEventListener("click", async () => {
-        const name = document.getElementById("new-account-name").value.trim();
+        const nameInput = document.getElementById("new-account-name");
+        const name = nameInput.value.trim();
         if (!name) return alert(i18n("account_name_required"));
         await FINORA_AUTH.addAccount(name);
+        alert(i18n("add_success"));
         location.reload();
       });
 
       document.getElementById("delete-account-btn").addEventListener("click", async () => {
         if (confirm(i18n("confirm_delete"))) {
           await FINORA_AUTH.deleteAccount();
+          alert(i18n("delete_success"));
           location.reload();
         }
       });
 
       FINORA_AUTH.onUserChanged(async (user) => {
-        document.getElementById("login-btn").style.display = user ? "none" : "inline-block";
-        document.getElementById("logout-btn").style.display = user ? "inline-block" : "none";
+        const loginBtn = document.getElementById("login-btn");
+        const logoutBtn = document.getElementById("logout-btn");
+        loginBtn.style.display = user ? "none" : "inline-block";
+        logoutBtn.style.display = user ? "inline-block" : "none";
 
         if (user) await updateAccountSelector();
       });
