@@ -224,7 +224,7 @@ async function loadAssets() {
     
   let currencyHtml = `<br><strong>${i18n("currency_totals")}</strong><br>`;    
   Object.entries(currencyTotals).forEach(([currency, amount]) => {    
-    currencyHtml += `🌍 ${amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}<br>`;    
+    currencyHtml += `🌍 ${currency}：${amount.toLocaleString(undefined, { maximumFractionDigits: 2 })}<br>`;    
   });    
   document.getElementById("asset-summary").innerHTML += currencyHtml;    
 }    
