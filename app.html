@@ -7,11 +7,14 @@
   <link rel="stylesheet" href="style.css" />
   <style>
     .grid-button-group {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
-      padding: 0 1rem;
-    }.grid-button-group a,
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  padding: 0 1rem;
+  max-width: 400px;        /* ✅ 限制最大寬度 */
+  margin: 0 auto;          /* ✅ 讓整塊置中 */
+    }
+
 .grid-button-group button {
   padding: 1rem;
   font-size: 0.95rem;
