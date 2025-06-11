@@ -13,10 +13,10 @@
 adiv id="account-control-wrapper" style="margin-top: 2rem;">
     <label for="account-select" data-i18n="accountLabel">帳本選擇：</label>
     <select id="account-select" style="width: 100%; margin-bottom: 0.5rem;"></select>
-<div class="grid-button-group" style="margin-top: 1rem;">
-  <button id="rename-account-btn" class="action-button" data-i18n="rename">✏️ 重新命名</button>
-  <button id="new-account-btn" class="action-button" data-i18n="add">➕ 新增帳本</button>
-  <button id="delete-account-btn" class="action-button" data-i18n="delete">🗑️ 刪除帳本</button>
+<div class="grid-button-group" style="margin: 1rem 0;">
+  <button class="action-button" onclick="renameAccount()">✏️ Rename</button>
+  <button class="action-button" onclick="addAccount()">➕ Add Account</button>
+  <button class="action-button" onclick="deleteAccount()">🗑️ Delete Account</button>
 </div>
     <div id="new-account-input-group" style="display: none; margin-top: 0.5rem;">
       <input type="text" id="new-account-name" placeholder="輸入新帳本名稱" data-i18n-placeholder="placeholderNewAccount" />
