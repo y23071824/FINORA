@@ -277,3 +277,147 @@
   });
 </script></body>
 </html>
+  
+<body class="logo-full-bg">
+  <h1 data-i18n="title">FINORA 好好存</h1>
+  <p class="subtitle" data-i18n="subtitle">讓資產更有力，退休不焦慮。</p>  <div class="grid-button-group" style="margin-top: 2rem;">
+    <a href="assets.html" data-i18n="asset">資產管理</a>
+    <a href="tools/compound.html" data-i18n="compound">複利試算</a>
+    <a href="tools/withdraw.html" data-i18n="withdraw">退休提領</a>
+    <a href="tools/emergency.html" data-i18n="emergency">預備金試算</a>
+<div class="grid-button-single" style="margin-top: 1rem;">
+  <a href="about.html" class="cta-button" data-i18n="nav_about">品牌故事</a>
+</div>
+    <label for="account-select" data-i18n="accountLabel">帳本選擇：</label>
+    <select id="account-select" style="width: 100%; max-width: 300px; margin: 0.5rem auto;"></select>
+    <div class="account-controls">
+      <button id="rename-account-btn" data-i18n=>✏️ </button>
+      <button id="new-account-btn" data-i18n=>➕ </button>
+      <button id="delete-account-btn" data-i18n=>🗑️ </button>
+    </div>
+    <div id="new-account-input-group" style="display: none; margin-top: 0.5rem;">
+      <input type="text" id="new-account-name" placeholder="輸入新帳本名稱" data-i18n-placeholder="placeholderNewAccount" />
+      <button id="save-new-account" data-i18n="save">儲存</button>
+    </div>
+  </div>  <div id="firebase-auth">
+    <button id="login-btn" data-i18n="login">🔐 使用 Google 帳號登入</button>
+    <button id="logout-btn" data-i18n="logout" style="display:none;">🚪 登出</button>
+  </div>  <div class="lang-selector">
+    <label for="lang-select" data-i18n="langLabel">🌐 Language / 語言：</label>
+    <select id="lang-select">
+      <option value="zh-Hant">繁體中文</option>
+      <option value="zh-Hans">简体中文</option>
+      <option value="en">English</option>
+      <option value="ja">日本語</option>
+    </select>
+  </div>  <p class="privacy-note" data-i18n="privacy">FINORA 重視隱私。你的資產，只屬於你自己。</p>  <footer class="site-footer">
+    <p data-i18n="footer">© 2025 FINORA 好好存｜家庭友善資產整合工具</p>
+    <div class="footer-links">
+      <a href="howto.html" data-i18n="guide">使用說明</a>・
+      <a href="mailto:service@finora.life?subject=聯絡詢問" data-i18n="contact">聯絡我們</a>・
+      <a href="privacy.html" data-i18n="policy">隱私權條款</a>
+    </div>
+  </footer> 
+  
+  <!-- Firebase + FINORA Script -->  
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="firebase-sync.js"></script>
+<script src="lang.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", async () => {
+    const lang = localStorage.getItem("lang") || "zh-Hant";
+    if (typeof applyLang === "function") applyLang(lang);
+
+    const langSelect = document.getElementById("lang-select");
+    langSelect.value = lang;
+    langSelect.addEventListener("change", function () {
+      localStorage.setItem("lang", this.value);
+      location.reload();
+    });
+
+    // 登入功能
+    document.getElementById("login-btn").addEventListener("click", async () => {
+      try {
+        const user = await FINORA_AUTH.signInWithGoogle();
+        if (user) {
+          alert(i18n("login_success"));
+          location.reload();
+        }
+      } catch (e) {
+        console.error("登入失敗", e);
+        alert(i18n("login_failed"));
+      }
+    });
+
+    // 登出功能
+    document.getElementById("logout-btn").addEventListener("click", async () => {
+      await FINORA_AUTH.signOutFromGoogle();
+      alert(i18n("logout_success"));
+      location.reload();
+    });
+
+    // 重新命名帳本
+    document.getElementById("rename-account-btn").addEventListener("click", async () => {
+      const newName = prompt(i18n("rename_prompt"), "");
+      if (newName) {
+        await FINORA_AUTH.renameAccount(newName);
+        alert(i18n("rename_success"));
+        location.reload();
+      }
+    });
+
+    // 顯示新增帳本欄位
+    document.getElementById("new-account-btn").addEventListener("click", () => {
+      document.getElementById("new-account-input-group").style.display = "block";
+    });
+
+    // 儲存新帳本
+    document.getElementById("save-new-account").addEventListener("click", async () => {
+      const name = document.getElementById("new-account-name").value.trim();
+      if (!name) return alert(i18n("account_name_required"));
+      await FINORA_AUTH.addAccount(name);
+      alert(i18n("add_success"));
+      location.reload();
+    });
+
+    // 刪除帳本
+    document.getElementById("delete-account-btn").addEventListener("click", async () => {
+      if (confirm(i18n("confirm_delete"))) {
+        await FINORA_AUTH.deleteAccount();
+        alert(i18n("delete_success"));
+        location.reload();
+      }
+    });
+
+    // 監聽登入狀態變化
+    FINORA_AUTH.onUserChanged(async (user) => {
+      const loginBtn = document.getElementById("login-btn");
+      const logoutBtn = document.getElementById("logout-btn");
+      loginBtn.style.display = user ? "none" : "inline-block";
+      logoutBtn.style.display = user ? "inline-block" : "none";
+
+      if (user) {
+        const accountSelect = document.getElementById("account-select");
+        const accounts = await FINORA_AUTH.fetchAccountList();
+        accountSelect.innerHTML = "";
+        accounts.forEach(acc => {
+          const opt = document.createElement("option");
+          opt.value = acc.id;
+          opt.textContent = acc.displayName || acc.id;
+          accountSelect.appendChild(opt);
+        });
+
+        const selected = FINORA_AUTH.getCurrentAccount();
+        if (selected) accountSelect.value = selected;
+
+        accountSelect.onchange = (e) => {
+          FINORA_AUTH.setSelectedAccount(e.target.value);
+          location.reload();
+        };
+      }
+    });
+  });
+</script></body>
+</html>
