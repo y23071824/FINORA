@@ -3,7 +3,7 @@
   <meta charset="UTF-8" />
   <title data-i18n="title">FINORA 好好存</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" href="favicon.png" type="image/png" />
+  <link rel="icon" href="favicon.png" type="i mage/png" />
   <link rel="stylesheet" href="style.css" />
   
   <style >
@@ -111,6 +111,26 @@
   display: inline-block;
   margin-top: 0.5rem;
 }
+
+  .grid-button-single {
+  display: flex;
+  justify-content: center;
+  padding: 0 1rem;
+}
+
+.grid-button-single a {
+  padding: 1rem;
+  font-size: clamp(0.9rem, 2.5vw, 1rem);
+  text-align: center;
+  border: 2px solid var(--main-color);
+  border-radius: 16px;
+  color: var(--main-color);
+  font-weight: bold;
+  text-decoration: none;
+  background-color: white;
+  cursor: pointer;
+  min-width: 220px;
+}
   </style>
 </head>
   
@@ -121,8 +141,9 @@
     <a href="tools/compound.html" data-i18n="compound">複利試算</a>
     <a href="tools/withdraw.html" data-i18n="withdraw">退休提領</a>
     <a href="tools/emergency.html" data-i18n="emergency">預備金試算</a>
-  </div>  <div class="grid-button-group" style="margin-top: 1rem;">
-    <a href="about.html" class="cta-button" data-i18n="nav_about">品牌故事</a>
+<div class="grid-button-single" style="margin-top: 1rem;">
+  <a href="about.html" class="cta-button" data-i18n="nav_about">品牌故事</a>
+</div>
     <label for="account-select" data-i18n="accountLabel">帳本選擇：</label>
     <select id="account-select" style="width: 100%; max-width: 300px; margin: 0.5rem auto;"></select>
     <div class="account-controls">
