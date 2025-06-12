@@ -6,69 +6,119 @@
   <link rel="icon" href="favicon.png" type="image/png" />
   <link rel="stylesheet" href="style.css" />
   <style>
-    .grid-button-group {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-  padding: 0 1rem;
-  max-width: 400px;        /* ✅ 限制最大寬度 */
-  margin: 0 auto;          /* ✅ 讓整塊置中 */
-    }
+<style>
+  :root {
+    --main-color: #b4695d; /* 與 LOGO 同色 */
+  }
 
-.grid-button-group button {
-  padding: 1rem;
-  font-size: 0.95rem;
-  text-align: center;
-  border: 2px solid #b4695d;
-  border-radius: 16px;
-  color: #b4695d;
-  font-weight: bold;
-  text-decoration: none;
-  background-color: white;
-  cursor: pointer;
-  word-break: break-word;
-  white-space: normal;
-  hyphens: auto;
-  max-width: 100%;
-  height: 100px;              /* ✅ 統一高度 */
-  display: flex;              /* ✅ 文字置中 */
-  align-items: center;
-  justify-content: center;
-}
+  body {
+    margin: 0;
+    font-family: "Noto Sans", sans-serif;
+    background-color: white;
+    color: #333;
+  }
 
-.grid-button-group a:hover,
-.grid-button-group button:hover {
-  background-color: #fcecec;
-  color: #a94456;
-}
+  h1 {
+    text-align: center;
+    color: var(--main-color);
+    font-size: 1.8rem;
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+  }
 
-.account-controls {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin: 1rem 0;
-}
+  .subtitle {
+    text-align: center;
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 2rem;
+  }
 
-#firebase-auth, .lang-selector {
-  text-align: center;
-  margin-top: 1rem;
-}
+  .grid-button-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding: 0 1rem;
+    max-width: 500px;
+    margin: auto;
+  }
 
-    .grid-button-group a,
-.grid-button-group button {
-  /* 原有設定保留 */
-  font-size: 0.95rem;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  white-space: normal;
-  word-break: break-word;
-  hyphens: auto;
+  .grid-button-group a,
+  .grid-button-group button {
+    padding: 1rem;
+    font-size: clamp(0.8rem, 2.5vw, 0.95rem);
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--main-color);
+    border-radius: 16px;
+    color: var(--main-color);
+    font-weight: bold;
+    text-decoration: none;
+    background-color: white;
+    cursor: pointer;
+    word-break: break-word;
+    white-space: normal;
+    hyphens: auto;
+    height: 100px;
+    min-height: 100px;
+    text-wrap: balance;
+  }
 
-  /* ✅ 新增這段讓字
+  .grid-button-group a:hover,
+  .grid-button-group button:hover {
+    background-color: #fcecec;
+    color: #a94456;
+  }
+
+  .account-controls {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin: 1.5rem auto;
+    max-width: 500px;
+  }
+
+  #account-select,
+  .lang-selector select {
+    width: 90%;
+    max-width: 320px;
+    padding: 0.5rem;
+    font-size: 1rem;
+    margin: 0.5rem auto;
+    display: block;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+
+  .lang-selector,
+  #firebase-auth {
+    text-align: center;
+    margin-top: 1.5rem;
+  }
+
+  .privacy-note {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #777;
+    margin: 2rem auto 1rem;
+  }
+
+  footer.site-footer {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #999;
+    padding: 1rem;
+  }
+
+  .footer-links a {
+    color: #999;
+    text-decoration: none;
+    margin: 0 0.25rem;
+  }
+</style>
   
-  </style>
 </head>
 <body class="logo-full-bg">
   <h1 data-i18n="title">FINORA 好好存</h1>
