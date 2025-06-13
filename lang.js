@@ -262,8 +262,15 @@ step_1: "第一年每月提 30,000 元",
 step_2: "通膨 2%，第二年提 30,600 元",
 step_3: "第三年提 31,212 元… 以此類推",
    nav_about: "品牌故事",
-nav_books: "推薦書單"
-
+nav_books: "推薦書單",
+   about_title: "品牌故事｜FINORA 好好存",
+  about_heading: "FINORA的由來",
+  about_p1: "哈嘍，你是否和我一樣，雖然收入穩定，但是對龐大的開銷，資產盤點和未來退休財務狀況感到格外焦慮？",
+  about_p2: "透過資產紀錄、報酬試算、退休預估和緊急備用金準備，我漸漸掌握自己的財務狀況。",
+  about_p3: "但資產分散在不同銀行和平台，甚至還有不同幣別。每次盤點都要打開一堆 App，Excel 表也難以在手機上使用。",
+  about_p4: "我相信，複利最重要的成本，是你願意投入的時間。而財務安全感，是可以一步步存出來的。所以「FINORA 好好存」，一個屬於我們的資產管理工具誕生了。",
+  about_p5: "歡迎你加入我們，一起「好好存、好好生活」。",
+  back_to_home: "← 回首頁"
 },
   
  "zh-Hans": {
@@ -500,8 +507,15 @@ step_1: "第一年每月提 30,000 元",
 step_2: "通胀 2%，第二年提 30,600 元",
 step_3: "第三年提 31,212 元… 以此类推",
    nav_about: "品牌故事",
-nav_books: "推荐书单"
-
+nav_books: "推荐书单",
+   about_title: "品牌故事｜FINORA 好好存",
+  about_heading: "FINORA的由来",
+  about_p1: "哈喽，你是否和我一样，虽然收入稳定，但是对庞大的开销、资产盘点和未来退休财务状况感到格外焦虑？",
+  about_p2: "通过资产记录、收益试算、退休预估和紧急备用金准备，我逐渐掌握了自己的财务状况。",
+  about_p3: "但资产分散在不同银行和平台，甚至还有不同币种。每次盘点都要打开很多 App，Excel 表在手机上也不好用。",
+  about_p4: "我相信，复利最重要的成本，是你愿意投入的时间。财务安全感，是可以一步步存出来的。所以“FINORA 好好存”，这个资产管理工具就诞生了。",
+  about_p5: "欢迎你加入我们，一起“好好存、好好生活”。",
+  back_to_home: "← 返回首页"
 },
 
 "en": {
@@ -737,8 +751,15 @@ step_1: "Year 1: Withdraw NT$30,000/month",
 step_2: "2% inflation → Year 2: NT$30,600",
 step_3: "Year 3: NT$31,212… and so on",
   nav_about: "About FINORA",
-nav_books: "Recommended Reads"
-
+nav_books: "Recommended Reads",
+  about_title: "Brand Story｜FINORA",
+  about_heading: "The Story of FINORA",
+  about_p1: "Hello! Are you like me — with a stable income but often anxious about rising expenses, scattered assets, and an uncertain retirement plan?",
+  about_p2: "By tracking assets, simulating returns, planning for retirement, and building an emergency fund, I gradually gained control of my finances.",
+  about_p3: "But my assets were spread across banks and platforms, in different currencies. I had to open multiple apps, and Excel sheets were hard to use on mobile.",
+  about_p4: "That’s why I created FINORA — a simple asset management tool designed for people like us. I believe the most important cost of compounding is your time. Financial security can be built step by step.",
+  about_p5: "Join us, and let’s start saving smart and living well together.",
+  back_to_home: "← Back to Home"
 },
   
  "ja": {
@@ -974,7 +995,15 @@ step_1: "1年目：月額 30,000元 を引き出す",
 step_2: "インフレ 2%、2年目は 30,600元",
 step_3: "3年目は 31,212元… 以降同様",
 nav_about: "ブランドストーリー",
-nav_books: "おすすめ書籍"
+nav_books: "おすすめ書籍",
+   about_title: "ブランドストーリー｜FINORA",
+  about_heading: "FINORAが生まれた理由",
+  about_p1: "こんにちは。安定した収入があっても、支出の多さや資産の管理、将来の退職資金に不安を感じたことはありませんか？",
+  about_p2: "資産の記録、利回りの試算、退職の見通し、緊急予備資金の準備を通して、少しずつ自分の財務状況を把握できるようになりました。",
+  about_p3: "しかし資産は複数の銀行やプラットフォームに分散され、通貨もバラバラ。毎回いくつものアプリを開く必要があり、Excelはスマホでは使いにくいと感じました。",
+  about_p4: "だからこそ、『FINORA 好好存』という私たちのための資産管理ツールを開発しました。複利で一番大切なのは、時間をかけること。財務の安心感は、一歩一歩積み上げるものです。",
+  about_p5: "ぜひ、私たちと一緒に「しっかり貯めて、しっかり暮らす」人生を始めましょう。",
+  back_to_home: "← ホームへ戻る"
   }
 };
 
