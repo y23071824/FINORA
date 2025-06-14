@@ -143,6 +143,15 @@ footer {
   text-decoration: none;
 }
 
+  .main-wrapper {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
   </style>
 </head>
 
@@ -167,9 +176,9 @@ footer {
     <select id="account-select" style="margin-top: 0.5rem; width: 90%; max-width: 320px;"></select>
 
     <div class="account-controls">
-      <button id="rename-account-btn" data-i18n="rename">✏️</button>
-      <button id="new-account-btn" data-i18n="add">➕</button>
-      <button id="delete-account-btn" data-i18n="delete">🗑️</button>
+      <div id="rename-account-btn" data-i18n="rename">✏️</div>
+      <div id="new-account-btn" data-i18n="add">➕</div>
+      <div id="delete-account-btn" data-i18n="delete">🗑️</div>
     </div>
 
     <div id="new-account-input-group" style="display: none; margin-top: 1rem;">
