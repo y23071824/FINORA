@@ -144,10 +144,14 @@ footer {
   text-decoration: none;
 }
 
-/* ✅ 修正重點：手機正常，桌機置中 */
 body.logo-full-bg {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin: 0;
-  display: block;
+}
+
+
 }
 
 /* ✅ 包住所有內容的容器：負責置中 */
