@@ -108,7 +108,7 @@ ul li {
   border-radius: 8px;
   box-shadow: 0 0 4px rgba(0,0,0,0.08);
 }
-.grid-button-group {
+
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
@@ -380,13 +380,6 @@ body.logo-full-bg::before {
   }
 }
 
-.grid-button-group {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  padding: 0 1rem;
-}
-
 .grid-button-group a,
 .grid-button-group button {
   padding: 1rem;
@@ -410,10 +403,17 @@ body.logo-full-bg::before {
 
 .grid-button-group {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  grid-template-columns: repeat(2, 1fr); /* 一行兩個 */
   gap: 1rem;
+  max-width: 500px;
+  margin: 2rem auto; /* ✅ 置中 */
   padding: 0 1rem;
 }
+.grid-button-group a {
+  aspect-ratio: 1 / 1;     /* 正方形 */
+  font-size: 1.2rem;       /* 字大一點 */
+}
+
 
 .action-button {
   padding: 1rem;
