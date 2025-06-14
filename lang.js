@@ -1,4 +1,5 @@
 // ✅ 多語言模組（整合版）
+const translations = {};
 
 function i18n(key, vars = {}) {
   const lang = localStorage.getItem("lang") || "zh-Hant";
