@@ -277,7 +277,7 @@ nav_books: "推薦書單",
   about_p5: "歡迎你加入我們，一起「好好存、好好生活」。",
   back_to_home: "← 回首頁",
 unit_share:"股",
-   price = "現價"
+   price:"現價"
 },
   
  "zh-Hans": {
@@ -524,7 +524,7 @@ nav_books: "推荐书单",
   about_p5: "欢迎你加入我们，一起“好好存、好好生活”。",
   back_to_home: "← 返回首页",
    unit_share:"股",
-   price = "现价"
+   price:"现价"
 },
 
 "en": {
@@ -770,7 +770,7 @@ nav_books: "Recommended Reads",
   about_p5: "Join us, and let’s start saving smart and living well together.",
   back_to_home: "← Back to Home",
   unit_share:"shares",
-  price = "Price"
+  price:"Price"
 },
   
  "ja": {
@@ -1016,7 +1016,7 @@ nav_books: "おすすめ書籍",
   about_p5: "ぜひ、私たちと一緒に「しっかり貯めて、しっかり暮らす」人生を始めましょう。",
   back_to_home: "← ホームへ戻る",
    unit_share:"株",
-   price= "現在価格"
+   price:"現在価格"
   }
 };
 
