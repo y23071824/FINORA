@@ -6,9 +6,10 @@
   <link rel="icon" href="favicon.png" type="image/png" />
   <link rel="stylesheet" href="style.css" />
   <style>
-    :root {
-      --main-color: #b4695d;
-    }body {
+  :root {
+  --main-color: #b4695d;
+}
+body {
   margin: 0;
   font-family: "Noto Sans", sans-serif;
   background-color: white;
@@ -143,54 +144,25 @@ footer {
   text-decoration: none;
 }
 
+/* ✅ 修正重點：手機正常，桌機置中 */
 body.logo-full-bg {
   margin: 0;
+  display: block;
 }
 
-
-.logo-full-bg .grid-button-group,
-.logo-full-bg .grid-button-single,
-.logo-full-bg .account-wrapper {
-  margin-top: 1rem;
+/* ✅ 包住所有內容的容器：負責置中 */
+.main-wrapper {
+  max-width: 480px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 1rem;
 }
+
+/* ✅ 品牌故事為長方形 */
 .grid-button-group a[data-i18n="nav_about"] {
   aspect-ratio: auto !important;
   height: auto;
-}
-    
-   body {
-  margin: 0;
-  font-family: "Noto Sans", sans-serif;
-  background-color: white;
-  color: #333;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-    
-@media (min-width: 768px) {
-  body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .grid-button-group,
-  .grid-button-single,
-  .account-wrapper,
-  .subtitle,
-  h1,
-  footer {
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
-  }
-}
-.main-wrapper {
-  max-width: 480px;
-  margin: 0 auto;
-  width: 100%;
 }
 
   </style>
