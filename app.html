@@ -5,18 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" href="favicon.png" type="image/png" />
   <link rel="stylesheet" href="style.css" />
-
   <style>
-  body.logo-full-bg {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
+    :root {
+      --main-color: #b4695d;
+    }body {
   margin: 0;
   font-family: "Noto Sans", sans-serif;
   background-color: white;
   color: #333;
-  padding: 0;
 }
 
 h1 {
@@ -40,12 +36,14 @@ h1 {
   gap: 1rem;
   padding: 0 1rem;
   max-width: 500px;
-  margin: 0 auto;
+  margin: 0 auto 1.5rem;
 }
 
-.grid-button-group a {
+.grid-button-group a,
+.grid-button-group button {
   aspect-ratio: 1 / 1;
   font-size: clamp(1rem, 4vw, 1.2rem);
+  text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -53,24 +51,122 @@ h1 {
   border-radius: 24px;
   color: var(--main-color);
   font-weight: bold;
-  background-color: white;
   text-decoration: none;
+  background-color: white;
   cursor: pointer;
   word-break: break-word;
   white-space: normal;
+  hyphens: auto;
+  box-sizing: border-box;
 }
 
-.grid-button-group a:hover {
+.grid-button-group a:hover,
+.grid-button-group button:hover {
   background-color: #fcecec;
   color: #a94456;
 }
 
-/* ✅ 品牌故事按鈕為長條按鈕 */
+.grid-button-single {
+  display: flex;
+  justify-content: center;
+  padding: 0 1rem;
+}
+
+.grid-button-single a {
+  padding: 1rem;
+  font-size: 1rem;
+  border: 2px solid var(--main-color);
+  border-radius: 24px;
+  color: var(--main-color);
+  font-weight: bold;
+  text-decoration: none;
+  background-color: white;
+  cursor: pointer;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.account-wrapper {
+  max-width: 500px;
+  margin: 2rem auto;
+  text-align: center;
+}
+
+.account-controls {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.account-controls button {
+  flex: 1;
+  min-width: 60px;
+  padding: 0.8rem;
+  font-size: 1.1rem;
+  border: 2px solid var(--main-color);
+  border-radius: 16px;
+  background-color: white;
+  color: var(--main-color);
+  font-weight: bold;
+  text-align: center;
+}
+
+#firebase-auth {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+.lang-selector {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+.privacy-note {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #777;
+  margin-top: 2rem;
+}
+
+footer {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #999;
+  padding: 1rem;
+}
+
+.footer-links a {
+  margin: 0 0.25rem;
+  color: #999;
+  text-decoration: none;
+}
+
+body.logo-full-bg {
+  display: flex;
+  flex-direction: column;
+  align-items: center;   /* 水平置中 */
+  justify-content: center;/* 垂直置中 */
+  min-height: 100vh;
+  margin: 0;
+}
+
+.logo-full-bg .grid-button-group,
+.logo-full-bg .grid-button-single,
+.logo-full-bg .account-wrapper {
+  margin-top: 1rem;
+}
 .grid-button-group a[data-i18n="nav_about"] {
   aspect-ratio: auto !important;
   height: auto;
-  padding: 1rem;
 }
+    body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 
   </style>
 </head>
