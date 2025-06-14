@@ -274,7 +274,7 @@ assets.forEach((asset, index) => {
     const shares = parseFloat(asset.shares || 0);
     const price = parseFloat(asset.price || 0);
     const marketValue = (shares * price).toFixed(2);
-    text += ` - ${asset.stockSymbol || ""} ${shares}${i18n("unit_share")} ${i18n("cost")} ${asset.cost}，${i18n("price")} ${price} ｜${i18n("market_value")}：${marketValue} ${currency}`;
+    text += ` - ${asset.stockSymbol || ""} ${shares}${i18n("unit_share")} ${i18n("cost")} ${asset.cost}，${i18n("label_price")} ${price} ｜${i18n("market_value")}：${marketValue} ${currency}`;
 } else if (type === "基金") {
   text += ` - ${asset.fundName || ""} ${asset.fundUnits}${i18n("unit_fund")} × ${asset.fundNav}`;
 } else if (type === "加密貨幣") {
