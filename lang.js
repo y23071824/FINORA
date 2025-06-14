@@ -270,7 +270,8 @@ nav_books: "推薦書單",
   about_p3: "但資產分散在不同銀行和平台，甚至還有不同幣別。每次盤點都要打開一堆 App，Excel 表也難以在手機上使用。",
   about_p4: "我相信，複利最重要的成本，是你願意投入的時間。而財務安全感，是可以一步步存出來的。所以「FINORA 好好存」，一個屬於我們的資產管理工具誕生了。",
   about_p5: "歡迎你加入我們，一起「好好存、好好生活」。",
-  back_to_home: "← 回首頁"
+  back_to_home: "← 回首頁",
+unit_share:"股"
 },
   
  "zh-Hans": {
@@ -515,7 +516,8 @@ nav_books: "推荐书单",
   about_p3: "但资产分散在不同银行和平台，甚至还有不同币种。每次盘点都要打开很多 App，Excel 表在手机上也不好用。",
   about_p4: "我相信，复利最重要的成本，是你愿意投入的时间。财务安全感，是可以一步步存出来的。所以“FINORA 好好存”，这个资产管理工具就诞生了。",
   about_p5: "欢迎你加入我们，一起“好好存、好好生活”。",
-  back_to_home: "← 返回首页"
+  back_to_home: "← 返回首页",
+   unit_share:"股"
 },
 
 "en": {
@@ -759,7 +761,8 @@ nav_books: "Recommended Reads",
   about_p3: "But my assets were spread across banks and platforms, in different currencies. I had to open multiple apps, and Excel sheets were hard to use on mobile.",
   about_p4: "That’s why I created FINORA — a simple asset management tool designed for people like us. I believe the most important cost of compounding is your time. Financial security can be built step by step.",
   about_p5: "Join us, and let’s start saving smart and living well together.",
-  back_to_home: "← Back to Home"
+  back_to_home: "← Back to Home",
+  unit_share:"shares"
 },
   
  "ja": {
@@ -1003,7 +1006,8 @@ nav_books: "おすすめ書籍",
   about_p3: "しかし資産は複数の銀行やプラットフォームに分散され、通貨もバラバラ。毎回いくつものアプリを開く必要があり、Excelはスマホでは使いにくいと感じました。",
   about_p4: "だからこそ、『FINORA 好好存』という私たちのための資産管理ツールを開発しました。複利で一番大切なのは、時間をかけること。財務の安心感は、一歩一歩積み上げるものです。",
   about_p5: "ぜひ、私たちと一緒に「しっかり貯めて、しっかり暮らす」人生を始めましょう。",
-  back_to_home: "← ホームへ戻る"
+  back_to_home: "← ホームへ戻る",
+   unit_share:"株"
   }
 };
 
