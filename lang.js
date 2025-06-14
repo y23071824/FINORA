@@ -1,8 +1,12 @@
 // ✅ 多語言模組（整合版）
 
-function i18n(key) {
+function i18n(key, vars = {}) {
   const lang = localStorage.getItem("lang") || "zh-Hant";
-  return (translations?.[lang]?.[key]) || key;
+  let text = translations[lang]?.[key] || key;
+  for (const [k, v] of Object.entries(vars)) {
+    text = text.replace(`{${k}}`, v);
+  }
+  return text;
 }
 
 function applyLang(lang = localStorage.getItem("lang") || "zh-Hant") {
