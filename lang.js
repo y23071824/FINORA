@@ -276,8 +276,8 @@ nav_books: "推薦書單",
   about_p4: "我相信，複利最重要的成本，是你願意投入的時間。而財務安全感，是可以一步步存出來的。所以「FINORA 好好存」，一個屬於我們的資產管理工具誕生了。",
   about_p5: "歡迎你加入我們，一起「好好存、好好生活」。",
   back_to_home: "← 回首頁",
-unit_share:"股",
-   price:"現價"
+unit_share: "股",
+   price: "現價"
 },
   
  "zh-Hans": {
@@ -523,8 +523,8 @@ nav_books: "推荐书单",
   about_p4: "我相信，复利最重要的成本，是你愿意投入的时间。财务安全感，是可以一步步存出来的。所以“FINORA 好好存”，这个资产管理工具就诞生了。",
   about_p5: "欢迎你加入我们，一起“好好存、好好生活”。",
   back_to_home: "← 返回首页",
-   unit_share:"股",
-   price:"现价"
+   unit_share: "股",
+   price: "现价"
 },
 
 "en": {
@@ -769,8 +769,8 @@ nav_books: "Recommended Reads",
   about_p4: "That’s why I created FINORA — a simple asset management tool designed for people like us. I believe the most important cost of compounding is your time. Financial security can be built step by step.",
   about_p5: "Join us, and let’s start saving smart and living well together.",
   back_to_home: "← Back to Home",
-  unit_share:"shares",
-  price:"Price"
+  unit_share: "shares",
+  price: "Price"
 },
   
  "ja": {
@@ -1015,8 +1015,8 @@ nav_books: "おすすめ書籍",
   about_p4: "だからこそ、『FINORA 好好存』という私たちのための資産管理ツールを開発しました。複利で一番大切なのは、時間をかけること。財務の安心感は、一歩一歩積み上げるものです。",
   about_p5: "ぜひ、私たちと一緒に「しっかり貯めて、しっかり暮らす」人生を始めましょう。",
   back_to_home: "← ホームへ戻る",
-   unit_share:"株",
-   price:"現在価格"
+   unit_share: "株",
+   price: "現在価格"
   }
 };
 
