@@ -131,6 +131,129 @@ h1 {
   font-size: 1.1rem;
   border: 2px solid var(--main-color);
   border-radius: 16px;
+:root {
+  --main-color: #b4695d;
+  --main-color-hover: #944647;
+  --main-color-bg: #f5e8e6;
+  --button-radius: 20px;
+  --button-font: 1.1rem;
+  --button-border: 2px solid var(--main-color);
+  --container-width: 700px;
+}
+
+body {
+  margin: 0;
+  font-family: "Noto Sans", sans-serif;
+  background-color: white;
+  color: #333;
+}
+
+/* ✅ 調整為靠上置中設計 */
+body.logo-full-bg {
+  display: flex;
+  justify-content: center; /* 水平置中主內容 */
+  min-height: 100vh;
+  padding-top: 3rem;       /* ✅ 與上方保留空間 */
+  box-sizing: border-box;
+}
+
+/* ✅ 主內容外框 */
+.main-wrapper {
+  width: 100%;
+  max-width: 640px;
+  padding: 0 1rem 3rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ✅ 標題與副標題 */
+h1 {
+  text-align: center;
+  color: var(--main-color);
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+.subtitle {
+  text-align: center;
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 2rem;
+}
+
+/* ✅ 主按鈕群組 */
+.grid-button-group {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+.grid-button-group a,
+.grid-button-group button {
+  aspect-ratio: 1 / 1;
+  font-size: clamp(1rem, 4vw, 1.2rem);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--button-border);
+  border-radius: 24px;
+  color: var(--main-color);
+  font-weight: bold;
+  text-decoration: none;
+  background-color: white;
+  cursor: pointer;
+  word-break: break-word;
+}
+.grid-button-group a:hover,
+.grid-button-group button:hover {
+  background-color: #fcecec;
+  color: #a94456;
+}
+
+/* ✅ 品牌故事按鈕為長方形 */
+.grid-button-single {
+  display: flex;
+  justify-content: center;
+  padding: 0 1rem;
+  max-width: 500px;
+  margin: 0 auto 1.5rem;
+}
+.grid-button-single a {
+  padding: 1rem;
+  font-size: 1rem;
+  border: 2px solid var(--main-color);
+  border-radius: 24px;
+  color: var(--main-color);
+  font-weight: bold;
+  text-decoration: none;
+  background-color: white;
+  cursor: pointer;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+}
+
+/* ✅ 帳本管理區塊 */
+.account-wrapper {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.account-controls {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+.account-controls button {
+  flex: 1;
+  min-width: 60px;
+  padding: 0.8rem;
+  font-size: 1.1rem;
+  border: 2px solid var(--main-color);
+  border-radius: 16px;
   background-color: white;
   color: var(--main-color);
   font-weight: bold;
