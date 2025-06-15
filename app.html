@@ -275,6 +275,111 @@ h1 {
   width: 90%;
   max-width: 400px;
   text-align: center;
+<style>
+:root {
+  --main-color: #b4695d;
+  --main-color-hover: #944647;
+  --main-color-bg: #f5e8e6;
+  --button-radius: 20px;
+  --button-font: 1.1rem;
+  --button-border: 2px solid var(--main-color);
+  --container-width: 700px;
+}
+
+/* ✅ 主體排版：靠上 + 水平置中 */
+body.logo-full-bg {
+  display: flex;
+  justify-content: center;
+  padding-top: 3rem;
+  min-height: 100vh;
+  box-sizing: border-box;
+  margin: 0;
+  background-color: white;
+  font-family: "Noto Sans", sans-serif;
+  color: #333;
+}
+
+/* ✅ 主內容容器 */
+.main-wrapper {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 1rem 3rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ✅ 標題與副標題 */
+h1 {
+  text-align: center;
+  color: var(--main-color);
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+.subtitle {
+  text-align: center;
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 2rem;
+}
+
+/* ✅ 四大按鈕群組 */
+.grid-button-group {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto 2rem;
+}
+
+.grid-button-group a,
+.grid-button-group button {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  font-size: clamp(1rem, 4vw, 1.2rem);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--button-border);
+  border-radius: 24px;
+  color: var(--main-color);
+  font-weight: bold;
+  text-decoration: none;
+  background-color: white;
+  cursor: pointer;
+  word-break: break-word;
+}
+.grid-button-group a:hover,
+.grid-button-group button:hover {
+  background-color: #fcecec;
+  color: var(--main-color-hover);
+}
+
+/* ✅ 品牌故事按鈕 */
+.grid-button-single {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto 1.5rem;
+}
+.grid-button-single a {
+  padding: 1rem;
+  font-size: 1rem;
+  border: var(--button-border);
+  border-radius: 24px;
+  color: var(--main-color);
+  font-weight: bold;
+  text-decoration: none;
+  background-color: white;
+  cursor: pointer;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
 }
 
 /* ✅ 帳本選單區 */
@@ -293,7 +398,7 @@ h1 {
   min-width: 60px;
   padding: 0.8rem;
   font-size: 1.1rem;
-  border: 2px solid var(--main-color);
+  border: var(--button-border);
   border-radius: 16px;
   background-color: white;
   color: var(--main-color);
@@ -306,6 +411,17 @@ h1 {
   text-align: center;
   margin-top: 1.5rem;
 }
+#firebase-auth button {
+  margin: 0.5rem;
+  font-size: 1rem;
+  padding: 0.6rem 1.2rem;
+  border: var(--button-border);
+  border-radius: 16px;
+  background-color: white;
+  color: var(--main-color);
+  font-weight: bold;
+  cursor: pointer;
+}
 
 /* ✅ 語言切換 */
 .lang-selector {
@@ -313,7 +429,7 @@ h1 {
   margin-top: 1.5rem;
 }
 
-/* ✅ 資安聲明與頁尾 */
+/* ✅ 隱私聲明與頁尾 */
 .privacy-note {
   text-align: center;
   font-size: 0.85rem;
@@ -332,7 +448,7 @@ footer {
   text-decoration: none;
 }
 
-/* ✅ 背景浮水印 */
+/* ✅ 浮水印背景 */
 body.logo-full-bg::before {
   content: "";
   position: fixed;
@@ -348,8 +464,7 @@ body.logo-full-bg::before {
   pointer-events: none;
   z-index: 0;
 }
-
-  </style>
+</style>
 </head>
 
 <body class="logo-full-bg">
