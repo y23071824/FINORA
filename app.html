@@ -174,13 +174,17 @@ body.logo-full-bg::before {
   z-index: 0;
 }
   .main-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;  /* ✅ 垂直靠上 */
+  min-height: 100vh;
   width: 100%;
-  max-width: 640px;   /* ✅ 從 480px 擴大一點 */
-  margin-left: auto;
-  margin-right: auto;
-  padding: 0 1rem;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 2rem 1rem 1rem;
   box-sizing: border-box;
-}
+  }
   .grid-button-single {
   display: flex;
   justify-content: center;
