@@ -1,3 +1,4 @@
+
 <!DOCTYPE html><html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
@@ -36,42 +37,8 @@ body.logo-full-bg {
 .main-wrapper {
   width: 100%;
   max-width: 640px;
-  padding: 0 1rem 3rem;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-:root {
-  --main-color: #b4695d;
-  --main-color-hover: #944647;
-  --main-color-bg: #f5e8e6;
-  --button-radius: 20px;
-  --button-font: 1.1rem;
-  --button-border: 2px solid var(--main-color);
-  --container-width: 700px;
-}
-
-body {
-  margin: 0;
-  font-family: "Noto Sans", sans-serif;
-  background-color: white;
-  color: #333;
-}
-
-/* ✅ 主體排版：靠上＋置中 */
-body.logo-full-bg {
-  display: flex;
-  justify-content: center;         /* 水平置中主內容 */
-  padding-top: 3rem;               /* 與頂端留距離 */
-  min-height: 100vh;
-  box-sizing: border-box;
-}
-
-/* ✅ 主內容容器 */
-.main-wrapper {
-  width: 100%;
-  max-width: 640px;
-  margin: 0 auto;                  /* 核心：置中 */
+  margin-left: auto;
+  margin-right: auto;
   padding: 0 1rem 3rem;
   box-sizing: border-box;
   display: flex;
@@ -93,22 +60,17 @@ h1 {
   margin-bottom: 2rem;
 }
 
-/* ✅ 四大按鈕群組 */
+/* ✅ 主按鈕群組 */
 .grid-button-group {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
   margin-bottom: 1.5rem;
   width: 100%;
-  max-width: 500px;
-  margin-left: auto;
-  margin-right: auto;
 }
-
 .grid-button-group a,
 .grid-button-group button {
   aspect-ratio: 1 / 1;
-  width: 100%;
   font-size: clamp(1rem, 4vw, 1.2rem);
   text-align: center;
   display: flex;
@@ -129,7 +91,7 @@ h1 {
   color: #a94456;
 }
 
-/* ✅ 品牌故事按鈕 */
+/* ✅ 品牌故事按鈕為長方形 */
 .grid-button-single {
   display: flex;
   justify-content: center;
@@ -150,7 +112,26 @@ h1 {
   width: 90%;
   max-width: 400px;
   text-align: center;
-<style>
+}
+
+/* ✅ 帳本管理區塊 */
+.account-wrapper {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.account-controls {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+.account-controls button {
+  flex: 1;
+  min-width: 60px;
+  padding: 0.8rem;
+  font-size: 1.1rem;
+  border: 2px solid var(--main-color);
+  border-radius: 16px;
 :root {
   --main-color: #b4695d;
   --main-color-hover: #944647;
@@ -161,24 +142,26 @@ h1 {
   --container-width: 700px;
 }
 
-/* ✅ 主體排版：靠上 + 水平置中 */
-body.logo-full-bg {
-  display: flex;
-  justify-content: center;
-  padding-top: 3rem;
-  min-height: 100vh;
-  box-sizing: border-box;
+body {
   margin: 0;
-  background-color: white;
   font-family: "Noto Sans", sans-serif;
+  background-color: white;
   color: #333;
 }
 
-/* ✅ 主內容容器 */
+/* ✅ 調整為靠上置中設計 */
+body.logo-full-bg {
+  display: flex;
+  justify-content: center; /* 水平置中主內容 */
+  min-height: 100vh;
+  padding-top: 3rem;       /* ✅ 與上方保留空間 */
+  box-sizing: border-box;
+}
+
+/* ✅ 主內容外框 */
 .main-wrapper {
   width: 100%;
   max-width: 640px;
-  margin: 0 auto;
   padding: 0 1rem 3rem;
   box-sizing: border-box;
   display: flex;
@@ -200,20 +183,17 @@ h1 {
   margin-bottom: 2rem;
 }
 
-/* ✅ 四大按鈕群組 */
+/* ✅ 主按鈕群組 */
 .grid-button-group {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
+  margin-bottom: 1.5rem;
   width: 100%;
-  max-width: 500px;
-  margin: 0 auto 2rem;
 }
-
 .grid-button-group a,
 .grid-button-group button {
   aspect-ratio: 1 / 1;
-  width: 100%;
   font-size: clamp(1rem, 4vw, 1.2rem);
   text-align: center;
   display: flex;
@@ -231,21 +211,21 @@ h1 {
 .grid-button-group a:hover,
 .grid-button-group button:hover {
   background-color: #fcecec;
-  color: var(--main-color-hover);
+  color: #a94456;
 }
 
-/* ✅ 品牌故事按鈕 */
+/* ✅ 品牌故事按鈕為長方形 */
 .grid-button-single {
   display: flex;
   justify-content: center;
-  width: 100%;
+  padding: 0 1rem;
   max-width: 500px;
   margin: 0 auto 1.5rem;
 }
 .grid-button-single a {
   padding: 1rem;
   font-size: 1rem;
-  border: var(--button-border);
+  border: 2px solid var(--main-color);
   border-radius: 24px;
   color: var(--main-color);
   font-weight: bold;
@@ -257,7 +237,7 @@ h1 {
   text-align: center;
 }
 
-/* ✅ 帳本選單區 */
+/* ✅ 帳本管理區塊 */
 .account-wrapper {
   text-align: center;
   margin-bottom: 2rem;
@@ -273,7 +253,7 @@ h1 {
   min-width: 60px;
   padding: 0.8rem;
   font-size: 1.1rem;
-  border: var(--button-border);
+  border: 2px solid var(--main-color);
   border-radius: 16px;
   background-color: white;
   color: var(--main-color);
@@ -281,21 +261,10 @@ h1 {
   text-align: center;
 }
 
-/* ✅ 登入 / 登出 */
+/* ✅ 登入/登出按鈕 */
 #firebase-auth {
   text-align: center;
   margin-top: 1.5rem;
-}
-#firebase-auth button {
-  margin: 0.5rem;
-  font-size: 1rem;
-  padding: 0.6rem 1.2rem;
-  border: var(--button-border);
-  border-radius: 16px;
-  background-color: white;
-  color: var(--main-color);
-  font-weight: bold;
-  cursor: pointer;
 }
 
 /* ✅ 語言切換 */
@@ -304,7 +273,7 @@ h1 {
   margin-top: 1.5rem;
 }
 
-/* ✅ 隱私聲明與頁尾 */
+/* ✅ 說明與頁尾 */
 .privacy-note {
   text-align: center;
   font-size: 0.85rem;
@@ -339,7 +308,8 @@ body.logo-full-bg::before {
   pointer-events: none;
   z-index: 0;
 }
-</style>
+
+  </style>
 </head>
 
 <body class="logo-full-bg">
