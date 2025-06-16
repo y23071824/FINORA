@@ -14,30 +14,70 @@
   <script src="../firebase-sync.js"></script>
 
   <style>
-    body { max-width: 700px; margin: auto; padding: 1.5rem; font-family: sans-serif; background: white; }
-    h1 { color: #c96374; text-align: center; }
-    h2 { color: #6c6c6c; margin-top: 2rem; }
-    .item-row { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
-    .item-row input:nth-child(1) { flex: 0 0 50%; }
-    .item-row input:nth-child(2) { flex: 0 0 35%; }
-    .item-row button {
-      flex: 0 0 15%;
-      background: white;
-      border: 2px solid #c96374;
-      color: #c96374;
-      padding: 0.3rem;
-      font-size: 1.2rem;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: background 0.2s, color 0.2s;
-    }
-    .item-row button:hover {
-      background: #fcecec;
-      color: #a94456;
-    }
-    label, select { margin-top: 1rem; display: block; }
-    .summary { margin-top: 1rem; font-weight: bold; }
-  </style>
+  :root {
+    --main-color: #b4695d;
+    --main-color-hover: #944647;
+  }
+
+  body {
+    max-width: 700px;
+    margin: auto;
+    padding: 1.5rem;
+    font-family: sans-serif;
+    background: white;
+  }
+
+  h1 {
+    color: var(--main-color);
+    text-align: center;
+  }
+
+  h2 {
+    color: #6c6c6c;
+    margin-top: 2rem;
+  }
+
+  .item-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .item-row input:nth-child(1) {
+    flex: 0 0 50%;
+  }
+
+  .item-row input:nth-child(2) {
+    flex: 0 0 35%;
+  }
+
+  .item-row button {
+    flex: 0 0 15%;
+    background: white;
+    border: 2px solid var(--main-color);
+    color: var(--main-color);
+    padding: 0.3rem;
+    font-size: 1.2rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .item-row button:hover {
+    background: #fcecec;
+    color: var(--main-color-hover);
+  }
+
+  label, select {
+    margin-top: 1rem;
+    display: block;
+  }
+
+  .summary {
+    margin-top: 1rem;
+    font-weight: bold;
+  }
+</style>
 </head>
 <body class="logo-full-bg">
   <h1 data-i18n="emergency_title">理財第一步</h1>
