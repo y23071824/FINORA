@@ -60,7 +60,6 @@ body.logo-full-bg {
     margin-bottom: 2rem;
   }
 
-  /* 四顆主按鈕 */
 .grid-button-group {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -68,8 +67,8 @@ body.logo-full-bg {
   width: 100%;
   max-width: 500px;
   margin: 0 auto 2rem;
+  place-items: center;  /* ✅ 新增這一行 */
 }
-
 .grid-button-group a,
 .grid-button-group button {
   aspect-ratio: 1 / 1;
