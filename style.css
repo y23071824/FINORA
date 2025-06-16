@@ -1,48 +1,48 @@
 :root {
-  --main-color: #b4695d;
-  --main-color-hover: #944647;
-  --main-color-bg: #f5e8e6;
-  --button-radius: 20px;
-  --button-font: 1.1rem;
-  --button-border: 2px solid var(--main-color);
-  --container-width: 700px;
+--main-color: #b4695d;
+--main-color-hover: #944647;
+--main-color-bg: #f5e8e6;
+--button-radius: 20px;
+--button-font: 1.1rem;
+--button-border: 2px solid var(--main-color);
+--container-width: 700px;
 }
 
 /* === 全站容器設定 === */
 body {
-  font-family: sans-serif;
-  background: white;
-  color: #333;
-  padding: 2rem;
-  font-size: 1rem;
-  max-width: var(--container-width);
-  margin: 0 auto;
-  box-sizing: border-box;
+font-family: sans-serif;
+background: white;
+color: #333;
+padding: 2rem;
+font-size: 1rem;
+max-width: var(--container-width);
+margin: 0 auto;
+box-sizing: border-box;
 }
 html, body {
-  width: 100%;
-  overflow-x: hidden;
+width: 100%;
+overflow-x: hidden;
 }
 
 /* === 標題 === */
 h1, h2, h3 {
-  text-align: center;
-  color: var(--main-color);
+text-align: center;
+color: var(--main-color);
 }
 
 /* === 表單 === */
 label {
-  display: block;
-  margin-top: 0.8rem;
+display: block;
+margin-top: 0.8rem;
 }
 input, select {
-  width: 100%;
-  padding: 0.6rem;
-  font-size: 1rem;
-  margin-top: 0.2rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  box-sizing: border-box;
+width: 100%;
+padding: 0.6rem;
+font-size: 1rem;
+margin-top: 0.2rem;
+border: 1px solid #ccc;
+border-radius: 6px;
+box-sizing: border-box;
 }
 
 /* === 紅框白底按鈕（主用樣式）=== */
@@ -51,19 +51,19 @@ button,
 .asset-actions button,
 .home-btn,
 .grid-button-group a {
-  background-color: white;
-  color: var(--main-color);
-  border: var(--button-border);
-  border-radius: var(--button-radius);
-  font-size: var(--button-font);
-  padding: 0.6rem 1.2rem;
-  text-align: center;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  transition: background-color 0.2s, color 0.2s;
+background-color: white;
+color: var(--main-color);
+border: var(--button-border);
+border-radius: var(--button-radius);
+font-size: var(--button-font);
+padding: 0.6rem 1.2rem;
+text-align: center;
+cursor: pointer;
+text-decoration: none;
+display: inline-flex;
+justify-content: center;
+align-items: center;
+transition: background-color 0.2s, color 0.2s;
 }
 
 button:hover,
@@ -71,368 +71,366 @@ button:hover,
 .asset-actions button:hover,
 .home-btn:hover,
 .grid-button-group a:hover {
-  background-color: var(--main-color);
-  color: white;
+background-color: var(--main-color);
+color: white;
 }
 
 /* === CTA 大按鈕（立即開始使用）=== */
 .cta-full {
-  display: block;
-  width: 100%;
-  max-width: 400px;
-  text-align: center;
-  padding: 1rem;
-  margin: 2rem auto;
-  border: var(--button-border);
-  border-radius: var(--button-radius);
-  font-size: 1.2rem;
-  font-weight: bold;
-  background-color: white;
-  color: var(--main-color);
-  text-decoration: none;
+display: block;
+width: 100%;
+max-width: 400px;
+text-align: center;
+padding: 1rem;
+margin: 2rem auto;
+border: var(--button-border);
+border-radius: var(--button-radius);
+font-size: 1.2rem;
+font-weight: bold;
+background-color: white;
+color: var(--main-color);
+text-decoration: none;
 }
 .cta-full:hover {
-  background-color: var(--main-color);
-  color: white;
+background-color: var(--main-color);
+color: white;
 }
 
 /* === 功能區塊 === */
 ul {
-  list-style: none;
-  padding: 0;
+list-style: none;
+padding: 0;
 }
 ul li {
-  background: white;
-  padding: 1rem;
-  margin: 0.5rem 0;
-  border-radius: 8px;
-  box-shadow: 0 0 4px rgba(0,0,0,0.08);
+background: white;
+padding: 1rem;
+margin: 0.5rem 0;
+border-radius: 8px;
+box-shadow: 0 0 4px rgba(0,0,0,0.08);
 }
 
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-  max-width: 600px;
-  margin: 2rem auto;
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 1rem;
+max-width: 600px;
+margin: 2rem auto;
 }
 .grid-button-group a {
-  aspect-ratio: 1 / 1;
+aspect-ratio: 1 / 1;
 }
 
 /* === 小標題與提示 === */
 .subtitle {
-  font-size: 1.2rem;
-  text-align: center;
-  margin-top: 0.8rem;
-  color: #555;
+font-size: 1.2rem;
+text-align: center;
+margin-top: 0.8rem;
+color: #555;
 }
 .guide-note {
-  font-style: italic;
-  font-size: 0.9rem;
-  color: #888;
-  margin-top: 0.8rem;
+font-style: italic;
+font-size: 0.9rem;
+color: #888;
+margin-top: 0.8rem;
 }
 
 /* === 登入提示區塊 === */
 .login-info-box {
-  background: #f7f2f1;
-  border-left: 5px solid var(--main-color);
-  padding: 1.2rem;
-  margin-top: 1.5rem;
-  border-radius: 12px;
-  font-size: 0.95rem;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-  color: #333;
+background: #f7f2f1;
+border-left: 5px solid var(--main-color);
+padding: 1.2rem;
+margin-top: 1.5rem;
+border-radius: 12px;
+font-size: 0.95rem;
+box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+color: #333;
 }
 .login-info-box h3 {
-  margin-top: 0;
-  color: #a14e4e;
+margin-top: 0;
+color: #a14e4e;
 }
 .login-info-box ul {
-  padding-left: 1.2rem;
-  margin: 0.5rem 0;
+padding-left: 1.2rem;
+margin: 0.5rem 0;
 }
 .login-info-box li {
-  margin-bottom: 0.4rem;
+margin-bottom: 0.4rem;
 }
 .privacy-note {
-  margin-top: 1rem;
-  font-style: italic;
-  font-size: 0.88rem;
-  color: #666;
+margin-top: 1rem;
+font-style: italic;
+font-size: 0.88rem;
+color: #666;
 }
 
 /* === 修改／刪除按鈕群組置中排列 === */
 .button-group,
 .asset-actions {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-top: 1rem;
+display: flex;
+justify-content: center;
+flex-wrap: wrap;
+gap: 1rem;
+margin-top: 1rem;
 }
 
 /* === 返回連結 === */
 a {
-  color: var(--main-color);
-  font-size: 0.85rem;
-  text-align: center;
-  margin-top: 1rem;
-  text-decoration: none;
+color: var(--main-color);
+font-size: 0.85rem;
+text-align: center;
+margin-top: 1rem;
+text-decoration: none;
 }
 #save-asset-btn {
-  display: block;
-  margin: 1rem auto 0.8rem;
-  padding: 0.8rem 1.4rem;
-  font-size: 1.05rem;
-  font-weight: bold;
-  color: var(--main-color);
-  border: 2px solid var(--main-color);
-  background-color: transparent;
-  border-radius: var(--button-radius);
-  cursor: pointer;
-  transition: background-color 0.2s, color 0.2s;
+display: block;
+margin: 1rem auto 0.8rem;
+padding: 0.8rem 1.4rem;
+font-size: 1.05rem;
+font-weight: bold;
+color: var(--main-color);
+border: 2px solid var(--main-color);
+background-color: transparent;
+border-radius: var(--button-radius);
+cursor: pointer;
+transition: background-color 0.2s, color 0.2s;
 }
 
 #save-asset-btn:hover {
-  background-color: var(--main-color);
-  color: white;
+background-color: var(--main-color);
+color: white;
 }
 
 .cta-full {
-  display: block;
-  width: 100%;
-  text-align: center;
-  padding: 1rem;
-  border: 2px solid var(--main-color);
-  color: var(--main-color);
-  border-radius: var(--button-radius);
-  font-size: var(--button-font);
-  font-weight: bold;
-  text-decoration: none;
-  transition: background-color 0.2s, color 0.2s;
-  margin: 1rem auto;
-  max-width: 400px;
-  background: transparent;
-  box-sizing: border-box;
+display: block;
+width: 100%;
+text-align: center;
+padding: 1rem;
+border: 2px solid var(--main-color);
+color: var(--main-color);
+border-radius: var(--button-radius);
+font-size: var(--button-font);
+font-weight: bold;
+text-decoration: none;
+transition: background-color 0.2s, color 0.2s;
+margin: 1rem auto;
+max-width: 400px;
+background: transparent;
+box-sizing: border-box;
 }
 .cta-full:hover {
-  background-color: var(--main-color);
-  color: white;
+background-color: var(--main-color);
+color: white;
 }
 button,
 .cta-full {
-  display: block;
-  margin: 1rem auto 0;
-  padding: 0.8rem 1.5rem;
-  font-size: 1.1rem;
-  font-weight: bold;
-  color: var(--main-color);
-  border: 2px solid var(--main-color);
-  background-color: transparent;
-  border-radius: var(--button-radius);
-  text-align: center;
-  transition: background-color 0.2s, color 0.2s;
-  box-sizing: border-box;
+display: block;
+margin: 1rem auto 0;
+padding: 0.8rem 1.5rem;
+font-size: 1.1rem;
+font-weight: bold;
+color: var(--main-color);
+border: 2px solid var(--main-color);
+background-color: transparent;
+border-radius: var(--button-radius);
+text-align: center;
+transition: background-color 0.2s, color 0.2s;
+box-sizing: border-box;
 }
 
 button:hover,
 .cta-full:hover {
-  background-color: var(--main-color);
-  color: white;
+background-color: var(--main-color);
+color: white;
 }
 
 /* ✅ 浮水印 Logo 背景樣式 */
 body.logo-full-bg::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-image: url('favicon.png');
-  background-repeat: no-repeat;
-  background-position: center 20%;
-  background-size: 60%;
-  opacity: 0.08;
-  pointer-events: none;
-  z-index: 0;
+content: "";
+position: fixed;
+top: 0;
+left: 0;
+width: 100vw;
+height: 100vh;
+background-image: url('favicon.png');
+background-repeat: no-repeat;
+background-position: center 20%;
+background-size: 60%;
+opacity: 0.08;
+pointer-events: none;
+z-index: 0;
 }
 .asset-card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 1rem;
-  margin-bottom: 0.8rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+background: #fff;
+border-radius: 12px;
+padding: 1rem;
+margin-bottom: 0.8rem;
+box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .finora-footer {
-  margin-top: 4rem;
-  padding: 2rem 1rem;
-  background-color: #fffaf8;
-  border-top: 1px solid #ddd;
-  text-align: center;
-  font-size: 0.95rem;
-  color: #666;
+margin-top: 4rem;
+padding: 2rem 1rem;
+background-color: #fffaf8;
+border-top: 1px solid #ddd;
+text-align: center;
+font-size: 0.95rem;
+color: #666;
 }
 .finora-footer .footer-links {
-  margin-top: 0.5rem;
+margin-top: 0.5rem;
 }
 .finora-footer a {
-  color: #b4695d;
-  text-decoration: none;
-  font-weight: bold;
+color: #b4695d;
+text-decoration: none;
+font-weight: bold;
 }
 .finora-footer a:hover {
-  text-decoration: underline;
+text-decoration: underline;
 }
 .site-footer {
-  text-align: center;
-  font-size: 0.9rem;
-  color: #888;
-  margin-top: 3rem;
-  padding: 1rem 0;
+text-align: center;
+font-size: 0.9rem;
+color: #888;
+margin-top: 3rem;
+padding: 1rem 0;
 }
 
 .site-footer a {
-  color: #b4695d;
-  text-decoration: none;
-  margin: 0 0.5rem;
+color: #b4695d;
+text-decoration: none;
+margin: 0 0.5rem;
 }
 
 .site-footer a:hover {
-  text-decoration: underline;
+text-decoration: underline;
 }
 
 .inflation-toggle-btn {
-  display: inline-block;
-  padding: 0.4rem 1rem;
-  font-size: 0.9rem;
-  color: var(--main-color);
-  border: 2px solid var(--main-color);
-  border-radius: var(--button-radius);
-  background-color: white;
-  cursor: pointer;
-  white-space: nowrap;
-  max-width: 100%;
-  text-align: center;
-  line-height: 1.2;
-  margin-top: 1rem;
+display: inline-block;
+padding: 0.4rem 1rem;
+font-size: 0.9rem;
+color: var(--main-color);
+border: 2px solid var(--main-color);
+border-radius: var(--button-radius);
+background-color: white;
+cursor: pointer;
+white-space: nowrap;
+max-width: 100%;
+text-align: center;
+line-height: 1.2;
+margin-top: 1rem;
 }
 
 .lang-btn {
-  height: 120px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  line-height: 1.4;
-  white-space: pre-line;
+height: 120px;
+display: flex;
+justify-content: center;
+align-items: center;
+text-align: center;
+line-height: 1.4;
+white-space: pre-line;
 }
 .asset-item .actions {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 0.5rem;
+display: flex;
+justify-content: center;
+gap: 1rem;
+margin-top: 0.5rem;
 }
 
 .asset-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.8rem;
-  border-radius: 1rem;
-  background: #fff;
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
-  flex-wrap: wrap;
+display: flex;
+justify-content: space-between;
+align-items: center;
+gap: 1rem;
+padding: 0.8rem;
+border-radius: 1rem;
+background: #fff;
+box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+flex-wrap: wrap;
 }
 .note-text {
-  flex-grow: 1;
-  min-width: 200px;
+flex-grow: 1;
+min-width: 200px;
 }
 .actions {
-  display: flex;
-  gap: 0.5rem;
+display: flex;
+gap: 0.5rem;
 }
 .actions button {
-  border: 1px solid #c96374;
-  border-radius: 1rem;
-  background: white;
-  color: #c96374;
-  padding: 0.4rem 0.6rem;
-  font-size: 1.2rem;
+border: 1px solid #c96374;
+border-radius: 1rem;
+background: white;
+color: #c96374;
+padding: 0.4rem 0.6rem;
+font-size: 1.2rem;
 }
 
 .action-button {
-  padding: 6px 10px;
-  border: 1px solid #b4695d;
-  background-color: white;
-  border-radius: 8px;
-  font-size: 1.2rem;
-  cursor: pointer;
+padding: 6px 10px;
+border: 1px solid #b4695d;
+background-color: white;
+border-radius: 8px;
+font-size: 1.2rem;
+cursor: pointer;
 }
 
 @media (max-width: 480px) {
-  .action-button {
-    max-width: 90px;
-    font-size: 0.85rem;
-  }
+.action-button {
+max-width: 90px;
+font-size: 0.85rem;
+}
 }
 
 .grid-button-group a,
 .grid-button-group button {
-  padding: 1rem;
-  font-size: 0.95rem;
-  text-align: center;
-  border: 2px solid #c96374;
-  border-radius: 16px;
-  color: #c96374;
-  font-weight: bold;
-  text-decoration: none;
-  word-break: break-word;
-  background-color: white;
-  cursor: pointer;
+padding: 1rem;
+font-size: 0.95rem;
+text-align: center;
+border: 2px solid #c96374;
+border-radius: 16px;
+color: #c96374;
+font-weight: bold;
+text-decoration: none;
+word-break: break-word;
+background-color: white;
+cursor: pointer;
 }
 
 .grid-button-group a:hover,
 .grid-button-group button:hover {
-  background-color: #fcecec;
-  color: #a94456;
+background-color: #fcecec;
+color: #a94456;
 }
 
 .grid-button-group {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 一行兩個 */
-  gap: 1rem;
-  max-width: 500px;
-  margin: 2rem auto; /* ✅ 置中 */
-  padding: 0 1rem;
+display: grid;
+grid-template-columns: repeat(2, 1fr); /* 一行兩個 /
+gap: 1rem;
+max-width: 500px;
+margin: 2rem auto; / ✅ 置中 /
+padding: 0 1rem;
 }
 .grid-button-group a {
-  aspect-ratio: 1 / 1;     /* 正方形 */
-  font-size: 1.2rem;       /* 字大一點 */
+aspect-ratio: 1 / 1;     / 正方形 /
+font-size: 1.2rem;       / 字大一點 */
 }
 
-
 .action-button {
-  padding: 1rem;
-  font-size: 0.95rem;
-  text-align: center;
-  border: 2px solid #c96374;
-  border-radius: 16px;
-  color: #c96374;
-  font-weight: bold;
-  text-decoration: none;
-  background-color: white;
-  word-break: break-word;
-  cursor: pointer;
-  transition: background 0.3s, color 0.3s;
+padding: 1rem;
+font-size: 0.95rem;
+text-align: center;
+border: 2px solid #c96374;
+border-radius: 16px;
+color: #c96374;
+font-weight: bold;
+text-decoration: none;
+background-color: white;
+word-break: break-word;
+cursor: pointer;
+transition: background 0.3s, color 0.3s;
 }
 
 .action-button:hover {
-  background-color: #fcecec;
-  color: #a94456;
+background-color: #fcecec;
+color: #a94456;
 }
-
 
