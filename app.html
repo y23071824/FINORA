@@ -99,95 +99,151 @@ max-width: 400px;
 text-align: center;
 }
 
+:root {
+  --main-color: #b4695d;
+  --main-color-hover: #944647;
+  --main-color-bg: #f5e8e6;
+  --button-radius: 20px;
+  --button-font: 1.1rem;
+  --button-border: 2px solid var(--main-color);
+  --container-width: 700px;
+}
+
+/* ✅ 全域按鈕設定 */
+button,
+.grid-button-group a,
+.cta-full,
+.action-button {
+  font-size: 1rem;
+  border: 2px solid var(--main-color);
+  border-radius: 24px;
+  color: var(--main-color);
+  font-weight: bold;
+  text-decoration: none;
+  background-color: white;
+  cursor: pointer;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  padding: 0.8rem 1rem;
+  box-sizing: border-box;
+}
+
 /* ✅ 帳本管理區塊 */
 .account-wrapper {
-text-align: center;
-margin-bottom: 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
 }
 .account-controls {
-display: flex;
-justify-content: center;
-gap: 0.75rem;
-margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
 }
 .account-controls button {
-flex: 1;
-min-width: 60px;
-padding: 0.8rem;
-font-size: 1.1rem;
-border: 2px solid var(--main-color);
-border-radius: 16px;
-background-color: white;
-color: var(--main-color);
-font-weight: bold;
-text-align: center;
+  flex: 1;
+  min-width: 60px;
+  padding: 0.8rem;
+  font-size: 1.1rem;
+  border: 2px solid var(--main-color);
+  border-radius: 16px;
+  background-color: white;
+  color: var(--main-color);
+  font-weight: bold;
+  text-align: center;
 }
 
 /* ✅ 登入/登出按鈕 */
 #firebase-auth {
-text-align: center;
-margin-top: 1.5rem;
+  text-align: center;
+  margin-top: 1.5rem;
 }
 
 /* ✅ 語言切換 */
 .lang-selector {
-text-align: center;
-margin-top: 1.5rem;
+  text-align: center;
+  margin-top: 1.5rem;
 }
 
 /* ✅ 說明與頁尾 */
 .privacy-note {
-text-align: center;
-font-size: 0.85rem;
-color: #777;
-margin-top: 2rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #777;
+  margin-top: 2rem;
 }
 footer {
-text-align: center;
-font-size: 0.85rem;
-color: #999;
-padding: 1rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #999;
+  padding: 1rem;
 }
 .footer-links a {
-margin: 0 0.25rem;
-color: #999;
-text-decoration: none;
+  margin: 0 0.25rem;
+  color: #999;
+  text-decoration: none;
 }
 
-/* ✅ 浮水印背景 /
+/* ✅ 浮水印背景 */
 body.logo-full-bg::before {
-content: "";
-position: fixed;
-top: 0;
-left: 0;
-width: 100vw;
-height: 100vh;
-background-image: url('favicon.png');
-background-repeat: no-repeat;
-background-position: center 20%;
-background-size: 60%;
-opacity: 0.08;
-pointer-events: none;
-z-index: 0;
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url('favicon.png');
+  background-repeat: no-repeat;
+  background-position: center 20%;
+  background-size: 60%;
+  opacity: 0.08;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ✅ 主要容器 */
+body.logo-full-bg {
+  padding: 0 !important;
+  max-width: 100% !important;
 }
 .main-wrapper {
-width: 100%;
-max-width: 640px;   / ✅ 從 480px 擴大一點 */
-margin-left: auto;
-margin-right: auto;
-padding: 0 1rem;
-box-sizing: border-box;
+  width: 100%;
+  max-width: 640px;  /* 從 480 擴大 */
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 1rem;
+  box-sizing: border-box;
 }
+
+/* ✅ 按鈕群組（正方形兩列置中） */
+.grid-button-group {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.2rem;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto 2rem;
+  justify-items: center;
+}
+.grid-button-group a {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  max-width: 200px;
+  font-size: 1.2rem;
+}
+
+/* ✅ 單列置中按鈕區塊 */
 .grid-button-single {
-display: flex;
-justify-content: center;
-padding: 0 1rem;
-max-width: 500px;
-margin: 0 auto 1.5rem;
+  display: flex;
+  justify-content: center;
+  padding: 0 1rem;
+  max-width: 500px;
+  margin: 0 auto 1.5rem;
 }
 
   </style>  
-</head>  <body class="logo-full-bg">  
+</head> 
+  <body class="logo-full-bg">  
   <div class="main-wrapper">  
   <h1 data-i18n="title">FINORA 好好存</h1>  
   <p class="subtitle" data-i18n="subtitle">讓資產更有力，退休不焦慮。</p>    <div class="grid-button-group">  
