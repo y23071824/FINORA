@@ -63,17 +63,18 @@ body.logo-full-bg {
 .grid-button-group {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  place-items: center;              /* ✅ 讓每格裡的物件水平＋垂直置中 */
   gap: 1.2rem;
   width: 100%;
   max-width: 500px;
   margin: 0 auto 2rem;
-  place-items: center;  /* ✅ 新增這一行 */
 }
+
 .grid-button-group a,
 .grid-button-group button {
   aspect-ratio: 1 / 1;
+  width: 100%;                      /* ✅ 不再用 90%，直接讓格子自動置中 */
   font-size: clamp(1rem, 4vw, 1.2rem);
-  text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -85,9 +86,6 @@ body.logo-full-bg {
   background-color: white;
   cursor: pointer;
   word-break: break-word;
-  width: 100%;         /* ✅ 回復為 100% */
-  max-width: 200px;    /* ✅ 避免 grid 太寬造成變形 */
-  margin: auto;        /* ✅ 讓按鈕本身在 grid cell 內置中 */
 }
 
   .grid-button-group a:hover,
