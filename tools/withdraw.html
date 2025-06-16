@@ -91,7 +91,9 @@
 <body>
 <h1 data-i18n="withdraw_heading">退休金怎麼花</h1>
 <div style="color: #555; font-size: 0.9rem;">
-  <span data-i18n="current_account">目前帳本：</span><strong id="account-id">(讀取中...)</strong>
+  <span data-i18n="current_account">目前帳本：</span>
+  <strong id="account-id" data-i18n="loading">讀取中...</strong>
+</div>
 </div>
 <p data-i18n="withdraw_intro">💶 輸入預估資產、提領金額或比率，可加入年報酬率與通膨率</p>
 
@@ -99,7 +101,7 @@
 <input type="number" id="total" />
 
 <label data-i18n="label_monthly">每月提領金額（元）：</label>
-<input type="number" id="monthly" placeholder="預設 30,000" />
+<input type="number" id="monthly" data-i18n-placeholder="placeholder_monthly" placeholder="預設 30,000" />
 
 <label data-i18n="label_withdraw_rate">提領比率（％）：</label>
 <input type="number" id="withdraw-rate" value="4" step="0.1" />
