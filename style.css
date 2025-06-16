@@ -459,7 +459,7 @@ html, body {
 /* 手機版和桌面版的寬度適配 */
 @media (max-width: 768px) {
   .main-wrapper {
-    width: 90%; /* 讓手機版更小，避免過寬 */
+    width: 100%; /* 讓手機版更小，避免過寬 */
     margin: 0 auto;
     padding: 0 1rem;
   }
