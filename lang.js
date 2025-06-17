@@ -278,7 +278,20 @@ nav_books: "推薦書單",
 unit_share: "股",
    current_account: "目前帳本：",
 loading: "讀取中...",
-placeholder_monthly: "預設 30,000"
+placeholder_monthly: "預設 30,000",
+   label_policy_name: "保單名稱",
+insured_amount: "保額",
+insured_years: "年期",
+annual_premium: "年繳",
+label_bank: "銀行名稱",
+label_note: "備註",
+label_fund_name: "基金名稱",
+label_fund_units: "單位數",
+label_fund_nav: "淨值",
+label_crypto_symbol: "幣種",
+label_crypto_amount: "數量",
+label_crypto_price: "現價",
+total: "總金額"
 },
   
  "zh-Hans": {
@@ -527,7 +540,20 @@ nav_books: "推荐书单",
    unit_share: "股",
    current_account: "当前帐本：",
 loading: "读取中...",
-placeholder_monthly: "默认 30,000"
+placeholder_monthly: "默认 30,000",
+    label_policy_name: "保单名称",
+    insured_amount: "保额",
+    insured_years: "年期",
+    annual_premium: "年缴",
+    label_bank: "银行名称",
+    label_note: "备注",
+    label_fund_name: "基金名称",
+    label_fund_units: "单位数",
+    label_fund_nav: "净值",
+    label_crypto_symbol: "币种",
+    label_crypto_amount: "数量",
+    label_crypto_price: "现价",
+    total: "总金额"
 },
 
 "en": {
@@ -775,7 +801,20 @@ nav_books: "Recommended Reads",
   unit_share: "shares",
   current_account: "Current Account:",
 loading: "Loading...",
-placeholder_monthly: "Default: 30,000"
+placeholder_monthly: "Default: 30,000",
+  label_policy_name: "Policy Name",
+    insured_amount: "Coverage Amount",
+    insured_years: "Term",
+    annual_premium: "Annual Premium",
+    label_bank: "Bank Name",
+    label_note: "Note",
+    label_fund_name: "Fund Name",
+    label_fund_units: "Units",
+    label_fund_nav: "NAV",
+    label_crypto_symbol: "Symbol",
+    label_crypto_amount: "Amount",
+    label_crypto_price: "Price",
+    total: "Total Value"
 },
   
  "ja": {
@@ -1023,7 +1062,20 @@ nav_books: "おすすめ書籍",
    unit_share: "株",
    current_account: "現在の帳本：",
 loading: "読み込み中...",
-placeholder_monthly: "デフォルト：30,000"
+placeholder_monthly: "デフォルト：30,000",
+   label_policy_name: "保険名",
+    insured_amount: "保障額",
+    insured_years: "年数",
+    annual_premium: "年間保険料",
+    label_bank: "銀行名",
+    label_note: "備考",
+    label_fund_name: "ファンド名",
+    label_fund_units: "口数",
+    label_fund_nav: "基準価額",
+    label_crypto_symbol: "銘柄",
+    label_crypto_amount: "数量",
+    label_crypto_price: "価格",
+    total: "合計金額"
   }
 };
 
