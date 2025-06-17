@@ -365,7 +365,7 @@ function render() {
     const rateToTWD = exchangeRates["TWD"] / (exchangeRates[currency] || 1);
     const converted = (total * rateToTWD).toFixed(0);
     const li = document.createElement("li");
-    li.textContent = `💱 ${currency}：${total.toFixed(2)} 
+    li.textContent = `💱 ${currency}：${total.toFixed(2)};
     totalsList.appendChild(li);
   }
 
