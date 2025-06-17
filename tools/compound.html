@@ -189,15 +189,20 @@ async function loadAssets() {
 
   let marketValue = 0;
 
-  if (type === "股票" || type === "基金") {
-    const price = parseFloat(item.price || item.currentPrice || 0);
-    const shares = parseFloat(item.shares || item.units || 0);
+  if (type === "股票") {
+    const price = parseFloat(item.price || 0);
+    const shares = parseFloat(item.shares || 0);
     marketValue = shares * price;
 
+  } else if (type === "基金") {
+    const units = parseFloat(item.fundUnits || 0);
+    const nav = parseFloat(item.fundNav || 0);
+    marketValue = units * nav;
+
   } else if (type === "加密貨幣") {
-    const price = parseFloat(item.cryptoPrice || 0);
     const amount = parseFloat(item.cryptoAmount || 0);
-    marketValue = price * amount;
+    const price = parseFloat(item.cryptoPrice || 0);
+    marketValue = amount * price;
 
   } else if (type === "儲蓄保險") {
     marketValue = parseFloat(item.insuranceAmount || 0);
