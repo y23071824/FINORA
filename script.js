@@ -358,7 +358,6 @@ function render() {
       totalsList.appendChild(li);
     }
   }
-}
 
   // 顯示總資產（折算為選擇幣別）
   const selectedCurrency = localStorage.getItem("displayCurrency") || "TWD";
@@ -394,8 +393,6 @@ function render() {
   if (rateTime) {
     rateTime.textContent = `${i18n("exchange_rate_updated")}：${now.toLocaleTimeString()}`;
   }
-}
-
 
 // ===== Part 4：編輯與刪除函式（請放在 render() 外部） =====
 function editAsset(index) {
