@@ -274,14 +274,22 @@ assets.forEach((asset, index) => {
   const details = [];
   let totalValue = 0;
 
-  if (type === "股票") {
-    const shares = parseFloat(asset.shares || 0);
-    const price = parseFloat(asset.price || 0);
-    totalValue = shares * price;
-    if (asset.stockSymbol) details.push(`${asset.stockSymbol}`);
-    if (asset.cost) details.push(`${i18n("cost")}：${asset.cost}`);
-    details.push(`${i18n("label_price")}：${price}`);
-    details.push(`${i18n("market_value")}：${totalValue.toLocaleString()} ${currency}`);
+ if (type === "股票") {
+  const shares = parseFloat(asset.shares || 0);
+  const price = parseFloat(asset.price || 0);
+  const costPerShare = parseFloat(asset.cost || 0);
+  totalValue = shares * price;
+  const costValue = shares * costPerShare;
+  const profit = totalValue - costValue;
+
+  if (asset.stockSymbol) details.push(`${asset.stockSymbol}`);
+  if (asset.shares) details.push(`${shares}${i18n("unit_share") || "股"}`);
+  if (asset.cost) details.push(`${i18n("cost")}：${costPerShare}`);
+  details.push(`${i18n("label_price")}：${price}`);
+  if (!isNaN(profit)) {
+    details.push(`💹 ${i18n("profit")}：${profit.toLocaleString()} ${currency}`);
+  }
+  details.push(`${i18n("market_value")}：${totalValue.toLocaleString()} ${currency}`);
   } else if (type === "基金") {
     const units = parseFloat(asset.fundUnits || 0);
     const nav = parseFloat(asset.fundNav || 0);
@@ -290,13 +298,14 @@ assets.forEach((asset, index) => {
     if (asset.fundUnits) details.push(`${i18n("label_fund_units") || "單位數"}：${units}`);
     if (asset.fundNav) details.push(`${i18n("label_fund_nav") || "淨值"}：${nav}`);
     details.push(`💰 ${i18n("total")}：${totalValue.toLocaleString()} ${currency}`);
-} else if (type === "加密貨幣") {
+  } else if (type === "加密貨幣") {
   const amount = parseFloat(asset.cryptoAmount || 0);
   const price = parseFloat(asset.cryptoPrice || 0);
   const cost = parseFloat(asset.cryptoCost || 0);
   totalValue = amount * price;
   const costValue = amount * cost;
   const profit = totalValue - costValue;
+  profitByTypeCurrency[type][currency] += value - cost;
 
   if (asset.cryptoSymbol) details.push(`${i18n("label_crypto_symbol") || "幣種"}：${asset.cryptoSymbol}`);
   if (asset.cryptoAmount) details.push(`${i18n("label_crypto_amount") || "數量"}：${amount}`);
