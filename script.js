@@ -270,24 +270,46 @@ assets.forEach((asset, index) => {
   const type = asset.type || "其他";
   let text = `${i18n("option_" + type) || type}（${currency}）`;
 
+  const details = [];
+
   if (type === "股票") {
     const shares = parseFloat(asset.shares || 0);
     const price = parseFloat(asset.price || 0);
     const marketValue = (shares * price).toFixed(2);
-    text += ` - ${asset.stockSymbol || ""} ${shares}${i18n("unit_share")} ${i18n("cost")} ${asset.cost}，${i18n("label_price")} ${price} ｜${i18n("market_value")}：${marketValue} ${currency}`;
-} else if (type === "基金") {
-  text += ` - ${asset.fundName || ""} ${asset.fundUnits}${i18n("unit_fund")} × ${asset.fundNav}`;
-} else if (type === "加密貨幣") {
-  text += ` - ${asset.cryptoSymbol || ""} ${asset.cryptoAmount} × ${asset.cryptoPrice}`;
-} else if (type === "儲蓄保險") {
-  text += ` - ${asset.insuranceName || ""} ${i18n("insured_amount")} ${asset.insuranceAmount}`;
-} else {
-  text += ` - ${asset.amount || 0}`;
-}
+    if (asset.stockSymbol) details.push(`${asset.stockSymbol}`);
+    if (asset.cost) details.push(`${i18n("cost")} ${asset.cost}`);
+    details.push(`${i18n("label_price")} ${price}`);
+    details.push(`${i18n("market_value")}：${marketValue} ${currency}`);
+  } else if (type === "基金") {
+    if (asset.fundName) details.push(`${asset.fundName}`);
+    if (asset.fundUnits) details.push(`${asset.fundUnits}${i18n("unit_fund")}`);
+    if (asset.fundNav) details.push(`× ${asset.fundNav}`);
+  } else if (type === "加密貨幣") {
+    if (asset.cryptoSymbol) details.push(`${asset.cryptoSymbol}`);
+    if (asset.cryptoAmount) details.push(`${asset.cryptoAmount}`);
+    if (asset.cryptoPrice) details.push(`× ${asset.cryptoPrice}`);
+  } else if (type === "儲蓄保險") {
+    if (asset.insuranceName) details.push(`${i18n("label_policy_name")} ${asset.insuranceName}`);
+    if (asset.insuranceAmount) details.push(`${i18n("insured_amount")} ${asset.insuranceAmount}`);
+    if (asset.insuredYears) details.push(`${i18n("insured_years")} ${asset.insuredYears}`);
+    if (asset.annualPremium) details.push(`${i18n("annual_premium")} ${asset.annualPremium}`);
+  } else if (type === "房產") {
+    if (asset.amount) details.push(`${asset.amount}`);
+    if (asset.note) details.push(`${asset.note}`);
+  } else {
+    if (asset.amount) details.push(`${asset.amount}`);
+  }
 
-if (asset.note) {
-  text += ` ｜ ${asset.note}`;
-}
+  if (asset.bank) {
+    details.push(`${i18n("label_bank")}：${asset.bank}`);
+  }
+  if (asset.note && type !== "房產") {
+    details.push(`${asset.note}`);
+  }
+
+  if (details.length > 0) {
+    text += ` - ${details.join(" ｜ ")}`;
+  }
 
   const textDiv = document.createElement("div");
   textDiv.textContent = text;
@@ -295,7 +317,7 @@ if (asset.note) {
 
   const btns = document.createElement("div");
   btns.style.display = "flex";
-  btns.style.flexDirection = "column"; // 若你想左右排，改為 row
+  btns.style.flexDirection = "column";
   btns.style.gap = "0.25rem";
   btns.style.flexShrink = "0";
   btns.innerHTML = `
@@ -307,6 +329,7 @@ if (asset.note) {
   li.appendChild(btns);
   assetList.appendChild(li);
 });
+
 
 
  // 資產分類加總
