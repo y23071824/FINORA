@@ -277,34 +277,31 @@ assets.forEach((asset, index) => {
     const price = parseFloat(asset.price || 0);
     const marketValue = (shares * price).toFixed(2);
     if (asset.stockSymbol) details.push(`${asset.stockSymbol}`);
-    if (asset.cost) details.push(`${i18n("cost")} ${asset.cost}`);
-    details.push(`${i18n("label_price")} ${price}`);
+    if (asset.cost) details.push(`${i18n("cost")}：${asset.cost}`);
+    details.push(`${i18n("label_price")}：${price}`);
     details.push(`${i18n("market_value")}：${marketValue} ${currency}`);
   } else if (type === "基金") {
-    if (asset.fundName) details.push(`${asset.fundName}`);
-    if (asset.fundUnits) details.push(`${asset.fundUnits}${i18n("unit_fund")}`);
-    if (asset.fundNav) details.push(`× ${asset.fundNav}`);
+    if (asset.fundName) details.push(`${i18n("label_fund_name") || "基金名稱"}：${asset.fundName}`);
+    if (asset.fundUnits) details.push(`${i18n("label_fund_units") || "單位數"}：${asset.fundUnits}`);
+    if (asset.fundNav) details.push(`${i18n("label_fund_nav") || "淨值"}：${asset.fundNav}`);
   } else if (type === "加密貨幣") {
-    if (asset.cryptoSymbol) details.push(`${asset.cryptoSymbol}`);
-    if (asset.cryptoAmount) details.push(`${asset.cryptoAmount}`);
-    if (asset.cryptoPrice) details.push(`× ${asset.cryptoPrice}`);
+    if (asset.cryptoSymbol) details.push(`${i18n("label_crypto_symbol") || "幣種"}：${asset.cryptoSymbol}`);
+    if (asset.cryptoAmount) details.push(`${i18n("label_crypto_amount") || "數量"}：${asset.cryptoAmount}`);
+    if (asset.cryptoPrice) details.push(`${i18n("label_crypto_price") || "現價"}：${asset.cryptoPrice}`);
   } else if (type === "儲蓄保險") {
-    if (asset.insuranceName) details.push(`${i18n("label_policy_name")} ${asset.insuranceName}`);
-    if (asset.insuranceAmount) details.push(`${i18n("insured_amount")} ${asset.insuranceAmount}`);
-    if (asset.insuredYears) details.push(`${i18n("insured_years")} ${asset.insuredYears}`);
-    if (asset.annualPremium) details.push(`${i18n("annual_premium")} ${asset.annualPremium}`);
-  } else if (type === "房產") {
-    if (asset.amount) details.push(`${asset.amount}`);
-    if (asset.note) details.push(`${asset.note}`);
+    if (asset.insuranceName) details.push(`${i18n("label_policy_name") || "保單名稱"}：${asset.insuranceName}`);
+    if (asset.insuranceAmount) details.push(`${i18n("insured_amount") || "保額"}：${asset.insuranceAmount}`);
+    if (asset.insuredYears) details.push(`${i18n("insured_years") || "年期"}：${asset.insuredYears}`);
+    if (asset.annualPremium) details.push(`${i18n("annual_premium") || "年繳"}：${asset.annualPremium}`);
   } else {
     if (asset.amount) details.push(`${asset.amount}`);
   }
 
   if (asset.bank) {
-    details.push(`${i18n("label_bank")}：${asset.bank}`);
+    details.push(`${i18n("label_bank") || "銀行名稱"}：${asset.bank}`);
   }
-  if (asset.note && type !== "房產") {
-    details.push(`${asset.note}`);
+  if (asset.note) {
+    details.push(`${i18n("label_note") || "備註"}：${asset.note}`);
   }
 
   if (details.length > 0) {
