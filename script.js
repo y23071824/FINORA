@@ -242,9 +242,11 @@ function render() {
   const shares = parseFloat(asset.shares || 0);
   const price = parseFloat(asset.price || 0);
   const costPerShare = parseFloat(asset.cost || 0);
-  totalValue = shares * price;
-  const costValue = shares * costPerShare;
-  const profit = totalValue - costValue;
+  value = shares * price;
+  cost = shares * costPerShare;
+  profitByTypeCurrency[type][currency] += value - cost;
+}
+
 
   if (asset.stockSymbol) details.push(`${asset.stockSymbol}`);
   if (asset.shares) details.push(`${shares}${i18n("unit_share") || "股"}`);
@@ -283,14 +285,24 @@ assets.forEach((asset, index) => {
   const details = [];
   let totalValue = 0;
 
-  if (type === "股票") {
-    const shares = parseFloat(asset.shares || 0);
-    const price = parseFloat(asset.price || 0);
-    totalValue = shares * price;
-    if (asset.stockSymbol) details.push(`${asset.stockSymbol}`);
-    if (asset.cost) details.push(`${i18n("cost")}：${asset.cost}`);
-    details.push(`${i18n("label_price")}：${price}`);
-    details.push(`${i18n("market_value")}：${totalValue.toLocaleString()} ${currency}`);
+ if (type === "股票") {
+  const shares = parseFloat(asset.shares || 0);
+  const price = parseFloat(asset.price || 0);
+  const costPerShare = parseFloat(asset.cost || 0);
+  totalValue = shares * price;
+  const costValue = shares * costPerShare;
+  const profit = totalValue - costValue;
+
+  if (asset.stockSymbol) details.push(`${asset.stockSymbol}`);
+  if (asset.shares) details.push(`${shares}${i18n("unit_share") || "股"}`);
+  if (asset.cost) details.push(`${i18n("cost")}：${costPerShare}`);
+  details.push(`${i18n("label_price")}：${price}`);
+  if (!isNaN(profit)) {
+    details.push(`💹 ${i18n("profit")}：${profit.toLocaleString()} ${currency}`);
+  }
+  details.push(`${i18n("market_value")}：${totalValue.toLocaleString()} ${currency}`);
+}
+
   } else if (type === "基金") {
     const units = parseFloat(asset.fundUnits || 0);
     const nav = parseFloat(asset.fundNav || 0);
