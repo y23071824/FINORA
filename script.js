@@ -289,14 +289,20 @@ assets.forEach((asset, index) => {
     if (asset.fundUnits) details.push(`${i18n("label_fund_units") || "單位數"}：${units}`);
     if (asset.fundNav) details.push(`${i18n("label_fund_nav") || "淨值"}：${nav}`);
     details.push(`💰 ${i18n("total")}：${totalValue.toLocaleString()} ${currency}`);
-  } else if (type === "加密貨幣") {
-    const amount = parseFloat(asset.cryptoAmount || 0);
-    const price = parseFloat(asset.cryptoPrice || 0);
-    totalValue = amount * price;
-    if (asset.cryptoSymbol) details.push(`${i18n("label_crypto_symbol") || "幣種"}：${asset.cryptoSymbol}`);
-    if (asset.cryptoAmount) details.push(`${i18n("label_crypto_amount") || "數量"}：${amount}`);
-    if (asset.cryptoPrice) details.push(`${i18n("label_crypto_price") || "現價"}：${price}`);
-    details.push(`💰 ${i18n("total")}：${totalValue.toLocaleString()} ${currency}`);
+} else if (type === "加密貨幣") {
+  const amount = parseFloat(asset.cryptoAmount || 0);
+  const price = parseFloat(asset.cryptoPrice || 0);
+  const cost = parseFloat(asset.cryptoCost || 0);
+  totalValue = amount * price;
+  const costValue = amount * cost;
+  const profit = totalValue - costValue;
+
+  if (asset.cryptoSymbol) details.push(`${i18n("label_crypto_symbol") || "幣種"}：${asset.cryptoSymbol}`);
+  if (asset.cryptoAmount) details.push(`${i18n("label_crypto_amount") || "數量"}：${amount}`);
+  if (asset.cryptoPrice) details.push(`${i18n("label_crypto_price") || "現價"}：${price}`);
+  if (asset.cryptoCost) details.push(`${i18n("cost") || "成本"}：${cost}`);
+  if (!isNaN(profit)) details.push(`💹 ${i18n("profit") || "盈餘"}：${profit.toLocaleString()} ${currency}`);
+  details.push(`💰 ${i18n("total")}：${totalValue.toLocaleString()} ${currency}`);
   } else if (type === "儲蓄保險") {
     if (asset.insuranceName) details.push(`${i18n("label_policy_name") || "保單名稱"}：${asset.insuranceName}`);
     if (asset.insuranceAmount) details.push(`${i18n("insured_amount") || "保額"}：${asset.insuranceAmount}`);
