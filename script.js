@@ -358,16 +358,7 @@ function render() {
       totalsList.appendChild(li);
     }
   }
-
- // 幣別加總與 TWD 換算
-  for (const currency in totalsByCurrency) {
-    const total = totalsByCurrency[currency];
-    const rateToTWD = exchangeRates["TWD"] / (exchangeRates[currency] || 1);
-    const converted = (total * rateToTWD).toFixed(0);
-    const li = document.createElement("li");
-    li.textContent = `💱 ${currency}：${total.toFixed(2)};
-    totalsList.appendChild(li);
-  }
+}
 
   // 顯示總資產（折算為選擇幣別）
   const selectedCurrency = localStorage.getItem("displayCurrency") || "TWD";
