@@ -359,7 +359,7 @@ function render() {
     }
   }
 
-  // 幣別加總與 TWD 換算
+ // 幣別加總與 TWD 換算
   for (const currency in totalsByCurrency) {
     const total = totalsByCurrency[currency];
     const rateToTWD = exchangeRates["TWD"] / (exchangeRates[currency] || 1);
