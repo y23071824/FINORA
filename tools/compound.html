@@ -183,22 +183,28 @@ async function loadAssets() {
   const selectedCurrency = document.getElementById("currency-select").value || "TWD";    
   let totalInSelectedCurrency = 0;    
     
-  for (const item of assets) {    
-    const type = item.type || "";    
-    const currency = item.currency || "TWD";    
-    const price = parseFloat(item.price || item.currentPrice || 0);    
-    const shares = parseFloat(item.shares || item.units || 0);    
-    const amount = parseFloat(item.amount || 0);    
-    const cost = parseFloat(item.cost || 0);    
-    
-    let marketValue = 0;    
-    if (["股票", "基金", "加密貨幣"].includes(type)) {    
-      marketValue = shares * price;    
-    } else if (type === "儲蓄保險") {    
-      marketValue = cost;    
-    } else {    
-      marketValue = amount;    
-    }    
+ for (const item of assets) {
+  const type = item.type || "";
+  const currency = item.currency || "TWD";
+
+  let marketValue = 0;
+
+  if (type === "股票" || type === "基金") {
+    const price = parseFloat(item.price || item.currentPrice || 0);
+    const shares = parseFloat(item.shares || item.units || 0);
+    marketValue = shares * price;
+
+  } else if (type === "加密貨幣") {
+    const price = parseFloat(item.cryptoPrice || 0);
+    const amount = parseFloat(item.cryptoAmount || 0);
+    marketValue = price * amount;
+
+  } else if (type === "儲蓄保險") {
+    marketValue = parseFloat(item.insuranceAmount || 0);
+
+  } else {
+    marketValue = parseFloat(item.amount || 0);
+  }
     
     if (!summary[type]) summary[type] = {};    
     if (!summary[type][currency]) summary[type][currency] = 0;    
