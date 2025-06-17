@@ -271,37 +271,53 @@ assets.forEach((asset, index) => {
   let text = `${i18n("option_" + type) || type}（${currency}）`;
 
   const details = [];
+  let totalValue = 0;
 
   if (type === "股票") {
     const shares = parseFloat(asset.shares || 0);
     const price = parseFloat(asset.price || 0);
-    const marketValue = (shares * price).toFixed(2);
+    totalValue = shares * price;
     if (asset.stockSymbol) details.push(`${asset.stockSymbol}`);
     if (asset.cost) details.push(`${i18n("cost")}：${asset.cost}`);
     details.push(`${i18n("label_price")}：${price}`);
-    details.push(`${i18n("market_value")}：${marketValue} ${currency}`);
+    details.push(`${i18n("market_value")}：${totalValue.toLocaleString()} ${currency}`);
   } else if (type === "基金") {
+    const units = parseFloat(asset.fundUnits || 0);
+    const nav = parseFloat(asset.fundNav || 0);
+    totalValue = units * nav;
     if (asset.fundName) details.push(`${i18n("label_fund_name") || "基金名稱"}：${asset.fundName}`);
-    if (asset.fundUnits) details.push(`${i18n("label_fund_units") || "單位數"}：${asset.fundUnits}`);
-    if (asset.fundNav) details.push(`${i18n("label_fund_nav") || "淨值"}：${asset.fundNav}`);
+    if (asset.fundUnits) details.push(`${i18n("label_fund_units") || "單位數"}：${units}`);
+    if (asset.fundNav) details.push(`${i18n("label_fund_nav") || "淨值"}：${nav}`);
+    details.push(`💰 ${i18n("total")}：${totalValue.toLocaleString()} ${currency}`);
   } else if (type === "加密貨幣") {
+    const amount = parseFloat(asset.cryptoAmount || 0);
+    const price = parseFloat(asset.cryptoPrice || 0);
+    totalValue = amount * price;
     if (asset.cryptoSymbol) details.push(`${i18n("label_crypto_symbol") || "幣種"}：${asset.cryptoSymbol}`);
-    if (asset.cryptoAmount) details.push(`${i18n("label_crypto_amount") || "數量"}：${asset.cryptoAmount}`);
-    if (asset.cryptoPrice) details.push(`${i18n("label_crypto_price") || "現價"}：${asset.cryptoPrice}`);
+    if (asset.cryptoAmount) details.push(`${i18n("label_crypto_amount") || "數量"}：${amount}`);
+    if (asset.cryptoPrice) details.push(`${i18n("label_crypto_price") || "現價"}：${price}`);
+    details.push(`💰 ${i18n("total")}：${totalValue.toLocaleString()} ${currency}`);
   } else if (type === "儲蓄保險") {
     if (asset.insuranceName) details.push(`${i18n("label_policy_name") || "保單名稱"}：${asset.insuranceName}`);
     if (asset.insuranceAmount) details.push(`${i18n("insured_amount") || "保額"}：${asset.insuranceAmount}`);
     if (asset.insuredYears) details.push(`${i18n("insured_years") || "年期"}：${asset.insuredYears}`);
     if (asset.annualPremium) details.push(`${i18n("annual_premium") || "年繳"}：${asset.annualPremium}`);
   } else {
-    if (asset.amount) details.push(`${asset.amount}`);
+    if (asset.amount) {
+      totalValue = parseFloat(asset.amount);
+      details.push(`${totalValue.toLocaleString()}`);
+    }
   }
 
   if (asset.bank) {
-    details.push(`${i18n("label_bank") || "銀行名稱"}：${asset.bank}`);
+    // 避免多冒號，去掉內文冒號
+    const label = i18n("label_bank")?.replace("：", "") || "銀行名稱";
+    details.push(`${label}：${asset.bank}`);
   }
+
   if (asset.note) {
-    details.push(`${i18n("label_note") || "備註"}：${asset.note}`);
+    const label = i18n("label_note")?.replace("：", "") || "備註";
+    details.push(`${label}：${asset.note}`);
   }
 
   if (details.length > 0) {
