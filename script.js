@@ -551,23 +551,44 @@ try {
     });
   }
 
-  // 💰 加密貨幣查價
-  const cryptoSymbolInput = document.getElementById("crypto-symbol");
-  const cryptoPriceInput = document.getElementById("crypto-price");
-  if (cryptoSymbolInput && cryptoPriceInput) {
-    cryptoSymbolInput.addEventListener("blur", async () => {
-      const symbol = cryptoSymbolInput.value.trim().toLowerCase();
-      if (!symbol) return;
-      try {
-        const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${symbol}&vs_currencies=usd`);
-        const data = await res.json();
-        const price = data[symbol]?.usd;
-        if (price) cryptoPriceInput.value = price;
-      } catch (e) {
-        console.error("❌ 加密貨幣查詢失敗", e);
+// 💰 加密貨幣查價（輸入 symbol 自動查價）
+const cryptoSymbolInput = document.getElementById("crypto-symbol");
+const cryptoPriceInput = document.getElementById("crypto-price");
+
+const symbolToIdMap = {
+  btc: "bitcoin",
+  eth: "ethereum",
+  usdt: "tether",
+  bnb: "binancecoin",
+  sol: "solana",
+  ada: "cardano",
+  xrp: "ripple",
+  doge: "dogecoin",
+  dot: "polkadot",
+  avax: "avalanche"
+  // 可以再擴充你要用的幣種
+};
+
+if (cryptoSymbolInput && cryptoPriceInput) {
+  cryptoSymbolInput.addEventListener("blur", async () => {
+    const symbol = cryptoSymbolInput.value.trim().toLowerCase();
+    const id = symbolToIdMap[symbol];
+    if (!id) return;
+
+    try {
+      const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${id}&vs_currencies=usd`);
+      const data = await res.json();
+      const price = data[id]?.usd;
+      if (price) {
+        cryptoPriceInput.value = price;
+        console.log(`✅ ${symbol.toUpperCase()} 現價：${price} USD`);
       }
-    });
-  }
+    } catch (e) {
+      console.error("❌ 加密貨幣查詢失敗", e);
+    }
+  });
+}
+
 
   // 📊 載入匯率與資產
   await fetchExchangeRates();
