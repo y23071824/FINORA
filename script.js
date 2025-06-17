@@ -172,6 +172,7 @@ async function handleSubmit(e) {
         cryptoSymbol: symbol,
         cryptoAmount: parseFloat(document.getElementById("crypto-amount")?.value) || 0,
         cryptoPrice: parseFloat(document.getElementById("crypto-price")?.value) || 0,
+        cryptoCost: parseFloat(document.getElementById("crypto-cost").value) || 0,
       };
     } else {
       newAsset.amount = parseFloat(document.getElementById("amount")?.value) || 0;
