@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>開發測試頁｜FINORA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="logo-full-bg">
+  <h1>🛠️ FINORA 限制功能測試頁</h1>
+  <p>此頁面僅供開發者測試，不會出現在主選單。</p>
+
+  <button onclick="runTest()" class="cta-button">🔧 模擬超過 30 天限制</button>
+
+  <script>
+    // ✅ Day 1 判斷邏輯
+    function isFreeUser() {
+      const createdAt = localStorage.getItem("userCreatedAt");
+      if (!createdAt) return true;
+      const daysUsed = (Date.now() - parseInt(createdAt, 10)) / (1000 * 60 * 60 * 24);
+      return daysUsed > 30;
+    }
+
+    if (!localStorage.getItem("userCreatedAt")) {
+      localStorage.setItem("userCreatedAt", Date.now().toString());
+    }
+
+    function applyUsageLimits() {
+      if (isFreeUser()) {
+        const accounts = JSON.parse(localStorage.getItem("accounts") || "[]");
+        if (accounts.length > 1) {
+          alert("目前為免費帳號 僅能使用一個帳本與基本功能 如需更多功能請升級");
+        }
+
+        alert("✅ 已套用免費版限制（匯率與股票查詢等功能應隱藏）");
+      } else {
+        alert("目前仍在試用期，功能不受限");
+      }
+    }
+
+    // ✅ 測試按鈕動作
+    function runTest() {
+      localStorage.setItem("userCreatedAt", Date.now() - 31 * 24 * 60 * 60 * 1000);
+      applyUsageLimits();
+    }
+  </script>
+</body>
+</html>
