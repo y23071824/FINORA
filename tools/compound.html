@@ -56,7 +56,9 @@
     <option value="CNY">CNY</option>    
   </select>    
   <button onclick="convertFx()" data-i18n="convert_button">換算</button>    
-  <div id="fx-result" style="margin-top: 0.5rem;"></div>    <script>    
+  <div id="fx-result" style="margin-top: 0.5rem;"></div>  
+  
+  <script>    
 let exchangeRates = {};    
     
 async function fetchExchangeRates() {    
@@ -327,10 +329,36 @@ function isFreeUser() {
   return daysUsed > 30;
 }
 
-if (!localStorage.getItem("userCreatedAt")) {
-  localStorage.setItem("userCreatedAt", Date.now().toString());
-}
-  
+  // ✅ 記錄首次登入時間（避免重複）
+  if (!localStorage.getItem("userCreatedAt")) {
+    localStorage.setItem("userCreatedAt", Date.now().toString());
+  }
+
+  // ✅ 免費帳號判斷函式
+  function isFreeUser() {
+    const createdAt = localStorage.getItem("userCreatedAt");
+    if (!createdAt) return true;
+    const daysUsed = (Date.now() - parseInt(createdAt, 10)) / (1000 * 60 * 60 * 24);
+    return daysUsed > 30;
+  }
+
+  // ✅ 套用限制邏輯
+  function applyUsageLimits() {
+    if (isFreeUser()) {
+      const accounts = JSON.parse(localStorage.getItem("accounts") || "[]");
+      if (accounts.length > 1) {
+        alert(i18n("free_user_limit_accounts"));
+      }
+      const rateSection = document.getElementById("exchange-section");
+      if (rateSection) rateSection.style.display = "none";
+
+      const currencySelect = document.getElementById("currency-select");
+      if (currencySelect) currencySelect.disabled = true;
+    }
+  }
+
+  // ✅ 呼叫限制邏輯
+  applyUsageLimits();
 });    
 </script>    <a href="../app.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374" data-i18n="back_home_link">← 返回首頁</a>
 
