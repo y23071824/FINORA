@@ -268,7 +268,7 @@ margin: 0 auto 1.5rem;
         <option value="ja">日本語</option>
       </select>
     </div>
- <!-- 🔧 Dev Mode 切換（僅開發者使用） -->
+ <!-- 🔧 Dev Mode 切換 -->
     <div style="text-align:center; margin-top:1rem;">
       <button style="opacity: 0.4; font-size: 0.75rem; margin: 0.25rem;" onclick="
         localStorage.setItem('devMode','yes');
@@ -282,6 +282,7 @@ margin: 0 auto 1.5rem;
         location.reload();
       ">關閉開發模式</button>
     </div>
+
     <p class="privacy-note" data-i18n="privacy">FINORA 重視隱私。你的資產，只屬於你自己。</p>
 
     <footer>
@@ -305,85 +306,165 @@ margin: 0 auto 1.5rem;
   <script src="firebase-sync.js"></script>
   <script src="lang.js"></script>
   <script src="main-script.js"></script> <!-- ✅ 你整合的登入/帳本/試用期邏輯放這 -->
-  <script>
+<script>
 // ✅ 初始化與語言設定 
-    const lang = localStorage.getItem("lang") || "zh-Hant"; if (typeof applyLang === "function") applyLang(lang);
+const lang = localStorage.getItem("lang") || "zh-Hant"; 
+if (typeof applyLang === "function") applyLang(lang);
 
-document.addEventListener("DOMContentLoaded", async () => { const langSelect = document.getElementById("lang-select"); if (langSelect) { langSelect.value = lang; langSelect.addEventListener("change", function () { localStorage.setItem("lang", this.value); location.reload(); }); }
-
-// ✅ 第一次登入記錄建立時間 
-if (!localStorage.getItem("userCreatedAt")) { localStorage.setItem("userCreatedAt", Date.now().toString()); }
-
-// ✅ 判斷是否為免費用戶 
-                                                           function isFreeUser() { if (localStorage.getItem("devMode") === "yes") return false; const createdAt = localStorage.getItem("userCreatedAt"); if (!createdAt) return true; const daysUsed = (Date.now() - parseInt(createdAt, 10)) / (1000 * 60 * 60 * 24); return daysUsed > 30; }
-
-// ✅ 顯示保留帳本 
-                                                           modal function showAccountRetentionModal(accounts) { const select = document.getElementById("retain-select"); select.innerHTML = ""; accounts.forEach(acc => { const opt = document.createElement("option"); opt.value = acc.id; opt.textContent = acc.displayName || acc.id; select.appendChild(opt); }); document.getElementById("account-retain-modal").style.display = "flex"; }
-
-// ✅ 確認保留帳本 
-                                                           window.confirmAccountRetention = function () { const selected = document.getElementById("retain-select").value; localStorage.setItem("retainedAccountId", selected); FINORA_AUTH.setSelectedAccount(selected); document.getElementById("account-retain-modal").style.display = "none"; location.reload(); };
-
-// ✅ Google 登入 
-                                                           document.getElementById("login-btn").addEventListener("click", async () => { if (isFreeUser()) { alert(i18n("expired_free_message")); return; } try { const user = await FINORA_AUTH.signInWithGoogle(); if (user) { alert(i18n("login_success")); location.reload(); } } catch (e) { console.error("登入失敗", e); alert(i18n("login_failed")); } });
-
-// ✅ Google 登出 
-                                                           document.getElementById("logout-btn").addEventListener("click", async () => { await FINORA_AUTH.signOutFromGoogle(); alert(i18n("logout_success")); location.reload(); });
-
-// ✅ 重新命名帳本 
-                                                           document.getElementById("rename-account-btn").addEventListener("click", async () => { const newName = prompt(i18n("rename_prompt"), ""); if (newName) { await FINORA_AUTH.renameAccount(newName); alert(i18n("rename_success")); location.reload(); } });
-
-// ✅ 新增帳本 
-                                                           document.getElementById("new-account-btn").addEventListener("click", () => { if (isFreeUser()) { alert(i18n("expired_add_account")); return; } document.getElementById("new-account-input-group").style.display = "block"; });
-
-document.getElementById("save-new-account").addEventListener("click", async () => { const name = document.getElementById("new-account-name").value.trim(); if (!name) return alert(i18n("account_name_required")); await FINORA_AUTH.addAccount(name); alert(i18n("add_success")); location.reload(); });
-
-// ✅ 刪除帳本 
-                                                           document.getElementById("delete-account-btn").addEventListener("click", async () => { if (confirm(i18n("confirm_delete"))) { await FINORA_AUTH.deleteAccount(); alert(i18n("delete_success")); location.reload(); } });
-
-// ✅ 登入狀態變化監聽 
-                                                           FINORA_AUTH.onUserChanged(async (user) => { const loginBtn = document.getElementById("login-btn"); const logoutBtn = document.getElementById("logout-btn"); loginBtn.style.display = user ? "none" : "inline-block"; logoutBtn.style.display = user ? "inline-block" : "none";
-
-const accountSelect = document.getElementById("account-select");
-accountSelect.innerHTML = "";
-
-if (user && !isFreeUser()) {
-  const accounts = await FINORA_AUTH.fetchAccountList();
-  const retainedId = localStorage.getItem("retainedAccountId");
-  if (!retainedId && accounts.length > 1) {
-    showAccountRetentionModal(accounts);
-    return;
-  }
-  if (retainedId) {
-    FINORA_AUTH.setSelectedAccount(retainedId);
+document.addEventListener("DOMContentLoaded", async () => {
+  const langSelect = document.getElementById("lang-select");
+  if (langSelect) {
+    langSelect.value = lang;
+    langSelect.addEventListener("change", function () {
+      localStorage.setItem("lang", this.value);
+      location.reload();
+    });
   }
 
-  accounts.forEach(acc => {
-    const opt = document.createElement("option");
-    opt.value = acc.id;
-    opt.textContent = acc.displayName || acc.id;
-    accountSelect.appendChild(opt);
-  });
+  // ✅ 第一次登入記錄建立時間 
+  if (!localStorage.getItem("userCreatedAt")) {
+    localStorage.setItem("userCreatedAt", Date.now().toString());
+  }
 
-  const selected = FINORA_AUTH.getCurrentAccount();
-  if (selected) accountSelect.value = selected;
-  accountSelect.onchange = (e) => {
-    FINORA_AUTH.setSelectedAccount(e.target.value);
+  // ✅ 判斷是否為免費用戶 
+  function isFreeUser() {
+    if (localStorage.getItem("devMode") === "yes") return false;
+    const createdAt = localStorage.getItem("userCreatedAt");
+    if (!createdAt) return true;
+    const daysUsed = (Date.now() - parseInt(createdAt, 10)) / (1000 * 60 * 60 * 24);
+    return daysUsed > 30;
+  }
+
+  // ✅ 顯示保留帳本 modal
+  function showAccountRetentionModal(accounts) {
+    const select = document.getElementById("retain-select");
+    select.innerHTML = "";
+    accounts.forEach(acc => {
+      const opt = document.createElement("option");
+      opt.value = acc.id;
+      opt.textContent = acc.displayName || acc.id;
+      select.appendChild(opt);
+    });
+    document.getElementById("account-retain-modal").style.display = "flex";
+  }
+
+  // ✅ 確認保留帳本
+  window.confirmAccountRetention = function () {
+    const selected = document.getElementById("retain-select").value;
+    localStorage.setItem("retainedAccountId", selected);
+    FINORA_AUTH.setSelectedAccount(selected);
+    document.getElementById("account-retain-modal").style.display = "none";
     location.reload();
   };
-} else {
-  // ✅ 本機帳本模式
-  const localAccountId = localStorage.getItem("selectedAccount") || "default";
-  const localOption = document.createElement("option");
-  localOption.value = localAccountId;
-  localOption.textContent = localAccountId;
-  accountSelect.appendChild(localOption);
-  accountSelect.value = localAccountId;
-  FINORA_AUTH.setSelectedAccount(localAccountId);
-  accountSelect.disabled = true;
-}
 
-}); });
+  // ✅ Google 登入
+  document.getElementById("login-btn").addEventListener("click", async () => {
+    if (isFreeUser()) {
+      alert(i18n("expired_free_message"));
+      return;
+    }
+    try {
+      const user = await FINORA_AUTH.signInWithGoogle();
+      if (user) {
+        alert(i18n("login_success"));
+        location.reload();
+      }
+    } catch (e) {
+      console.error("登入失敗", e);
+      alert(i18n("login_failed"));
+    }
+  });
 
-  </script>
+  // ✅ Google 登出
+  document.getElementById("logout-btn").addEventListener("click", async () => {
+    await FINORA_AUTH.signOutFromGoogle();
+    alert(i18n("logout_success"));
+    location.reload();
+  });
+
+  // ✅ 重新命名帳本
+  document.getElementById("rename-account-btn").addEventListener("click", async () => {
+    const newName = prompt(i18n("rename_prompt"), "");
+    if (newName) {
+      await FINORA_AUTH.renameAccount(newName);
+      alert(i18n("rename_success"));
+      location.reload();
+    }
+  });
+
+  // ✅ 新增帳本
+  document.getElementById("new-account-btn").addEventListener("click", () => {
+    if (isFreeUser()) {
+      alert(i18n("expired_add_account"));
+      return;
+    }
+    document.getElementById("new-account-input-group").style.display = "block";
+  });
+
+  document.getElementById("save-new-account").addEventListener("click", async () => {
+    const name = document.getElementById("new-account-name").value.trim();
+    if (!name) return alert(i18n("account_name_required"));
+    await FINORA_AUTH.addAccount(name);
+    alert(i18n("add_success"));
+    location.reload();
+  });
+
+  // ✅ 刪除帳本
+  document.getElementById("delete-account-btn").addEventListener("click", async () => {
+    if (confirm(i18n("confirm_delete"))) {
+      await FINORA_AUTH.deleteAccount();
+      alert(i18n("delete_success"));
+      location.reload();
+    }
+  });
+
+  // ✅ 登入狀態變化監聽
+  FINORA_AUTH.onUserChanged(async (user) => {
+    const loginBtn = document.getElementById("login-btn");
+    const logoutBtn = document.getElementById("logout-btn");
+    loginBtn.style.display = user ? "none" : "inline-block";
+    logoutBtn.style.display = user ? "inline-block" : "none";
+
+    const accountSelect = document.getElementById("account-select");
+    accountSelect.innerHTML = "";
+
+    if (user && !isFreeUser()) {
+      const accounts = await FINORA_AUTH.fetchAccountList();
+      const retainedId = localStorage.getItem("retainedAccountId");
+      if (!retainedId && accounts.length > 1) {
+        showAccountRetentionModal(accounts);
+        return;
+      }
+      if (retainedId) {
+        FINORA_AUTH.setSelectedAccount(retainedId);
+      }
+
+      accounts.forEach(acc => {
+        const opt = document.createElement("option");
+        opt.value = acc.id;
+        opt.textContent = acc.displayName || acc.id;
+        accountSelect.appendChild(opt);
+      });
+
+      const selected = FINORA_AUTH.getCurrentAccount();
+      if (selected) accountSelect.value = selected;
+      accountSelect.onchange = (e) => {
+        FINORA_AUTH.setSelectedAccount(e.target.value);
+        location.reload();
+      };
+    } else {
+      // ✅ 本機帳本模式
+      const localAccountId = localStorage.getItem("selectedAccount") || "default";
+      const localOption = document.createElement("option");
+      localOption.value = localAccountId;
+      localOption.textContent = localAccountId;
+      accountSelect.appendChild(localOption);
+      accountSelect.value = localAccountId;
+      FINORA_AUTH.setSelectedAccount(localAccountId);
+      accountSelect.disabled = true;
+    }
+  });
+});
+</script>
 </body>
 </html>
