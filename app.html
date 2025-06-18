@@ -162,6 +162,7 @@
     }
   </style>
 </head>
+
 <body class="logo-full-bg">
   <div class="main-wrapper">
     <h1 data-i18n="title">FINORA 好好存</h1>
@@ -180,13 +181,13 @@
 
     <div class="account-wrapper">
       <label for="account-select" data-i18n="accountLabel">帳本選擇：</label>
-      <select id="account-select"></select>
+      <select id="account-select" style="margin-top: 0.5rem; width: 90%; max-width: 320px;"></select>
       <div class="account-controls">
         <button id="rename-account-btn" data-i18n="rename">✏️</button>
         <button id="new-account-btn" data-i18n="add">➕</button>
         <button id="delete-account-btn" data-i18n="delete">🗑️</button>
       </div>
-      <div id="new-account-input-group" style="display:none;">
+      <div id="new-account-input-group" style="display: none; margin-top: 1rem;">
         <input type="text" id="new-account-name" placeholder="輸入新帳本名稱" data-i18n-placeholder="placeholderNewAccount" />
         <button id="save-new-account" data-i18n="save">儲存</button>
       </div>
@@ -208,6 +209,7 @@
     </div>
 
     <p class="privacy-note" data-i18n="privacy">FINORA 重視隱私。你的資產，只屬於你自己。</p>
+
     <footer>
       <p data-i18n="footer">© 2025 FINORA 好好存｜家庭友善資產整合工具</p>
       <div class="footer-links">
@@ -218,29 +220,17 @@
     </footer>
   </div>
 
-  <!-- ✅ 升級提示與保留帳本 Modal -->
-  <div id="upgrade-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; display:flex; align-items:center; justify-content:center;">
-    <div style="background:white; padding:2rem; max-width:90%; border-radius:12px; text-align:center;">
-      <p data-i18n="upgrade_required_msg">您目前使用的是免費帳號，僅限一個帳本與基本功能。如需解鎖更多功能，請升級為進階版。</p>
-      <a href="tools/upgrade.html" class="cta-button" data-i18n="upgrade_now">立即升級</a><br><br>
-      <button onclick="document.getElementById('upgrade-modal').style.display='none';" class="cta-button-outline" data-i18n="close">關閉</button>
-    </div>
-  </div>
+  <!-- 🌟 升級提示與帳本保留 Modal -->
+  <div id="upgrade-modal" style="display:none;"></div>
+  <div id="account-retain-modal" style="display:none;"></div>
 
-  <div id="account-retain-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; display:flex; align-items:center; justify-content:center;">
-    <div style="background:white; padding:2rem; max-width:90%; border-radius:12px; text-align:center;">
-      <p data-i18n="retain_prompt">您已超過免費帳本上限，請選擇要保留的帳本：</p>
-      <select id="retain-select" style="padding:0.5rem; margin:1rem 0; font-size:1rem;"></select><br />
-      <button onclick="confirmAccountRetention()" class="cta-button" data-i18n="confirm_retain">確認保留</button>
-    </div>
-  </div>
-
-  <!-- ✅ Firebase SDK + 自定義腳本 -->
+  <!-- Firebase SDK 與腳本 -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script src="firebase-sync.js"></script>
   <script src="lang.js"></script>
+  <script src="main-script.js"></script> <!-- ✅ 你整合的登入/帳本/試用期邏輯放這 -->
   <script>
 document.addEventListener("DOMContentLoaded", async () => {
   const lang = localStorage.getItem("lang") || "zh-Hant";
@@ -385,6 +375,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 });
-</script>
+  </script>
 </body>
 </html>
