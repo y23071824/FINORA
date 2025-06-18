@@ -6,161 +6,222 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" href="favicon.png" type="image/png" />
   <link rel="stylesheet" href="style.css" />
-  <style>
-    :root {
-      --main-color: #b4695d;
-      --main-color-hover: #944647;
-      --main-color-bg: #f5e8e6;
-      --button-radius: 20px;
-      --button-font: 1.1rem;
-      --button-border: 2px solid var(--main-color);
-      --container-width: 700px;
-    }
-    body {
-      margin: 0;
-      font-family: "Noto Sans", sans-serif;
-      background-color: white;
-      color: #333;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    h1 {
-      text-align: center;
-      color: var(--main-color);
-      font-size: 1.8rem;
-      margin-top: 2rem;
-      margin-bottom: 0.5rem;
-    }
-    .subtitle {
-      text-align: center;
-      font-size: 1rem;
-      color: #555;
-      margin-bottom: 2rem;
-    }
-    .grid-button-group {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1.2rem;
-      width: 100%;
-      max-width: 500px;
-      margin: 0 auto 2rem;
-      justify-items: center;
-      justify-content: center;
-    }
-    .grid-button-group a {
-      aspect-ratio: 1 / 1;
-      width: 100%;
-      max-width: 200px;
-      font-size: 1.2rem;
-      text-align: center;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 2px solid var(--main-color);
-      border-radius: 24px;
-      color: var(--main-color);
-      font-weight: bold;
-      text-decoration: none;
-      background-color: white;
-      cursor: pointer;
-      word-break: break-word;
-    }
-    .grid-button-group a:hover {
-      background-color: #fcecec;
-      color: #a94456;
-    }
-    .grid-button-single {
-      display: flex;
-      justify-content: center;
-      padding: 0 1rem;
-      max-width: 500px;
-      margin: 0 auto 1.5rem;
-    }
-    .grid-button-single a {
-      padding: 1rem;
-      font-size: 1rem;
-      border: 2px solid var(--main-color);
-      border-radius: 24px;
-      color: var(--main-color);
-      font-weight: bold;
-      text-decoration: none;
-      background-color: white;
-      cursor: pointer;
-      width: 90%;
-      max-width: 400px;
-      text-align: center;
-    }
-    .account-wrapper {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-    .account-controls {
-      display: flex;
-      justify-content: center;
-      gap: 0.75rem;
-      margin-top: 1rem;
-    }
-    .account-controls button {
-      flex: 1;
-      min-width: 60px;
-      padding: 0.8rem;
-      font-size: 1.1rem;
-      border: 2px solid var(--main-color);
-      border-radius: 16px;
-      background-color: white;
-      color: var(--main-color);
-      font-weight: bold;
-      text-align: center;
-    }
-    #firebase-auth, .lang-selector {
-      text-align: center;
-      margin-top: 1.5rem;
-    }
-    .privacy-note {
-      text-align: center;
-      font-size: 0.85rem;
-      color: #777;
-      margin-top: 2rem;
-    }
-    footer {
-      text-align: center;
-      font-size: 0.85rem;
-      color: #999;
-      padding: 1rem;
-    }
-    .footer-links a {
-      margin: 0 0.25rem;
-      color: #999;
-      text-decoration: none;
-    }
-    body.logo-full-bg::before {
-      content: "";
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background-image: url('favicon.png');
-      background-repeat: no-repeat;
-      background-position: center 20%;
-      background-size: 60%;
-      opacity: 0.08;
-      pointer-events: none;
-      z-index: 0;
-    }
-    body.logo-full-bg {
-      padding: 0 !important;
-      max-width: 100% !important;
-    }
-    .main-wrapper {
-      width: 100%;
-      max-width: 640px;
-      margin: 0 auto;
-      padding: 0 1rem;
-      box-sizing: border-box;
-    }
-  </style>
+    <style>    
+  :root {    
+  --main-color: #b4695d;    
+  --main-color-hover: #944647;    
+  --main-color-bg: #f5e8e6;    
+  --button-radius: 20px;    
+  --button-font: 1.1rem;    
+  --button-border: 2px solid var(--main-color);    
+  --container-width: 700px;    
+}  body {  
+margin: 0;  
+font-family: "Noto Sans", sans-serif;  
+background-color: white;  
+color: #333;  
+display: flex;  
+flex-direction: column;  
+align-items: center;  
+}  /* ✅ 標題與副標題 */
+h1 {
+text-align: center;
+color: var(--main-color);
+font-size: 1.8rem;
+margin-top: 2rem;
+margin-bottom: 0.5rem;
+}
+.subtitle {
+text-align: center;
+font-size: 1rem;
+color: #555;
+margin-bottom: 2rem;
+}
+
+/* ✅ 主按鈕群組 */
+.grid-button-group {
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 1rem;
+margin-bottom: 1.5rem;
+justify-content:center;
+}
+.grid-button-group a,
+.grid-button-group button {
+aspect-ratio: 1 / 1;
+font-size: clamp(1rem, 4vw, 1.2rem);
+text-align: center;
+display: flex;
+align-items: center;
+justify-content: center;
+border: 2px solid var(--main-color);
+border-radius: 24px;
+color: var(--main-color);
+font-weight: bold;
+text-decoration: none;
+background-color: white;
+cursor: pointer;
+word-break: break-word;
+}
+.grid-button-group a:hover,
+.grid-button-group button:hover {
+background-color: #fcecec;
+color: #a94456;
+}
+
+/* ✅ 品牌故事按鈕為長方形 */
+.grid-button-single {
+margin-bottom: 2rem;
+}
+.grid-button-single a {
+padding: 1rem;
+font-size: 1rem;
+border: 2px solid var(--main-color);
+border-radius: 24px;
+color: var(--main-color);
+font-weight: bold;
+text-decoration: none;
+background-color: white;
+cursor: pointer;
+width: 90%;
+max-width: 400px;
+text-align: center;
+}
+
+/* ✅ 全域按鈕設定 */
+button,
+.grid-button-group a,
+.cta-full,
+.action-button {
+font-size: 1rem;
+border: 2px solid var(--main-color);
+border-radius: 24px;
+color: var(--main-color);
+font-weight: bold;
+text-decoration: none;
+background-color: white;
+cursor: pointer;
+width: 90%;
+max-width: 400px;
+text-align: center;
+padding: 0.8rem 1rem;
+box-sizing: border-box;
+}
+
+/* ✅ 帳本管理區塊 */
+.account-wrapper {
+text-align: center;
+margin-bottom: 2rem;
+}
+.account-controls {
+display: flex;
+justify-content: center;
+gap: 0.75rem;
+margin-top: 1rem;
+}
+.account-controls button {
+flex: 1;
+min-width: 60px;
+padding: 0.8rem;
+font-size: 1.1rem;
+border: 2px solid var(--main-color);
+border-radius: 16px;
+background-color: white;
+color: var(--main-color);
+font-weight: bold;
+text-align: center;
+}
+
+/* ✅ 登入/登出按鈕 */
+#firebase-auth {
+text-align: center;
+margin-top: 1.5rem;
+}
+
+/* ✅ 語言切換 */
+.lang-selector {
+text-align: center;
+margin-top: 1.5rem;
+}
+
+/* ✅ 說明與頁尾 */
+.privacy-note {
+text-align: center;
+font-size: 0.85rem;
+color: #777;
+margin-top: 2rem;
+}
+footer {
+text-align: center;
+font-size: 0.85rem;
+color: #999;
+padding: 1rem;
+}
+.footer-links a {
+margin: 0 0.25rem;
+color: #999;
+text-decoration: none;
+}
+
+/* ✅ 浮水印背景 */
+body.logo-full-bg::before {
+content: "";
+position: fixed;
+top: 0;
+left: 0;
+width: 100vw;
+height: 100vh;
+background-image: url('favicon.png');
+background-repeat: no-repeat;
+background-position: center 20%;
+background-size: 60%;
+opacity: 0.08;
+pointer-events: none;
+z-index: 0;
+}
+
+/* ✅ 主要容器 /
+body.logo-full-bg {
+padding: 0 !important;
+max-width: 100% !important;
+}
+.main-wrapper {
+width: 100%;
+max-width: 640px;  / 從 480 擴大 */
+margin-left: auto;
+margin-right: auto;
+padding: 0 1rem;
+box-sizing: border-box;
+}
+
+/* ✅ 按鈕群組（正方形兩列置中） */
+.grid-button-group {
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 1.2rem;
+width: 100%;
+max-width: 500px;
+margin: 0 auto 2rem;
+justify-items: center;
+justify-content: center
+}
+.grid-button-group a {
+aspect-ratio: 1 / 1;
+width: 100%;
+max-width: 200px;
+font-size: 1.2rem;
+}
+
+/* ✅ 單列置中按鈕區塊 */
+.grid-button-single {
+display: flex;
+justify-content: center;
+padding: 0 1rem;
+max-width: 500px;
+margin: 0 auto 1.5rem;
+}
+
+  </style>    
 </head>
 
 <body class="logo-full-bg">
