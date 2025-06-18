@@ -1,3 +1,14 @@
+// ✅ 檢查是否已過試用期（超過 30 天且未啟用 devMode）
+const createdAt = localStorage.getItem("userCreatedAt");
+const devMode = localStorage.getItem("devMode") === "yes";
+if (createdAt) {
+  const daysUsed = (Date.now() - parseInt(createdAt, 10)) / (1000 * 60 * 60 * 24);
+  if (daysUsed > 30 && !devMode) {
+    console.log("⛔ 試用期已過，firebase-sync.js 停用 Firebase 功能");
+    return;
+  }
+}
+
 // ✅ Firebase 初始化設定
 if (!firebase.apps.length) {
   const firebaseConfig = {
