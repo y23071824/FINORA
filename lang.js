@@ -291,7 +291,8 @@ label_fund_nav: "淨值",
 label_crypto_symbol: "幣種",
 label_crypto_amount: "數量",
 label_crypto_price: "現價",
-total: "總金額"
+total: "總金額",
+free_user_limit_accounts: "目前為免費帳號，僅能使用一個帳本與基本功能，如需更多功能請升級"
 },
   
  "zh-Hans": {
@@ -553,7 +554,8 @@ placeholder_monthly: "默认 30,000",
     label_crypto_symbol: "币种",
     label_crypto_amount: "数量",
     label_crypto_price: "现价",
-    total: "总金额"
+    total: "总金额",
+free_user_limit_accounts: "当前为免费账号，仅限使用一个账本和基本功能，如需更多请升级"
 },
 
 "en": {
@@ -814,13 +816,15 @@ placeholder_monthly: "Default: 30,000",
     label_crypto_symbol: "Symbol",
     label_crypto_amount: "Amount",
     label_crypto_price: "Price",
-    total: "Total Value"
+    total: "Total Value",
+free_user_limit_accounts: "You are currently using the free plan with one account and basic features. Upgrade for more."
 },
+
   
  "ja": {
   title: "FINORA 資産管理",
   subtitle: "資産を強く、安心なリタイアへ。",
-  asset: "資産管理",
+  asset: "資産2管理",
   compound: "複利計算",
   withdraw: "引き出し計画",
   emergency: "緊急資金",
@@ -1075,7 +1079,8 @@ placeholder_monthly: "デフォルト：30,000",
     label_crypto_symbol: "銘柄",
     label_crypto_amount: "数量",
     label_crypto_price: "価格",
-    total: "合計金額"
+    total: "合計金額",
+free_user_limit_accounts: "現在は無料プランを利用中です。アカウントは1つまでで、基本機能のみ使用できます。アップグレードをご検討ください。" 
   }
 };
 
