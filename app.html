@@ -268,7 +268,20 @@ margin: 0 auto 1.5rem;
         <option value="ja">日本語</option>
       </select>
     </div>
+<!-- 🔧 Dev Mode 切換（僅開發者使用） -->
+<div style="text-align:center; margin-top:1rem;">
+  <button style="opacity: 0.4; font-size: 0.75rem; margin: 0.25rem;" onclick="
+    localStorage.setItem('devMode','yes');
+    alert('✅ 已啟用開發模式（devMode = yes）');
+    location.reload();
+  ">啟用開發模式</button>
 
+  <button style="opacity: 0.4; font-size: 0.75rem; margin: 0.25rem;" onclick="
+    localStorage.removeItem('devMode');
+    alert('❌ 已關閉開發模式（devMode 已清除）');
+    location.reload();
+  ">關閉開發模式</button>
+</div>
     <p class="privacy-note" data-i18n="privacy">FINORA 重視隱私。你的資產，只屬於你自己。</p>
 
     <footer>
