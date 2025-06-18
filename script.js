@@ -475,14 +475,18 @@ function typeToKey(type) {
 function applyUsageLimits() {
   if (isFreeUser()) {
     const accounts = JSON.parse(localStorage.getItem("accounts") || "[]");
+
+    // 🟡 ✅ 原本這裡會 alert，我們改成 console 記錄即可
     if (accounts.length > 1) {
-      alert(i18n("free_user_limit_accounts"));  // ← 可支援 i18n
+      console.log("🔒 免費帳號超過一個帳本，功能受限");
     }
 
+    // ✅ 匯率與幣別選單停用（不移除）
     const rateSection = document.getElementById("exchange-section");
-    const stockSection = document.getElementById("stock-fields");
     if (rateSection) rateSection.style.display = "none";
-    if (stockSection) stockSection.style.display = "none";
+
+    const currencySelect = document.getElementById("currency-select");
+    if (currencySelect) currencySelect.disabled = true;
   }
 }
 
