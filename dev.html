@@ -1,90 +1,57 @@
-<!DOCTYPE html>
-<html lang="zh-Hant">
+<!DOCTYPE html><html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>FINORA 測試工具頁</title>
+  <title>FINORA 測試工具</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css" />
-  <script src="lang.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; background: #fffaf8; }
+    h1 { color: #b4695d; }
+    pre { background: #f0f0f0; padding: 1rem; border-radius: 8px; white-space: pre-wrap; }
+    button { margin-top: 1rem; padding: 0.5rem 1rem; border: none; background: #b4695d; color: white; border-radius: 6px; font-weight: bold; }
+  </style>
 </head>
-<body class="logo-full-bg">
-  <h1>🧪 FINORA 測試控制台</h1>
-  <p>以下按鈕僅供測試限制功能與語言切換</p>
-
-  <div style="display: flex; flex-direction: column; gap: 1rem; max-width: 300px;">
-    <button onclick="simulateExpired()" class="cta-button">⏱ 模擬使用超過 30 天</button>
-    <button onclick="simulateMultiAccounts()" class="cta-button">📛 模擬兩本帳本</button>
-    <button onclick="checkUpgradeNoticeCondition()" class="cta-button">🧪 測試帳本限制邏輯</button>
-    <button onclick="showUpgradeModal()" class="cta-button">🔔 強制顯示升級提示</button>
-
-    <div>
-      <label>🌐 語言切換：</label>
-      <select id="lang-select" onchange="switchLang()" class="cta-button-outline">
-        <option value="zh-Hant">繁體中文</option>
-        <option value="zh-Hans">簡體中文</option>
-        <option value="en">English</option>
-        <option value="ja">日本語</option>
-      </select>
-    </div>
-  </div>
-
-  <!-- 🌟 升級提示模組 -->
-  <div id="upgrade-modal" style="display: none; position: fixed; top: 0; left: 0;
-    width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999;
-    display: flex; align-items: center; justify-content: center;">
-    <div style="background: white; padding: 2rem; max-width: 90%; border-radius: 12px; text-align: center;">
-      <p style="font-size: 1.1rem;" data-i18n="upgrade_required_msg">
-        您目前使用的是免費帳號 僅限一個帳本與基本功能 如需解鎖更多功能 請升級為進階版
-      </p>
-      <a href="tools/upgrade.html" class="cta-button" data-i18n="upgrade_now">立即升級</a><br><br>
-      <button onclick="document.getElementById('upgrade-modal').style.display='none';" class="cta-button-outline" data-i18n="close">關閉</button>
-    </div>
-  </div>
-
-  <script>
-    function isFreeUser() {
-      const createdAt = localStorage.getItem("userCreatedAt");
-      if (!createdAt) return true;
-      const daysUsed = (Date.now() - parseInt(createdAt, 10)) / (1000 * 60 * 60 * 24);
-      return daysUsed > 30;
-    }
-
-    function checkUpgradeNoticeCondition() {
-      const accounts = JSON.parse(localStorage.getItem("accounts") || "[]");
-      if (isFreeUser() && accounts.length > 1) {
-        const modal = document.getElementById("upgrade-modal");
-        if (modal) modal.style.display = "flex";
-      } else {
-        alert("✅ 不符合升級提示條件（未過期或帳本數量不足）");
+<body>
+  <h1>🔧 FINORA Dev 測試工具</h1>
+  <div id="info"></div>
+  <button onclick="clearLocal()">🧹 清除 localStorage 並重整</button>
+  <button onclick="simulateExpired()">📅 模擬過期狀態</button>  <script>
+    function showInfo() {
+      const userCreatedAt = localStorage.getItem("userCreatedAt");
+      const selectedAccount = localStorage.getItem("selectedAccount");
+      const retainedAccountId = localStorage.getItem("retainedAccountId");
+      const assetsKeys = Object.keys(localStorage).filter(k => k.startsWith("assets_"));
+      const now = Date.now();
+      let daysUsed = "--";
+      if (userCreatedAt) {
+        daysUsed = Math.floor((now - parseInt(userCreatedAt, 10)) / (1000 * 60 * 60 * 24));
       }
-    }
 
-    function simulateExpired() {
-      localStorage.setItem("userCreatedAt", Date.now() - 31 * 24 * 60 * 60 * 1000);
-      alert("✅ 已模擬超過 30 天使用");
-    }
+      const info = `
+📅 使用天數：${daysUsed} 天
+🧑‍💼 selectedAccount：${selectedAccount}
+📘 retainedAccountId：${retainedAccountId}
+💾 本機帳本數量：${assetsKeys.length}
+📂 帳本 Keys：\n${assetsKeys.join("\n")}
+📍 Firebase 啟用狀態：${typeof firebase !== "undefined" ? '✅ 有載入 SDK' : '❌ 無'}
+      `;
 
-    function simulateMultiAccounts() {
-      localStorage.setItem("accounts", JSON.stringify(["default", "第二本帳本"]));
-      alert("✅ 已模擬帳本超過 1 本");
-    }
+      document.getElementById("info").innerHTML = `<pre>${info}</pre>`;}
 
-    function showUpgradeModal() {
-      const modal = document.getElementById("upgrade-modal");
-      if (modal) modal.style.display = "flex";
-    }
+function clearLocal() {
+  localStorage.clear();
+  alert("已清除 localStorage，將重新整理頁面");
+  location.reload();
+}
 
-    function switchLang() {
-      const lang = document.getElementById("lang-select").value;
-      localStorage.setItem("lang", lang);
-      applyLang(lang);
-    }
+function simulateExpired() {
+  const fakeCreatedAt = Date.now() - (31 * 24 * 60 * 60 * 1000); // 31天前
+  localStorage.setItem("userCreatedAt", fakeCreatedAt.toString());
+  alert("已模擬過期狀態，下次載入視為過期用戶");
+  location.reload();
+}
 
-    document.addEventListener("DOMContentLoaded", () => {
-      const lang = localStorage.getItem("lang") || "zh-Hant";
-      document.getElementById("lang-select").value = lang;
-      applyLang(lang);
-    });
+document.addEventListener("DOMContentLoaded", showInfo);
+
   </script>
 </body>
 </html>
