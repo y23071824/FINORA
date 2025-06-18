@@ -14,7 +14,8 @@
   <div style="display: flex; flex-direction: column; gap: 1rem; max-width: 300px;">
     <button onclick="simulateExpired()" class="cta-button">⏱ 模擬使用超過 30 天</button>
     <button onclick="simulateMultiAccounts()" class="cta-button">📛 模擬兩本帳本</button>
-    <button onclick="showUpgradeModal()" class="cta-button">🔔 觸發升級提示視窗</button>
+    <button onclick="checkUpgradeNoticeCondition()" class="cta-button">🧪 測試帳本限制邏輯</button>
+    <button onclick="showUpgradeModal()" class="cta-button">🔔 強制顯示升級提示</button>
 
     <div>
       <label>🌐 語言切換：</label>
@@ -41,6 +42,23 @@
   </div>
 
   <script>
+    function isFreeUser() {
+      const createdAt = localStorage.getItem("userCreatedAt");
+      if (!createdAt) return true;
+      const daysUsed = (Date.now() - parseInt(createdAt, 10)) / (1000 * 60 * 60 * 24);
+      return daysUsed > 30;
+    }
+
+    function checkUpgradeNoticeCondition() {
+      const accounts = JSON.parse(localStorage.getItem("accounts") || "[]");
+      if (isFreeUser() && accounts.length > 1) {
+        const modal = document.getElementById("upgrade-modal");
+        if (modal) modal.style.display = "flex";
+      } else {
+        alert("✅ 不符合升級提示條件（未過期或帳本數量不足）");
+      }
+    }
+
     function simulateExpired() {
       localStorage.setItem("userCreatedAt", Date.now() - 31 * 24 * 60 * 60 * 1000);
       alert("✅ 已模擬超過 30 天使用");
@@ -62,7 +80,6 @@
       applyLang(lang);
     }
 
-    // 初始化語系
     document.addEventListener("DOMContentLoaded", () => {
       const lang = localStorage.getItem("lang") || "zh-Hant";
       document.getElementById("lang-select").value = lang;
