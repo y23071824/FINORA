@@ -292,7 +292,11 @@ label_crypto_symbol: "幣種",
 label_crypto_amount: "數量",
 label_crypto_price: "現價",
 total: "總金額",
-free_user_limit_accounts: "目前為免費帳號，僅能使用一個帳本與基本功能，如需更多功能請升級"
+free_user_limit_accounts: "目前為免費帳號，僅能使用一個帳本與基本功能，如需更多功能請升級",
+upgrade_required_msg: "您目前使用的是免費帳號 僅限一個帳本與基本功能 如需解鎖更多功能 請升級為進階版",
+  upgrade_now: "立即升級",
+  close: "關閉"
+
 },
   
  "zh-Hans": {
@@ -555,7 +559,11 @@ placeholder_monthly: "默认 30,000",
     label_crypto_amount: "数量",
     label_crypto_price: "现价",
     total: "总金额",
-free_user_limit_accounts: "当前为免费账号，仅限使用一个账本和基本功能，如需更多请升级"
+free_user_limit_accounts: "当前为免费账号，仅限使用一个账本和基本功能，如需更多请升级",
+upgrade_required_msg: "您当前使用的是免费账户 仅限一个账本和基本功能 如需解锁更多功能 请升级为进阶版",
+  upgrade_now: "立即升级",
+  close: "关闭"
+
 },
 
 "en": {
@@ -817,7 +825,11 @@ placeholder_monthly: "Default: 30,000",
     label_crypto_amount: "Amount",
     label_crypto_price: "Price",
     total: "Total Value",
-free_user_limit_accounts: "You are currently using the free plan with one account and basic features. Upgrade for more."
+free_user_limit_accounts: "You are currently using the free plan with one account and basic features. Upgrade for more.",
+upgrade_required_msg: "You are currently using the free version with one account and basic features Upgrade to unlock more",
+  upgrade_now: "Upgrade Now",
+  close: "Close"
+
 },
 
   
@@ -1080,7 +1092,11 @@ placeholder_monthly: "デフォルト：30,000",
     label_crypto_amount: "数量",
     label_crypto_price: "価格",
     total: "合計金額",
-free_user_limit_accounts: "現在は無料プランを利用中です。アカウントは1つまでで、基本機能のみ使用できます。アップグレードをご検討ください。" 
+free_user_limit_accounts: "現在は無料プランを利用中です。アカウントは1つまでで、基本機能のみ使用できます。アップグレードをご検討ください。",
+upgrade_required_msg: "現在は無料プランを利用中です アカウントは1つまで 基本機能のみ使用可能です アップグレードで全機能を解放できます",
+  upgrade_now: "今すぐアップグレード",
+  close: "閉じる"
+
   }
 };
 
