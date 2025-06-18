@@ -288,13 +288,7 @@ function isFreeUser() {
 }
 
 // 頁面載入時判斷是否顯示升級提示
-document.addEventListener("DOMContentLoaded", () => {
-  const accounts = JSON.parse(localStorage.getItem("accounts") || "[]");
-  if (isFreeUser() && accounts.length > 1) {
-    const modal = document.getElementById("upgrade-modal");
-    if (modal) modal.style.display = "flex";
-  }
-}); 
+
     function checkUpgradeNoticeCondition() {
   const accounts = JSON.parse(localStorage.getItem("accounts") || "[]");
   if (isFreeUser() && accounts.length > 1) {
