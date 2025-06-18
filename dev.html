@@ -43,6 +43,14 @@
       localStorage.setItem("userCreatedAt", Date.now() - 31 * 24 * 60 * 60 * 1000);
       applyUsageLimits();
     }
+
+    <button onclick="simulateMultiAccounts()">📛 模擬多帳本</button>
+<script>
+function simulateMultiAccounts() {
+  localStorage.setItem("accounts", JSON.stringify(["default", "第二本帳本"]));
+  applyUsageLimits();
+}
+
   </script>
 </body>
 </html>
