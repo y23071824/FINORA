@@ -67,6 +67,19 @@ async function fetchExchangeRates() {
   render(); // 更新畫面
 }
 
+// ✅ 使用期限限制（30天後自動轉為限制帳號）
+function isFreeUser() {
+  const createdAt = localStorage.getItem("userCreatedAt");
+  if (!createdAt) return true;
+  const daysUsed = (Date.now() - parseInt(createdAt, 10)) / (1000 * 60 * 60 * 24);
+  return daysUsed > 30;
+}
+
+// ✅ 第一次登入時紀錄建立時間
+if (!localStorage.getItem("userCreatedAt")) {
+  localStorage.setItem("userCreatedAt", Date.now().toString());
+}
+
 // ✅ 股票查價（美股 + 台股）
 async function fetchStockPrice(symbol, category) {
   try {
@@ -458,6 +471,23 @@ function typeToKey(type) {
     default: return "other";
   }
 }
+
+function applyUsageLimits() {
+  if (isFreeUser()) {
+    const accounts = JSON.parse(localStorage.getItem("accounts") || "[]");
+    if (accounts.length > 1) {
+      alert(i18n("free_user_limit_accounts"));  // ← 可支援 i18n
+    }
+
+    const rateSection = document.getElementById("exchange-section");
+    const stockSection = document.getElementById("stock-fields");
+    if (rateSection) rateSection.style.display = "none";
+    if (stockSection) stockSection.style.display = "none";
+  }
+}
+
+// ✅ 在頁面初始化流程最後執行
+applyUsageLimits();
 
 // ===== Part 5：初始化與登入綁定（修正版） =====
 
