@@ -180,21 +180,5 @@
       }
     });
   </script>
-  <!-- 🧪 測試用按鈕（點一下模擬使用超過30天） -->
-<button onclick="runTest()" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
-  🔧 測試限制功能
-</button>
-
-<script>
-function runTest() {
-  localStorage.setItem("userCreatedAt", Date.now() - 31 * 24 * 60 * 60 * 1000);
-  if (typeof applyUsageLimits === 'function') {
-    applyUsageLimits();
-    alert("已模擬成免費帳號超過30天，限制功能應已套用");
-  } else {
-    alert("applyUsageLimits 函式尚未載入，請確認程式碼是否正確");
-  }
-}
-</script>
 </body>
 </html>
