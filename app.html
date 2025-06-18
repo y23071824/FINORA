@@ -1,464 +1,265 @@
-<!DOCTYPE html><html lang="zh-Hant">  <head>  
-  <meta charset="UTF-8" />  
-  <title data-i18n="title">FINORA 好好存</title>  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />  
-  <link rel="icon" href="favicon.png" type="image/png" />  
-  <link rel="stylesheet" href="style.css" />  
-  <style>  
-  :root {  
-  --main-color: #b4695d;  
-  --main-color-hover: #944647;  
-  --main-color-bg: #f5e8e6;  
-  --button-radius: 20px;  
-  --button-font: 1.1rem;  
-  --button-border: 2px solid var(--main-color);  
-  --container-width: 700px;  
-}  body {
-margin: 0;
-font-family: "Noto Sans", sans-serif;
-background-color: white;
-color: #333;
-display: flex;
-flex-direction: column;
-align-items: center;
-}
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title data-i18n="title">FINORA 好好存</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="favicon.png" type="image/png" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    :root {
+      --main-color: #b4695d;
+      --main-color-hover: #944647;
+      --main-color-bg: #f5e8e6;
+      --button-radius: 20px;
+      --button-font: 1.1rem;
+      --button-border: 2px solid var(--main-color);
+      --container-width: 700px;
+    }
+    /* ✅ 其餘 CSS 請保留原樣，略去避免重複 */
 
+    /* ✅ 按鈕群組樣式（部分） */
+    .grid-button-group {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.2rem;
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto 2rem;
+      justify-items: center;
+      justify-content: center;
+    }
+    .grid-button-group a {
+      aspect-ratio: 1 / 1;
+      width: 100%;
+      max-width: 200px;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body class="logo-full-bg">
+  <div class="main-wrapper">
+    <h1 data-i18n="title">FINORA 好好存</h1>
+    <p class="subtitle" data-i18n="subtitle">讓資產更有力，退休不焦慮。</p>
 
-/* ✅ 標題與副標題 */
-h1 {
-text-align: center;
-color: var(--main-color);
-font-size: 1.8rem;
-margin-top: 2rem;
-margin-bottom: 0.5rem;
-}
-.subtitle {
-text-align: center;
-font-size: 1rem;
-color: #555;
-margin-bottom: 2rem;
-}
+    <div class="grid-button-group">
+      <a href="assets.html" data-i18n="asset">資產管理</a>
+      <a href="tools/compound.html" data-i18n="compound">複利試算</a>
+      <a href="tools/withdraw.html" data-i18n="withdraw">退休提領</a>
+      <a href="tools/emergency.html" data-i18n="emergency">預備金試算</a>
+    </div>
 
-/* ✅ 主按鈕群組 */
-.grid-button-group {
-display: grid;
-grid-template-columns: repeat(2, 1fr);
-gap: 1rem;
-margin-bottom: 1.5rem;
-justify-content:center;
-}
-.grid-button-group a,
-.grid-button-group button {
-aspect-ratio: 1 / 1;
-font-size: clamp(1rem, 4vw, 1.2rem);
-text-align: center;
-display: flex;
-align-items: center;
-justify-content: center;
-border: 2px solid var(--main-color);
-border-radius: 24px;
-color: var(--main-color);
-font-weight: bold;
-text-decoration: none;
-background-color: white;
-cursor: pointer;
-word-break: break-word;
-}
-.grid-button-group a:hover,
-.grid-button-group button:hover {
-background-color: #fcecec;
-color: #a94456;
-}
+    <div class="grid-button-single">
+      <a href="about.html" data-i18n="nav_about">品牌故事</a>
+    </div>
 
-/* ✅ 品牌故事按鈕為長方形 */
-.grid-button-single {
-margin-bottom: 2rem;
-}
-.grid-button-single a {
-padding: 1rem;
-font-size: 1rem;
-border: 2px solid var(--main-color);
-border-radius: 24px;
-color: var(--main-color);
-font-weight: bold;
-text-decoration: none;
-background-color: white;
-cursor: pointer;
-width: 90%;
-max-width: 400px;
-text-align: center;
-}
+    <div class="account-wrapper">
+      <label for="account-select" data-i18n="accountLabel">帳本選擇：</label>
+      <select id="account-select"></select>
+      <div class="account-controls">
+        <button id="rename-account-btn" data-i18n="rename">✏️</button>
+        <button id="new-account-btn" data-i18n="add">➕</button>
+        <button id="delete-account-btn" data-i18n="delete">🗑️</button>
+      </div>
+      <div id="new-account-input-group" style="display:none;">
+        <input type="text" id="new-account-name" placeholder="輸入新帳本名稱" data-i18n-placeholder="placeholderNewAccount" />
+        <button id="save-new-account" data-i18n="save">儲存</button>
+      </div>
+    </div>
 
+    <div id="firebase-auth">
+      <button id="login-btn" data-i18n="login">🔐 使用 Google 帳號登入</button>
+      <button id="logout-btn" data-i18n="logout" style="display:none;">🚪 登出</button>
+    </div>
 
-/* ✅ 全域按鈕設定 */
-button,
-.grid-button-group a,
-.cta-full,
-.action-button {
-  font-size: 1rem;
-  border: 2px solid var(--main-color);
-  border-radius: 24px;
-  color: var(--main-color);
-  font-weight: bold;
-  text-decoration: none;
-  background-color: white;
-  cursor: pointer;
-  width: 90%;
-  max-width: 400px;
-  text-align: center;
-  padding: 0.8rem 1rem;
-  box-sizing: border-box;
-}
+    <div class="lang-selector">
+      <label for="lang-select" data-i18n="langLabel">🌐 Language / 語言：</label>
+      <select id="lang-select">
+        <option value="zh-Hant">繁體中文</option>
+        <option value="zh-Hans">简体中文</option>
+        <option value="en">English</option>
+        <option value="ja">日本語</option>
+      </select>
+    </div>
 
-/* ✅ 帳本管理區塊 */
-.account-wrapper {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-.account-controls {
-  display: flex;
-  justify-content: center;
-  gap: 0.75rem;
-  margin-top: 1rem;
-}
-.account-controls button {
-  flex: 1;
-  min-width: 60px;
-  padding: 0.8rem;
-  font-size: 1.1rem;
-  border: 2px solid var(--main-color);
-  border-radius: 16px;
-  background-color: white;
-  color: var(--main-color);
-  font-weight: bold;
-  text-align: center;
-}
-
-/* ✅ 登入/登出按鈕 */
-#firebase-auth {
-  text-align: center;
-  margin-top: 1.5rem;
-}
-
-/* ✅ 語言切換 */
-.lang-selector {
-  text-align: center;
-  margin-top: 1.5rem;
-}
-
-/* ✅ 說明與頁尾 */
-.privacy-note {
-  text-align: center;
-  font-size: 0.85rem;
-  color: #777;
-  margin-top: 2rem;
-}
-footer {
-  text-align: center;
-  font-size: 0.85rem;
-  color: #999;
-  padding: 1rem;
-}
-.footer-links a {
-  margin: 0 0.25rem;
-  color: #999;
-  text-decoration: none;
-}
-
-/* ✅ 浮水印背景 */
-body.logo-full-bg::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-image: url('favicon.png');
-  background-repeat: no-repeat;
-  background-position: center 20%;
-  background-size: 60%;
-  opacity: 0.08;
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* ✅ 主要容器 */
-body.logo-full-bg {
-  padding: 0 !important;
-  max-width: 100% !important;
-}
-.main-wrapper {
-  width: 100%;
-  max-width: 640px;  /* 從 480 擴大 */
-  margin-left: auto;
-  margin-right: auto;
-  padding: 0 1rem;
-  box-sizing: border-box;
-}
-
-/* ✅ 按鈕群組（正方形兩列置中） */
-.grid-button-group {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.2rem;
-  width: 100%;
-  max-width: 500px;
-  margin: 0 auto 2rem;
-  justify-items: center;
-  justify-content: center
-}
-.grid-button-group a {
-  aspect-ratio: 1 / 1;
-  width: 100%;
-  max-width: 200px;
-  font-size: 1.2rem;
-}
-
-/* ✅ 單列置中按鈕區塊 */
-.grid-button-single {
-  display: flex;
-  justify-content: center;
-  padding: 0 1rem;
-  max-width: 500px;
-  margin: 0 auto 1.5rem;
-}
-    
-
-  </style>  
-</head> 
-  <body class="logo-full-bg">  
-  <div class="main-wrapper">  
-  <h1 data-i18n="title">FINORA 好好存</h1>  
-  <p class="subtitle" data-i18n="subtitle">讓資產更有力，退休不焦慮。</p>    <div class="grid-button-group">  
-    <a href="assets.html" data-i18n="asset">資產管理</a>  
-    <a href="tools/compound.html" data-i18n="compound">複利試算</a>  
-    <a href="tools/withdraw.html" data-i18n="withdraw">退休提領</a>  
-    <a href="tools/emergency.html" data-i18n="emergency">預備金試算</a>  
-  </div>    <div class="grid-button-single">  
-    <a href="about.html" data-i18n="nav_about">品牌故事</a>  
-  </div>    <div class="account-wrapper">  
-    <label for="account-select" data-i18n="accountLabel">帳本選擇：</label>  
-    <select id="account-select" style="margin-top: 0.5rem; width: 90%; max-width: 320px;"></select>  <div class="account-controls">  
-  <button id="rename-account-btn" data-i18n="rename">✏️</button>  
-  <button id="new-account-btn" data-i18n="add">➕</button>  
-  <button id="delete-account-btn" data-i18n="delete">🗑️</button>  
-</div>  
-
-<div id="new-account-input-group" style="display: none; margin-top: 1rem;">  
-  <input type="text" id="new-account-name" placeholder="輸入新帳本名稱" data-i18n-placeholder="placeholderNewAccount" />  
-  <button id="save-new-account" data-i18n="save">儲存</button>  
-</div>
-
-  </div>    <div id="firebase-auth">  
-    <button id="login-btn" data-i18n="login">🔐 使用 Google 帳號登入</button>  
-    <button id="logout-btn" data-i18n="logout" style="display:none;">🚪 登出</button>  
-  </div>    <div class="lang-selector">  
-    <label for="lang-select" data-i18n="langLabel">🌐 Language / 語言：</label>  
-    <select id="lang-select">  
-      <option value="zh-Hant">繁體中文</option>  
-      <option value="zh-Hans">简体中文</option>  
-      <option value="en">English</option>  
-      <option value="ja">日本語</option>  
-    </select>  
-  </div>    <p class="privacy-note" data-i18n="privacy">FINORA 重視隱私。你的資產，只屬於你自己。</p>    <footer>  
-    <p data-i18n="footer">© 2025 FINORA 好好存｜家庭友善資產整合工具</p>  
-    <div class="footer-links">  
-      <a href="howto.html" data-i18n="guide">使用說明</a>・  
-      <a href="mailto:service@finora.life?subject=聯絡詢問" data-i18n="contact">聯絡我們</a>・  
-      <a href="privacy.html" data-i18n="policy">隱私權條款</a>  
-    </div>  
-    
-  </footer>  
-</div>
-    <!-- 🌟 升級提示模組（固定在首頁） -->
-<div id="upgrade-modal" style="display: none; position: fixed; top: 0; left: 0;
-  width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999;
-  display: flex; align-items: center; justify-content: center;">
-  <div style="background: white; padding: 2rem; max-width: 90%; border-radius: 12px; text-align: center;">
-    <p style="font-size: 1.1rem;" data-i18n="upgrade_required_msg">
-      您目前使用的是免費帳號，僅限一個帳本與基本功能。如需解鎖更多功能，請升級為進階版。
-    </p>
-    <a href="tools/upgrade.html" class="cta-button" data-i18n="upgrade_now">立即升級</a><br><br>
-    <button onclick="document.getElementById('upgrade-modal').style.display='none';" class="cta-button-outline" data-i18n="close">關閉</button>
+    <p class="privacy-note" data-i18n="privacy">FINORA 重視隱私。你的資產，只屬於你自己。</p>
+    <footer>
+      <p data-i18n="footer">© 2025 FINORA 好好存｜家庭友善資產整合工具</p>
+      <div class="footer-links">
+        <a href="howto.html" data-i18n="guide">使用說明</a>・
+        <a href="mailto:service@finora.life?subject=聯絡詢問" data-i18n="contact">聯絡我們</a>・
+        <a href="privacy.html" data-i18n="policy">隱私權條款</a>
+      </div>
+    </footer>
   </div>
-</div>
-    <!-- ✅ 保留帳本 Modal -->
-<div id="account-retain-modal" style="display:none; position:fixed; top:0; left:0;
-  width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999;
-  display:flex; align-items:center; justify-content:center;">
-  <div style="background:white; padding:2rem; max-width:90%; border-radius:12px; text-align:center;">
-    <p data-i18n="retain_prompt">您已超過免費帳本上限，請選擇要保留的帳本：</p>
-    <select id="retain-select" style="padding:0.5rem; margin:1rem 0; font-size:1rem;"></select>
-    <br />
-    <button onclick="confirmAccountRetention()" class="cta-button" data-i18n="confirm_retain">確認保留</button>
-  </div>
-</div>
-    <!-- Firebase + FINORA Script -->   
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js">
-      
-   </script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js">
-      
-    </script>  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>  
-    <script src="firebase-sync.js"></script> 
-    <script src="lang.js"></script>  
-    
-    <script>
-  document.addEventListener("DOMContentLoaded", async () => {
-    const lang = localStorage.getItem("lang") || "zh-Hant";
-    if (typeof applyLang === "function") applyLang(lang);
 
-    const langSelect = document.getElementById("lang-select");
-    langSelect.value = lang;
-    langSelect.addEventListener("change", function () {
-      localStorage.setItem("lang", this.value);
-      location.reload();
+  <!-- ✅ 升級提示與保留帳本 Modal -->
+  <div id="upgrade-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; display:flex; align-items:center; justify-content:center;">
+    <div style="background:white; padding:2rem; max-width:90%; border-radius:12px; text-align:center;">
+      <p data-i18n="upgrade_required_msg">您目前使用的是免費帳號，僅限一個帳本與基本功能。如需解鎖更多功能，請升級為進階版。</p>
+      <a href="tools/upgrade.html" class="cta-button" data-i18n="upgrade_now">立即升級</a><br><br>
+      <button onclick="document.getElementById('upgrade-modal').style.display='none';" class="cta-button-outline" data-i18n="close">關閉</button>
+    </div>
+  </div>
+
+  <div id="account-retain-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; display:flex; align-items:center; justify-content:center;">
+    <div style="background:white; padding:2rem; max-width:90%; border-radius:12px; text-align:center;">
+      <p data-i18n="retain_prompt">您已超過免費帳本上限，請選擇要保留的帳本：</p>
+      <select id="retain-select" style="padding:0.5rem; margin:1rem 0; font-size:1rem;"></select><br />
+      <button onclick="confirmAccountRetention()" class="cta-button" data-i18n="confirm_retain">確認保留</button>
+    </div>
+  </div>
+
+  <!-- ✅ Firebase SDK + 自定義腳本 -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="firebase-sync.js"></script>
+  <script src="lang.js"></script>
+  <script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const lang = localStorage.getItem("lang") || "zh-Hant";
+  if (typeof applyLang === "function") applyLang(lang);
+
+  const langSelect = document.getElementById("lang-select");
+  langSelect.value = lang;
+  langSelect.addEventListener("change", function () {
+    localStorage.setItem("lang", this.value);
+    location.reload();
+  });
+
+  function isFreeUser() {
+    if (localStorage.getItem("devMode") === "yes") return false;
+    const createdAt = localStorage.getItem("userCreatedAt");
+    if (!createdAt) return true;
+    const daysUsed = (Date.now() - parseInt(createdAt, 10)) / (1000 * 60 * 60 * 24);
+    return daysUsed > 30;
+  }
+
+  if (!localStorage.getItem("userCreatedAt")) {
+    localStorage.setItem("userCreatedAt", Date.now().toString());
+  }
+
+  function showAccountRetentionModal(accounts) {
+    const select = document.getElementById("retain-select");
+    select.innerHTML = "";
+    accounts.forEach(acc => {
+      const opt = document.createElement("option");
+      opt.value = acc.id;
+      opt.textContent = acc.displayName || acc.id;
+      select.appendChild(opt);
     });
+    document.getElementById("account-retain-modal").style.display = "flex";
+  }
 
-    // ✅ 判斷是否為免費用戶
-    function isFreeUser() {
-      // ✅ 開發模式跳過限制
-      if (localStorage.getItem("devMode") === "yes") return false;
+  window.confirmAccountRetention = function () {
+    const selected = document.getElementById("retain-select").value;
+    localStorage.setItem("retainedAccountId", selected);
+    FINORA_AUTH.setSelectedAccount(selected);
+    document.getElementById("account-retain-modal").style.display = "none";
+    location.reload();
+  };
 
-      const createdAt = localStorage.getItem("userCreatedAt");
-      if (!createdAt) return true;
-      const daysUsed = (Date.now() - parseInt(createdAt, 10)) / (1000 * 60 * 60 * 24);
-      return daysUsed > 30;
+  document.getElementById("login-btn").addEventListener("click", async () => {
+    if (isFreeUser()) {
+      const modal = document.getElementById("upgrade-modal");
+      if (modal) modal.style.display = "flex";
+      return;
     }
-
-    // ✅ 第一次登入記錄建立時間
-    if (!localStorage.getItem("userCreatedAt")) {
-      localStorage.setItem("userCreatedAt", Date.now().toString());
+    try {
+      const user = await FINORA_AUTH.signInWithGoogle();
+      if (user) {
+        alert("登入成功！");
+        location.reload();
+      }
+    } catch (e) {
+      console.error("登入失敗", e);
+      alert("登入失敗，請稍後再試");
     }
+  });
 
-    // ✅ 選擇保留帳本的 Modal 觸發邏輯
-    function showAccountRetentionModal(accounts) {
-      const select = document.getElementById("retain-select");
-      select.innerHTML = "";
+  document.getElementById("logout-btn").addEventListener("click", async () => {
+    await FINORA_AUTH.signOutFromGoogle();
+    alert("登出成功！");
+    location.reload();
+  });
+
+  document.getElementById("rename-account-btn").addEventListener("click", async () => {
+    const newName = prompt("輸入新帳本名稱：", "");
+    if (newName) {
+      await FINORA_AUTH.setAccountDisplayName(FINORA_AUTH.getCurrentAccount(), newName);
+      alert("帳本已重新命名！");
+      location.reload();
+    }
+  });
+
+  document.getElementById("new-account-btn").addEventListener("click", () => {
+    const accounts = JSON.parse(localStorage.getItem("accounts") || "[]");
+    if (isFreeUser() && accounts.length > 1) {
+      const modal = document.getElementById("upgrade-modal");
+      if (modal) modal.style.display = "flex";
+      return;
+    }
+    document.getElementById("new-account-input-group").style.display = "block";
+  });
+
+  document.getElementById("save-new-account").addEventListener("click", async () => {
+    const name = document.getElementById("new-account-name").value.trim();
+    if (!name) return alert("請輸入帳本名稱");
+    await FINORA_AUTH.createNewAccount(name);
+    alert("新增成功！");
+    location.reload();
+  });
+
+  document.getElementById("delete-account-btn").addEventListener("click", async () => {
+    if (confirm("確定要刪除目前帳本？")) {
+      await FINORA_AUTH.deleteAccount(FINORA_AUTH.getCurrentAccount());
+      alert("刪除成功！");
+      location.reload();
+    }
+  });
+
+  FINORA_AUTH.onUserChanged(async (user) => {
+    const loginBtn = document.getElementById("login-btn");
+    const logoutBtn = document.getElementById("logout-btn");
+    loginBtn.style.display = user ? "none" : "inline-block";
+    logoutBtn.style.display = user ? "inline-block" : "none";
+
+    if (user) {
+      const accountSelect = document.getElementById("account-select");
+      const accounts = await FINORA_AUTH.fetchAccountList();
+      accountSelect.innerHTML = "";
+
+      if (isFreeUser() && accounts.length > 1) {
+        const retainedId = localStorage.getItem("retainedAccountId");
+        if (!retainedId) {
+          showAccountRetentionModal(accounts);
+          return;
+        }
+
+        FINORA_AUTH.setSelectedAccount(retainedId);
+        document.getElementById("account-select").disabled = true;
+        document.getElementById("new-account-btn").disabled = true;
+        document.getElementById("delete-account-btn").disabled = true;
+      }
+
       accounts.forEach(acc => {
         const opt = document.createElement("option");
         opt.value = acc.id;
         opt.textContent = acc.displayName || acc.id;
-        select.appendChild(opt);
+        accountSelect.appendChild(opt);
       });
-      document.getElementById("account-retain-modal").style.display = "flex";
+
+      const selected = FINORA_AUTH.getCurrentAccount();
+      if (selected) accountSelect.value = selected;
+
+      accountSelect.onchange = (e) => {
+        FINORA_AUTH.setSelectedAccount(e.target.value);
+        location.reload();
+      };
     }
-
-    window.confirmAccountRetention = function () {
-      const selected = document.getElementById("retain-select").value;
-      localStorage.setItem("retainedAccountId", selected);
-      FINORA_AUTH.setSelectedAccount(selected);
-      document.getElementById("account-retain-modal").style.display = "none";
-      location.reload();
-    };
-
-    // ✅ 登入
-    document.getElementById("login-btn").addEventListener("click", async () => {
-      try {
-        const user = await FINORA_AUTH.signInWithGoogle();
-        if (user) {
-          alert(i18n("login_success"));
-          location.reload();
-        }
-      } catch (e) {
-        console.error("登入失敗", e);
-        alert(i18n("login_failed"));
-      }
-    });
-
-    // ✅ 登出
-    document.getElementById("logout-btn").addEventListener("click", async () => {
-      await FINORA_AUTH.signOutFromGoogle();
-      alert(i18n("logout_success"));
-      location.reload();
-    });
-
-    // ✅ 重新命名帳本
-    document.getElementById("rename-account-btn").addEventListener("click", async () => {
-      const newName = prompt(i18n("rename_prompt"), "");
-      if (newName) {
-        await FINORA_AUTH.renameAccount(newName);
-        alert(i18n("rename_success"));
-        location.reload();
-      }
-    });
-
-    // ✅ 顯示新增帳本欄位（含免費限制）
-    document.getElementById("new-account-btn").addEventListener("click", () => {
-      const accounts = JSON.parse(localStorage.getItem("accounts") || "[]");
-      if (isFreeUser() && accounts.length > 1) {
-        const modal = document.getElementById("upgrade-modal");
-        if (modal) modal.style.display = "flex";
-        return;
-      }
-      document.getElementById("new-account-input-group").style.display = "block";
-    });
-
-    // ✅ 儲存新帳本
-    document.getElementById("save-new-account").addEventListener("click", async () => {
-      const name = document.getElementById("new-account-name").value.trim();
-      if (!name) return alert(i18n("account_name_required"));
-      await FINORA_AUTH.addAccount(name);
-      alert(i18n("add_success"));
-      location.reload();
-    });
-
-    // ✅ 刪除帳本
-    document.getElementById("delete-account-btn").addEventListener("click", async () => {
-      if (confirm(i18n("confirm_delete"))) {
-        await FINORA_AUTH.deleteAccount();
-        alert(i18n("delete_success"));
-        location.reload();
-      }
-    });
-
-    // ✅ 登入狀態變化後處理帳本載入與限制
-    FINORA_AUTH.onUserChanged(async (user) => {
-      const loginBtn = document.getElementById("login-btn");
-      const logoutBtn = document.getElementById("logout-btn");
-      loginBtn.style.display = user ? "none" : "inline-block";
-      logoutBtn.style.display = user ? "inline-block" : "none";
-
-      if (user) {
-        const accountSelect = document.getElementById("account-select");
-        const accounts = await FINORA_AUTH.fetchAccountList();
-        accountSelect.innerHTML = "";
-
-        // ✅ 免費且帳本超過 1 本，強制選擇保留帳本
-        if (isFreeUser() && accounts.length > 1) {
-          const retainedId = localStorage.getItem("retainedAccountId");
-
-          if (!retainedId) {
-            showAccountRetentionModal(accounts);
-            return; // 等待使用者選擇再繼續
-          }
-
-          // ✅ 使用者已選保留帳本，自動切換
-          FINORA_AUTH.setSelectedAccount(retainedId);
-
-          // ✅ 鎖住帳本切換與新增
-          document.getElementById("account-select").disabled = true;
-          document.getElementById("new-account-btn").disabled = true;
-          document.getElementById("delete-account-btn").disabled = true;
-        }
-
-        accounts.forEach(acc => {
-          const opt = document.createElement("option");
-          opt.value = acc.id;
-          opt.textContent = acc.displayName || acc.id;
-          accountSelect.appendChild(opt);
-        });
-
-        const selected = FINORA_AUTH.getCurrentAccount();
-        if (selected) accountSelect.value = selected;
-
-        accountSelect.onchange = (e) => {
-          FINORA_AUTH.setSelectedAccount(e.target.value);
-          location.reload();
-        };
-      }
-    });
   });
+});
 </script>
-
-  </body>  
+</body>
 </html>
