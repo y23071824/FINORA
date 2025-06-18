@@ -292,7 +292,36 @@ document.addEventListener("DOMContentLoaded", async () => {
     
   } catch (e) {    
     alert(i18n("please_login"));    
-  }    
+  } 
+
+  function isFreeUser() {
+  const createdAt = localStorage.getItem("userCreatedAt");
+  if (!createdAt) return true;
+  const daysUsed = (Date.now() - parseInt(createdAt, 10)) / (1000 * 60 * 60 * 24);
+  return daysUsed > 30;
+}
+
+if (!localStorage.getItem("userCreatedAt")) {
+  localStorage.setItem("userCreatedAt", Date.now().toString());
+}
+
+function applyUsageLimits() {
+  if (isFreeUser()) {
+    const accounts = JSON.parse(localStorage.getItem("accounts") || "[]");
+    if (accounts.length > 1) {
+      alert(i18n("free_user_limit_accounts"));
+    }
+
+    const rateSection = document.getElementById("exchange-section");
+    if (rateSection) rateSection.style.display = "none";
+
+    const currencySelect = document.getElementById("currency-select");
+    if (currencySelect) currencySelect.disabled = true;
+  }
+}
+
+applyUsageLimits();
+  
 });    
 </script>    <a href="../app.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374" data-i18n="back_home_link">← 返回首頁</a>
 
