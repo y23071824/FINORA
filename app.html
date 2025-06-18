@@ -279,7 +279,23 @@ body.logo-full-bg {
       localStorage.setItem("lang", this.value);  
       location.reload();  
     });  
-  
+    
+function isFreeUser() {
+  const createdAt = localStorage.getItem("userCreatedAt");
+  if (!createdAt) return true;
+  const daysUsed = (Date.now() - parseInt(createdAt, 10)) / (1000 * 60 * 60 * 24);
+  return daysUsed > 30;
+}
+
+// 頁面載入時判斷是否顯示升級提示
+document.addEventListener("DOMContentLoaded", () => {
+  const accounts = JSON.parse(localStorage.getItem("accounts") || "[]");
+  if (isFreeUser() && accounts.length > 1) {
+    const modal = document.getElementById("upgrade-modal");
+    if (modal) modal.style.display = "flex";
+  }
+});
+
     // 登入功能  
     document.getElementById("login-btn").addEventListener("click", async () => {  
       try {  
@@ -362,5 +378,18 @@ body.logo-full-bg {
       }  
     });  
   });  
-</script>  </body>  
+</script>  
+  <!-- 🌟 升級提示模組（固定在首頁） -->
+<div id="upgrade-modal" style="display: none; position: fixed; top: 0; left: 0;
+  width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999;
+  display: flex; align-items: center; justify-content: center;">
+  <div style="background: white; padding: 2rem; max-width: 90%; border-radius: 12px; text-align: center;">
+    <p style="font-size: 1.1rem;" data-i18n="upgrade_required_msg">
+      您目前使用的是免費帳號，僅限一個帳本與基本功能。如需解鎖更多功能，請升級為進階版。
+    </p>
+    <a href="tools/upgrade.html" class="cta-button" data-i18n="upgrade_now">立即升級</a><br><br>
+    <button onclick="document.getElementById('upgrade-modal').style.display='none';" class="cta-button-outline" data-i18n="close">關閉</button>
+  </div>
+</div>
+  </body>  
 </html>
