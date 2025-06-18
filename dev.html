@@ -1,8 +1,11 @@
 <!DOCTYPE html><html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>FINORA 測試工具</title>
+  <title>FINORA Dev 測試工具</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <style>
     body { font-family: sans-serif; padding: 2rem; background: #fffaf8; }
     h1 { color: #b4695d; }
@@ -13,8 +16,21 @@
 <body>
   <h1>🔧 FINORA Dev 測試工具</h1>
   <div id="info"></div>
-  <button onclick="clearLocal()">🧹 清除 localStorage 並重整</button>
-  <button onclick="simulateExpired()">📅 模擬過期狀態</button>  <script>
+  <button onclick="clearLocal()">🧹 清除 localStorage 並重置</button>
+  <button onclick="simulateExpired()">📅 模擬過期狀態</button>
+  <button onclick="testLogin()">🔐 測試 Firebase 登入</button>  <script>
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyBJE12oIoK4gr153jkNBokQ-d3ohnN4aWE",
+      authDomain: "finora-d8cb3.firebaseapp.com",
+      projectId: "finora-d8cb3",
+      storageBucket: "finora-d8cb3.appspot.com",
+      messagingSenderId: "716455528328",
+      appId: "1:716455528328:web:16f6e68311e4deb2c31c3d"
+    };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
     function showInfo() {
       const userCreatedAt = localStorage.getItem("userCreatedAt");
       const selectedAccount = localStorage.getItem("selectedAccount");
@@ -28,7 +44,7 @@
 
       const info = `
 📅 使用天數：${daysUsed} 天
-🧑‍💼 selectedAccount：${selectedAccount}
+🧑‍🎓 selectedAccount：${selectedAccount}
 📘 retainedAccountId：${retainedAccountId}
 💾 本機帳本數量：${assetsKeys.length}
 📂 帳本 Keys：\n${assetsKeys.join("\n")}
@@ -39,15 +55,26 @@
 
 function clearLocal() {
   localStorage.clear();
-  alert("已清除 localStorage，將重新整理頁面");
+  alert("✅ 已清除 localStorage，將重新整理頁面");
   location.reload();
 }
 
 function simulateExpired() {
   const fakeCreatedAt = Date.now() - (31 * 24 * 60 * 60 * 1000); // 31天前
   localStorage.setItem("userCreatedAt", fakeCreatedAt.toString());
-  alert("已模擬過期狀態，下次載入視為過期用戶");
+  alert("📅 已模擬過期狀態，下次載入視為過期用戶");
   location.reload();
+}
+
+async function testLogin() {
+  try {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    const result = await auth.signInWithPopup(provider);
+    const user = result.user;
+    alert(`✅ 登入成功\n${user.email}`);
+  } catch (e) {
+    alert("❌ 登入失敗：" + e.message);
+  }
 }
 
 document.addEventListener("DOMContentLoaded", showInfo);
