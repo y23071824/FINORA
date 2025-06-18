@@ -433,6 +433,26 @@ document.addEventListener("DOMContentLoaded", async () => {
         FINORA_AUTH.setSelectedAccount(e.target.value);
         location.reload();
       };
+      // ✅ 若無登入且試用已過，自動啟用本機帳本
+if (isFreeUser() && !firebase.auth().currentUser) {
+  const accountSelect = document.getElementById("account-select");
+  const localId = "local-default";
+  localStorage.setItem("selectedAccount", localId);
+  accountSelect.innerHTML = "";
+  const opt = document.createElement("option");
+  opt.value = localId;
+  opt.textContent = "本機帳本";
+  accountSelect.appendChild(opt);
+  accountSelect.disabled = true;
+
+  // 隱藏新增與刪除功能
+  document.getElementById("new-account-btn").style.display = "none";
+  document.getElementById("delete-account-btn").style.display = "none";
+  document.getElementById("rename-account-btn").style.display = "none";
+
+  // 停用匯率與股價更新（如果你後面有這些功能）
+  console.log("已進入免費模式：使用本機帳本");
+}
     }
   });
 });
