@@ -309,6 +309,11 @@ body.logo-full-bg {
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script src="firebase-sync.js"></script>
+  <script>
+  if (!window.FINORA_AUTH) {
+    console.error("❌ FINORA_AUTH 尚未正確載入，請檢查 firebase-sync.js 是否有錯誤");
+  }
+</script>
   <script src="lang.js"></script>
   
 <script>
