@@ -20,11 +20,18 @@ const createdAt = localStorage.getItem("userCreatedAt");
 const devMode = localStorage.getItem("devMode") === "yes";
 if (createdAt) {
   const daysUsed = (Date.now() - parseInt(createdAt, 10)) / (1000 * 60 * 60 * 24);
-  if (daysUsed > 30 && !devMode) {
-    console.log("⛔ 試用期已過，firebase-sync.js 停用 Firebase 同步功能");
-    window.FINORA_AUTH = {}; // 避免主程式報錯
-    return;
-  }
+if (daysUsed > 30 && !devMode) {
+  console.log("⛔ 試用期已過，firebase-sync.js 停用 Firebase 同步功能");
+
+  // ✅ 本機帳本簡易功能
+  window.FINORA_AUTH = {
+    getCurrentAccount: () => localStorage.getItem("selectedAccount") || "default",
+    setSelectedAccount: (name) => localStorage.setItem("selectedAccount", name),
+    onUserChanged: (cb) => cb(null) // 永遠回傳 null（代表未登入）
+  };
+
+  return;
+}
 }
 
 // ✅ Firebase 物件
