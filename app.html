@@ -307,8 +307,8 @@ margin: 0 auto 1.5rem;
   <script src="lang.js"></script>
   <script src="main-script.js"></script> <!-- ✅ 你整合的登入/帳本/試用期邏輯放這 -->
 <script>
-// ✅ 初始化與語言設定 
-const lang = localStorage.getItem("lang") || "zh-Hant"; 
+// ✅ 初始化與語言設定
+const lang = localStorage.getItem("lang") || "zh-Hant";
 if (typeof applyLang === "function") applyLang(lang);
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -321,12 +321,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // ✅ 第一次登入記錄建立時間 
+  // ✅ 第一次登入記錄建立時間
   if (!localStorage.getItem("userCreatedAt")) {
     localStorage.setItem("userCreatedAt", Date.now().toString());
   }
 
-  // ✅ 判斷是否為免費用戶 
+  // ✅ 判斷是否為免費用戶
   function isFreeUser() {
     if (localStorage.getItem("devMode") === "yes") return false;
     const createdAt = localStorage.getItem("userCreatedAt");
@@ -337,15 +337,23 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // ✅ 顯示保留帳本 modal
   function showAccountRetentionModal(accounts) {
-    const select = document.getElementById("retain-select");
-    select.innerHTML = "";
+    const select = document.createElement("select");
+    select.id = "retain-select";
     accounts.forEach(acc => {
       const opt = document.createElement("option");
       opt.value = acc.id;
       opt.textContent = acc.displayName || acc.id;
       select.appendChild(opt);
     });
-    document.getElementById("account-retain-modal").style.display = "flex";
+    const modal = document.getElementById("account-retain-modal");
+    modal.innerHTML = `
+      <div style="background:white;padding:2rem;border-radius:12px;text-align:center;max-width:360px;margin:auto">
+        <p>請選擇您要保留的帳本：</p>
+        ${select.outerHTML}
+        <button onclick="confirmAccountRetention()">確定</button>
+      </div>
+    `;
+    modal.style.display = "flex";
   }
 
   // ✅ 確認保留帳本
@@ -360,7 +368,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // ✅ Google 登入
   document.getElementById("login-btn").addEventListener("click", async () => {
     if (isFreeUser()) {
-      alert(i18n("expired_free_message"));
+      alert("您的免費試用已到期。您可使用本機帳本。也可升級版本繼續享受 Google 登入、三本帳本管理、匯率與股價同步功能喔。");
       return;
     }
     try {
@@ -438,14 +446,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (retainedId) {
         FINORA_AUTH.setSelectedAccount(retainedId);
       }
-
       accounts.forEach(acc => {
         const opt = document.createElement("option");
         opt.value = acc.id;
         opt.textContent = acc.displayName || acc.id;
         accountSelect.appendChild(opt);
       });
-
       const selected = FINORA_AUTH.getCurrentAccount();
       if (selected) accountSelect.value = selected;
       accountSelect.onchange = (e) => {
