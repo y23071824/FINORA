@@ -51,48 +51,6 @@ async function fetchAccountList() {
   return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }
 
-// ✅ 設定帳本名稱
-async function setAccountDisplayName(accountId, displayName) {
-  ensureLoggedIn();
-  if (!accountId || !displayName || displayName.trim() === "") throw new Error("帳本資料無效");
-  const docRef = db.collection("accounts").doc(accountId);
-  await docRef.set({ uid: currentUser.uid, displayName }, { merge: true });
-}
-
-// ✅ 建立帳本
-async function createNewAccount(displayName) {
-  ensureLoggedIn();
-  const list = await fetchAccountList();
-  if (list.length >= MAX_ACCOUNT_COUNT) throw new Error(`最多只能建立 ${MAX_ACCOUNT_COUNT} 本帳本`);
-  const newId = Date.now().toString();
-  await setAccountDisplayName(newId, displayName);
-  return newId;
-}
-
-// ✅ 刪除帳本
-async function deleteAccount(accountId) {
-  ensureLoggedIn();
-  if (!accountId) throw new Error("帳本 ID 無效");
-  const ref = db.collection("accounts").doc(accountId);
-  const assetRef = db
-    .collection("users")
-    .doc(currentUser.uid)
-    .collection("accounts")
-    .doc(accountId)
-    .collection("assets");
-
-  const assets = await assetRef.get();
-  const batch = db.batch();
-  assets.forEach(doc => batch.delete(doc.ref));
-  batch.delete(ref);
-  await batch.commit();
-
-  if (selectedAccount === accountId) {
-    selectedAccount = null;
-    localStorage.removeItem("selectedAccount");
-    localStorage.removeItem(getLocalStorageKey());
-  }
-}
 
 // ✅ 主要功能導出
 window.FINORA_AUTH = {
@@ -182,6 +140,49 @@ window.FINORA_AUTH = {
     });
   },
 
+// ✅ 設定帳本名稱
+async function setAccountDisplayName(accountId, displayName) {
+  ensureLoggedIn();
+  if (!accountId || !displayName || displayName.trim() === "") throw new Error("帳本資料無效");
+  const docRef = db.collection("accounts").doc(accountId);
+  await docRef.set({ uid: currentUser.uid, displayName }, { merge: true });
+}
+
+// ✅ 建立帳本
+async function createNewAccount(displayName) {
+  ensureLoggedIn();
+  const list = await fetchAccountList();
+  if (list.length >= MAX_ACCOUNT_COUNT) throw new Error(`最多只能建立 ${MAX_ACCOUNT_COUNT} 本帳本`);
+  const newId = Date.now().toString();
+  await setAccountDisplayName(newId, displayName);
+  return newId;
+}
+
+// ✅ 刪除帳本
+async function deleteAccount(accountId) {
+  ensureLoggedIn();
+  if (!accountId) throw new Error("帳本 ID 無效");
+  const ref = db.collection("accounts").doc(accountId);
+  const assetRef = db
+    .collection("users")
+    .doc(currentUser.uid)
+    .collection("accounts")
+    .doc(accountId)
+    .collection("assets");
+
+  const assets = await assetRef.get();
+  const batch = db.batch();
+  assets.forEach(doc => batch.delete(doc.ref));
+  batch.delete(ref);
+  await batch.commit();
+
+  if (selectedAccount === accountId) {
+    selectedAccount = null;
+    localStorage.removeItem("selectedAccount");
+    localStorage.removeItem(getLocalStorageKey());
+  }
+}
+  
   // ✅ 其他功能
   getCurrentAccount: () => selectedAccount,
   setSelectedAccount: (name) => {
