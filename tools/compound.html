@@ -88,28 +88,42 @@ async function fetchExchangeRatesOnce() {
 function renderAssetFromStorage() {
   const accountId = localStorage.getItem("selectedAccount") || "default";
   const raw = localStorage.getItem(`assets_breakdown_${accountId}`);
-  if (!raw) return;
-  const data = JSON.parse(raw);
   const container = document.getElementById("asset-summary");
+
+  if (!raw) {
+    console.warn("❌ 找不到資產分類資料，請先到資產頁建立資產");
+    if (container) container.innerHTML = `<p style="color: red;">⚠️ 尚未建立資產，請先至資產頁新增資產</p>`;
+    return;
+  }
+
+  if (!container) {
+    console.error("❌ 缺少 #asset-summary 容器");
+    return;
+  }
+
+  const data = JSON.parse(raw);
   const currency = data.selectedCurrency;
   const summary = data.summary || {};
   const profits = data.profits || {};
   const totalConverted = data.totalConverted;
 
   let html = `<h3>📊 ${i18n("asset_category_summary")}</h3>`;
+
   for (let type in summary) {
     for (let cur in summary[type]) {
       const val = summary[type][cur];
       const profit = profits[type]?.[cur] || 0;
-      const profitText = profit ? `（${i18n("profit")}：${profit.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${cur}）` : "";
+      const profitText = profit
+        ? `（${i18n("profit") || "盈餘"}：${profit.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${cur}）`
+        : "";
       html += `<p>📌 ${i18n(`type_${type}`) || type}：${val.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${cur} ${profitText}</p>`;
     }
   }
-  html += `<p style="font-weight:bold; color:#b4695d;">💎 ${i18n("total_asset_value", { currency })}${Math.round(totalConverted).toLocaleString()} ${currency}</p>`;
-  container.innerHTML = html;
-  document.getElementById("principal").value = Math.round(totalConverted);
-}
 
+  html += `<p style="margin-top:1rem; font-weight:bold;">💎 ${i18n("total_asset_value", { currency })}${Math.round(totalConverted).toLocaleString()} ${currency}</p>`;
+
+  container.innerHTML = html;
+}
 function calculateCompound() {
   const p = parseFloat(document.getElementById("principal").value) || 0;
   const r = (parseFloat(document.getElementById("rate").value) || 0) / 100;
