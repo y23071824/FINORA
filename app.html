@@ -301,38 +301,39 @@ body.logo-full-bg {
       location.reload();  
     });  
   
-    // 重新命名帳本  
-    document.getElementById("rename-account-btn").addEventListener("click", async () => {  
-      const newName = prompt(i18n("rename_prompt"), "");  
-      if (newName) {  
-        await FINORA_AUTH.renameAccount(newName);  
-        alert(i18n("rename_success"));  
-        location.reload();  
-      }  
-    });  
   
     // 顯示新增帳本欄位  
     document.getElementById("new-account-btn").addEventListener("click", () => {  
       document.getElementById("new-account-input-group").style.display = "block";  
     });  
   
-    // 儲存新帳本  
-    document.getElementById("save-new-account").addEventListener("click", async () => {  
-      const name = document.getElementById("new-account-name").value.trim();  
-      if (!name) return alert(i18n("account_name_required"));  
-      await FINORA_AUTH.addAccount(name);  
-      alert(i18n("add_success"));  
-      location.reload();  
-    });  
-  
-    // 刪除帳本  
-    document.getElementById("delete-account-btn").addEventListener("click", async () => {  
-      if (confirm(i18n("confirm_delete"))) {  
-        await FINORA_AUTH.deleteAccount();  
-        alert(i18n("delete_success"));  
-        location.reload();  
-      }  
-    });  
+   / ✅ 重新命名帳本
+document.getElementById("rename-account-btn").addEventListener("click", async () => {
+  const newName = prompt(i18n("rename_prompt"), "");
+  if (newName) {
+    await FINORA_AUTH.setAccountDisplayName(FINORA_AUTH.getCurrentAccount(), newName);
+    alert(i18n("rename_success"));
+    location.reload();
+  }
+});
+
+// ✅ 儲存新帳本
+document.getElementById("save-new-account").addEventListener("click", async () => {
+  const name = document.getElementById("new-account-name").value.trim();
+  if (!name) return alert(i18n("account_name_required"));
+  await FINORA_AUTH.createNewAccount(name);
+  alert(i18n("add_success"));
+  location.reload();
+});
+
+// ✅ 刪除帳本
+document.getElementById("delete-account-btn").addEventListener("click", async () => {
+  if (confirm(i18n("confirm_delete"))) {
+    await FINORA_AUTH.deleteAccount(FINORA_AUTH.getCurrentAccount());
+    alert(i18n("delete_success"));
+    location.reload();
+  }
+});
   
     // 監聽登入狀態變化  
     FINORA_AUTH.onUserChanged(async (user) => {  
