@@ -76,6 +76,15 @@ async function testLogin() {
   }
 }
 
+    <script>
+document.addEventListener("DOMContentLoaded", () => {
+  if (!window.FINORA_AUTH) {
+    alert("❌ FINORA_AUTH 未正確載入");
+  } else {
+    alert("✅ FINORA_AUTH 已載入");
+  }
+});
+</script>
 document.addEventListener("DOMContentLoaded", showInfo);
 
   </script>
