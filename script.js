@@ -89,6 +89,7 @@ async function fetchExchangeRatesOnce() {
   console.log("⏰ 匯率過期或未存在，開始查詢...");
   await fetchExchangeRates();
 }
+  }
 
 // ✅ 股票查價（美股 + 台股）
 async function fetchStockPrice(symbol, category) {
