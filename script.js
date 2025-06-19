@@ -410,6 +410,17 @@ function render() {
   convertedLi.textContent = `💰 ${i18n("total_asset")}（${selectedCurrency}）：${totalConverted.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${selectedCurrency}`;
   totalsList.appendChild(convertedLi);
 
+  const assetBreakdown = {
+  summary: totalsByType,       // 各類別市值
+  profits: profitsByType,      // 各類別盈餘
+  totals: currencyTotals,      // 幣別總和
+  totalConverted: totalInSelectedCurrency, // 折合總資產
+  selectedCurrency: selectedCurrency       // 當前幣別
+};
+
+localStorage.setItem(`assets_breakdown_${getSelectedAccount()}`, JSON.stringify(assetBreakdown));
+
+
   // 匯率更新時間
   const now = new Date();
   const rateTime = document.getElementById("rate-time");
