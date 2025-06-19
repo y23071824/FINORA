@@ -1,12 +1,26 @@
-// ✅ firebase-sync.js 完整修正版本（支援試用期後自動切換本機帳本）
-
-// ✅ 試用期過期時停用 Firebase 功能（非 devMode）
 const createdAt = localStorage.getItem("userCreatedAt");
 const devMode = localStorage.getItem("devMode") === "yes";
+
+// ✅ 永遠都執行 firebase.initializeApp()
+const firebaseConfig = {
+  apiKey: "AIzaSyBJE12oIoK4gr153jkNBokQ-d3ohnN4aWE",
+  authDomain: "finora-d8cb3.firebaseapp.com",
+  projectId: "finora-d8cb3",
+  storageBucket: "finora-d8cb3.appspot.com",
+  messagingSenderId: "716455528328",
+  appId: "1:716455528328:web:16f6e68311e4deb2c31c3d"
+};
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
+
+// ✅ 接著再依 devMode 決定是否啟用同步邏輯（但不要跳過上面那段）
 if (createdAt) {
   const daysUsed = (Date.now() - parseInt(createdAt, 10)) / (1000 * 60 * 60 * 24);
   if (daysUsed > 30 && !devMode) {
-    console.log("⛔ 試用期已過，firebase-sync.js 停用 Firebase 功能");
+    console.log("⛔ 試用期已過，firebase-sync.js 停用 Firebase 同步功能");
+    // 👉 只停用同步功能，不 return 整段，不影響初始化
+    window.FINORA_AUTH = {};  // 給一個空殼避免 app.html 錯誤
     return;
   }
 }
