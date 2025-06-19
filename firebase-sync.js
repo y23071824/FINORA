@@ -1,6 +1,5 @@
-// ✅ firebase-sync.js 最新版（含開發模式與試用期邏輯）
+// ✅ firebase-sync.js 最終版（含開發模式、試用期、帳本管理、renameAccount）
 
-// ✅ Firebase 初始化（一定要先執行）
 const firebaseConfig = {
   apiKey: "AIzaSyBJE12oIoK4gr153jkNBokQ-d3ohnN4aWE",
   authDomain: "finora-d8cb3.firebaseapp.com",
@@ -15,30 +14,25 @@ if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
 
-// ✅ 試用期檢查（只停用同步功能，不 return 整段）
 const createdAt = localStorage.getItem("userCreatedAt");
 const devMode = localStorage.getItem("devMode") === "yes";
 if (createdAt) {
   const daysUsed = (Date.now() - parseInt(createdAt, 10)) / (1000 * 60 * 60 * 24);
-if (daysUsed > 30 && !devMode) {
-  console.log("⛔ 試用期已過，firebase-sync.js 停用 Firebase 同步功能");
+  if (daysUsed > 30 && !devMode) {
+    console.log("⛔ 試用期已過，firebase-sync.js 停用 Firebase 同步功能");
 
-  // ✅ 本機帳本簡易功能
-  window.FINORA_AUTH = {
-    getCurrentAccount: () => localStorage.getItem("selectedAccount") || "default",
-    setSelectedAccount: (name) => localStorage.setItem("selectedAccount", name),
-    onUserChanged: (cb) => cb(null) // 永遠回傳 null（代表未登入）
-  };
-
-  return;
-}
+    window.FINORA_AUTH = {
+      getCurrentAccount: () => localStorage.getItem("selectedAccount") || "default",
+      setSelectedAccount: (name) => localStorage.setItem("selectedAccount", name),
+      onUserChanged: (cb) => cb(null) // 永遠為未登入狀態
+    };
+    return;
+  }
 }
 
-// ✅ Firebase 物件
 const auth = firebase.auth();
 const db = firebase.firestore();
 const provider = new firebase.auth.GoogleAuthProvider();
-
 const MAX_ACCOUNT_COUNT = 3;
 let currentUser = null;
 let selectedAccount = localStorage.getItem("selectedAccount") || null;
@@ -95,6 +89,14 @@ async function deleteAccount(accountId) {
     localStorage.removeItem("selectedAccount");
     localStorage.removeItem(getLocalStorageKey());
   }
+}
+
+async function renameAccount(newDisplayName) {
+  ensureLoggedIn();
+  const id = selectedAccount;
+  if (!id || !newDisplayName || newDisplayName.trim() === "") throw new Error("帳本資料無效");
+  const docRef = db.collection("accounts").doc(id);
+  await docRef.set({ uid: currentUser.uid, displayName: newDisplayName }, { merge: true });
 }
 
 window.FINORA_AUTH = {
@@ -184,13 +186,6 @@ window.FINORA_AUTH = {
   setAccountDisplayName,
   createNewAccount,
   deleteAccount,
-  addAccount: createNewAccount // 補上 addAccount 功能
-    
-async function renameAccount(newDisplayName) {
-  ensureLoggedIn();
-  const id = selectedAccount;
-  if (!id || !newDisplayName || newDisplayName.trim() === "") throw new Error("帳本資料無效");
-  const docRef = db.collection("accounts").doc(id);
-  await docRef.set({ uid: currentUser.uid, displayName: newDisplayName }, { merge: true });
-}
+  renameAccount,
+  addAccount: createNewAccount // alias
 };
