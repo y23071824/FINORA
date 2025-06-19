@@ -295,8 +295,16 @@ total: "總金額",
 free_user_limit_accounts: "目前為免費帳號，僅能使用一個帳本與基本功能，如需更多功能請升級",
 upgrade_required_msg: "您目前使用的是免費帳號 僅限一個帳本與基本功能 如需解鎖更多功能 請升級為進階版",
   upgrade_now: "立即升級",
-  close: "關閉"
-
+  close: "關閉",
+   login_success: "登入成功！",
+    login_failed: "登入失敗，請稍後再試。",
+    logout_success: "已成功登出。",
+    rename_prompt: "請輸入新的帳本名稱：",
+    rename_success: "帳本已重新命名！",
+    add_success: "帳本新增成功！",
+    delete_success: "帳本已刪除！",
+    confirm_delete: "確定要刪除此帳本？",
+    account_name_required: "請輸入帳本名稱"
 },
   
  "zh-Hans": {
@@ -562,7 +570,16 @@ placeholder_monthly: "默认 30,000",
 free_user_limit_accounts: "当前为免费账号，仅限使用一个账本和基本功能，如需更多请升级",
 upgrade_required_msg: "您当前使用的是免费账户 仅限一个账本和基本功能 如需解锁更多功能 请升级为进阶版",
   upgrade_now: "立即升级",
-  close: "关闭"
+  close: "关闭",
+login_success: "登录成功！",
+    login_failed: "登录失败，请稍后再试。",
+    logout_success: "已成功登出。",
+    rename_prompt: "请输入新的账本名称：",
+    rename_success: "账本已重命名！",
+    add_success: "账本新增成功！",
+    delete_success: "账本已删除！",
+    confirm_delete: "确定要删除此账本？",
+    account_name_required: "请输入账本名称"
 
 },
 
@@ -828,8 +845,16 @@ placeholder_monthly: "Default: 30,000",
 free_user_limit_accounts: "You are currently using the free plan with one account and basic features. Upgrade for more.",
 upgrade_required_msg: "You are currently using the free version with one account and basic features Upgrade to unlock more",
   upgrade_now: "Upgrade Now",
-  close: "Close"
-
+  close: "Close",
+login_success: "Login successful!",
+    login_failed: "Login failed. Please try again later.",
+    logout_success: "Successfully logged out.",
+    rename_prompt: "Enter new account name:",
+    rename_success: "Account renamed!",
+    add_success: "Account created!",
+    delete_success: "Account deleted!",
+    confirm_delete: "Are you sure you want to delete this account?",
+    account_name_required: "Please enter an account name"
 },
 
   
@@ -1095,7 +1120,16 @@ placeholder_monthly: "デフォルト：30,000",
 free_user_limit_accounts: "現在は無料プランを利用中です。アカウントは1つまでで、基本機能のみ使用できます。アップグレードをご検討ください。",
 upgrade_required_msg: "現在は無料プランを利用中です アカウントは1つまで 基本機能のみ使用可能です アップグレードで全機能を解放できます",
   upgrade_now: "今すぐアップグレード",
-  close: "閉じる"
+  close: "閉じる",
+   login_success: "ログイン成功！",
+    login_failed: "ログインに失敗しました。後で再試行してください。",
+    logout_success: "ログアウトしました。",
+    rename_prompt: "新しい帳簿名を入力してください：",
+    rename_success: "帳簿名を変更しました！",
+    add_success: "新しい帳簿を作成しました！",
+    delete_success: "帳簿を削除しました！",
+    confirm_delete: "この帳簿を削除してもよろしいですか？",
+    account_name_required: "帳簿名を入力してください"
 
   }
 };
