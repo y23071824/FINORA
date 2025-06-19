@@ -185,4 +185,12 @@ window.FINORA_AUTH = {
   createNewAccount,
   deleteAccount,
   addAccount: createNewAccount // 補上 addAccount 功能
+    
+async function renameAccount(newDisplayName) {
+  ensureLoggedIn();
+  const id = selectedAccount;
+  if (!id || !newDisplayName || newDisplayName.trim() === "") throw new Error("帳本資料無效");
+  const docRef = db.collection("accounts").doc(id);
+  await docRef.set({ uid: currentUser.uid, displayName: newDisplayName }, { merge: true });
+}
 };
