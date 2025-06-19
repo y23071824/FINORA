@@ -18,13 +18,14 @@ function getLocalStorageKey() {
 let assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
 let bankHistory = JSON.parse(localStorage.getItem("banks") || "[]");
 let exchangeRates = {};
+let exchangeRatesLoaded = false;
 let editIndex = null;
 
 // ✅ DOM 元素定義（稍後啟動流程會綁定）
 let form, typeSelect, stockFields, insuranceFields, amountField;
 let assetList, totalsList, profitList, bankDatalist;
 
-// ✅ 匯率查詢（含 CNY 與 fallback）
+// ✅ 匯率查詢主函式（含 fallback 與備援）
 async function fetchExchangeRates() {
   try {
     const res = await fetch("https://v6.exchangerate-api.com/v6/747171c8dd2eaa9173e2d890/latest/USD");
@@ -42,17 +43,15 @@ async function fetchExchangeRates() {
 
     localStorage.setItem("exchangeRates", JSON.stringify(exchangeRates));
     localStorage.setItem("exchangeRatesTimestamp", Date.now());
-    console.log("💱 匯率已更新：", exchangeRates);
+    console.log("💱 " + i18n("exchange_rate_updated") + "：", exchangeRates);
   } catch (err) {
-    console.error("❌ 匯率查詢錯誤：", err.message);
+    console.error("❌ " + i18n("exchange_rate_error") + "：" + err.message);
 
-    // 嘗試使用 localStorage 備援
     const backup = localStorage.getItem("exchangeRates");
     if (backup) {
       exchangeRates = JSON.parse(backup);
-      console.log("📦 使用備援匯率資料（localStorage）", exchangeRates);
+      console.log("📦 " + i18n("using_backup_rates"), exchangeRates);
     } else {
-      // 最終預設值
       exchangeRates = {
         USD: 1,
         TWD: 32,
@@ -60,11 +59,17 @@ async function fetchExchangeRates() {
         EUR: 1.08,
         CNY: 7.18
       };
-      console.warn("📦 使用預設匯率資料", exchangeRates);
+      console.warn("📦 " + i18n("using_default_rates"), exchangeRates);
     }
   }
+}
 
-  render(); // 更新畫面
+
+// ✅ 匯率查詢（只執行一次）
+async function fetchExchangeRatesOnce() {
+  if (exchangeRatesLoaded) return;
+  exchangeRatesLoaded = true;
+  await fetchExchangeRates();
 }
 
 // ✅ 股票查價（美股 + 台股）
@@ -78,7 +83,6 @@ async function fetchStockPrice(symbol, category) {
       const today = new Date().toISOString().slice(0, 10);
       const res = await fetch(`https://api.finmindtrade.com/api/v4/data?dataset=TaiwanStockPrice&data_id=${symbol}&start_date=${today}`);
       const data = await res.json();
-
       if (data.data && data.data.length > 0) {
         const latest = data.data.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
         return latest.close;
@@ -463,6 +467,7 @@ function typeToKey(type) {
 
 document.addEventListener("DOMContentLoaded",async () => { 
   console.log("🔄 系統初始化中...");
+  
 
 // 🔧 綁定 DOM 元素 
   form = document.getElementById("asset-form"); typeSelect = document.getElementById("type"); stockFields = document.getElementById("stock-fields"); insuranceFields = document.getElementById("insurance-fields"); amountField = document.getElementById("amount-field"); assetList = document.getElementById("asset-list"); totalsList = document.getElementById("totals-list"); profitList = document.getElementById("stock-profit-list"); bankDatalist = document.getElementById("bank-list");
@@ -570,7 +575,7 @@ if (cryptoSymbolInput && cryptoPriceInput) {
 
 
   // 📊 載入匯率與資產
-  await fetchExchangeRates();
+  await fetchExchangeRatesOnce(); 
   await updateAllStockPrices();
 
   // 🧾 重新讀入資產
