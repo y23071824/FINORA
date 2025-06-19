@@ -61,9 +61,8 @@ function clearLocal() {
 
 function simulateExpired() {
   const fakeCreatedAt = Date.now() - (31 * 24 * 60 * 60 * 1000); // 31天前
-  localStorage.setItem("userCreatedAt", fakeCreatedAt.toString());
-  alert("📅 已模擬過期狀態，下次載入視為過期用戶");
-  location.reload();
+  localStorage.setItem("devMode", "yes");
+location.reload();
 }
 
 async function testLogin() {
