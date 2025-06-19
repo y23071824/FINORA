@@ -146,7 +146,7 @@ async function setAccountDisplayName(accountId, displayName) {
   if (!accountId || !displayName || displayName.trim() === "") throw new Error("帳本資料無效");
   const docRef = db.collection("accounts").doc(accountId);
   await docRef.set({ uid: currentUser.uid, displayName }, { merge: true });
-}
+},
 
 // ✅ 建立帳本
 async function createNewAccount(displayName) {
@@ -156,7 +156,7 @@ async function createNewAccount(displayName) {
   const newId = Date.now().toString();
   await setAccountDisplayName(newId, displayName);
   return newId;
-}
+},
 
 // ✅ 刪除帳本
 async function deleteAccount(accountId) {
@@ -181,7 +181,7 @@ async function deleteAccount(accountId) {
     localStorage.removeItem("selectedAccount");
     localStorage.removeItem(getLocalStorageKey());
   }
-}
+},
   
   // ✅ 其他功能
   getCurrentAccount: () => selectedAccount,
