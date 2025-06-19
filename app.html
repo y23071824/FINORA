@@ -406,13 +406,13 @@ if (isFreeUser() && localStorage.getItem("devMode") !== "yes") {
   });
 
   // ✅ 新增帳本
-  document.getElementById("new-account-btn").addEventListener("click", () => {
-    if (isFreeUser()) {
-      alert(i18n("expired_add_account"));
-      return;
-    }
-    document.getElementById("new-account-input-group").style.display = "block";
-  });
+document.getElementById("new-account-btn").addEventListener("click", () => {
+  if (isFreeUser() && localStorage.getItem("devMode") !== "yes") {
+    alert(i18n("expired_add_account"));
+    return;
+  }
+  document.getElementById("new-account-input-group").style.display = "block";
+});
 
   document.getElementById("save-new-account").addEventListener("click", async () => {
     const name = document.getElementById("new-account-name").value.trim();
@@ -472,7 +472,7 @@ if (isFreeUser() && localStorage.getItem("devMode") !== "yes") {
       accountSelect.appendChild(localOption);
       accountSelect.value = localAccountId;
       FINORA_AUTH.setSelectedAccount(localAccountId);
-      accountSelect.disabled = true;
+accountSelect.disabled = !(user || localStorage.getItem("devMode") === "yes");
     }
   });
 });
