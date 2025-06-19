@@ -1,44 +1,33 @@
-const createdAt = localStorage.getItem("userCreatedAt");
-const devMode = localStorage.getItem("devMode") === "yes";
+// ✅ firebase-sync.js 最新版（含開發模式與試用期邏輯）
 
-// ✅ 永遠都執行 firebase.initializeApp()
+// ✅ Firebase 初始化（一定要先執行）
 const firebaseConfig = {
   apiKey: "AIzaSyBJE12oIoK4gr153jkNBokQ-d3ohnN4aWE",
   authDomain: "finora-d8cb3.firebaseapp.com",
   projectId: "finora-d8cb3",
   storageBucket: "finora-d8cb3.appspot.com",
   messagingSenderId: "716455528328",
-  appId: "1:716455528328:web:16f6e68311e4deb2c31c3d"
+  appId: "1:716455528328:web:16f6e68311e4deb2c31c3d",
+  measurementId: "G-KGS1T8F00Y"
 };
+
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
 
-// ✅ 接著再依 devMode 決定是否啟用同步邏輯（但不要跳過上面那段）
+// ✅ 試用期檢查（只停用同步功能，不 return 整段）
+const createdAt = localStorage.getItem("userCreatedAt");
+const devMode = localStorage.getItem("devMode") === "yes";
 if (createdAt) {
   const daysUsed = (Date.now() - parseInt(createdAt, 10)) / (1000 * 60 * 60 * 24);
   if (daysUsed > 30 && !devMode) {
     console.log("⛔ 試用期已過，firebase-sync.js 停用 Firebase 同步功能");
-    // 👉 只停用同步功能，不 return 整段，不影響初始化
-    window.FINORA_AUTH = {};  // 給一個空殼避免 app.html 錯誤
+    window.FINORA_AUTH = {}; // 避免主程式報錯
     return;
   }
 }
 
-// ✅ Firebase 初始化
-if (!firebase.apps.length) {
-  const firebaseConfig = {
-    apiKey: "AIzaSyBJE12oIoK4gr153jkNBokQ-d3ohnN4aWE",
-    authDomain: "finora-d8cb3.firebaseapp.com",
-    projectId: "finora-d8cb3",
-    storageBucket: "finora-d8cb3.appspot.com",
-    messagingSenderId: "716455528328",
-    appId: "1:716455528328:web:16f6e68311e4deb2c31c3d",
-    measurementId: "G-KGS1T8F00Y"
-  };
-  firebase.initializeApp(firebaseConfig);
-}
-
+// ✅ Firebase 物件
 const auth = firebase.auth();
 const db = firebase.firestore();
 const provider = new firebase.auth.GoogleAuthProvider();
@@ -188,5 +177,5 @@ window.FINORA_AUTH = {
   setAccountDisplayName,
   createNewAccount,
   deleteAccount,
-  addAccount: createNewAccount // ✅ 補回 addAccount 功能
+  addAccount: createNewAccount // 補上 addAccount 功能
 };
