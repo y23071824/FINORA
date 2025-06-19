@@ -372,10 +372,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // ✅ Google 登入
   document.getElementById("login-btn").addEventListener("click", async () => {
-    if (isFreeUser()) {
-      alert("您的免費試用已到期。您可使用本機帳本。也可升級版本繼續享受 Google 登入、三本帳本管理、匯率與股價同步功能喔。");
-      return;
-    }
+if (isFreeUser() && localStorage.getItem("devMode") !== "yes") {
+  alert("您的免費試用已到期。您可使用本機帳本。也可升級版本繼續享受 Google 登入、三本帳本管理、匯率與股價同步功能喔。");
+  return;
+}
     try {
       const user = await FINORA_AUTH.signInWithGoogle();
       if (user) {
@@ -441,7 +441,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const accountSelect = document.getElementById("account-select");
     accountSelect.innerHTML = "";
 
-    if (user && !isFreeUser()) {
+    if (user && (!isFreeUser() || localStorage.getItem("devMode") === "yes")) {
       const accounts = await FINORA_AUTH.fetchAccountList();
       const retainedId = localStorage.getItem("retainedAccountId");
       if (!retainedId && accounts.length > 1) {
