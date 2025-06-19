@@ -312,6 +312,7 @@ body.logo-full-bg {
   <script src="lang.js"></script>
   
 <script>
+  const i18n = window.i18n || ((key) => key);
 // ✅ 初始化與語言設定
 const lang = localStorage.getItem("lang") || "zh-Hant";
 if (typeof applyLang === "function") applyLang(lang);
