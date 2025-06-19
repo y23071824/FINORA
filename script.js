@@ -155,6 +155,7 @@ function toggleFields() {
 
 // ✅ 儲存資產表單資料
 async function handleSubmit(e) {
+async function handleSubmit(e) {
   e.preventDefault();
 
   const type = typeSelect?.value;
@@ -168,7 +169,7 @@ async function handleSubmit(e) {
         ...newAsset,
         stockCategory: document.getElementById("stock-category")?.value,
         stockSymbol: symbol,
-        symbol, // 舊欄位保留相容性
+        symbol,
         shares: parseFloat(document.getElementById("stock-shares")?.value) || 0,
         cost: parseFloat(document.getElementById("stock-cost")?.value) || 0,
         price: parseFloat(document.getElementById("stock-price")?.value) || 0,
@@ -201,9 +202,16 @@ async function handleSubmit(e) {
       newAsset.amount = parseFloat(document.getElementById("amount")?.value) || 0;
     }
 
-    // 共同欄位處理
+    // 共同欄位
     newAsset.bank = document.getElementById("bank")?.value || "";
     newAsset.note = document.getElementById("note")?.value || "";
+
+    // 檢查是否重複
+    const isDuplicate = editIndex === null && assets.some(a => JSON.stringify(a) === JSON.stringify(newAsset));
+    if (isDuplicate) {
+      alert("⚠️ 相同資產已存在，請勿重複新增！");
+      return;
+    }
 
     // 編輯或新增
     if (editIndex !== null) {
@@ -213,14 +221,14 @@ async function handleSubmit(e) {
       assets.push(newAsset);
     }
 
-    // 銀行名稱記憶
+    // 銀行記憶
     const bankName = newAsset.bank;
     if (bankName && !bankHistory.includes(bankName)) {
       bankHistory.push(bankName);
       localStorage.setItem("banks", JSON.stringify(bankHistory));
     }
 
-    // 儲存本地與雲端
+    // 儲存
     localStorage.setItem(getLocalStorageKey(), JSON.stringify(assets));
     if (typeof FINORA_AUTH !== "undefined" && FINORA_AUTH.saveUserAssets) {
       await FINORA_AUTH.saveUserAssets(assets);
@@ -229,6 +237,8 @@ async function handleSubmit(e) {
     form.reset();
     toggleFields();
     render();
+    console.log("✅ 資產已儲存，總筆數：", assets.length);
+
   } catch (e) {
     console.error("❌ 表單儲存錯誤", e);
     alert(i18n("input_error") || "輸入錯誤，請檢查欄位");
