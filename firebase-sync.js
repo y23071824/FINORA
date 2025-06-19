@@ -1,15 +1,13 @@
-// ✅ 檢查是否已過試用期（超過 30 天且未啟用 devMode）
+// ✅ 判斷是否過試用期
 const createdAt = localStorage.getItem("userCreatedAt");
 const devMode = localStorage.getItem("devMode") === "yes";
-if (createdAt) {
+const isFreeExpired = (() => {
+  if (!createdAt) return false;
   const daysUsed = (Date.now() - parseInt(createdAt, 10)) / (1000 * 60 * 60 * 24);
-  if (daysUsed > 30 && !devMode) {
-    console.log("⛔ 試用期已過，firebase-sync.js 停用 Firebase 功能");
-    return;
-  }
-}
+  return daysUsed > 30 && !devMode;
+})();
 
-// ✅ Firebase 初始化設定
+// ✅ Firebase 初始化設定（即使過期也不 return，保留 FINORA_AUTH 架構）
 if (!firebase.apps.length) {
   const firebaseConfig = {
     apiKey: "AIzaSyBJE12oIoK4gr153jkNBokQ-d3ohnN4aWE",
@@ -35,34 +33,23 @@ function getLocalStorageKey() {
   return `assets_${selectedAccount || "default"}`;
 }
 
-// ✅ 防呆確認登入
 function ensureLoggedIn() {
   currentUser = firebase.auth().currentUser;
   if (!currentUser) throw new Error("尚未登入");
 }
 
-// ✅ 取得資產子集合路徑
 function getAccountAssetRef() {
   ensureLoggedIn();
   if (!selectedAccount) throw new Error("尚未選擇帳戶");
-  return db
-    .collection("users")
-    .doc(currentUser.uid)
-    .collection("accounts")
-    .doc(selectedAccount)
-    .collection("assets");
+  return db.collection("users").doc(currentUser.uid).collection("accounts").doc(selectedAccount).collection("assets");
 }
 
-// ✅ 載入帳本清單
 async function fetchAccountList() {
   ensureLoggedIn();
-  const snapshot = await db.collection("accounts")
-    .where("uid", "==", currentUser.uid)
-    .get();
+  const snapshot = await db.collection("accounts").where("uid", "==", currentUser.uid).get();
   return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }
 
-// ✅ 設定帳本名稱
 async function setAccountDisplayName(accountId, displayName) {
   ensureLoggedIn();
   if (!accountId || !displayName || displayName.trim() === "") throw new Error("帳本資料無效");
@@ -70,7 +57,6 @@ async function setAccountDisplayName(accountId, displayName) {
   await docRef.set({ uid: currentUser.uid, displayName }, { merge: true });
 }
 
-// ✅ 建立帳本
 async function createNewAccount(displayName) {
   ensureLoggedIn();
   const list = await fetchAccountList();
@@ -80,18 +66,11 @@ async function createNewAccount(displayName) {
   return newId;
 }
 
-// ✅ 刪除帳本
 async function deleteAccount(accountId) {
   ensureLoggedIn();
   if (!accountId) throw new Error("帳本 ID 無效");
   const ref = db.collection("accounts").doc(accountId);
-  const assetRef = db
-    .collection("users")
-    .doc(currentUser.uid)
-    .collection("accounts")
-    .doc(accountId)
-    .collection("assets");
-
+  const assetRef = db.collection("users").doc(currentUser.uid).collection("accounts").doc(accountId).collection("assets");
   const assets = await assetRef.get();
   const batch = db.batch();
   assets.forEach(doc => batch.delete(doc.ref));
@@ -105,24 +84,20 @@ async function deleteAccount(accountId) {
   }
 }
 
-// ✅ 主要功能導出
 window.FINORA_AUTH = {
-  // ✅ 登入
   signInWithGoogle: async () => {
+    if (isFreeExpired) throw new Error("試用期已過，登入功能已停用");
     try {
       const result = await auth.signInWithPopup(provider);
       currentUser = result.user;
-
       if (!selectedAccount) {
         selectedAccount = "default";
         localStorage.setItem("selectedAccount", selectedAccount);
       }
-
       const cloudAssets = await FINORA_AUTH.fetchUserAssets();
       if (Array.isArray(cloudAssets)) {
         localStorage.setItem(getLocalStorageKey(), JSON.stringify(cloudAssets));
       }
-
       return currentUser;
     } catch (e) {
       console.error("登入失敗", e);
@@ -131,7 +106,6 @@ window.FINORA_AUTH = {
     }
   },
 
-  // ✅ 登出
   signOutFromGoogle: async () => {
     await auth.signOut();
     currentUser = null;
@@ -140,11 +114,10 @@ window.FINORA_AUTH = {
     localStorage.removeItem(getLocalStorageKey());
   },
 
-  // ✅ 用戶變更監聽
   onUserChanged: (callback) => {
     auth.onAuthStateChanged(async user => {
       currentUser = user;
-      if (user) {
+      if (user && !isFreeExpired) {
         selectedAccount = localStorage.getItem("selectedAccount") || "default";
         localStorage.setItem("selectedAccount", selectedAccount);
         try {
@@ -160,16 +133,16 @@ window.FINORA_AUTH = {
     });
   },
 
-  // ✅ 載入雲端資產
   fetchUserAssets: async () => {
+    if (isFreeExpired) throw new Error("試用期已過，無法讀取雲端資料");
     await FINORA_AUTH.waitForLogin();
     const ref = getAccountAssetRef();
     const snap = await ref.get();
     return snap.docs.map(doc => doc.data());
   },
 
-  // ✅ 儲存資產
   saveUserAssets: async (assets) => {
+    if (isFreeExpired) throw new Error("試用期已過，無法儲存雲端資料");
     try {
       const ref = getAccountAssetRef();
       const batch = db.batch();
@@ -183,7 +156,6 @@ window.FINORA_AUTH = {
     }
   },
 
-  // ✅ 等待登入
   waitForLogin: () => {
     return new Promise((resolve, reject) => {
       const unsubscribe = auth.onAuthStateChanged(user => {
@@ -193,7 +165,6 @@ window.FINORA_AUTH = {
     });
   },
 
-  // ✅ 其他功能
   getCurrentAccount: () => selectedAccount,
   setSelectedAccount: (name) => {
     selectedAccount = name;
@@ -205,7 +176,6 @@ window.FINORA_AUTH = {
   deleteAccount
 };
 
-// ✅ 載入帳本名稱（用於頁面顯示）
 async function loadDisplayName() {
   try {
     await FINORA_AUTH.waitForLogin();
