@@ -1,59 +1,63 @@
 <!DOCTYPE html><html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
-  <title data-i18n="title">FINORA 好好存</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>FINORA Debug 測試</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script src="firebase-sync.js"></script>
-  <script src="lang.js"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2rem;
+      background: #fffaf8;
+      text-align: center;
+    }
+    h1 {
+      color: #b4695d;
+    }
+    input {
+      margin-top: 1rem;
+      padding: 0.5rem;
+      width: 90%;
+      max-width: 400px;
+      font-size: 1rem;
+    }
+    pre {
+      margin-top: 1.5rem;
+      text-align: left;
+      background: #f0f0f0;
+      padding: 1rem;
+      border-radius: 6px;
+      white-space: pre-wrap;
+    }
+  </style>
 </head>
 <body>
   <h1>FINORA Debug 測試</h1>
-  <div id="log-output" style="white-space: pre-wrap; background: #f9f9f9; border: 1px solid #ccc; padding: 1rem; margin: 1rem; border-radius: 6px;"></div>  <script>
-    const logArea = document.getElementById("log-output");
-    const log = (...args) => {
-      const message = args.map(a => (typeof a === 'object' ? JSON.stringify(a) : a)).join(' ');
-      console.log("[LOG]", message);
-      logArea.textContent += message + "\n";
-    };
+  <input id="currentAccount" placeholder="帳本 ID 顯示區" readonly>
+  <pre id="status"></pre>  <script>
+    function updateDebugInfo() {
+      const currentAccount = window.FINORA_AUTH?.getCurrentAccount?.() || '(無法取得)';
+      const selectedAccount = localStorage.getItem("selectedAccount") || '(無)';
+      const devMode = localStorage.getItem("devMode") || '(無)';
+      const userCreatedAt = localStorage.getItem("userCreatedAt") || '(無)';
+      const keys = Object.keys(localStorage).filter(k => k.startsWith("assets_"));
 
-    const i18n = window.i18n || ((key) => key);
-    const lang = localStorage.getItem("lang") || "zh-Hant";
-    if (typeof applyLang === "function") applyLang(lang);
+      document.getElementById("currentAccount").value = currentAccount;
+      document.getElementById("status").textContent =
+`✅ FINORA_AUTH: ${typeof FINORA_AUTH !== 'undefined'}
+📘 selectedAccount: ${selectedAccount}
+🧰 getCurrentAccount(): ${currentAccount}
+🧪 devMode: ${devMode}
+📅 userCreatedAt: ${userCreatedAt}
+📂 本機帳本 keys:
+${keys.join("\n")}`;
+    }
 
-    document.addEventListener("DOMContentLoaded", async () => {
-      log("📦 DOMContentLoaded 完成");
-      if (!window.FINORA_AUTH) {
-        log("❌ FINORA_AUTH 未正確載入");
-        return;
-      }
-      log("✅ FINORA_AUTH 已載入");
-
-      const createdAt = localStorage.getItem("userCreatedAt");
-      const devMode = localStorage.getItem("devMode") === "yes";
-      log("🔍 userCreatedAt:", createdAt);
-      log("🔍 devMode:", devMode);
-
-      FINORA_AUTH.onUserChanged(async (user) => {
-        if (!user) {
-          log("👤 未登入（或已登出）");
-        } else {
-          log("👤 已登入：", user.email);
-        }
-
-        const accountId = FINORA_AUTH.getCurrentAccount();
-        log("📘 當前帳本：", accountId);
-
-        try {
-          const accounts = await FINORA_AUTH.fetchAccountList();
-          log("📂 雲端帳本：", accounts);
-        } catch (e) {
-          log("⚠️ 無法讀取帳本：", e.message);
-        }
-      });
+    document.addEventListener("DOMContentLoaded", () => {
+      setTimeout(updateDebugInfo, 500);
     });
   </script></body>
 </html>
