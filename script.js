@@ -211,6 +211,15 @@ async function handleSubmit(e) {
         cryptoPrice: parseFloat(document.getElementById("crypto-price")?.value) || 0,
         cryptoCost: parseFloat(document.getElementById("crypto-cost").value) || 0,
       };
+      } else if (type === "房產") {
+  newAsset = {
+    ...newAsset,
+    name: document.getElementById("property-name")?.value.trim(),
+    amount: parseFloat(document.getElementById("amount")?.value) || 0,
+    mortgage: parseFloat(document.getElementById("mortgage")?.value) || 0,
+    interestRate: parseFloat(document.getElementById("interest-rate")?.value) || 0,
+    yearsRemaining: parseInt(document.getElementById("years-remaining")?.value) || 0
+  };
     } else {
       newAsset.amount = parseFloat(document.getElementById("amount")?.value) || 0;
     }
