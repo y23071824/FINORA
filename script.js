@@ -155,7 +155,6 @@ function toggleFields() {
 
 // ✅ 儲存資產表單資料
 async function handleSubmit(e) {
-async function handleSubmit(e) {
   e.preventDefault();
 
   const type = typeSelect?.value;
