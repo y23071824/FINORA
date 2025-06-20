@@ -88,8 +88,6 @@ async function fetchExchangeRatesOnce() {
   await fetchExchangeRates();
 }
 
-  }
-
 // ✅ 股票查價（美股 + 台股）
 async function fetchStockPrice(symbol, category) {
   try {
