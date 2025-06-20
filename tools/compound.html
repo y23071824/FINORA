@@ -14,7 +14,7 @@
 <body class="logo-full-bg">
 <div class="main-wrapper">
   <h1 data-i18n="compound_title">模擬好好未來</h1>
-  <div id="user-info" style="margin-bottom:1rem; font-size:0.95rem;"></div>  <p><span data-i18n="compound_description">輸入起始金額、年報酬率與時間，模擬複利增值的成長效果</span></p>  <div id="asset-summary" style="margin-top:2rem;"></div><label for="currency-select" data-i18n="select_currency">總資產顯示幣別：</label> <select id="currency-select"> <option value="TWD">TWD</option> <option value="USD">USD</option> <option value="JPY">JPY</option> <option value="EUR">EUR</option> <option value="CNY">CNY</option> </select>
+  <div id="user-info" style="margin-bottom:1rem; font-size:0.95rem;"></div>  <p><span data-i18n="compound_description">輸入起始金額、年報酬率與時間，模擬複利增值的成長效果</span></p>  <div id="asset-summary" style="margin-top:2rem;"></div><
 
   <p id="total-assets" style="font-weight: bold;"></p>  
    <h2 data-i18n="compound_input_title">📈 複利試算</h2>    
@@ -113,7 +113,7 @@ function renderAssetFromStorage() {
   const profits = data.profits || {};
   const totalConverted = data.totalConverted;
 
-  let html = `<h3>📊 ${i18n("asset_category_summary")}</h3>`;
+  let html = `<h3> ${i18n("asset_category_summary")}</h3>`;
 
   for (let type in summary) {
     for (let cur in summary[type]) {
@@ -126,7 +126,7 @@ function renderAssetFromStorage() {
     }
   }
 
-  html += `<p style="margin-top:1rem; font-weight:bold;">💎 ${i18n("total_asset_value", { currency })}${Math.round(totalConverted).toLocaleString()} ${currency}</p>`;
+  html += `<p style="margin-top:1rem; font-weight:bold;"> ${i18n("total_asset_value", { currency })}${Math.round(totalConverted).toLocaleString()} ${currency}</p>`;
 
   container.innerHTML = html;
 }
