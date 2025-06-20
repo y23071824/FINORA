@@ -185,7 +185,6 @@
             const list = await FINORA_AUTH.fetchAccountList();
             const displayName = list.find(acc => acc.id === accountId)?.displayName || accountId;
             accountEl.textContent = displayName;
-            if (typeof fetchExchangeRates === "function") await fetchExchangeRates();
             if (typeof updateAllStockPrices === "function") await updateAllStockPrices();
             assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
             if (typeof toggleFields === "function") toggleFields();
