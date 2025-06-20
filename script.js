@@ -243,7 +243,6 @@ async function handleSubmit(e) {
     alert(i18n("input_error") || "輸入錯誤，請檢查欄位");
   }
 }
-}
 
 // ===== Part 3：畫面渲染與計算 =====
 function render() {
