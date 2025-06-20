@@ -558,7 +558,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // 🧹 Firebase 登入後開始載入資料
-  FINORA_AUTH.onUserChanged(async (user) => {
+FINORA_AUTH.onUserChanged(async (user) => {
     const emailEl = document.getElementById("auth-email");
     const accountEl = document.getElementById("account-name");
     const MAX_ACCOUNT_COUNT = 3;
