@@ -94,30 +94,31 @@ async function fetchStockPrice(symbol, category) {
     if (category === "美股") {
       const res = await fetch(`https://api.twelvedata.com/price?symbol=${symbol}&apikey=de909496c6754a89bc33db0306c2def8`);
       const data = await res.json();
-      if (data && data.price) return parseFloat(data.price);
-   } else if (category === "台股") {
-  const today = new Date();
-  const sevenDaysAgo = new Date(today);
-  sevenDaysAgo.setDate(today.getDate() - 7);
+      if (data && data.price) {
+        return parseFloat(data.price);
+      }
+    } else if (category === "台股") {
+      const today = new Date();
+      const sevenDaysAgo = new Date(today);
+      sevenDaysAgo.setDate(today.getDate() - 7);
 
-  const startDate = sevenDaysAgo.toISOString().slice(0, 10);
-  const endDate = today.toISOString().slice(0, 10);
+      const startDate = sevenDaysAgo.toISOString().slice(0, 10);
+      const endDate = today.toISOString().slice(0, 10);
 
-  const res = await fetch(`https://api.finmindtrade.com/api/v4/data?dataset=TaiwanStockPrice&data_id=${symbol}&start_date=${startDate}&end_date=${endDate}`);
-  const data = await res.json();
+      const res = await fetch(`https://api.finmindtrade.com/api/v4/data?dataset=TaiwanStockPrice&data_id=${symbol}&start_date=${startDate}&end_date=${endDate}`);
+      const data = await res.json();
 
-  if (data.data && data.data.length > 0) {
-    const latest = data.data.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
-    return latest.close;
-  }
-}
-
+      if (data.data && data.data.length > 0) {
+        const latest = data.data.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+        return latest.close;
+      }
     }
   } catch (e) {
     console.warn("❌ " + i18n("stock_price_error") + "：" + e.message);
   }
   return null;
 }
+
 
 // ✅ 更新所有股票現價（含寫入與同步）
 async function updateAllStockPrices() {
