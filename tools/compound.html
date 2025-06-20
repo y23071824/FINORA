@@ -16,17 +16,20 @@
   <h1 data-i18n="compound_title">模擬好好未來</h1>
   <div id="user-info" style="margin-bottom:1rem; font-size:0.95rem;"></div>  <p><span data-i18n="compound_description">輸入起始金額、年報酬率與時間，模擬複利增值的成長效果</span></p>  <div id="asset-summary" style="margin-top:2rem;"></div><label for="currency-select" data-i18n="select_currency">總資產顯示幣別：</label> <select id="currency-select"> <option value="TWD">TWD</option> <option value="USD">USD</option> <option value="JPY">JPY</option> <option value="EUR">EUR</option> <option value="CNY">CNY</option> </select>
 
-  <p id="total-assets" style="font-weight: bold;"></p>  <h2 data-i18n="compound_title">📈 複利試算</h2>
-  <label data-i18n="initial_principal">初始投入：</label>
-  <input type="number" id="principal"><br>
-  <label data-i18n="annual_return">年報酬率 (%)：</label>
-  <input type="number" id="rate"><br>
-  <label data-i18n="investment_years">投資年數：</label>
-  <input type="number" id="years"><br>
-  <label data-i18n="annual_invest">每年定期投入：</label>
-  <input type="number" id="annual"><br>
-  <label data-i18n="monthly_invest">每月定期投入：</label>
-  <input type="number" id="monthly"><br>
+  <p id="total-assets" style="font-weight: bold;"></p>  
+   <h2 data-i18n="compound_input_title">📈 複利試算</h2>    
+  <label for="principal" data-i18n="label_principal">初始投入金額（元）：</label>    
+  <input type="number" id="principal" />    
+  <label for="rate" data-i18n="label_rate">年報酬率（%）：</label>    
+  <input type="number" id="rate" />    
+  <label for="years" data-i18n="label_years">投資年數：</label>    
+  <input type="number" id="years" />    
+  <label for="annual" data-i18n="label_annual">每年定期投入金額：</label>    
+  <input type="number" id="annual" />    
+  <label for="monthly" data-i18n="label_monthly">每月定期投入金額：</label>    
+  <input type="number" id="monthly" />    
+  <button onclick="calculateCompound()" data-i18n="calculate_button">計算複利</button>    
+  <div id="result" style="margin-top: 1rem; font-weight: bold;"></div>      <hr /> 
  <h2 data-i18n="exchange_tool">💱 匯率換算</h2>    
   <div id="exchange-status" style="font-size: 0.85rem; color: #666; margin-bottom: 0.5rem;"></div>    
   <label for="fx-amount" data-i18n="label_amount">金額：</label>    
