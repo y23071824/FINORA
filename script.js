@@ -259,6 +259,7 @@ function render() {
   const totalsByType = {};
   const totalsByCurrency = {};
   const profitByTypeCurrency = {};
+  const profitsByType = {}; 
 
   for (const asset of assets) {
     const currency = asset.currency || "TWD";
