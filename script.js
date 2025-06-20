@@ -423,12 +423,12 @@ function render() {
   convertedLi.textContent = `💰 ${i18n("total_asset")}（${selectedCurrency}）：${totalConverted.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${selectedCurrency}`;
   totalsList.appendChild(convertedLi);
 
-  const assetBreakdown = {
-  summary: totalsByType,       // 各類別市值
-  profits: profitsByType,      // 各類別盈餘
-  totals: currencyTotals,      // 幣別總和
-  totalConverted: totalInSelectedCurrency, // 折合總資產
-  selectedCurrency: selectedCurrency       // 當前幣別
+ const assetBreakdown = {
+  summary: totalsByType,
+  profits: profitByTypeCurrency, // 若你未來需要呈現分類盈餘，這個可用
+  totals: totalsByCurrency,
+  totalConverted: totalConverted,
+  selectedCurrency: selectedCurrency
 };
 
 localStorage.setItem(`assets_breakdown_${getSelectedAccount()}`, JSON.stringify(assetBreakdown));
