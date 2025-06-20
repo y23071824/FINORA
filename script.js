@@ -156,8 +156,10 @@ function toggleFields() {
 
   if (fundFields) fundFields.style.display = type === "基金" ? "block" : "none";
   if (cryptoFields) cryptoFields.style.display = type === "加密貨幣" ? "block" : "none";
+const propertyFields = document.getElementById("property-fields");
+if (propertyFields) propertyFields.style.display = type === "房產" ? "block" : "none";
 
-  amountField.style.display = ["定存", "現金", "房產", "其他"].includes(type) ? "block" : "none";
+  amountField.style.display = ["定存", "現金", "其他"].includes(type) ? "block" : "none";
 }
 
 // ✅ 儲存資產表單資料
