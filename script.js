@@ -156,7 +156,14 @@ function toggleFields() {
 // ✅ 儲存資產表單資料
 async function handleSubmit(e) {
   e.preventDefault();
+ // 1. 更新銀行記憶
+  const bankName = document.getElementById("bank").value.trim();
+  if (bankName && !bankHistory.includes(bankName)) {
+    bankHistory.push(bankName);
+    localStorage.setItem("banks", JSON.stringify(bankHistory));
+  }
 
+  // 2. ... 接著處理你的資產資料邏輯
   const type = typeSelect?.value;
   const currency = document.getElementById("currency")?.value || "TWD";
   let newAsset = { type, currency };
