@@ -165,14 +165,7 @@ if (propertyFields) propertyFields.style.display = type === "房產" ? "block" :
 // ✅ 儲存資產表單資料
 async function handleSubmit(e) {
   e.preventDefault();
- // 1. 更新銀行記憶
-  const bankName = document.getElementById("bank").value.trim();
-  if (bankName && !bankHistory.includes(bankName)) {
-    bankHistory.push(bankName);
-    localStorage.setItem("banks", JSON.stringify(bankHistory));
-  }
 
-  // 2. ... 接著處理你的資產資料邏輯
   const type = typeSelect?.value;
   const currency = document.getElementById("currency")?.value || "TWD";
   let newAsset = { type, currency };
@@ -211,33 +204,31 @@ async function handleSubmit(e) {
         cryptoSymbol: symbol,
         cryptoAmount: parseFloat(document.getElementById("crypto-amount")?.value) || 0,
         cryptoPrice: parseFloat(document.getElementById("crypto-price")?.value) || 0,
-        cryptoCost: parseFloat(document.getElementById("crypto-cost").value) || 0,
+        cryptoCost: parseFloat(document.getElementById("crypto-cost")?.value) || 0,
       };
-      } else if (type === "房產") {
-  newAsset = {
-    ...newAsset,
-    name: document.getElementById("property-name")?.value.trim(),
-    amount: parseFloat(document.getElementById("amount")?.value) || 0,
-    mortgage: parseFloat(document.getElementById("mortgage")?.value) || 0,
-    interestRate: parseFloat(document.getElementById("interest-rate")?.value) || 0,
-    yearsRemaining: parseInt(document.getElementById("years-remaining")?.value) || 0
-  };
+    } else if (type === "房產") {
+      newAsset = {
+        ...newAsset,
+        name: document.getElementById("property-name")?.value.trim(),
+        amount: parseFloat(document.getElementById("amount")?.value) || 0,
+        mortgage: parseFloat(document.getElementById("mortgage")?.value) || 0,
+        interestRate: parseFloat(document.getElementById("interest-rate")?.value) || 0,
+        yearsRemaining: parseInt(document.getElementById("years-remaining")?.value) || 0
+      };
     } else {
+      // 一般資產（現金、定存、其他）
       newAsset.amount = parseFloat(document.getElementById("amount")?.value) || 0;
     }
 
-    // 共同欄位
     newAsset.bank = document.getElementById("bank")?.value || "";
     newAsset.note = document.getElementById("note")?.value || "";
 
-    // 檢查是否重複
     const isDuplicate = editIndex === null && assets.some(a => JSON.stringify(a) === JSON.stringify(newAsset));
     if (isDuplicate) {
       alert("⚠️ 相同資產已存在，請勿重複新增！");
       return;
     }
 
-    // 編輯或新增
     if (editIndex !== null) {
       assets[editIndex] = newAsset;
       editIndex = null;
@@ -245,7 +236,12 @@ async function handleSubmit(e) {
       assets.push(newAsset);
     }
 
-    // 儲存
+    const bankName = newAsset.bank;
+    if (bankName && !bankHistory.includes(bankName)) {
+      bankHistory.push(bankName);
+      localStorage.setItem("banks", JSON.stringify(bankHistory));
+    }
+
     localStorage.setItem(getLocalStorageKey(), JSON.stringify(assets));
     if (typeof FINORA_AUTH !== "undefined" && FINORA_AUTH.saveUserAssets) {
       await FINORA_AUTH.saveUserAssets(assets);
@@ -255,7 +251,6 @@ async function handleSubmit(e) {
     toggleFields();
     render();
     console.log("✅ 資產已儲存，總筆數：", assets.length);
-
   } catch (e) {
     console.error("❌ 表單儲存錯誤", e);
     alert(i18n("input_error") || "輸入錯誤，請檢查欄位");
