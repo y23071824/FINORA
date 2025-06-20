@@ -245,13 +245,6 @@ async function handleSubmit(e) {
       assets.push(newAsset);
     }
 
-    // 銀行記憶
-    const bankName = newAsset.bank;
-    if (bankName && !bankHistory.includes(bankName)) {
-      bankHistory.push(bankName);
-      localStorage.setItem("banks", JSON.stringify(bankHistory));
-    }
-
     // 儲存
     localStorage.setItem(getLocalStorageKey(), JSON.stringify(assets));
     if (typeof FINORA_AUTH !== "undefined" && FINORA_AUTH.saveUserAssets) {
