@@ -68,15 +68,13 @@ async function fetchExchangeRates() {
 // ✅ 匯率查詢（只執行一次）
 async function fetchExchangeRatesOnce() {
   function isExchangeRateExpired() {
-  const ts = localStorage.getItem("exchangeRatesTimestamp");
-  if (!ts) return true; // 沒存過就當作過期
+    const ts = localStorage.getItem("exchangeRatesTimestamp");
+    if (!ts) return true; // 沒存過就當作過期
+    const lastFetched = parseInt(ts);
+    const now = Date.now();
+    return now - lastFetched > 24 * 60 * 60 * 1000; // 超過一天就過期
+  }
 
-  const lastFetched = parseInt(ts);
-  const now = Date.now();
-  return now - lastFetched > 24 * 60 * 60 * 1000; // 24 小時
-}
-// ✅ 主控制函式：只在首次或過期時查詢
-async function fetchExchangeRatesOnce() {
   const stored = localStorage.getItem("exchangeRates");
   const expired = isExchangeRateExpired();
 
@@ -89,6 +87,7 @@ async function fetchExchangeRatesOnce() {
   console.log("⏰ 匯率過期或未存在，開始查詢...");
   await fetchExchangeRates();
 }
+
   }
 
 // ✅ 股票查價（美股 + 台股）
