@@ -162,16 +162,98 @@ if (propertyFields) propertyFields.style.display = type === "房產" ? "block" :
   amountField.style.display = ["定存", "現金", "其他"].includes(type) ? "block" : "none";
 }
 
-// ✅ 儲存資產表單資料
-} else if (type === "房產") {
-  newAsset = {
-    ...newAsset,
-    name: document.getElementById("property-name")?.value.trim(),
-    amount: parseFloat(document.getElementById("amount")?.value) || 0, // ✅ 用共用 amount 欄位
-    mortgage: parseFloat(document.getElementById("mortgage")?.value) || 0,
-    interestRate: parseFloat(document.getElementById("interest-rate")?.value) || 0,
-    yearsRemaining: parseInt(document.getElementById("years-remaining")?.value) || 0
-  };
+async function handleSubmit(e) {
+  e.preventDefault();
+
+  const type = typeSelect?.value;
+  const currency = document.getElementById("currency")?.value || "TWD";
+  let newAsset = { type, currency };
+
+  try {
+    if (type === "股票") {
+      const symbol = document.getElementById("stock-symbol")?.value.trim();
+      newAsset = {
+        ...newAsset,
+        stockCategory: document.getElementById("stock-category")?.value,
+        stockSymbol: symbol,
+        symbol,
+        shares: parseFloat(document.getElementById("stock-shares")?.value) || 0,
+        cost: parseFloat(document.getElementById("stock-cost")?.value) || 0,
+        price: parseFloat(document.getElementById("stock-price")?.value) || 0,
+      };
+    } else if (type === "儲蓄保險") {
+      newAsset = {
+        ...newAsset,
+        insuranceName: document.getElementById("insurance-name")?.value,
+        insuranceAmount: parseFloat(document.getElementById("insurance-amount")?.value) || 0,
+        insuranceYears: parseInt(document.getElementById("insurance-years")?.value) || 0,
+        insuranceAnnual: parseFloat(document.getElementById("insurance-annual")?.value) || 0,
+      };
+    } else if (type === "基金") {
+      newAsset = {
+        ...newAsset,
+        fundName: document.getElementById("fund-name")?.value,
+        fundUnits: parseFloat(document.getElementById("fund-units")?.value) || 0,
+        fundNav: parseFloat(document.getElementById("fund-nav")?.value) || 0,
+      };
+    } else if (type === "加密貨幣") {
+      const symbol = document.getElementById("crypto-symbol")?.value.toLowerCase();
+      newAsset = {
+        ...newAsset,
+        cryptoSymbol: symbol,
+        cryptoAmount: parseFloat(document.getElementById("crypto-amount")?.value) || 0,
+        cryptoPrice: parseFloat(document.getElementById("crypto-price")?.value) || 0,
+        cryptoCost: parseFloat(document.getElementById("crypto-cost")?.value) || 0,
+      };
+    } else if (type === "房產") {
+      newAsset = {
+        ...newAsset,
+        name: document.getElementById("property-name")?.value.trim(),
+        amount: parseFloat(document.getElementById("amount")?.value) || 0,  // ✅ 修正這裡
+        mortgage: parseFloat(document.getElementById("mortgage")?.value) || 0,
+        interestRate: parseFloat(document.getElementById("interest-rate")?.value) || 0,
+        yearsRemaining: parseInt(document.getElementById("years-remaining")?.value) || 0
+      };
+    } else {
+      // 現金、定存、其他
+      newAsset.amount = parseFloat(document.getElementById("amount")?.value) || 0;
+    }
+
+    newAsset.bank = document.getElementById("bank")?.value || "";
+    newAsset.note = document.getElementById("note")?.value || "";
+
+    const isDuplicate = editIndex === null && assets.some(a => JSON.stringify(a) === JSON.stringify(newAsset));
+    if (isDuplicate) {
+      alert("⚠️ 相同資產已存在，請勿重複新增！");
+      return;
+    }
+
+    if (editIndex !== null) {
+      assets[editIndex] = newAsset;
+      editIndex = null;
+    } else {
+      assets.push(newAsset);
+    }
+
+    const bankName = newAsset.bank;
+    if (bankName && !bankHistory.includes(bankName)) {
+      bankHistory.push(bankName);
+      localStorage.setItem("banks", JSON.stringify(bankHistory));
+    }
+
+    localStorage.setItem(getLocalStorageKey(), JSON.stringify(assets));
+    if (typeof FINORA_AUTH !== "undefined" && FINORA_AUTH.saveUserAssets) {
+      await FINORA_AUTH.saveUserAssets(assets);
+    }
+
+    form.reset();
+    toggleFields();
+    render();
+    console.log("✅ 資產已儲存，總筆數：", assets.length);
+  } catch (e) {
+    console.error("❌ 表單儲存錯誤", e);
+    alert(i18n("input_error") || "輸入錯誤，請檢查欄位");
+  }
 }
 
 // ===== Part 3：畫面渲染與計算 =====
