@@ -207,14 +207,15 @@ async function handleSubmit(e) {
         cryptoCost: parseFloat(document.getElementById("crypto-cost")?.value) || 0,
       };
     } else if (type === "房產") {
-      newAsset = {
-        ...newAsset,
-        name: document.getElementById("property-name")?.value.trim(),
-        amount: parseFloat(document.getElementById("property-amount")?.value) || 0,
-        mortgage: parseFloat(document.getElementById("mortgage")?.value) || 0,
-        interestRate: parseFloat(document.getElementById("interest-rate")?.value) || 0,
-        yearsRemaining: parseInt(document.getElementById("years-remaining")?.value) || 0
-      };
+  newAsset = {
+    ...newAsset,
+    name: document.getElementById("property-name")?.value.trim(),
+    amount: parseFloat(document.getElementById("amount")?.value) || 0, // ✅ 用共用 amount 欄位
+    mortgage: parseFloat(document.getElementById("mortgage")?.value) || 0,
+    interestRate: parseFloat(document.getElementById("interest-rate")?.value) || 0,
+    yearsRemaining: parseInt(document.getElementById("years-remaining")?.value) || 0
+  };
+    }
     } else {
       // 一般資產（現金、定存、其他）
       newAsset.amount = parseFloat(document.getElementById("amount")?.value) || 0;
