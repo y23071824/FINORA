@@ -269,7 +269,6 @@ function render() {
   const totalsByType = {};
   const totalsByCurrency = {};
   const profitByTypeCurrency = {};
-  const currencyTotals = {};
 
   for (const asset of assets) {
     const currency = asset.currency || "TWD";
@@ -309,7 +308,7 @@ function render() {
     totalsByCurrency[currency] += value;
   }
 
-  // 顯示各筆資產
+  // 顯示每筆資產
   assets.forEach((asset, index) => {
     const li = document.createElement("li");
     li.className = "asset-item";
@@ -356,24 +355,21 @@ function render() {
       details.push(`💹 ${i18n("profit")}：${profit.toLocaleString()} ${currency}`);
       details.push(`💰 ${i18n("total")}：${totalValue.toLocaleString()} ${currency}`);
     } else if (type === "儲蓄保險") {
+      totalValue = parseFloat(asset.insuranceAmount || 0);
       details.push(`${i18n("label_policy_name")}：${asset.insuranceName}`);
       details.push(`${i18n("insured_amount")}：${asset.insuranceAmount}`);
       details.push(`${i18n("insured_years")}：${asset.insuranceYears}`);
       details.push(`${i18n("annual_premium")}：${asset.annualPremium}`);
+    } else if (type === "房產") {
+      totalValue = parseFloat(asset.amount || 0);
+      if (asset.name) details.push(`${i18n("label_property_name")}：${asset.name}`);
+      details.push(`${i18n("label_property_value")}：${totalValue.toLocaleString()} ${currency}`);
+      if (asset.mortgage) details.push(`${i18n("label_mortgage_balance")}：${parseFloat(asset.mortgage).toLocaleString()} ${currency}`);
+      if (asset.interestRate) details.push(`${i18n("label_interest_rate")}：${asset.interestRate}%`);
+      if (asset.yearsRemaining) details.push(`${i18n("label_years_remaining")}：${asset.yearsRemaining}${i18n("unit_years")}`);
     } else {
-  if (asset.amount) {
-    totalValue = parseFloat(asset.amount);
-    details.push(`${i18n("label_amount")}：${totalValue.toLocaleString()} ${currency}`);
-  }
-      if (type === "房產") {
-        if (asset.name) details.push(`${i18n("label_property_name")}：${asset.name}`);
-        details.push(`${i18n("label_property_value")}：${totalValue.toLocaleString()} ${currency}`);
-        if (asset.mortgage) details.push(`${i18n("label_mortgage_balance")}：${asset.mortgage.toLocaleString()} ${currency}`);
-        if (asset.interestRate) details.push(`${i18n("label_interest_rate")}：${asset.interestRate}%`);
-        if (asset.yearsRemaining) details.push(`${i18n("label_years_remaining")}：${asset.yearsRemaining}${i18n("unit_years")}`);
-      } else {
-        details.push(`${i18n("label_amount")}：${totalValue.toLocaleString()} ${currency}`);
-      }
+      totalValue = parseFloat(asset.amount || 0);
+      details.push(`${i18n("label_amount")}：${totalValue.toLocaleString()} ${currency}`);
     }
 
     if (asset.bank) details.push(`${i18n("label_bank")}：${asset.bank}`);
