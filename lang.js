@@ -313,7 +313,8 @@ exchange_rate_updated: "匯率已更新",
 label_property_value: "估值（市價）",
 label_mortgage_balance: "房貸餘額",
 label_interest_rate: "利率（%）",
-label_years_remaining: "剩餘年限"
+label_years_remaining: "剩餘年限",
+   unit_years:"年"
 },
   
  "zh-Hans": {
@@ -597,7 +598,8 @@ exchange_rate_updated: "汇率已更新",
 label_property_value: "估值（市价）",
 label_mortgage_balance: "房贷余额",
 label_interest_rate: "利率（%）",
-label_years_remaining: "剩余年限"
+label_years_remaining: "剩余年限",
+      unit_years:"年"
 },
 
 "en": {
@@ -880,7 +882,8 @@ exchange_rate_updated: "Exchange rates updated",
 label_property_value: "Appraised Value (Market Price)",
 label_mortgage_balance: "Mortgage Balance",
 label_interest_rate: "Interest Rate (%)",
-label_years_remaining: "Years Remaining"
+label_years_remaining: "Years Remaining",
+     unit_years:"years"
 },
 
   
@@ -1164,7 +1167,8 @@ exchange_rate_updated: "為替レートを更新しました",
 label_property_value: "評価額（時価）",
 label_mortgage_balance: "住宅ローン残高",
 label_interest_rate: "金利（%）",
-label_years_remaining: "残存年数"
+label_years_remaining: "残存年数",
+      unit_years:"年"
 
   }
 };
