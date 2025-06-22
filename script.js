@@ -481,7 +481,13 @@ function editAsset(index) {
       document.getElementById("crypto-price").value = asset.cryptoPrice || 0;
     } else {
       document.getElementById("amount").value = asset.amount || 0;
-    }
+   } else if (asset.type === "房產") {
+  document.getElementById("property-name").value = asset.name || "";
+  document.getElementById("property-value").value = asset.amount || "";
+  document.getElementById("property-mortgage").value = asset.mortgage || "";
+  document.getElementById("property-interest").value = asset.interestRate || "";
+  document.getElementById("property-years").value = asset.yearsRemaining || "";
+}
 
     document.getElementById("currency").value = asset.currency || "TWD";
     document.getElementById("bank").value = asset.bank || "";
