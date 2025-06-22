@@ -505,13 +505,14 @@ function editAsset(index) {
         setValue("crypto-price", "cryptoPrice", 0);
         break;
 
-    case "房產":
-  get("property-name", "name");
+case "房產":
+  document.getElementById("property-name").value = asset.name || "";
   document.getElementById("property-amount").value = asset.amount || asset["property-value"] || 0;
   document.getElementById("mortgage").value = asset.mortgage || 0;
   document.getElementById("interest-rate").value = asset.interestRate || 0;
   document.getElementById("years-remaining").value = asset.yearsRemaining || 0;
   break;
+
 
 
       default:
