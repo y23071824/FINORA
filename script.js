@@ -300,6 +300,8 @@ function render() {
       profitByTypeCurrency[type][currency] += value - cost;
     } else if (type === "儲蓄保險") {
       value = parseFloat(asset.insuranceAmount || 0);
+    } else if (type === "房產") {
+      value = parseFloat(asset.amount || 0);
     } else {
       value = parseFloat(asset.amount || 0);
     }
@@ -308,7 +310,6 @@ function render() {
     totalsByCurrency[currency] += value;
   }
 
-  // 顯示每筆資產
   assets.forEach((asset, index) => {
     const li = document.createElement("li");
     li.className = "asset-item";
@@ -395,7 +396,6 @@ function render() {
     assetList.appendChild(li);
   });
 
-  // 顯示分類加總
   for (const type in totalsByType) {
     for (const currency in totalsByType[type]) {
       const total = totalsByType[type][currency].toFixed(2);
@@ -409,7 +409,6 @@ function render() {
     }
   }
 
-  // 顯示總資產（換算為選擇幣別）
   const selectedCurrency = localStorage.getItem("displayCurrency") || "TWD";
   const selectedRate = exchangeRates[selectedCurrency];
   let totalConverted = 0;
@@ -452,6 +451,7 @@ function render() {
     rateTime.textContent = `${i18n("exchange_rate_updated")}：${now.toLocaleTimeString()}`;
   }
 }
+
 // ===== Part 4：編輯與刪除函式（請放在 render() 外部） =====
 function editAsset(index) {
   const asset = assets[index];
