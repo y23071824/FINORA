@@ -121,24 +121,47 @@ async function fetchStockPrice(symbol, category) {
 
 
 // ✅ 更新所有股票現價（含寫入與同步）
-async function updateAllStockPrices() {
+async function fetchStockPricesOnce() {
+  const ts = localStorage.getItem("stockPricesTimestamp");
+  const cache = localStorage.getItem("stockPrices");
+
+  // 如果有快取且未過期，直接套用
+  if (ts && Date.now() - parseInt(ts) < 24 * 60 * 60 * 1000 && cache) {
+    const cachedPrices = JSON.parse(cache);
+    assets.forEach(asset => {
+      if (asset.type === "股票" && asset.stockSymbol && cachedPrices[asset.stockSymbol]) {
+        asset.price = cachedPrices[asset.stockSymbol];
+      }
+    });
+    localStorage.setItem(getLocalStorageKey(), JSON.stringify(assets));
+    return;
+  }
+
+  // 沒快取或過期就重新查
+  const updatedPrices = {};
   const updatedAssets = [];
 
   for (let asset of assets) {
     if (asset.type === "股票" && asset.stockSymbol && asset.stockCategory) {
       const price = await fetchStockPrice(asset.stockSymbol, asset.stockCategory);
-      if (price !== null) asset.price = price;
+      if (price !== null) {
+        asset.price = price;
+        updatedPrices[asset.stockSymbol] = price;
+      }
     }
     updatedAssets.push(asset);
   }
 
   assets = updatedAssets;
   localStorage.setItem(getLocalStorageKey(), JSON.stringify(assets));
+  localStorage.setItem("stockPrices", JSON.stringify(updatedPrices));
+  localStorage.setItem("stockPricesTimestamp", Date.now());
 
   if (typeof FINORA_AUTH !== "undefined" && FINORA_AUTH.saveUserAssets) {
     await FINORA_AUTH.saveUserAssets(assets);
   }
 }
+
 
 
 // ===== Part 2：表單處理與存儲 =====
