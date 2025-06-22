@@ -51,8 +51,15 @@
   </select>    
   <button onclick="convertFx()" data-i18n="convert_button">換算</button>    
   <div id="fx-result" style="margin-top: 0.5rem;"></div> 
-  <p id="fx-result"></p>  <footer style="margin-top:2rem; text-align:center; font-size:0.85rem; color:#999;">
-    <a href="../app.html">← 返回首頁</a>
+  <p id="fx-result"></p>  
+  <a href="../app.html" style="display:block; margin-top: 2rem; text-align:center; color:#c96374" data-i18n="back_home_link">← 返回首頁</a>
+  <footer class="site-footer">
+    <p data-i18n="footer_copyright">© 2025 FINORA 好好存｜家庭友善資產整合工具</p>
+    <div class="footer-links">
+      <a href="howto.html" data-i18n="footer_guide">使用說明</a>・
+      <a href="mailto:service@finora.life?subject=聯絡詢問" data-i18n="footer_contact">聯絡我們</a>・
+      <a href="privacy.html" data-i18n="footer_privacy">隱私權條款</a>
+    </div>
   </footer>
 </div><script>
 let exchangeRates = {};
