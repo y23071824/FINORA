@@ -402,7 +402,7 @@ function render() {
     } else {
       if (asset.amount) {
         totalValue = parseFloat(asset.amount);
-        details.push(`${i18n("label_amount")}：${totalValue.toLocaleString()} ${currency}`);
+        details.push(`${i18n("label_amount")}${totalValue.toLocaleString()} ${currency}`);
       }
     }
 
