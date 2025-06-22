@@ -207,20 +207,18 @@ async function handleSubmit(e) {
       };
     } else if (type === "房產") {
   const name = document.getElementById("property-name")?.value;
-const value = parseFloat(document.getElementById("property-amount")?.value) || 0;
-const mortgage = parseFloat(document.getElementById("mortgage")?.value) || 0;
-const interest = parseFloat(document.getElementById("interest-rate")?.value) || 0;
-const years = parseInt(document.getElementById("years-remaining")?.value) || 0;
+  const value = parseFloat(document.getElementById("property-amount")?.value) || 0;
+  const mortgage = parseFloat(document.getElementById("mortgage")?.value) || 0;
+  const interest = parseFloat(document.getElementById("interest-rate")?.value) || 0;
+  const years = parseInt(document.getElementById("years-remaining")?.value) || 0;
 
+  newAsset.name = name;
+  newAsset.amount = value; // 房產估值
+  newAsset["property-value"] = value; // 保留舊欄位相容
+  newAsset.mortgage = mortgage;
+  newAsset.interestRate = interest;
+  newAsset.yearsRemaining = years;
 
-  newAsset = {
-    ...newAsset,
-    name,
-    amount: value,
-    "property-value": value, // 相容舊欄位
-    mortgage,
-    interestRate: interest,
-    yearsRemaining: years
     } else {
       newAsset.amount = parseFloat(document.getElementById("amount")?.value) || 0;
     }
