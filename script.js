@@ -506,8 +506,9 @@ function editAsset(index) {
 
       case "房產":
         setValue("property-name", "name");
-        // 房產估值優先抓新版欄位 amount，無則抓 property-value
-        document.getElementById("property-value").value = asset.amount || asset["property-value"] || 0;
+        // ✅ 優先取新版欄位 amount，保留舊版 property-value 相容性
+        const valueField = document.getElementById("property-value");
+        if (valueField) valueField.value = asset.amount ?? asset["property-value"] ?? 0;
         setValue("property-mortgage", "mortgage", 0);
         setValue("property-interest", "interestRate", 0);
         setValue("property-years", "yearsRemaining", 0);
@@ -521,10 +522,14 @@ function editAsset(index) {
     setValue("currency", "currency", "TWD");
     setValue("bank", "bank", "");
     setValue("note", "note", "");
-    document.getElementById("asset-form").scrollIntoView({ behavior: "smooth", block: "start" });
-  }, 100);
-}
 
+    // ✅ 滑動到表單上方（確保 asset-form 存在）
+    const formEl = document.getElementById("asset-form");
+    if (formEl && typeof formEl.scrollIntoView === "function") {
+      formEl.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, 100); // 確保畫面切換完成才帶值與捲動
+}
 
 
 
