@@ -361,17 +361,20 @@ function render() {
       details.push(`${i18n("insured_amount")}：${asset.insuranceAmount}`);
       details.push(`${i18n("insured_years")}：${asset.insuranceYears}`);
       details.push(`${i18n("annual_premium")}：${asset.annualPremium}`);
-    } else if (type === "房產") {
-      totalValue = parseFloat(asset.amount || 0);
-      if (asset.name) details.push(`${i18n("label_property_name")}：${asset.name}`);
-      details.push(`${i18n("label_property_value")}：${totalValue.toLocaleString()} ${currency}`);
-      if (asset.mortgage) details.push(`${i18n("label_mortgage_balance")}：${parseFloat(asset.mortgage).toLocaleString()} ${currency}`);
-      if (asset.interestRate) details.push(`${i18n("label_interest_rate")}：${asset.interestRate}%`);
-      if (asset.yearsRemaining) details.push(`${i18n("label_years_remaining")}：${asset.yearsRemaining}${i18n("unit_years")}`);
-    } else {
-      totalValue = parseFloat(asset.amount || 0);
-      details.push(`${i18n("label_amount")}：${totalValue.toLocaleString()} ${currency}`);
-    }
+   } else if (type === "房產") {
+  if (asset.amount) totalValue = parseFloat(asset.amount);
+  if (asset.name) details.push(`${i18n("label_property_name")}：${asset.name}`);
+  details.push(`${i18n("label_property_value")}：${totalValue.toLocaleString()} ${currency}`);
+  if (asset.mortgage) details.push(`${i18n("label_mortgage_balance")}：${asset.mortgage.toLocaleString()} ${currency}`);
+  if (asset.interestRate) details.push(`${i18n("label_interest_rate")}：${asset.interestRate}%`);
+  if (asset.yearsRemaining) details.push(`${i18n("label_years_remaining")}：${asset.yearsRemaining}${i18n("unit_years")}`);
+} else {
+  if (asset.amount) {
+    totalValue = parseFloat(asset.amount);
+    details.push(`${i18n("label_amount")}：${totalValue.toLocaleString()} ${currency}`);
+  }
+}
+
 
     if (asset.bank) details.push(`${i18n("label_bank")}：${asset.bank}`);
     if (asset.note) details.push(`${i18n("label_note")}：${asset.note}`);
