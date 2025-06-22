@@ -726,7 +726,7 @@ FINORA_AUTH.onUserChanged(async (user) => {
 
       // 📊 載入匯率與資產
       await fetchExchangeRatesOnce();
-      await updateAllStockPrices();
+      await fetchStockPricesoOes();
 
       // 🗒️ 重新讀入資產
       assets = JSON.parse(localStorage.getItem(getLocalStorageKey()) || "[]");
