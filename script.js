@@ -506,15 +506,14 @@ function editAsset(index) {
         setValue("crypto-price", "cryptoPrice", 0);
         break;
 
-      case "房產":
-        setValue("property-name", "name");
-        // ✅ 優先取新版欄位 amount，保留舊版 property-value 相容性
-        const valueField = document.getElementById("property-value");
-        if (valueField) valueField.value = asset.amount ?? asset["property-value"] ?? 0;
-        setValue("property-mortgage", "mortgage", 0);
-        setValue("property-interest", "interestRate", 0);
-        setValue("property-years", "yearsRemaining", 0);
-        break;
+    case "房產":
+  get("property-name", "name");
+  document.getElementById("property-amount").value = asset.amount || asset["property-value"] || 0;
+  document.getElementById("mortgage").value = asset.mortgage || 0;
+  document.getElementById("interest-rate").value = asset.interestRate || 0;
+  document.getElementById("years-remaining").value = asset.yearsRemaining || 0;
+  break;
+
 
       default:
         setValue("amount", "amount", 0);
