@@ -464,41 +464,57 @@ function editAsset(index) {
   toggleFields();
 
   setTimeout(() => {
-    if (asset.type === "股票") {
-      document.getElementById("stock-symbol").value = asset.stockSymbol || asset.symbol || "";
-      document.getElementById("stock-category").value = asset.stockCategory || asset.category || "";
-      document.getElementById("stock-shares").value = asset.shares || 0;
-      document.getElementById("stock-cost").value = asset.cost || 0;
-      document.getElementById("stock-price").value = asset.price || 0;
-    } else if (asset.type === "儲蓄保險") {
-      document.getElementById("insurance-name").value = asset.insuranceName || "";
-      document.getElementById("insurance-amount").value = asset.insuranceAmount || 0;
-      document.getElementById("insurance-years").value = asset.insuranceYears || 0;
-      document.getElementById("insurance-annual").value = asset.insuranceAnnual || 0;
-    } else if (asset.type === "基金") {
-      document.getElementById("fund-name").value = asset.fundName || "";
-      document.getElementById("fund-units").value = asset.fundUnits || 0;
-      document.getElementById("fund-nav").value = asset.fundNav || 0;
-    } else if (asset.type === "加密貨幣") {
-      document.getElementById("crypto-symbol").value = asset.cryptoSymbol || "";
-      document.getElementById("crypto-amount").value = asset.cryptoAmount || 0;
-      document.getElementById("crypto-price").value = asset.cryptoPrice || 0;
-    } else if (asset.type === "房產") {
-      document.getElementById("property-name").value = asset.name || "";
-      document.getElementById("property-value").value = asset.amount || "";
-      document.getElementById("property-mortgage").value = asset.mortgage || "";
-      document.getElementById("property-interest").value = asset.interestRate || "";
-      document.getElementById("property-years").value = asset.yearsRemaining || "";
-    } else {
-      document.getElementById("amount").value = asset.amount || 0;
+    const get = (id, fallback = "") => document.getElementById(id).value = asset?.[fallback] ?? "";
+
+    switch (asset.type) {
+      case "股票":
+        get("stock-symbol", "stockSymbol");
+        get("stock-category", "stockCategory");
+        document.getElementById("stock-shares").value = asset.shares || 0;
+        document.getElementById("stock-cost").value = asset.cost || 0;
+        document.getElementById("stock-price").value = asset.price || 0;
+        break;
+
+      case "儲蓄保險":
+        get("insurance-name", "insuranceName");
+        document.getElementById("insurance-amount").value = asset.insuranceAmount || 0;
+        document.getElementById("insurance-years").value = asset.insuranceYears || 0;
+        document.getElementById("insurance-annual").value = asset.insuranceAnnual || 0;
+        break;
+
+      case "基金":
+        get("fund-name", "fundName");
+        document.getElementById("fund-units").value = asset.fundUnits || 0;
+        document.getElementById("fund-nav").value = asset.fundNav || 0;
+        break;
+
+      case "加密貨幣":
+        get("crypto-symbol", "cryptoSymbol");
+        document.getElementById("crypto-amount").value = asset.cryptoAmount || 0;
+        document.getElementById("crypto-price").value = asset.cryptoPrice || 0;
+        break;
+
+      case "房產":
+        get("property-name", "name");
+        document.getElementById("property-value").value = asset.amount || asset["property-value"] || 0;
+        document.getElementById("property-mortgage").value = asset.mortgage || 0;
+        document.getElementById("property-interest").value = asset.interestRate || 0;
+        document.getElementById("property-years").value = asset.yearsRemaining || 0;
+        break;
+
+      default:
+        document.getElementById("amount").value = asset.amount || 0;
+        break;
     }
 
     document.getElementById("currency").value = asset.currency || "TWD";
     document.getElementById("bank").value = asset.bank || "";
     document.getElementById("note").value = asset.note || "";
+
     document.getElementById("asset-form").scrollIntoView({ behavior: "smooth", block: "start" });
   }, 100);
 }
+
 
 
 function deleteAsset(index) {
