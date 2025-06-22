@@ -471,56 +471,60 @@ function editAsset(index) {
   toggleFields();
 
   setTimeout(() => {
-    const get = (id, fallback = "") => document.getElementById(id).value = asset?.[fallback] ?? "";
+    const setValue = (id, key, fallback = "") => {
+      const el = document.getElementById(id);
+      if (el) el.value = asset?.[key] ?? fallback;
+    };
 
     switch (asset.type) {
       case "股票":
-        get("stock-symbol", "stockSymbol");
-        get("stock-category", "stockCategory");
-        document.getElementById("stock-shares").value = asset.shares || 0;
-        document.getElementById("stock-cost").value = asset.cost || 0;
-        document.getElementById("stock-price").value = asset.price || 0;
+        setValue("stock-symbol", "stockSymbol");
+        setValue("stock-category", "stockCategory");
+        setValue("stock-shares", "shares", 0);
+        setValue("stock-cost", "cost", 0);
+        setValue("stock-price", "price", 0);
         break;
 
       case "儲蓄保險":
-        get("insurance-name", "insuranceName");
-        document.getElementById("insurance-amount").value = asset.insuranceAmount || 0;
-        document.getElementById("insurance-years").value = asset.insuranceYears || 0;
-        document.getElementById("insurance-annual").value = asset.insuranceAnnual || 0;
+        setValue("insurance-name", "insuranceName");
+        setValue("insurance-amount", "insuranceAmount", 0);
+        setValue("insurance-years", "insuranceYears", 0);
+        setValue("insurance-annual", "insuranceAnnual", 0);
         break;
 
       case "基金":
-        get("fund-name", "fundName");
-        document.getElementById("fund-units").value = asset.fundUnits || 0;
-        document.getElementById("fund-nav").value = asset.fundNav || 0;
+        setValue("fund-name", "fundName");
+        setValue("fund-units", "fundUnits", 0);
+        setValue("fund-nav", "fundNav", 0);
         break;
 
       case "加密貨幣":
-        get("crypto-symbol", "cryptoSymbol");
-        document.getElementById("crypto-amount").value = asset.cryptoAmount || 0;
-        document.getElementById("crypto-price").value = asset.cryptoPrice || 0;
+        setValue("crypto-symbol", "cryptoSymbol");
+        setValue("crypto-amount", "cryptoAmount", 0);
+        setValue("crypto-price", "cryptoPrice", 0);
         break;
 
       case "房產":
-        get("property-name", "name");
+        setValue("property-name", "name");
+        // 房產估值優先抓新版欄位 amount，無則抓 property-value
         document.getElementById("property-value").value = asset.amount || asset["property-value"] || 0;
-        document.getElementById("property-mortgage").value = asset.mortgage || 0;
-        document.getElementById("property-interest").value = asset.interestRate || 0;
-        document.getElementById("property-years").value = asset.yearsRemaining || 0;
+        setValue("property-mortgage", "mortgage", 0);
+        setValue("property-interest", "interestRate", 0);
+        setValue("property-years", "yearsRemaining", 0);
         break;
 
       default:
-        document.getElementById("amount").value = asset.amount || 0;
+        setValue("amount", "amount", 0);
         break;
     }
 
-    document.getElementById("currency").value = asset.currency || "TWD";
-    document.getElementById("bank").value = asset.bank || "";
-    document.getElementById("note").value = asset.note || "";
-
+    setValue("currency", "currency", "TWD");
+    setValue("bank", "bank", "");
+    setValue("note", "note", "");
     document.getElementById("asset-form").scrollIntoView({ behavior: "smooth", block: "start" });
   }, 100);
 }
+
 
 
 
