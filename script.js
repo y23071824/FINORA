@@ -409,8 +409,21 @@ function render() {
   for (const type in totalsByType) {
     for (const currency in totalsByType[type]) {
       const total = totalsByType[type][currency].toFixed(2);
-      const profit = profitByTypeCurrency?.[type]?.[currency] || 0;
-      const profitText = profit !== 0 ? `（${i18n("profit")}：${profit.toFixed(2)} ${currency}）` : "";
+      const profit = profitByTypeCurrency?.[type]?.[currency] || 0;  
+       let profitText = profit !== 0 ? `（${i18n("profit")}：${profit.toFixed(2)} ${currency}）` : "";
+
+         // ✅ 額外處理房產的房貸加總顯示
+    if (type === "房產") {
+      let totalMortgage = 0;
+      assets.forEach(asset => {
+        if (asset.type === "房產" && asset.currency === currency) {
+          totalMortgage += parseFloat(asset.mortgage || 0);
+        }
+      });
+      if (totalMortgage > 0) {
+        profitText += `（${i18n("label_mortgage_balance")}：${totalMortgage.toLocaleString()} ${currency}）`;
+      }
+    }
       const li = document.createElement("li");
       li.textContent = `📌 ${i18n("option_" + type)}：${total} ${currency} ${profitText}`;
       if (profit > 0) li.style.color = "green";
