@@ -207,10 +207,11 @@ async function handleSubmit(e) {
       };
     } else if (type === "房產") {
   const name = document.getElementById("property-name")?.value;
-  const value = parseFloat(document.getElementById("property-amount")?.value) || 0;
-  const mortgage = parseFloat(document.getElementById("mortgage")?.value) || 0;
-  const interest = parseFloat(document.getElementById("interest-rate")?.value) || 0;
-  const years = parseInt(document.getElementById("years-remaining")?.value) || 0;
+const value = parseFloat(document.getElementById("property-amount")?.value) || 0;
+const mortgage = parseFloat(document.getElementById("mortgage")?.value) || 0;
+const interest = parseFloat(document.getElementById("interest-rate")?.value) || 0;
+const years = parseInt(document.getElementById("years-remaining")?.value) || 0;
+
 
   newAsset = {
     ...newAsset,
