@@ -118,17 +118,33 @@ function renderAssetFromStorage() {
     for (let cur in summary[type]) {
       const val = summary[type][cur];
       const profit = profits[type]?.[cur] || 0;
-      const profitText = profit
-        ? `（${i18n("profit") || "盈餘"}：${profit.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${cur}）`
-        : "";
+      let profitText = "";
+
+      if (profit) {
+        profitText = `（${i18n("profit") || "盈餘"}：${profit.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${cur}）`;
+      }
+
+      // ✅ 額外加入房貸顯示
+      if (type === "房產") {
+        // 讀取原始資產資料計算總房貸
+        const fullAssets = JSON.parse(localStorage.getItem(`assets_${accountId}`) || "[]");
+        const totalMortgage = fullAssets
+          .filter(a => a.type === "房產" && a.currency === cur)
+          .reduce((sum, a) => sum + (parseFloat(a.mortgage) || 0), 0);
+
+        if (totalMortgage > 0) {
+          profitText += `（${i18n("label_mortgage_balance") || "含房貸"}：${totalMortgage.toLocaleString()} ${cur}）`;
+        }
+      }
+
       html += `<p>📌 ${i18n(`type_${type}`) || type}：${val.toLocaleString(undefined, { maximumFractionDigits: 2 })} ${cur} ${profitText}</p>`;
     }
   }
 
   html += `<p style="margin-top:1rem; font-weight:bold;"> ${i18n("total_asset_value", { currency })}${Math.round(totalConverted).toLocaleString()} ${currency}</p>`;
-
   container.innerHTML = html;
 }
+
 function calculateCompound() {
   const p = parseFloat(document.getElementById("principal").value) || 0;
   const r = (parseFloat(document.getElementById("rate").value) || 0) / 100;
