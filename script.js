@@ -206,28 +206,33 @@ async function handleSubmit(e) {
         cryptoCost: parseFloat(document.getElementById("crypto-cost")?.value) || 0,
       };
     } else if (type === "房產") {
-      newAsset = {
-        ...newAsset,
-        name: document.getElementById("property-name")?.value.trim(),
-        amount: parseFloat(document.getElementById("amount")?.value) || 0,  // ✅ 修正這裡
-        mortgage: parseFloat(document.getElementById("mortgage")?.value) || 0,
-        interestRate: parseFloat(document.getElementById("interest-rate")?.value) || 0,
-        yearsRemaining: parseInt(document.getElementById("years-remaining")?.value) || 0
-      };
+      const name = document.getElementById("property-name")?.value;
+      const value = parseFloat(document.getElementById("property-value")?.value) || 0;
+      const mortgage = parseFloat(document.getElementById("property-mortgage")?.value) || 0;
+      const interest = parseFloat(document.getElementById("property-interest")?.value) || 0;
+      const years = parseInt(document.getElementById("property-years")?.value) || 0;
+
+      newAsset.name = name;
+      newAsset.amount = value; // 房產估值（市價）
+      newAsset["property-value"] = value; // 舊資料相容欄位
+      newAsset.mortgage = mortgage;
+      newAsset.interestRate = interest;
+      newAsset.yearsRemaining = years;
     } else {
-      // 現金、定存、其他
       newAsset.amount = parseFloat(document.getElementById("amount")?.value) || 0;
     }
 
     newAsset.bank = document.getElementById("bank")?.value || "";
     newAsset.note = document.getElementById("note")?.value || "";
 
+    // 防止重複新增
     const isDuplicate = editIndex === null && assets.some(a => JSON.stringify(a) === JSON.stringify(newAsset));
     if (isDuplicate) {
       alert("⚠️ 相同資產已存在，請勿重複新增！");
       return;
     }
 
+    // 更新或新增資產
     if (editIndex !== null) {
       assets[editIndex] = newAsset;
       editIndex = null;
@@ -235,12 +240,14 @@ async function handleSubmit(e) {
       assets.push(newAsset);
     }
 
+    // 銀行記憶
     const bankName = newAsset.bank;
     if (bankName && !bankHistory.includes(bankName)) {
       bankHistory.push(bankName);
       localStorage.setItem("banks", JSON.stringify(bankHistory));
     }
 
+    // 儲存與同步
     localStorage.setItem(getLocalStorageKey(), JSON.stringify(assets));
     if (typeof FINORA_AUTH !== "undefined" && FINORA_AUTH.saveUserAssets) {
       await FINORA_AUTH.saveUserAssets(assets);
