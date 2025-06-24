@@ -1,0 +1,24 @@
+<!DOCTYPE html><html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="delete_account_title">刪除帳號說明</title>
+  <style>
+    body { font-family: sans-serif; line-height: 1.6; padding: 2em; max-width: 700px; margin: auto; }
+    h1 { color: #b91c1c; }
+  </style>
+</head>
+<body>
+  <h1 data-i18n="delete_account_title">刪除帳號說明</h1>  <p data-i18n="delete_intro">
+    如果您希望刪除在 FINORA 好好存 App 中的帳號與相關資產資料，請依以下步驟操作。
+  </p>  <ol>
+    <li data-i18n="delete_step1">請確認您已登入 App 並切換到欲刪除的帳本。</li>
+    <li data-i18n="delete_step2">進入 App 主畫面，點選右上角「登出」後即可清除本地與雲端資料。</li>
+    <li data-i18n="delete_step3">若您希望完全刪除 Google 登入紀錄，請前往您的 Google 帳戶的 <a href="https://myaccount.google.com/permissions" target="_blank">應用授權頁面</a> 撤銷 FINORA 權限。</li>
+    <li data-i18n="delete_step4">如有其他刪除請求，可來信 <a href="mailto:service@finora.life">service@finora.life</a> 提出申請，我們會於 7 天內處理。</li>
+  </ol>  <p data-i18n="delete_note">
+    本應用程式不會主動收集您的個人敏感資訊，所有帳本資料僅限於資產記錄用途，並可依使用者操作完全刪除。
+  </p>  <script src="lang.js"></script>  <script>
+    applyLang(); // 自動套用語言
+  </script></body>
+</html>
