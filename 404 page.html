@@ -1,0 +1,53 @@
+<!DOCTYPE html><html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>404 - 找不到頁面</title>
+  <link rel="icon" href="favicon.png" type="image/png" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+      font-family: sans-serif;
+    }.logo {
+  width: 60vw;
+  max-width: 400px;
+  height: auto;
+  margin-bottom: 1.5rem;
+}
+
+h1 {
+  font-size: 1.5rem;
+  margin: 0 1rem;
+}
+
+.btn {
+  margin-top: 2rem;
+  font-size: 1rem;
+  color: #b4695d;
+  border: 2px solid #b4695d;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.btn:hover {
+  background-color: #f7eae6;
+}
+
+  </style>
+</head>
+<body>
+  <img src="logo.png" alt="FINORA Logo" class="logo" />
+  <h1 data-i18n="error_not_found">這個頁面找不到了喔！</h1>
+  <a href="index.html" class="btn" data-i18n="error_try_again">再試一次</a>
+</body>
+</html>
