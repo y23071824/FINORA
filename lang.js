@@ -327,7 +327,10 @@ delete_note: "如需更多協助，請聯絡 service@finora.life",
     terms_privacy: "2. 隱私保護：我們依據隱私權條款保護您提供的資料。",
     terms_liability: "3. 平台責任：本平台不對資料準確性或使用結果負完全責任。",
     terms_change: "4. 條款變更：我們保留隨時修改條款的權利，請定期查閱。",
-    terms_contact: "若您對服務條款有任何疑問，歡迎透過聯絡我們頁面與我們聯繫。"
+    terms_contact: "若您對服務條款有任何疑問，歡迎透過聯絡我們頁面與我們聯繫。",
+      no_asset_warning_console: "找不到資產分類資料，請先到資產頁建立資產",
+    no_asset_warning_html: "尚未建立資產，請先至資產頁新增資產",
+    missing_container_error: "缺少 #asset-summary 容器"
 },
   
  "zh-Hans": {
@@ -625,7 +628,10 @@ delete_note: "如需更多帮助，请联系 service@finora.life",
     terms_privacy: "2. 隐私保护：我们依据隐私权条款保护您提供的资料。",
     terms_liability: "3. 平台责任：本平台不对资料准确性或使用结果负完全责任。",
     terms_change: "4. 条款变更：我们保留随时修改条款的权利，请定期查阅。",
-    terms_contact: "若您对服务条款有任何疑问，欢迎通过联系我们页面与我们联系。"
+    terms_contact: "若您对服务条款有任何疑问，欢迎通过联系我们页面与我们联系。",
+   no_asset_warning_console: "找不到资产分类数据，请先到资产页建立资产",
+    no_asset_warning_html: "尚未建立资产，请先至资产页新增资产",
+    missing_container_error: "缺少 #asset-summary 容器"
 },
 
 "en": {
@@ -922,7 +928,10 @@ delete_note: "For further assistance, contact service@finora.life",
     terms_privacy: "2. Privacy: Your data is protected in accordance with our privacy policy.",
     terms_liability: "3. Platform Liability: We are not fully responsible for the accuracy of data or usage outcomes.",
     terms_change: "4. Changes to Terms: We may revise these terms at any time. Please review them regularly.",
-    terms_contact: "If you have any questions, feel free to contact us via the Contact page."
+    terms_contact: "If you have any questions, feel free to contact us via the Contact page.", 
+  no_asset_warning_console: "No asset data found. Please go to the Assets page to add assets first.",
+    no_asset_warning_html: "⚠️ No assets found. Please add assets from the Assets page first.",
+    missing_container_error: "Missing #asset-summary container"
 },
 
   
@@ -1220,7 +1229,10 @@ delete_note: "詳細は service@finora.life までご連絡ください。",
     terms_privacy: "2. プライバシー保護：私たちはプライバシーポリシーに基づき、提供された情報を保護します。",
     terms_liability: "3. プラットフォームの責任：本サービスの内容や結果について、完全な責任を負うものではありません。",
     terms_change: "4. 規約の変更：規約は随時変更される可能性があります。定期的にご確認ください。",
-    terms_contact: "ご不明な点がある場合は、お問い合わせページよりご連絡ください。"
+    terms_contact: "ご不明な点がある場合は、お問い合わせページよりご連絡ください。",
+   no_asset_warning_console: "資産データが見つかりません。先に資産ページで追加してください。",
+    no_asset_warning_html: "⚠️ 資産が未登録です。資産ページで追加してください。",
+    missing_container_error: "#asset-summary コンテナが見つかりません"
 
   }
 };
