@@ -126,7 +126,7 @@ async function fetchStockPricesOnce() {
   const cache = localStorage.getItem("stockPrices");
 
   // 如果有快取且未過期，直接套用
-  if (ts && Date.now() - parseInt(ts) < 24 * 60 * 60 * 1000 && cache) {
+  if (ts && Date.now() - parseInt(ts) < 12 * 60 * 60 * 1000 && cache) {
     const cachedPrices = JSON.parse(cache);
     assets.forEach(asset => {
       if (asset.type === "股票" && asset.stockSymbol && cachedPrices[asset.stockSymbol]) {
