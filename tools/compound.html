@@ -102,16 +102,17 @@ function renderAssetFromStorage() {
   const raw = localStorage.getItem(`assets_breakdown_${accountId}`);
   const container = document.getElementById("asset-summary");
 
-  if (!raw) {
-    console.warn("❌ 找不到資產分類資料，請先到資產頁建立資產");
-    if (container) container.innerHTML = `<p style="color: red;">⚠️ 尚未建立資產，請先至資產頁新增資產</p>`;
-    return;
-  }
+ if (!raw) {
+  console.warn("❌ " + i18n("no_asset_warning_console"));
+  if (container) container.innerHTML = `<p style="color: red;">⚠️ ${i18n("no_asset_warning_html")}</p>`;
+  return;
+}
 
-  if (!container) {
-    console.error("❌ 缺少 #asset-summary 容器");
-    return;
-  }
+if (!container) {
+  console.error("❌ " + i18n("missing_container_error"));
+  return;
+}
+
 
   const data = JSON.parse(raw);
   const currency = data.selectedCurrency;
