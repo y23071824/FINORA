@@ -5,14 +5,44 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title data-i18n="footer_terms">服務條款</title>
   <link rel="stylesheet" href="style.css" />
-  <script src="lang.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      applyLang();
-    });
-  </script>
+  <link rel="icon" href="favicon.png" type="image/png" />
+  <style>
+    body {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 2rem;
+      background: white;
+      font-family: sans-serif;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    h1 {
+      color: #b4695d;
+      text-align: center;
+    }
+
+    h2 {
+      color: #944647;
+      margin-top: 2rem;
+    }
+
+    footer {
+      margin-top: 3rem;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #888;
+    }
+
+    .footer-links a {
+      color: #b4695d;
+      text-decoration: none;
+      margin: 0 0.3rem;
+    }
+  </style>
 </head>
-<body>
+
+<body class="logo-full-bg">
   <main class="content">
     <h1 data-i18n="footer_terms">服務條款</h1>
 
@@ -46,5 +76,13 @@
 
     <p class="note" data-i18n="terms_last_updated">最後更新：2025 年 6 月</p>
   </main>
+
+  <script src="lang.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      applyLang();
+    });
+  </script>
 </body>
 </html>
+
