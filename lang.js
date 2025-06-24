@@ -314,7 +314,11 @@ label_property_value: "估值（市價）",
 label_mortgage_balance: "房貸餘額",
 label_interest_rate: "利率（%）",
 label_years_remaining: "剩餘年限",
-   unit_years:"年"
+   unit_years:"年",
+   delete_title: "刪除帳號與資料",
+delete_intro: "您可以依照下列步驟，要求刪除您的帳號與相關資料。",
+delete_steps: "請透過電子郵件聯絡我們，標題請註明：刪除帳號。我們將在收到您的請求後 7 個工作天內處理並回覆確認。",
+delete_note: "如需更多協助，請聯絡 service@finora.life"
 },
   
  "zh-Hans": {
@@ -599,7 +603,11 @@ label_property_value: "估值（市价）",
 label_mortgage_balance: "房贷余额",
 label_interest_rate: "利率（%）",
 label_years_remaining: "剩余年限",
-      unit_years:"年"
+      unit_years:"年",
+   delete_title: "删除帐号与数据",
+delete_intro: "您可以按照以下步骤，申请删除您的帐号及相关数据。",
+delete_steps: "请通过电子邮件联系我们，标题请注明：删除帐号。我们将在收到请求后的 7 个工作日内处理并回复确认。",
+delete_note: "如需更多帮助，请联系 service@finora.life"
 },
 
 "en": {
@@ -883,7 +891,11 @@ label_property_value: "Appraised Value (Market Price)",
 label_mortgage_balance: "Mortgage Balance",
 label_interest_rate: "Interest Rate (%)",
 label_years_remaining: "Years Remaining",
-     unit_years:"years"
+     unit_years:"years",
+  delete_title: "Delete Account and Data",
+delete_intro: "You can request to delete your account and related data by following the steps below.",
+delete_steps: "Please contact us via email with the subject: Delete Account. We will process and confirm your request within 7 business days.",
+delete_note: "For further assistance, contact service@finora.life"
 },
 
   
@@ -1168,7 +1180,11 @@ label_property_value: "評価額（時価）",
 label_mortgage_balance: "住宅ローン残高",
 label_interest_rate: "金利（%）",
 label_years_remaining: "残存年数",
-      unit_years:"年"
+      unit_years:"年",
+   delete_title: "アカウントとデータの削除",
+delete_intro: "以下の手順に従って、アカウントと関連データの削除をリクエストできます。",
+delete_steps: "「アカウント削除」という件名でメールにてご連絡ください。7営業日以内に処理し、確認を返信いたします。",
+delete_note: "詳細は service@finora.life までご連絡ください。"
 
   }
 };
