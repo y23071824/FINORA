@@ -319,7 +319,15 @@ label_years_remaining: "剩餘年限",
 delete_intro: "您可以依照下列步驟，要求刪除您的帳號與相關資料。",
 delete_steps: "請透過電子郵件聯絡我們，標題請註明：刪除帳號。我們將在收到您的請求後 7 個工作天內處理並回覆確認。",
 delete_note: "如需更多協助，請聯絡 service@finora.life",
-   footer_delete_account: "刪除帳號"
+   footer_delete_account: "刪除帳號",
+   footer_terms: "服務條款",
+    terms_title: "服務條款",
+    terms_intro: "歡迎使用 FINORA 好好存。本服務條款說明您與本平台間的權利與義務。",
+    terms_use: "1. 使用者責任：請確認您提供的資料正確且不涉及非法行為。",
+    terms_privacy: "2. 隱私保護：我們依據隱私權條款保護您提供的資料。",
+    terms_liability: "3. 平台責任：本平台不對資料準確性或使用結果負完全責任。",
+    terms_change: "4. 條款變更：我們保留隨時修改條款的權利，請定期查閱。",
+    terms_contact: "若您對服務條款有任何疑問，歡迎透過聯絡我們頁面與我們聯繫。"
 },
   
  "zh-Hans": {
@@ -609,7 +617,15 @@ label_years_remaining: "剩余年限",
 delete_intro: "您可以按照以下步骤，申请删除您的帐号及相关数据。",
 delete_steps: "请通过电子邮件联系我们，标题请注明：删除帐号。我们将在收到请求后的 7 个工作日内处理并回复确认。",
 delete_note: "如需更多帮助，请联系 service@finora.life",
-   footer_delete_account: "删除账户"
+   footer_delete_account: "删除账户",
+   footer_terms: "服务条款",
+    terms_title: "服务条款",
+    terms_intro: "欢迎使用 FINORA 好好存。本服务条款说明您与本平台之间的权利与义务。",
+    terms_use: "1. 用户责任：请确认您提供的资料正确且不涉及非法行为。",
+    terms_privacy: "2. 隐私保护：我们依据隐私权条款保护您提供的资料。",
+    terms_liability: "3. 平台责任：本平台不对资料准确性或使用结果负完全责任。",
+    terms_change: "4. 条款变更：我们保留随时修改条款的权利，请定期查阅。",
+    terms_contact: "若您对服务条款有任何疑问，欢迎通过联系我们页面与我们联系。"
 },
 
 "en": {
@@ -898,7 +914,15 @@ label_years_remaining: "Years Remaining",
 delete_intro: "You can request to delete your account and related data by following the steps below.",
 delete_steps: "Please contact us via email with the subject: Delete Account. We will process and confirm your request within 7 business days.",
 delete_note: "For further assistance, contact service@finora.life",
-  footer_delete_account: "Delete Account"
+  footer_delete_account: "Delete Account",
+  footer_terms: "Terms of Service",
+    terms_title: "Terms of Service",
+    terms_intro: "Welcome to FINORA. These Terms of Service explain your rights and obligations when using this platform.",
+    terms_use: "1. User Responsibility: Please ensure the information you provide is accurate and lawful.",
+    terms_privacy: "2. Privacy: Your data is protected in accordance with our privacy policy.",
+    terms_liability: "3. Platform Liability: We are not fully responsible for the accuracy of data or usage outcomes.",
+    terms_change: "4. Changes to Terms: We may revise these terms at any time. Please review them regularly.",
+    terms_contact: "If you have any questions, feel free to contact us via the Contact page."
 },
 
   
@@ -1188,7 +1212,15 @@ label_years_remaining: "残存年数",
 delete_intro: "以下の手順に従って、アカウントと関連データの削除をリクエストできます。",
 delete_steps: "「アカウント削除」という件名でメールにてご連絡ください。7営業日以内に処理し、確認を返信いたします。",
 delete_note: "詳細は service@finora.life までご連絡ください。",
-   footer_delete_account: "アカウント削除"
+   footer_delete_account: "アカウント削除",
+   footer_terms: "利用規約",
+    terms_title: "利用規約",
+    terms_intro: "FINORAをご利用いただきありがとうございます。本規約は本サービスの利用に関する権利と義務を説明します。",
+    terms_use: "1. ユーザーの責任：提供された情報が正確であり、違法行為を含まないことを確認してください。",
+    terms_privacy: "2. プライバシー保護：私たちはプライバシーポリシーに基づき、提供された情報を保護します。",
+    terms_liability: "3. プラットフォームの責任：本サービスの内容や結果について、完全な責任を負うものではありません。",
+    terms_change: "4. 規約の変更：規約は随時変更される可能性があります。定期的にご確認ください。",
+    terms_contact: "ご不明な点がある場合は、お問い合わせページよりご連絡ください。"
 
   }
 };
