@@ -174,7 +174,8 @@ document.getElementById("account-id").textContent = i18n("loading");
       }
  } catch (e) {
   alert(i18n("please_login_first"));
-  window.location.href = "app.html"; // ✅ 自動導回首頁
+  window.location.href = "../app.html";
+        return; // ✅ 自動導回首頁
 }
 
     document.getElementById("toggle-inflation").addEventListener("click", () => {
