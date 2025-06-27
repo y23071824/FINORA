@@ -172,9 +172,10 @@ document.getElementById("account-id").textContent = i18n("loading");
         document.getElementById("compound-info").innerHTML =
           `💰 ${i18n("recent_compound_result")}：<strong>NT$ ${Number(saved).toLocaleString()}</strong>`;
       }
-    } catch (e) {
-      alert(i18n("please_login_first"));
-    }
+ } catch (e) {
+  alert(i18n("please_login_first"));
+  window.location.href = "app.html"; // ✅ 自動導回首頁
+}
 
     document.getElementById("toggle-inflation").addEventListener("click", () => {
       const checkbox = document.getElementById("inflation-adjust");
