@@ -1,0 +1,33 @@
+# === Node / Web tools（如果你將來用 Vite、Parcel、npm 等）===
+node_modules/
+dist/
+build/
+.cache/
+.vite/
+
+# === Firebase ===
+.firebase/
+firebase-debug.log
+firebase.json
+
+# === IDE / 編輯器設定檔 ===
+.vscode/
+.idea/
+*.iml
+
+# === 系統快取 / 臨時檔案 ===
+.DS_Store
+Thumbs.db
+
+# === 打包產物 / 壓縮檔 ===
+*.zip
+*.log
+
+# === 本機憑證或密鑰（如 serviceAccount.json）===
+*.key
+*.pem
+*.jks
+*.keystore
+
+# === 可選：避免上傳 production build ===
+/public/
